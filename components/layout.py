@@ -1,7 +1,9 @@
-import dash
 import dash_bootstrap_components as dbc
 from dash import html
 from data.queries import get_studies
+from plotly.express.colors import sequential
+import re
+import numpy as np
 
 
 def header_layout():
@@ -17,18 +19,39 @@ def header_layout():
                             dbc.DropdownMenu(
                                 children=[
                                     dbc.DropdownMenuItem(
-                                        "Dual Task Analysis", href="/view/dual-task"),
+                                        "Randomized Control Trials", href="/insights/rct"),
                                     dbc.DropdownMenuItem(
-                                        "Time", href="/view/time"),
-                                    dbc.DropdownMenuItem(divider=True),
+                                        "Efficacy & Safety Endpoints", href="/insights/efficacy-safety"),
                                     dbc.DropdownMenuItem(
-                                        "Something else here", href="#"),
+                                        "Long-term Data", href="/insights/long-term"),
+                                    dbc.DropdownMenuItem(
+                                        "Sex Bias", href="/insights/sex-bias"),
+                                    dbc.DropdownMenuItem(
+                                        "Number of Participants", href="/insights/participants"),
+                                    dbc.DropdownMenuItem(
+                                        "Good Research Practices", href="/insights/good-research"),
+                                    dbc.DropdownMenuItem(
+                                        "Dosage", href="/insights/dosage"),
+
                                 ],
                                 nav=True,
                                 in_navbar=True,
-                                label="Views",
-                                id="navbarDropdown"
+                                label="Insights",
+                                id="insightsDropdown"
                             ),
+
+                            dbc.DropdownMenu(
+                                children=[
+                                    dbc.DropdownMenuItem(
+                                        "Dual Task Analysis", href="/explore/dual-task"),
+                                    dbc.DropdownMenuItem(
+                                        "Time", href="/explore/time"),],
+                                nav=True,
+                                in_navbar=True,
+                                label="Explore",
+                                id="exploreDropdown"
+                            ),
+
                             dbc.NavItem(dbc.NavLink("About", href="/about")),
                             dbc.NavItem(dbc.NavLink(
                                 "Contact", href="/contact")),
@@ -64,7 +87,14 @@ def footer_layout():
     )
 
 
-def search_filter_component():
+def content_layout(list_of_children: list):
+    return dbc.Container(
+        list_of_children,
+        class_name="py-4"
+    )
+
+
+def search_filter_component(filter_buttons: list[dbc.Button] = []):
     return html.Div(
         className="m-4",
         children=[
@@ -105,10 +135,8 @@ def search_filter_component():
                         width="auto",
                     ),
                     dbc.Col(
-                        id="active-filters",  # This will be updated dynamically
-                        children=[
-                            # Initially empty, it will be populated by the callback
-                        ],
+                        id="active-filters",
+                        children=filter_buttons,
                         width="auto",
                     ),
                 ],
@@ -164,21 +192,29 @@ def study_view(s: dict[str, str], idx: int):
     )
 
 
-def filter_button(color: str, filter: str, cat: str):
+def filter_button(color: str, filter: str, cat: str, editable: bool = False):
+    children = [html.Span(f"{filter} ", style={"marginRight": "0.5rem"})]
+    custom_style = {
+        "borderRadius": "1rem",
+        "backgroundColor": f'{color}',
+        "color": "white",
+        "marginRight": "0.5rem",
+    }
+
+    if editable:
+        children.append(html.I(className="fa-solid fa-xmark"))
+    else:
+        custom_style["backgroundColor"] = color
+        custom_style["border"] = "none"
+        custom_style["boxShadow"] = "none"
+        custom_style["cursor"] = "default"
+
     return dbc.Button(
-        children=[
-            html.Span(f"{filter} ", style={
-                "marginRight": "0.5rem"}),
-            html.I(className="fa-solid fa-xmark"),
-        ],
-        style={
-            "borderRadius": "1rem",
-            "backgroundColor": f'{color}',
-            "color": "white",
-            "marginRight": "0.5rem",
-        },
+        children=children,
+        style=custom_style,
         color="light",
         id=f'{cat}-{filter}',
         n_clicks=0,
         value={"category": cat, "value": filter},
+        title=f'{cat}: {filter}',
     )

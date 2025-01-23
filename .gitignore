@@ -1,2 +1,5 @@
 *_env/*
 settings.py
+
+## pycache
+*__pycache__

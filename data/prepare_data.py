@@ -6,8 +6,10 @@ from ast import literal_eval
 from tqdm import tqdm
 
 
-STUDIES = '/home/vera/Documents/Arbeit/CRS/PsychNER/app_dash/data/studies.csv'
-PREDICTIONS = '/home/vera/Documents/Arbeit/CRS/PsychNER/app_dash/data/predictions.csv'
+PROJECT_DIR = '/home/vera/Documents/Arbeit/CRS/PsychNER/PsyNamic-Webapp'
+
+STUDIES = os.path.join(PROJECT_DIR, 'data', 'studies.csv')
+PREDICTIONS = os.path.join(PROJECT_DIR, 'data', 'predictions.csv')
 
 substance_prediction = '/home/vera/Documents/Arbeit/CRS/PsychNER/model/experiments/pubmedbert_substances_20240902/checkpoint-440_psychedelic_study_relevant_predictions.csv'
 condition_prediction = '/home/vera/Documents/Arbeit/CRS/PsychNER/model/experiments/pubmedbert_condition_20240912/checkpoint-792_psychedelic_study_relevant_predictions.csv'

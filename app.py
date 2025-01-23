@@ -5,10 +5,11 @@ from dash import html, dcc, State
 from pages.about import about_layout
 from pages.contact import contact_layout
 from pages.home import home_layout
-from pages.views.dual_task import dual_task_graphs
-from pages.views.time import time_graph, get_time_data
+from pages.explore.dual_task import dual_task_graphs
+from pages.explore.time import time_graph, get_time_data
+from pages.insights.views import rct_view, efficacy_safety_view
 
-from components.layout import header_layout, footer_layout, search_filter_component, studies_display
+from components.layout import header_layout, footer_layout, search_filter_component, studies_display, content_layout
 from callbacks import register_callbacks
 
 # Load data
@@ -33,17 +34,21 @@ def display_page(pathname: str):
         return about_layout()
     elif pathname == '/contact':
         return contact_layout()
-    elif pathname.startswith('/view'):
+    elif pathname.startswith('/explore'):
         filtered_display = studies_display()
         search_filter = search_filter_component()
-        if pathname == '/view/time':
-            return [time_graph(), search_filter, filtered_display]
-        elif pathname == '/view/dual-task':
-            return [dual_task_graphs(), search_filter, filtered_display]
+        if pathname == '/explore/time':
+            return content_layout([time_graph(), search_filter, filtered_display])
+        elif pathname == '/explore/dual-task':
+            return content_layout([dual_task_graphs(), search_filter, filtered_display])
         else:
-            return [home_layout(), search_filter, filtered_display]
-
-
+            return content_layout([home_layout(), search_filter, filtered_display])
+    elif pathname.startswith('/insights'):
+        if pathname == '/insights/rct':
+            return content_layout([rct_view()])
+        elif pathname == '/insights/efficacy-safety':
+            return content_layout([efficacy_safety_view()])
+        
 # Register all callbacks and pass data
 register_callbacks(app, {'frequency_df': frequency_df})
 
