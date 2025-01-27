@@ -1,4 +1,5 @@
-from sqlalchemy import create_engine, select, func
+from settings import *
+from sqlalchemy import create_engine, select, func, case
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 import sys
@@ -8,14 +9,16 @@ import pandas as pd
 from .models import Base, Paper, BatchRetrieval, Token, Prediction, PredictionToken
 
 # Add the parent folder to the Python search path
-parent_folder_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+parent_folder_path = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, parent_folder_path)
-from settings import *
 
 # Set up the database connection
-DATABASE_URL = f'postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}'
+DATABASE_URL = f'postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{
+    DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}'
 engine = create_engine(DATABASE_URL, echo=True)
 Session = sessionmaker(bind=engine)
+
 
 def extract_filters(input_dict: dict):
     filters = []
@@ -25,6 +28,7 @@ def extract_filters(input_dict: dict):
         values = button_info['props']['value']
         filters.append(values)
     return filters
+
 
 def get_studies(filters: list[dict[str, str]] = None) -> list[dict]:
     """
@@ -66,7 +70,8 @@ def get_studies(filters: list[dict[str, str]] = None) -> list[dict]:
     finally:
         session.close()
 
-def get_freq(task: str, filter_task: str = None, filter_task_label: str = None, threshold: float = 0.1) -> pd.DataFrame:
+
+def get_filtered_freq(task: str, filter_task: str = None, filter_task_label: str = None, threshold: float = 0.1) -> pd.DataFrame:
     """Get the prediction data for a given task and filter the data based on the filter task and label."""
     session = Session()
     try:
@@ -75,7 +80,6 @@ def get_freq(task: str, filter_task: str = None, filter_task_label: str = None, 
             Prediction.label == filter_task_label,
             Prediction.probability >= threshold
         ).subquery()
-
         query = session.query(Prediction.label, func.count(Prediction.id).label('Frequency')).filter(
             Prediction.task == task,
             Prediction.probability >= threshold
@@ -86,10 +90,93 @@ def get_freq(task: str, filter_task: str = None, filter_task_label: str = None, 
 
         query = query.group_by(Prediction.label).order_by('Frequency')
         result = pd.read_sql(query.statement, session.bind)
-        result.rename(columns={'label': task, 'Frequency': 'Frequency'}, inplace=True)
+        result.rename(
+            columns={'label': task, 'Frequency': 'Frequency'}, inplace=True)
         return result
     finally:
         session.close()
+
+
+def get_freq(task: str, labels: list[str], threshold: float = 0.1) -> pd.DataFrame:
+    """Get the frequency of the labels for a given task."""
+    session = Session()
+    try:
+        query = session.query(Prediction.label, func.count(Prediction.id).label('Frequency')).filter(
+            Prediction.task == task,
+            Prediction.label.in_(labels),
+            Prediction.probability >= threshold
+        ).group_by(Prediction.label).order_by('Frequency')
+        result = pd.read_sql(query.statement, session.bind)
+        result.rename(
+            columns={'label': task, 'Frequency': 'Frequency'}, inplace=True)
+        return result
+    finally:
+        session.close()
+
+
+def get_pred(task: str, threshold: float = 0.1) -> pd.DataFrame:
+    """Get the prediction data for a given task."""
+    session = Session()
+    try:
+        query = session.query(Prediction.label, func.count(Prediction.id).label('Frequency')).filter(
+            Prediction.task == task,
+            Prediction.probability >= threshold
+        ).group_by(Prediction.label).order_by('Frequency')
+        result = pd.read_sql(query.statement, session.bind)
+        result.rename(
+            columns={'label': task, 'Frequency': 'Frequency'}, inplace=True)
+        return result
+    finally:
+        session.close()
+
+
+def get_freq_grouped(task: str, labels: list[str], group_task: str, threshold: float = 0.1) -> pd.DataFrame:
+    """Get the predictions where task is labels, group by group task and labels, then count the frequency. 
+    The output is a dataframe with columns group_task, label, and Frequency."""
+    session = Session()
+    
+    try:
+        use_rest = 'Other' in labels
+        grouping_query = (
+            session.query(
+                Prediction.paper_id.label("paper_id"),
+                Prediction.label.label(group_task)
+            )
+            .filter(Prediction.task == group_task, Prediction.probability > threshold)
+            .subquery()
+        )
+
+        # Main query for task grouping
+        query = (
+            session.query(
+            grouping_query.c[group_task].label(group_task),
+            case(
+                (Prediction.label.in_(labels), Prediction.label), 
+                else_="Other" if use_rest else None
+            ).label("Label"),
+            func.count(Prediction.id).label("Frequency")
+            )
+            .join(grouping_query, grouping_query.c.paper_id == Prediction.paper_id)
+            .filter(Prediction.task == task, Prediction.probability > threshold)
+            .group_by(
+            grouping_query.c[group_task],
+            case(
+                (Prediction.label.in_(labels), Prediction.label), 
+                else_="Other" if use_rest else None
+            )
+            )
+        )
+
+        # Execute query and fetch results
+        result = query.all()
+
+        # Convert results to a Pandas DataFrame
+        df = pd.DataFrame(result, columns=[group_task, task, "Frequency"])
+        return df
+
+    finally:
+        session.close()
+
 
 def get_ids(task: str, label: str, threshold: float = 0.1) -> list[int]:
     """Get the ids of the papers that have a specific label for a given task."""

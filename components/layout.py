@@ -19,7 +19,7 @@ def header_layout():
                             dbc.DropdownMenu(
                                 children=[
                                     dbc.DropdownMenuItem(
-                                        "Randomized Control Trials", href="/insights/rct"),
+                                        "Evidence Strength", href="/insights/evidence-strength"),
                                     dbc.DropdownMenuItem(
                                         "Efficacy & Safety Endpoints", href="/insights/efficacy-safety"),
                                     dbc.DropdownMenuItem(

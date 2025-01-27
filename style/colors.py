@@ -86,7 +86,11 @@ def check_button_contrast(background_rgb_str: str) -> bool:
 def get_color_mapping(category: str, list_filters: list[str]) -> dict[str, str]:
     cat2contcolors = {
         "Study Type": sequential.Greens,
-        'Substance': sequential.Purples,        
+        "Substances": sequential.Purples,
+        "Condition": sequential.Oranges,
+        "Study Purpose": sequential.Blues,
+        "Data Type": sequential.Reds,
+        "Sex of Participants": sequential.Burg
     }
 
     if category not in cat2contcolors:

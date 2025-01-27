@@ -4,7 +4,7 @@ from dash import html, dcc
 from plotly import express as px
 import dash_bootstrap_components as dbc
 from components.graphs import dropdown
-from data.queries import get_freq
+from data.queries import get_filtered_freq
 
 
 def dual_task_graphs():
@@ -16,8 +16,8 @@ def dual_task_graphs():
     dropdown2_id = "jux_dropdown2"
     message_id = "validation-message"
 
-    df_task1 = get_freq(default_task1)
-    df_task2 = get_freq(default_task2)
+    df_task1 = get_filtered_freq(default_task1)
+    df_task2 = get_filtered_freq(default_task2)
 
     my_div = html.Div([
         html.H1("Dual Task Analysis", className="my-4"),

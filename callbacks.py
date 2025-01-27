@@ -3,7 +3,7 @@ from dash.dependencies import Input, Output, State, ALL
 from dash import callback_context, html, no_update
 import plotly.express as px
 import pandas as pd
-from data.queries import get_freq
+from data.queries import get_filtered_freq
 from components.layout import filter_button, study_view
 from data.queries import get_studies
 
@@ -63,7 +63,7 @@ def register_dual_task_view_callbacks(app):
         style1 = STYLE_NORMAL
         style2 = STYLE_NORMAL
 
-        df_task1 = get_freq(task1_value)
+        df_task1 = get_filtered_freq(task1_value)
         pie_fig = px.pie(df_task1, values='Frequency',
                          names=task1_value, title=f'Task 1: {task1_value}')
 
@@ -93,12 +93,12 @@ def register_dual_task_view_callbacks(app):
                         'value': label, 'color': color}]
 
             # Filter Task 2 based on selected Task 1 label
-            df_task2 = get_freq(task2_value, task1_value, label)
+            df_task2 = get_filtered_freq(task2_value, task1_value, label)
             bar_fig = px.bar(df_task2, x='Frequency', y=task2_value,
                              title=f'Task 2: {task2_value}', orientation='h', color_discrete_sequence=[color])
 
         else:
-            df_task2 = get_freq(task2_value)
+            df_task2 = get_filtered_freq(task2_value)
             bar_fig = px.bar(df_task2, x='Frequency', y=task2_value,
                              title=f'Task 2: {task2_value}', orientation='h', color_discrete_sequence=[SECONDARY_COLOR])
 
