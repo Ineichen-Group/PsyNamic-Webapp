@@ -52,7 +52,7 @@ def get_studies(filters: list[dict[str, str]] = None) -> list[dict]:
                 paper_ids = get_ids(task, label)
                 query = query.filter(Paper.id.in_(paper_ids))
 
-        studies = query.limit(20).all()
+        studies = query.all()
         result = []
         for study in studies:
             result.append({

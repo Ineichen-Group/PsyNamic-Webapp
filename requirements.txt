@@ -2,6 +2,7 @@ pandas
 tqdm
 dash
 dash_bootstrap_components
+dash_ag_grid
 plotly
 pep8
 pylint

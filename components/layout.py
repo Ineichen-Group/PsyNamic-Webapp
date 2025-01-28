@@ -1,9 +1,10 @@
 import dash_bootstrap_components as dbc
-from dash import html
+from dash import html, Input, Output, ctx
 from data.queries import get_studies
-from plotly.express.colors import sequential
+import math
 import re
 import numpy as np
+from plotly.express.colors import sequential
 
 
 def header_layout():
@@ -146,31 +147,50 @@ def search_filter_component(filter_buttons: list[dbc.Button] = []):
 
 
 def studies_display():
-    # studies = [
-    #     {"title": "Study 1", "authors_short": "Author A",
-    #      "year": 2020, "abstract": "Abstract 1"},
-    #     {"title": "Study 2", "authors_short": "Author B",
-    #      "year": 2021, "abstract": "Abstract 2"},
-    #     {"title": "Study 3", "authors_short": "Author C",
-    #      "year": 2022, "abstract": "Abstract 3"},
-    # ]
-    studies = get_studies()[:20]
+    """
+    Main display function to handle paginated study cards.
+    """
+    # Fetch studies dynamically
+    studies = get_studies()
+
+    # Initial setup
+    page_size = 20  # Number of studies per page
+    total_pages = math.ceil(len(studies) / page_size)  # Total number of pages
+
     return html.Div(
-        className="m-4",
-        id="accordion",
-        children=[study_view(s, idx)
-                  for idx, s in enumerate(studies)
-                  ],
+        [
+            html.Div(
+                id="study-cards-container",
+                children=[
+                    study_view(study, idx)
+                    for idx, study in enumerate(paginate_studies(studies, 1, page_size))
+                ],
+            ),
+            html.Div(
+                className="d-flex justify-content-between align-items-center mt-3",
+                children=[
+                    dbc.Button("Previous", id="prev-page-btn",
+                               n_clicks=0, color="primary", disabled=True),
+                    html.Div(id="page-info",
+                             children=f"Page 1 of {total_pages}"),
+                    dbc.Button("Next", id="next-page-btn",
+                               n_clicks=0, color="primary"),
+                ],
+            ),
+        ],
+        id="studies-display-container",
     )
 
 
 def study_view(s: dict[str, str], idx: int):
+    """
+    Creates an individual card for each study with an expandable abstract.
+    """
     return dbc.Card(
         children=[
             dbc.CardHeader(
                 children=[
                     html.H5(
-                        # f"{s['title']} ({s['authors_short']}, {s['year']})", className="mb-0"
                         f'{s["title"]}, ({s["year"]})', className="mb-0"
                     ),
                     dbc.Button(
@@ -190,6 +210,15 @@ def study_view(s: dict[str, str], idx: int):
             ),
         ],
     )
+
+
+def paginate_studies(studies, page, page_size):
+    """
+    Helper function to paginate studies.
+    """
+    start_idx = (page - 1) * page_size
+    end_idx = start_idx + page_size
+    return studies[start_idx:end_idx]
 
 
 def filter_button(color: str, filter: str, cat: str, editable: bool = False):
