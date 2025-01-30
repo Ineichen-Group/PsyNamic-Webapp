@@ -1,12 +1,13 @@
-from settings import *
-from sqlalchemy import create_engine, select, func, case
-from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 import sys
 import os
 import pandas as pd
+from dash import html
+from sqlalchemy import create_engine, func, case
+from sqlalchemy.orm import sessionmaker
 
-from .models import Base, Paper, BatchRetrieval, Token, Prediction, PredictionToken
+from settings import *
+from .models import Paper, Prediction
 
 # Add the parent folder to the Python search path
 parent_folder_path = os.path.abspath(
@@ -20,17 +21,17 @@ engine = create_engine(DATABASE_URL, echo=True)
 Session = sessionmaker(bind=engine)
 
 
-def extract_filters(input_dict: dict):
-    filters = []
-    buttons = input_dict['props']['children']
-    # Traverse the structure to extract the necessary information
-    for button_info in buttons:
-        values = button_info['props']['value']
-        filters.append(values)
-    return filters
+# def extract_filters(input_dict: dict):
+#     filters = []
+#     buttons = input_dict['props']['children']
+#     # Traverse the structure to extract the necessary information
+#     for button_info in buttons:
+#         values = button_info['props']['value']
+#         filters.append(values)
+#     return filters
 
 
-def get_studies(filters: list[dict[str, str]] = None) -> list[dict]:
+def get_studies(study_tags: dict[str, list[html.Div]]) -> list[dict]:
     """
     Retrieves studies from the database based on the provided filters.
 
@@ -43,19 +44,11 @@ def get_studies(filters: list[dict[str, str]] = None) -> list[dict]:
     session = Session()
     try:
         query = session.query(Paper)
-
-        if filters:
-            filters = extract_filters(filters)
-            for f in filters:
-                task = f['category']
-                label = f['value']
-                paper_ids = get_ids(task, label)
-                query = query.filter(Paper.id.in_(paper_ids))
-
-        studies = query.all()
-        result = []
+        ids = study_tags.keys()
+        studies = query.filter(Paper.id.in_(ids)).all()
+        results = []
         for study in studies:
-            result.append({
+            result = {
                 'id': study.id,
                 'title': study.title,
                 'abstract': study.abstract,
@@ -64,9 +57,11 @@ def get_studies(filters: list[dict[str, str]] = None) -> list[dict]:
                 'year': study.year,
                 'authors': study.authors,
                 'link_to_fulltext': study.link_to_fulltext,
-                'link_to_pubmed': study.link_to_pubmed
-            })
-        return result
+                'link_to_pubmed': study.link_to_pubmed,
+                'tags': study_tags[study.id]
+            }
+            results.append(result)
+        return results
     finally:
         session.close()
 
@@ -134,7 +129,7 @@ def get_freq_grouped(task: str, labels: list[str], group_task: str, threshold: f
     """Get the predictions where task is labels, group by group task and labels, then count the frequency. 
     The output is a dataframe with columns group_task, label, and Frequency."""
     session = Session()
-    
+
     try:
         use_rest = 'Other' in labels
         grouping_query = (
@@ -149,21 +144,21 @@ def get_freq_grouped(task: str, labels: list[str], group_task: str, threshold: f
         # Main query for task grouping
         query = (
             session.query(
-            grouping_query.c[group_task].label(group_task),
-            case(
-                (Prediction.label.in_(labels), Prediction.label), 
-                else_="Other" if use_rest else None
-            ).label("Label"),
-            func.count(Prediction.id).label("Frequency")
+                grouping_query.c[group_task].label(group_task),
+                case(
+                    (Prediction.label.in_(labels), Prediction.label),
+                    else_="Other" if use_rest else None
+                ).label("Label"),
+                func.count(Prediction.id).label("Frequency")
             )
             .join(grouping_query, grouping_query.c.paper_id == Prediction.paper_id)
             .filter(Prediction.task == task, Prediction.probability > threshold)
             .group_by(
-            grouping_query.c[group_task],
-            case(
-                (Prediction.label.in_(labels), Prediction.label), 
-                else_="Other" if use_rest else None
-            )
+                grouping_query.c[group_task],
+                case(
+                    (Prediction.label.in_(labels), Prediction.label),
+                    else_="Other" if use_rest else None
+                )
             )
         )
 
@@ -178,8 +173,18 @@ def get_freq_grouped(task: str, labels: list[str], group_task: str, threshold: f
         session.close()
 
 
-def get_ids(task: str, label: str, threshold: float = 0.1) -> list[int]:
+def get_ids(task: str = None, label: str = None, threshold: float = 0.1) -> list[int]:
     """Get the ids of the papers that have a specific label for a given task."""
+    if task is None and label is None:
+        # Return all paper ids
+        session = Session()
+        try:
+            query = session.query(Prediction.paper_id)
+            ids = [item.paper_id for item in query.all()]
+            return ids
+        finally:
+            session.close()
+    
     session = Session()
     try:
         query = session.query(Prediction.paper_id).filter(

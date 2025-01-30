@@ -1,10 +1,8 @@
 import dash_bootstrap_components as dbc
-from dash import html, Input, Output, ctx
+import dash_ag_grid as dag
+from dash import html, dcc
 from data.queries import get_studies
-import math
-import re
-import numpy as np
-from plotly.express.colors import sequential
+
 
 
 def header_layout():
@@ -84,7 +82,13 @@ def footer_layout():
             ),
             className="py-3"
         ),
-        className="footer bg-light"
+        className="footer bg-light",
+        style={
+            "marginTop": "auto",
+            "width": "100%",
+            "position": "relative",
+            "bottom": "0",
+        }
     )
 
 
@@ -95,39 +99,39 @@ def content_layout(list_of_children: list):
     )
 
 
-def search_filter_component(filter_buttons: list[dbc.Button] = []):
+def filter_component(filter_buttons: list[dbc.Button] = []):
     return html.Div(
-        className="m-4",
+        # className="m-4",
         children=[
-            dbc.Form(
-                className="d-flex",
-                children=[
-                    dbc.Row(
-                        className="flex-grow-1",
-                        children=[
-                            dbc.Col(
-                                dbc.Input(
-                                    type="search",
-                                    placeholder="Search",
-                                    className="me-2",
-                                    id="search-input",
-                                ),
-                                width=8,
-                            ),
-                            dbc.Col(
-                                dbc.Button(
-                                    "Search",
-                                    color="outline-success",
-                                    className="me-2",
-                                    id="search-button",
-                                    n_clicks=0,
-                                ),
-                                width="auto",
-                            ),
-                        ],
-                    ),
-                ],
-            ),
+            # dbc.Form(
+            #     className="d-flex",
+            #     children=[
+            #         dbc.Row(
+            #             className="flex-grow-1",
+            #             children=[
+            #                 dbc.Col(
+            #                     dbc.Input(
+            #                         type="search",
+            #                         placeholder="Search",
+            #                         className="me-2",
+            #                         id="search-input",
+            #                     ),
+            #                     width=8,
+            #                 ),
+            #                 dbc.Col(
+            #                     dbc.Button(
+            #                         "Search",
+            #                         color="outline-success",
+            #                         className="me-2",
+            #                         id="search-button",
+            #                         n_clicks=0,
+            #                     ),
+            #                     width="auto",
+            #                 ),
+            #             ],
+            #         ),
+            #     ],
+            # ),
             dbc.Row(
                 className="mt-3 d-flex align-items-center",
                 children=[
@@ -146,37 +150,69 @@ def search_filter_component(filter_buttons: list[dbc.Button] = []):
     )
 
 
-def studies_display():
+def studies_display(study_tags: dict[str: list[html.Div]] = None):
     """
-    Main display function to handle paginated study cards.
+    Main display function with AG Grid for studies, expandable text, pagination, and filtering.
     """
-    # Fetch studies dynamically
-    studies = get_studies()
-
-    # Initial setup
-    page_size = 20  # Number of studies per page
-    total_pages = math.ceil(len(studies) / page_size)  # Total number of pages
+    # Default page size and options
+    page_size_options = [10, 20, 50, 100]
+    default_page_size = 20
 
     return html.Div(
         [
+            # Dropdown for page size selection
             html.Div(
-                id="study-cards-container",
+                className="d-flex align-items-center justify-content-start mb-3",
                 children=[
-                    study_view(study, idx)
-                    for idx, study in enumerate(paginate_studies(studies, 1, page_size))
+                    html.Label("Page Size:", className="me-4 mb-0"),
+                    # add some padding in between
+                    dcc.Dropdown(
+                        className="my-2",
+                        id="page-size-dropdown",
+                        options=[
+                            {"label": f"{size}", "value": size}
+                            for size in page_size_options
+                        ],
+                        value=default_page_size,
+                        clearable=False,
+                        style={"width": "100px"},
+                    ),
                 ],
             ),
-            html.Div(
-                className="d-flex justify-content-between align-items-center mt-3",
-                children=[
-                    dbc.Button("Previous", id="prev-page-btn",
-                               n_clicks=0, color="primary", disabled=True),
-                    html.Div(id="page-info",
-                             children=f"Page 1 of {total_pages}"),
-                    dbc.Button("Next", id="next-page-btn",
-                               n_clicks=0, color="primary"),
+            dag.AgGrid(
+                id="studies-ag-grid",
+                columnDefs=[
+                    {"field": "title", "headerName": "Title",
+                        "filter": True, "flex": 1},
+                    {"field": "year", "headerName": "Year",
+                        "filter": True, "width": 100},
+                    {
+                        "field": "abstract",
+                        "headerName": "Abstract",
+                        "filter": True,
+                        "cellStyle": {"whiteSpace": "pre-line"},
+                        "flex": 2,
+                    },
+                    {
+                        "headerName": "Active Filters",
+                        "field": "tags",
+                        "filter": False,
+                        "sortable": False,
+                        "width": 200,
+                        "cellRenderer": "Tag", 
+                        },
                 ],
-            ),
+                rowData=get_studies(study_tags),  # Pass all studies directly
+                dashGridOptions={
+                    "pagination": True,
+                    "paginationPageSize": default_page_size,
+                },
+                defaultColDef={
+                    "sortable": True,
+                    "resizable": True,
+                },
+                style={"height": "500px", "width": "100%"},
+            )
         ],
         id="studies-display-container",
     )
@@ -210,15 +246,6 @@ def study_view(s: dict[str, str], idx: int):
             ),
         ],
     )
-
-
-def paginate_studies(studies, page, page_size):
-    """
-    Helper function to paginate studies.
-    """
-    start_idx = (page - 1) * page_size
-    end_idx = start_idx + page_size
-    return studies[start_idx:end_idx]
 
 
 def filter_button(color: str, filter: str, cat: str, editable: bool = False):
