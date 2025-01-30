@@ -81,7 +81,7 @@ def bar_chart(
                 color = color_mapping.get(x_val, None)
                 fig.for_each_trace(lambda trace: trace.update(
                     marker_color=color) if trace.name == x_val else ())
-    fig.update_layout(plot_bgcolor='#f8f9fa')
+    fig.update_layout(plot_bgcolor='#f8f8f8')
 
     config = {
         'modeBarButtonsToRemove': remove_button,  # Remove specific buttons

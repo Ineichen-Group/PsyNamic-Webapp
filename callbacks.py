@@ -6,7 +6,7 @@ import pandas as pd
 from data.queries import get_filtered_freq
 from components.layout import filter_button, study_view
 from data.queries import get_studies
-from components.layout import study_view, paginate_studies
+from components.layout import study_view
 
 SECONDARY_COLOR = '#c7c7c7'
 STYLE_NORMAL = {'border': '1px solid #ccc'}
@@ -170,36 +170,19 @@ def rgb_to_hex(rgb: str):
 
 def register_pagination_callbacks(app):
     @app.callback(
-        Output("study-cards-container", "children"),
-        Output("page-info", "children"),
-        Output("prev-page-btn", "disabled"),
-        Output("next-page-btn", "disabled"),
-        Input("prev-page-btn", "n_clicks"),
-        Input("next-page-btn", "n_clicks"),
-        State("page-info", "children"),
-    )
-    def update_page(prev_clicks, next_clicks, page_info):
+    Output("studies-ag-grid", "dashGridOptions"),
+    Input("page-size-dropdown", "value"),)
+    def update_page_size(selected_page_size):
         """
-        Callback to handle pagination of study cards.
+        Updates the AG Grid pagination page size dynamically.
         """
-        # Extract current page and total pages from the page-info string
-        current_page, total_pages = map(
-            int, page_info.replace("Page ", "").split(" of "))
-
-        # Determine new page based on button clicks
-        if callback_context.triggered_id == "prev-page-btn" and current_page > 1:
-            current_page -= 1
-        elif callback_context.triggered_id == "next-page-btn" and current_page < total_pages:
-            current_page += 1
-
-        # Fetch updated studies for the new page
-        studies = get_studies()
-        page_size = 10
-        paginated_studies = paginate_studies(studies, current_page, page_size)
-
-        # Update study cards and navigation buttons
-        new_cards = [study_view(study, idx)
-                     for idx, study in enumerate(paginated_studies)]
-        prev_disabled = current_page == 1
-        next_disabled = current_page == total_pages
-        return new_cards, f"Page {current_page} of {total_pages}", prev_disabled, next_disabled
+        return {
+            "pagination": True,
+            "paginationPageSize": selected_page_size,
+            "groupDefaultExpanded": 0,
+            "autoGroupColumnDef": {
+                "headerName": "Abstract",
+                "field": "abstract",
+                "cellRenderer": "agGroupCellRenderer",
+            },
+        }

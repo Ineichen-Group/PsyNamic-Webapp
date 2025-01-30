@@ -9,7 +9,7 @@ from pages.explore.dual_task import dual_task_graphs
 from pages.explore.time import time_graph, get_time_data
 from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view
 
-from components.layout import header_layout, footer_layout, search_filter_component, studies_display, content_layout
+from components.layout import header_layout, footer_layout, filter_component, studies_display, content_layout
 from callbacks import register_callbacks
 
 # Load data
@@ -36,7 +36,7 @@ def display_page(pathname: str):
         return contact_layout()
     elif pathname.startswith('/explore'):
         filtered_display = studies_display()
-        search_filter = search_filter_component()
+        search_filter = filter_component()
         if pathname == '/explore/time':
             return content_layout([time_graph(), search_filter, filtered_display])
         elif pathname == '/explore/dual-task':
