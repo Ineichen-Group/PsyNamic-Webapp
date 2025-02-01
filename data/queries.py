@@ -44,7 +44,10 @@ def get_studies(study_tags: dict[str, list[html.Div]]) -> list[dict]:
     session = Session()
     try:
         query = session.query(Paper)
-        ids = study_tags.keys()
+        if study_tags:
+            ids = study_tags.keys()
+        else:
+            ids = []
         studies = query.filter(Paper.id.in_(ids)).all()
         results = []
         for study in studies:
@@ -113,13 +116,11 @@ def get_pred(task: str, threshold: float = 0.1) -> pd.DataFrame:
     """Get the prediction data for a given task."""
     session = Session()
     try:
-        query = session.query(Prediction.label, func.count(Prediction.id).label('Frequency')).filter(
+        query = session.query(Prediction).filter(
             Prediction.task == task,
             Prediction.probability >= threshold
-        ).group_by(Prediction.label).order_by('Frequency')
+        )
         result = pd.read_sql(query.statement, session.bind)
-        result.rename(
-            columns={'label': task, 'Frequency': 'Frequency'}, inplace=True)
         return result
     finally:
         session.close()
@@ -173,26 +174,47 @@ def get_freq_grouped(task: str, labels: list[str], group_task: str, threshold: f
         session.close()
 
 
-def get_ids(task: str = None, label: str = None, threshold: float = 0.1) -> list[int]:
+def get_ids(task: str = None, label: str = None, threshold: float = 0.1) -> set[int]:
     """Get the ids of the papers that have a specific label for a given task."""
+    session = Session()
     if task is None and label is None:
         # Return all paper ids
-        session = Session()
         try:
             query = session.query(Prediction.paper_id)
             ids = [item.paper_id for item in query.all()]
-            return ids
+            return set(ids)
         finally:
             session.close()
-    
+    elif task is not None:
+        try:
+            query = session.query(Prediction.paper_id).filter(
+                Prediction.task == task,
+                Prediction.probability >= threshold
+            )
+            if label is not None:
+                query = query.filter(Prediction.label == label)
+            ids = [item.paper_id for item in query.all()]
+            return set(ids)
+        finally:
+            session.close()
+    else:
+        try:
+            query = session.query(Prediction.paper_id).filter(
+                Prediction.task == task,
+                Prediction.label == label,
+                Prediction.probability >= threshold
+            )
+            ids = [item.paper_id for item in query.all()]
+            return set(ids)
+        finally:
+            session.close()
+
+def get_all_tasks() -> list[str]:
+    """Get all unique tasks from the predictions."""
     session = Session()
     try:
-        query = session.query(Prediction.paper_id).filter(
-            Prediction.task == task,
-            Prediction.label == label,
-            Prediction.probability >= threshold
-        )
-        ids = [item.paper_id for item in query.all()]
-        return ids
+        query = session.query(Prediction.task).distinct()
+        tasks = [item.task for item in query.all()]
+        return tasks
     finally:
         session.close()

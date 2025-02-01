@@ -5,7 +5,7 @@ from dash import html, dcc, State
 from pages.about import about_layout
 from pages.contact import contact_layout
 from pages.home import home_layout
-from pages.explore.dual_task import dual_task_graphs
+from pages.explore.dual_task import dual_task_graphs, dual_task_layout
 from pages.explore.time import time_graph, get_time_data
 from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view
 
@@ -36,11 +36,11 @@ def display_page(pathname: str):
         return contact_layout()
     elif pathname.startswith('/explore'):
         filtered_display = studies_display()
-        search_filter = filter_component()
+        search_filter = filter_component()  
         if pathname == '/explore/time':
             return content_layout([time_graph(), search_filter, filtered_display])
         elif pathname == '/explore/dual-task':
-            return content_layout([dual_task_graphs(), search_filter, filtered_display])
+            return content_layout(dual_task_layout())
         else:
             return content_layout([home_layout(), search_filter, filtered_display])
     elif pathname.startswith('/insights'):

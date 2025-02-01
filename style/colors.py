@@ -3,6 +3,9 @@ import re
 from plotly.express.colors import sequential
 import numpy as np
 
+
+SECONDARY_COLOR = '#c7c7c7'
+
 # s. https://plotly.com/python/builtin-colorscales/
 
 def interpolate_color(start: list[int], end: list[int], t: float) -> list[int]:
@@ -41,6 +44,13 @@ def parse_rgb_string(rgb_str):
         raise ValueError(f"Invalid RGB string: {rgb_str}")
     return [int(match.group(i)) for i in range(1, 4)]
 
+def rgb_to_hex(rgb: str):
+    if rgb.startswith('#'):
+        return rgb
+    else:
+        rgb = rgb.lstrip('rgba')
+        int_list = [int(i) for i in rgb.strip('()').split(',')][:3]
+        return '#%02x%02x%02x' % tuple(int_list)
 
 def calculate_luminance(color_component):
     """Calculates the luminance of a single RGB component."""
@@ -83,7 +93,7 @@ def check_button_contrast(background_rgb_str: str) -> bool:
     return contrast_ratio >= 3
 
 
-def get_color_mapping(category: str, list_filters: list[str]) -> dict[str, str]:
+def get_color_mapping(category: str, list_filters: list[str], type: str = 'rgb') -> dict[str, str]:
     cat2contcolors = {
         "Study Type": sequential.Greens,
         "Substances": sequential.Purples,
@@ -110,9 +120,12 @@ def get_color_mapping(category: str, list_filters: list[str]) -> dict[str, str]:
             interpolate_color(darkest, lightest, i / (n - 1)) for i in range(n)
         ]
     ]
+    
     # check against contrast ratio
     for color in selected_colors:
         if not check_button_contrast(color):
             raise ValueError(f"Contrast ratio not met for color: {color}")
+    if type == 'hex':
+        selected_colors = [rgb_to_hex(color) for color in selected_colors]
 
     return {list_filters[i]: selected_colors[i] for i in range(n)}

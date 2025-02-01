@@ -36,8 +36,8 @@ def rct_view():
                       'Frequency', task, color_mapping, ['pan', 'select', 'lasso2d'], labels)
     study_tags = defaultdict(list)
     for label in labels[:-1]: # exclude 'Other'
-        filered_ids = get_ids(task, label)
-        for id in filered_ids:
+        filtered_study_ids = get_ids(task, label)
+        for id in filtered_study_ids:
             tag_info = {
                 'task': task,
                 'label': label,
