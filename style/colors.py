@@ -5,8 +5,18 @@ import numpy as np
 
 
 SECONDARY_COLOR = '#c7c7c7'
+TASK2COLOR = {
+        "Study Type": sequential.Greens,
+        "Substances": sequential.Purples,
+        "Condition": sequential.Oranges,
+        "Study Purpose": sequential.Blues,
+        "Data Type": sequential.Reds,
+        "Sex of Participants": sequential.Magenta,
+        "Number of Participants": sequential.Bluered,
+    }
 
 # s. https://plotly.com/python/builtin-colorscales/
+
 
 def interpolate_color(start: list[int], end: list[int], t: float) -> list[int]:
     """Linearly interpolate between two colors."""
@@ -44,6 +54,7 @@ def parse_rgb_string(rgb_str):
         raise ValueError(f"Invalid RGB string: {rgb_str}")
     return [int(match.group(i)) for i in range(1, 4)]
 
+
 def rgb_to_hex(rgb: str):
     if rgb.startswith('#'):
         return rgb
@@ -51,6 +62,7 @@ def rgb_to_hex(rgb: str):
         rgb = rgb.lstrip('rgba')
         int_list = [int(i) for i in rgb.strip('()').split(',')][:3]
         return '#%02x%02x%02x' % tuple(int_list)
+
 
 def calculate_luminance(color_component):
     """Calculates the luminance of a single RGB component."""
@@ -93,26 +105,19 @@ def check_button_contrast(background_rgb_str: str) -> bool:
     return contrast_ratio >= 3
 
 
-def get_color_mapping(category: str, list_filters: list[str], type: str = 'rgb') -> dict[str, str]:
-    cat2contcolors = {
-        "Study Type": sequential.Greens,
-        "Substances": sequential.Purples,
-        "Condition": sequential.Oranges,
-        "Study Purpose": sequential.Blues,
-        "Data Type": sequential.Reds,
-        "Sex of Participants": sequential.Burg
-    }
+def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb', check_contrast: bool = False) -> dict[str, str]:
 
-    if category not in cat2contcolors:
-        raise ValueError(f"Unsupported category: {category}")
-
-    palette_start = cat2contcolors[category][0]
-    palette_end = cat2contcolors[category][-1]
+    if task not in TASK2COLOR:
+        raise ValueError(f"Unsupported category: {task}")
+    
+    palette_start = TASK2COLOR[task][0]
+    palette_end = TASK2COLOR[task][-1]
 
     lightest, darkest = find_luminance_boundaries(palette_start, palette_end)
 
-    n = len(list_filters)
-
+    n = len(list_labels)
+    if n == 1:
+        return {list_labels[0]: palette_start}
     # Extrapolate colors evenly between the lightest and darkest colors
     selected_colors = [
         f"rgb({r}, {g}, {b})"
@@ -120,7 +125,7 @@ def get_color_mapping(category: str, list_filters: list[str], type: str = 'rgb')
             interpolate_color(darkest, lightest, i / (n - 1)) for i in range(n)
         ]
     ]
-    
+
     # check against contrast ratio
     for color in selected_colors:
         if not check_button_contrast(color):
@@ -128,4 +133,10 @@ def get_color_mapping(category: str, list_filters: list[str], type: str = 'rgb')
     if type == 'hex':
         selected_colors = [rgb_to_hex(color) for color in selected_colors]
 
-    return {list_filters[i]: selected_colors[i] for i in range(n)}
+    return {list_labels[i]: selected_colors[i] for i in range(n)}
+
+
+def get_color(task:str, type: str = 'rgb') -> str:
+    if type == 'hex':
+        return rgb_to_hex(TASK2COLOR[task][-1])
+    return TASK2COLOR[task][0]

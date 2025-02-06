@@ -24,7 +24,7 @@ def rct_view():
     labels = [
         'Randomized-controlled trial (RCT)', 'Systematic review/meta-analysis', 'Other']
     group_task = 'Substances'
-    data_rct = get_freq_grouped(task, labels, group_task)
+    data_rct = get_freq_grouped(task, group_task, labels=labels)
     graph_title = 'Number of RCTs and Systematic Reviews per Substance'
     filter_buttons = []
     color_mapping = get_color_mapping(task, labels)
@@ -52,7 +52,7 @@ def efficacy_safety_view():
     task = "Study Purpose"
     labels = ["Efficacy endpoints", "Safety endpoints"]
     group_task = 'Substances'
-    data = get_freq_grouped(task, labels, group_task)
+    data = get_freq_grouped(task, group_task, labels=labels)
     graph_title = 'Number of studies measuring efficacy and safety endpoints per substance'
     color_mapping = get_color_mapping(task, labels)
     filter_buttons = []
@@ -79,7 +79,7 @@ def longitudinal_view():
     task = "Data Type"
     labels = ["Longitudinal short", "Longitudinal long", "Cross-sectional"]
     group_task = 'Substances'
-    data = get_freq_grouped(task, labels, group_task)
+    data = get_freq_grouped(task, group_task, labels=labels)
     graph_title = 'Number of studies per substance for different data types'
     color_mapping = get_color_mapping(task, labels)
     filter_buttons = []
@@ -106,7 +106,7 @@ def sex_bias_view():
     task = "Sex of Participants"
     labels = ["Male", "Female", "Both sexes", "Unknown"]
     group_task = 'Substances'
-    data = get_freq_grouped(task, labels, group_task)
+    data = get_freq_grouped(task, group_task, labels=labels)
     graph_title = 'Sex of participants of studies per substance'
     color_mapping = get_color_mapping(task, labels)
     filter_buttons = []
@@ -116,6 +116,36 @@ def sex_bias_view():
     graph = bar_chart(data, group_task, 'Frequency', graph_title, group_task,
                       'Frequency', task, color_mapping, ['pan', 'select', 'lasso2d'], labels)
 
+    study_tags = defaultdict(list)
+    for label in labels:
+        filered_ids = get_ids(task, label)
+        for id in filered_ids:
+            tag_info = {
+                'task': task,
+                'label': label,
+                'color': rgb_to_hex(color_mapping[label])
+            }
+            study_tags[id].append(tag_info)
+    return explore_layout(title, graph, filter_buttons, study_tags)
+
+
+def nr_part_view():
+    title = "Number of participants per substance"
+    task = "Number of Participants"
+    group_task = 'Substances'
+    
+    data = get_freq_grouped(task, group_task)
+    labels = ['1-20', '21-40', '41-60', '61-80', '81-100', '100-199', '200-499', '500-999', '≥1000', 'Unknown']
+    graph_title = 'Number of participants per substance'
+    color_mapping = get_color_mapping(task, labels)
+
+    graph = bar_chart(data, group_task, 'Frequency', graph_title, group_task,
+                      'Frequency', task, color_mapping, ['pan', 'select', 'lasso2d'], labels)
+
+    filter_buttons = []
+    for label in labels:
+        filter_buttons.append(filter_button(
+            color_mapping[label], label, task, False))
     study_tags = defaultdict(list)
     for label in labels:
         filered_ids = get_ids(task, label)

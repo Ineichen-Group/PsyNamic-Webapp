@@ -5,6 +5,8 @@ import pandas as pd
 from dash import html
 from sqlalchemy import create_engine, func, case
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import func
+
 
 from settings import *
 from .models import Paper, Prediction
@@ -21,17 +23,7 @@ engine = create_engine(DATABASE_URL, echo=True)
 Session = sessionmaker(bind=engine)
 
 
-# def extract_filters(input_dict: dict):
-#     filters = []
-#     buttons = input_dict['props']['children']
-#     # Traverse the structure to extract the necessary information
-#     for button_info in buttons:
-#         values = button_info['props']['value']
-#         filters.append(values)
-#     return filters
-
-
-def get_studies(study_tags: dict[str, list[html.Div]]) -> list[dict]:
+def get_studies_details(study_tags: dict[str, list[html.Div]]) -> list[dict]:
     """
     Retrieves studies from the database based on the provided filters.
 
@@ -69,7 +61,7 @@ def get_studies(study_tags: dict[str, list[html.Div]]) -> list[dict]:
         session.close()
 
 
-def get_filtered_freq(task: str, filter_task: str = None, filter_task_label: str = None, threshold: float = 0.1) -> pd.DataFrame:
+def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None, threshold: float = 0.1) -> pd.DataFrame:
     """Get the prediction data for a given task and filter the data based on the filter task and label."""
     session = Session()
     try:
@@ -83,8 +75,7 @@ def get_filtered_freq(task: str, filter_task: str = None, filter_task_label: str
             Prediction.probability >= threshold
         )
 
-        if filter_task and filter_task_label:
-            query = query.filter(Prediction.paper_id.in_(subquery))
+        query = query.filter(Prediction.paper_id.in_(subquery))
 
         query = query.group_by(Prediction.label).order_by('Frequency')
         result = pd.read_sql(query.statement, session.bind)
@@ -95,19 +86,32 @@ def get_filtered_freq(task: str, filter_task: str = None, filter_task_label: str
         session.close()
 
 
-def get_freq(task: str, labels: list[str], threshold: float = 0.1) -> pd.DataFrame:
-    """Get the frequency of the labels for a given task."""
+def get_freq(task: str, labels: list[str] = None, threshold: float = 0.1) -> pd.DataFrame:
+    """
+    Get the frequency of the labels for a given task. If no labels are provided, return the frequency of all labels."""
     session = Session()
     try:
-        query = session.query(Prediction.label, func.count(Prediction.id).label('Frequency')).filter(
+        # Build query
+        query = session.query(
+            Prediction.label,
+            func.count(Prediction.id).label('Frequency')
+        ).filter(
             Prediction.task == task,
-            Prediction.label.in_(labels),
             Prediction.probability >= threshold
-        ).group_by(Prediction.label).order_by('Frequency')
+        )
+        if labels:
+            query = query.filter(Prediction.label.in_(labels))
+        query = query.group_by(Prediction.label).order_by(
+            func.count(Prediction.id).desc())
         result = pd.read_sql(query.statement, session.bind)
         result.rename(
             columns={'label': task, 'Frequency': 'Frequency'}, inplace=True)
         return result
+
+    except Exception as e:
+        print(f"Error fetching frequencies: {e}")
+        return pd.DataFrame(columns=[task, 'Frequency'])
+
     finally:
         session.close()
 
@@ -126,13 +130,13 @@ def get_pred(task: str, threshold: float = 0.1) -> pd.DataFrame:
         session.close()
 
 
-def get_freq_grouped(task: str, labels: list[str], group_task: str, threshold: float = 0.1) -> pd.DataFrame:
+def get_freq_grouped(task: str, group_task: str, threshold: float = 0.1, labels: list[str] = None, ) -> pd.DataFrame:
     """Get the predictions where task is labels, group by group task and labels, then count the frequency. 
     The output is a dataframe with columns group_task, label, and Frequency."""
     session = Session()
 
     try:
-        use_rest = 'Other' in labels
+        use_rest = 'Other' in labels if labels else False
         grouping_query = (
             session.query(
                 Prediction.paper_id.label("paper_id"),
@@ -143,24 +147,24 @@ def get_freq_grouped(task: str, labels: list[str], group_task: str, threshold: f
         )
 
         # Main query for task grouping
+        if labels:
+            label_case = case(
+                (Prediction.label.in_(labels), Prediction.label),
+                else_="Other" if use_rest else Prediction.label
+            )
+        else:
+            label_case = Prediction.label
+
+        # Main query for task grouping
         query = (
             session.query(
                 grouping_query.c[group_task].label(group_task),
-                case(
-                    (Prediction.label.in_(labels), Prediction.label),
-                    else_="Other" if use_rest else None
-                ).label("Label"),
+                label_case.label("Label"),
                 func.count(Prediction.id).label("Frequency")
             )
             .join(grouping_query, grouping_query.c.paper_id == Prediction.paper_id)
             .filter(Prediction.task == task, Prediction.probability > threshold)
-            .group_by(
-                grouping_query.c[group_task],
-                case(
-                    (Prediction.label.in_(labels), Prediction.label),
-                    else_="Other" if use_rest else None
-                )
-            )
+            .group_by(grouping_query.c[group_task], label_case)
         )
 
         # Execute query and fetch results
@@ -209,6 +213,7 @@ def get_ids(task: str = None, label: str = None, threshold: float = 0.1) -> set[
         finally:
             session.close()
 
+
 def get_all_tasks() -> list[str]:
     """Get all unique tasks from the predictions."""
     session = Session()
@@ -216,5 +221,17 @@ def get_all_tasks() -> list[str]:
         query = session.query(Prediction.task).distinct()
         tasks = [item.task for item in query.all()]
         return tasks
+    finally:
+        session.close()
+
+
+def get_all_labels(task: str) -> list[str]:
+    """Get all unique labels for a given task."""
+    session = Session()
+    try:
+        query = session.query(Prediction.label).filter(
+            Prediction.task == task).distinct()
+        labels = [item.label for item in query.all()]
+        return labels
     finally:
         session.close()

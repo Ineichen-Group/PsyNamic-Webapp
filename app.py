@@ -7,7 +7,7 @@ from pages.contact import contact_layout
 from pages.home import home_layout
 from pages.explore.dual_task import dual_task_graphs, dual_task_layout
 from pages.explore.time import time_graph, get_time_data
-from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view
+from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view, nr_part_view
 
 from components.layout import header_layout, footer_layout, filter_component, studies_display, content_layout
 from callbacks import register_callbacks
@@ -40,7 +40,7 @@ def display_page(pathname: str):
         if pathname == '/explore/time':
             return content_layout([time_graph(), search_filter, filtered_display])
         elif pathname == '/explore/dual-task':
-            return content_layout(dual_task_layout())
+            return content_layout(dual_task_layout(), id='dual-task-layout')
         else:
             return content_layout([home_layout(), search_filter, filtered_display])
     elif pathname.startswith('/insights'):
@@ -52,6 +52,8 @@ def display_page(pathname: str):
             return content_layout([longitudinal_view()])
         elif pathname == '/insights/sex-bias':
             return content_layout([sex_bias_view()])
+        elif pathname == '/insights/participants':
+            return content_layout([nr_part_view()])
         
 # Register all callbacks and pass data
 register_callbacks(app, {'frequency_df': frequency_df})

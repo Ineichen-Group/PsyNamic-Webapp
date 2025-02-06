@@ -51,7 +51,7 @@ def bar_chart(
     # s. https://plotly.com/python/configuration-options/ for removing buttons
     """
     if group:
-        if group_order:
+        if group_order is not None:
             data[group] = pd.Categorical(data[group], categories=group_order, ordered=True)
             data = data.sort_values([group, x])
         # order x values alphabetically
