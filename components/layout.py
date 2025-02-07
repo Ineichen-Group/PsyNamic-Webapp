@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 from dash import html, dcc
-from data.queries import get_studies_details
+from data.queries import get_studies_details, nr_studies
 
 
 def header_layout():
@@ -102,8 +102,9 @@ def content_layout(list_of_children: list, id: str = "content"):
 def filter_component(filter_buttons: list[dbc.Button] = [], comp_id: str = "active-filters", label="Active Filters:"):
     return html.Div(
         children=[
+            html.H4("Filtered Studies"),
             dbc.Row(
-                className="mt-3 d-flex align-items-center p-3",
+                className="d-flex align-items-center mt-2 mb-2",
                 children=[
                     dbc.Col(
                         html.Span(label),
@@ -124,8 +125,15 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
     """
     Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
     """
+    studies = get_studies_details(study_tags)
+    total_studies = nr_studies()
     return html.Div(
         [
+            dbc.Row(
+                children=[html.Span(
+                f"Found Studies: {len(studies)} (out of {total_studies})", 
+                className="mb-3"),]
+            ),
             dag.AgGrid(
                 id="studies-display",
                 columnDefs=[
@@ -149,7 +157,7 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
                         "cellRenderer": "Tag",
                     },
                 ],
-                rowData=get_studies_details(study_tags),
+                rowData=studies,
                 dashGridOptions={
                     "pagination": True,
                     "paginationPageSize": 20,
@@ -168,13 +176,13 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
 
             paper_details_modal(),
         ],
-        id="studies-display-container",
+        id = "studies-display-container",
     )
 
 
-def filter_button(color: str, label: str, task: str, editable: bool = False):
-    children = [html.Span(f"{label} ", style={"marginRight": "0.5rem"})]
-    custom_style = {
+def filter_button(color: str, label: str, task: str, editable: bool=False):
+    children=[html.Span(f"{label} ", style={"marginRight": "0.5rem"})]
+    custom_style={
         "borderRadius": "1rem",
         "backgroundColor": f'{color}',
         "color": "white",
@@ -184,10 +192,10 @@ def filter_button(color: str, label: str, task: str, editable: bool = False):
     if editable:
         children.append(html.I(className="fa-solid fa-xmark"))
     else:
-        custom_style["backgroundColor"] = color
-        custom_style["border"] = "none"
-        custom_style["boxShadow"] = "none"
-        custom_style["cursor"] = "default"
+        custom_style["backgroundColor"]=color
+        custom_style["border"]="none"
+        custom_style["boxShadow"]="none"
+        custom_style["cursor"]="default"
 
     return dbc.Button(
         children=children,
@@ -219,11 +227,11 @@ def paper_details_modal():
 
 
 def ner_tag(text: str, category: str):
-    hilight_colors = {
+    hilight_colors={
         "Dosage": "#bbf484",
     }
 
-    color = hilight_colors[category]
+    color=hilight_colors[category]
 
     return html.Span(
         [

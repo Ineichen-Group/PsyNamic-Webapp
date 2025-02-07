@@ -187,6 +187,7 @@ def register_modal_callbacks(app):
 
         return no_update  # No update if no row or multiple rows selected
 
+
 def register_download_csv_callback(app):
     @app.callback(
         Output("download-csv", "data"),

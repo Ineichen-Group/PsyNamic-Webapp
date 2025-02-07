@@ -56,7 +56,7 @@ def display_page(pathname: str):
             return content_layout([study_protocol_view()])
         elif pathname == '/insights/dosage':
             return content_layout([dosages_view()])
-# Register all callbacks and pass data
+
 register_callbacks(app)
 
 

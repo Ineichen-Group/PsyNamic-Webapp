@@ -273,3 +273,14 @@ def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.Data
     frequency_df = df.groupby('year').count().reset_index().rename(
         columns={'id': 'Frequency', 'year': 'Year'})
     return frequency_df, ids
+
+
+def nr_studies():
+    """Get the number of studies in the database."""
+    session = Session()
+    try:
+        query = session.query(func.count(Paper.id))
+        result = query.first()
+        return result[0]
+    finally:
+        session.close()
