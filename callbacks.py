@@ -20,9 +20,7 @@ def register_callbacks(app):
     register_dual_task_view_callbacks(app)
     # register_filter(app)
     register_pagination_callbacks(app)
-
-
-# def register_time_view_callbacks(app):
+    register_modal_callbacks(app)
 
 
 def register_time_view_callbacks(app):
@@ -34,14 +32,16 @@ def register_time_view_callbacks(app):
     )
     def update_time_view(start_year, end_year):
         df, ids = get_time_data(start_year=start_year, end_year=end_year)
-        
+
         # Create updated figure
-        fig = px.bar(df, x="Year", y="Frequency", title="Frequency of IDs per Year", labels={"Frequency": "Frequency"})
-        
+        fig = px.bar(df, x="Year", y="Frequency", title="Frequency of IDs per Year", labels={
+                     "Frequency": "Frequency"})
+
         # Fetch study details
         studies = get_studies_details(ids=ids)
 
         return fig, studies
+
 
 def register_dual_task_view_callbacks(app):
     @app.callback(
@@ -61,14 +61,14 @@ def register_dual_task_view_callbacks(app):
     )
     def update_dual_task_view(dropdown1_value, dropdown2_value, click_data):
         if dropdown1_value == dropdown2_value:
-            return dual_task_layout(task1=None, task2=None), "Choose two different tasks.", dash.no_update, dash.no_update, dash.no_update, dash.no_update
+            return dual_task_layout(task1=None, task2=None), "Choose two different tasks.", no_update, no_update, no_update, no_update
 
         # Default values
         task1_value = dropdown1_value or 'Substances'
         task2_value = dropdown2_value or 'Condition'
 
         # Default empty values
-        pie_chart, bar_chart, filter_div, study_data = dash.no_update, dash.no_update, dash.no_update, dash.no_update
+        pie_chart, bar_chart, filter_div, study_data = no_update, no_update, no_update, no_update
 
         # If click event exists, update the charts & filters
         if click_data:
@@ -76,7 +76,8 @@ def register_dual_task_view_callbacks(app):
             color = click_data['points'][0]['color']
 
             # Fetch updated data based on clicked label
-            task1_data, task2_data, study_tags = get_dual_task_data(task1_value, task2_value, label)
+            task1_data, task2_data, study_tags = get_dual_task_data(
+                task1_value, task2_value, label)
 
             # Get color mappings
             task1_all_labels = task1_data[task1_value].unique()
@@ -86,11 +87,13 @@ def register_dual_task_view_callbacks(app):
                 color = col_map.get(label, '#000000')
 
             # Update charts
-            pie_chart = create_pie_chart(task1_data, task1_value, col_map, highlight=label, highlight_color=color)
+            pie_chart = create_pie_chart(
+                task1_data, task1_value, col_map, highlight=label, highlight_color=color)
             bar_chart = create_bar_chart(task2_data, task2_value, color)
 
             # Update filters
-            filters = [{'category': task1_value, 'value': label, 'color': color}]
+            filters = [{'category': task1_value,
+                        'value': label, 'color': color}]
             filter_div = html.Div(className="d-flex flex-wrap",
                                   children=[filter_button(f['color'], f['value'], f['category']) for f in filters])
 
@@ -150,3 +153,35 @@ def register_pagination_callbacks(app):
                 "cellRenderer": "agGroupCellRenderer",
             },
         }
+
+
+def register_modal_callbacks(app):
+    @app.callback(
+        [Output("paper-modal", "is_open"),
+         Output("paper-title", "children"),
+         Output("paper-abstract", "children"),
+         Output("active-filters-modal", "children")
+         ],
+        [Input("studies-display", "selectedRows")],
+        prevent_initial_call=True
+    )
+    def show_paper_details(selected_row_data):
+        if not selected_row_data:
+            return False, no_update, no_update, no_update
+        print("Triggered callback!")  # Debugging
+        print("Selected row:", selected_row_data)
+        ctx = callback_context
+        if ctx.triggered_id == "close-modal":
+            return False, no_update, no_update, no_update
+
+        # Ensure a single row is selected
+        if selected_row_data and len(selected_row_data) == 1:
+            paper = selected_row_data[0]
+            title = paper["title"] + " (" + str(paper["year"]) + ")"
+            abstract = paper["abstract"]
+
+            buttons = [filter_button(tag['color'], tag['label'], tag['task'])
+                       for tag in paper['tags']]
+            return True, title, abstract, buttons
+
+        return no_update  # No update if no row or multiple rows selected

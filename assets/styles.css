@@ -12,3 +12,26 @@
     max-width: 100px;
     display: inline-block;
 }
+
+.ner-tag {
+    font-size: 16px;
+    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 7px;
+    border-radius: 4px;
+    color: black;
+    margin: 2px;
+}
+
+.ner-category {
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-left: 6px;
+    color: dimgray;
+    font-weight: bold;
+}
+
+.ner-text {
+    font-weight: normal;
+}

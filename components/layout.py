@@ -99,18 +99,18 @@ def content_layout(list_of_children: list, id: str = "content"):
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = []):
+def filter_component(filter_buttons: list[dbc.Button] = [], comp_id: str = "active-filters", label="Active Filters:"):
     return html.Div(
         children=[
             dbc.Row(
                 className="mt-3 d-flex align-items-center p-3",
                 children=[
                     dbc.Col(
-                        html.Span("Active Filters:"),
+                        html.Span(label),
                         width="auto",
                     ),
                     dbc.Col(
-                        id="active-filters",
+                        id=comp_id,
                         children=filter_buttons,
                         width="auto",
                     ),
@@ -124,8 +124,6 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
     """
     Main display function with AG Grid for studies, expandable text, pagination, and filtering.
     """
-    default_page_size = 20
-
     return html.Div(
         [
             dag.AgGrid(
@@ -151,17 +149,20 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
                         "cellRenderer": "Tag",
                     },
                 ],
-                rowData=get_studies_details(study_tags),  # Pass all studies directly
+                rowData=get_studies_details(study_tags),
                 dashGridOptions={
                     "pagination": True,
-                    "paginationPageSize": default_page_size,
+                    "paginationPageSize": 20,
+                    "rowSelection": "single",
                 },
                 defaultColDef={
                     "sortable": True,
                     "resizable": True,
                 },
                 style={"height": "500px", "width": "100%"},
-            )
+            ),
+
+            paper_details_modal(),
         ],
         id="studies-display-container",
     )
@@ -192,4 +193,40 @@ def filter_button(color: str, label: str, task: str, editable: bool = False):
         n_clicks=0,
         value={"category": task, "value": label},
         title=f'{task}: {label}',
+    )
+
+
+def paper_details_modal():
+    return dbc.Modal(
+        [
+            dbc.ModalHeader(dbc.ModalTitle(id="paper-title")),
+            dbc.ModalBody(
+                [
+                    html.P(id="paper-abstract", className="abstract-text"),
+                    filter_component(comp_id='active-filters-modal', label="Tags:"),
+                ]
+            ),
+        ],
+        id="paper-modal",
+        size="xl",
+        is_open=False,
+    )
+
+
+def ner_tag(text: str, category: str):
+    hilight_colors = {
+        "Dosage": "#bbf484",
+    }
+
+    color = hilight_colors[category]
+
+    return html.Span(
+        [
+            html.Span(text, className="ner-text"),
+            html.Span(category, className="ner-category"),
+        ],
+        className="ner-tag",
+        style={
+            "backgroundColor": color,
+        },
     )
