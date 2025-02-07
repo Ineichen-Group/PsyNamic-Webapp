@@ -1,8 +1,7 @@
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 from dash import html, dcc
-from data.queries import get_studies
-
+from data.queries import get_studies_details
 
 
 def header_layout():
@@ -92,51 +91,22 @@ def footer_layout():
     )
 
 
-def content_layout(list_of_children: list):
+def content_layout(list_of_children: list, id: str = "content"):
     return dbc.Container(
         list_of_children,
-        class_name="py-4"
+        class_name="py-4",
+        id=id
     )
 
 
 def filter_component(filter_buttons: list[dbc.Button] = []):
     return html.Div(
-        # className="m-4",
         children=[
-            # dbc.Form(
-            #     className="d-flex",
-            #     children=[
-            #         dbc.Row(
-            #             className="flex-grow-1",
-            #             children=[
-            #                 dbc.Col(
-            #                     dbc.Input(
-            #                         type="search",
-            #                         placeholder="Search",
-            #                         className="me-2",
-            #                         id="search-input",
-            #                     ),
-            #                     width=8,
-            #                 ),
-            #                 dbc.Col(
-            #                     dbc.Button(
-            #                         "Search",
-            #                         color="outline-success",
-            #                         className="me-2",
-            #                         id="search-button",
-            #                         n_clicks=0,
-            #                     ),
-            #                     width="auto",
-            #                 ),
-            #             ],
-            #         ),
-            #     ],
-            # ),
             dbc.Row(
-                className="mt-3 d-flex align-items-center",
+                className="mt-3 d-flex align-items-center p-3",
                 children=[
                     dbc.Col(
-                        html.Span("Active Filters:", className="me-2"),
+                        html.Span("Active Filters:"),
                         width="auto",
                     ),
                     dbc.Col(
@@ -160,27 +130,8 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
 
     return html.Div(
         [
-            # Dropdown for page size selection
-            html.Div(
-                className="d-flex align-items-center justify-content-start mb-3",
-                children=[
-                    html.Label("Page Size:", className="me-4 mb-0"),
-                    # add some padding in between
-                    dcc.Dropdown(
-                        className="my-2",
-                        id="page-size-dropdown",
-                        options=[
-                            {"label": f"{size}", "value": size}
-                            for size in page_size_options
-                        ],
-                        value=default_page_size,
-                        clearable=False,
-                        style={"width": "100px"},
-                    ),
-                ],
-            ),
             dag.AgGrid(
-                id="studies-ag-grid",
+                id="studies-display",
                 columnDefs=[
                     {"field": "title", "headerName": "Title",
                         "filter": True, "flex": 1},
@@ -194,15 +145,15 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
                         "flex": 2,
                     },
                     {
-                        "headerName": "Active Filters",
+                        "headerName": "Tags",
                         "field": "tags",
                         "filter": False,
                         "sortable": False,
                         "width": 200,
-                        "cellRenderer": "Tag", 
-                        },
+                        "cellRenderer": "Tag",
+                    },
                 ],
-                rowData=get_studies(study_tags),  # Pass all studies directly
+                rowData=get_studies_details(study_tags),  # Pass all studies directly
                 dashGridOptions={
                     "pagination": True,
                     "paginationPageSize": default_page_size,
@@ -218,38 +169,8 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
     )
 
 
-def study_view(s: dict[str, str], idx: int):
-    """
-    Creates an individual card for each study with an expandable abstract.
-    """
-    return dbc.Card(
-        children=[
-            dbc.CardHeader(
-                children=[
-                    html.H5(
-                        f'{s["title"]}, ({s["year"]})', className="mb-0"
-                    ),
-                    dbc.Button(
-                        html.I(className="fa-solid fa-caret-down"),
-                        color="link",
-                        id={'type': 'collapse-button', 'index': idx},
-                        n_clicks=0,
-                    ),
-                ],
-                className="d-flex justify-content-between align-items-center",
-                id=f"heading{idx+1}",
-            ),
-            dbc.Collapse(
-                dbc.CardBody(s['abstract']),
-                id={'type': 'collapse', 'index': idx},
-                is_open=False,
-            ),
-        ],
-    )
-
-
-def filter_button(color: str, filter: str, cat: str, editable: bool = False):
-    children = [html.Span(f"{filter} ", style={"marginRight": "0.5rem"})]
+def filter_button(color: str, label: str, task: str, editable: bool = False):
+    children = [html.Span(f"{label} ", style={"marginRight": "0.5rem"})]
     custom_style = {
         "borderRadius": "1rem",
         "backgroundColor": f'{color}',
@@ -269,8 +190,8 @@ def filter_button(color: str, filter: str, cat: str, editable: bool = False):
         children=children,
         style=custom_style,
         color="light",
-        id=f'{cat}-{filter}',
+        id=f'{task}-{label}',
         n_clicks=0,
-        value={"category": cat, "value": filter},
-        title=f'{cat}: {filter}',
+        value={"category": task, "value": label},
+        title=f'{task}: {label}',
     )

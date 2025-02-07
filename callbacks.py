@@ -1,11 +1,13 @@
 import plotly.express as px
 import pandas as pd
 
+import dash
 from dash.dependencies import Input, Output, State, ALL
 from dash import callback_context, html
-from pages.explore.dual_task import get_dual_task_data, create_pie_chart, create_bar_chart
+from pages.explore.dual_task import get_dual_task_data, create_pie_chart, create_bar_chart, dual_task_layout
 from components.layout import filter_button
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
+from data.queries import get_studies_details
 
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
@@ -40,67 +42,59 @@ def register_time_view_callbacks(app, frequency_df: pd.DataFrame):
 
 def register_dual_task_view_callbacks(app):
     @app.callback(
-        [Output('task2-bar-graph', 'figure'),
-         Output('task1-pie-graph', 'figure'),
-         Output('jux_dropdown1', 'style'),
-         Output('jux_dropdown2', 'style'),
-         Output('validation-message', 'children'),
-         Output('active-filters', 'children')],
-        [Input('task1-pie-graph', 'clickData'),
-         Input('jux_dropdown1', 'value'),
-         Input('jux_dropdown2', 'value')],
+        [
+            Output('dual-task-layout', 'children'),
+            Output('validation-message', 'children'),
+            Output('task1-pie-graph', 'figure'),
+            Output('task2-bar-graph', 'figure'),
+            Output('active-filters', 'children'),
+            Output('studies-display', 'rowData'),
+        ],
+        [
+            Input('jux_dropdown1', 'value'),
+            Input('jux_dropdown2', 'value'),
+            Input('task1-pie-graph', 'clickData'),
+        ],
     )
-    def update_graph(click_data, dropdown1_value, dropdown2_value):
+    def update_dual_task_view(dropdown1_value, dropdown2_value, click_data):
+        if dropdown1_value == dropdown2_value:
+            return dual_task_layout(task1=None, task2=None), "Choose two different tasks.", dash.no_update, dash.no_update, dash.no_update, dash.no_update
+
+        # Default values
         task1_value = dropdown1_value or 'Substances'
         task2_value = dropdown2_value or 'Condition'
 
-        # If the same task is selected, show an error message
-        if dropdown1_value == dropdown2_value:
-            return {}, {}, STYLE_ERROR, STYLE_ERROR, "Choose two different values", None
+        # Default empty values
+        pie_chart, bar_chart, filter_div, study_data = dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
-        style1, style2 = STYLE_NORMAL, STYLE_NORMAL
-        task1_data, task2_data, study_tags = get_dual_task_data(
-            task1_value, task2_value)
+        # If click event exists, update the charts & filters
+        if click_data:
+            label = click_data['points'][0]['label']
+            color = click_data['points'][0]['color']
 
-        task1_all_labels = task1_data[task1_value].unique()
-        col_map = get_color_mapping(task1_value, task1_all_labels)
+            # Fetch updated data based on clicked label
+            task1_data, task2_data, study_tags = get_dual_task_data(task1_value, task2_value, label)
 
-        pie_chart = create_pie_chart(task1_data, task1_value, col_map)
-        bar_chart = create_bar_chart(task2_data, task2_value, None)
+            # Get color mappings
+            task1_all_labels = task1_data[task1_value].unique()
+            col_map = get_color_mapping(task1_value, task1_all_labels)
 
-        if not click_data:
-            return bar_chart, pie_chart, style1, style2, "", None
+            if rgb_to_hex(color) == SECONDARY_COLOR:
+                color = col_map.get(label, '#000000')
 
-        label = click_data['points'][0]['label']
-        color = click_data['points'][0]['color']
+            # Update charts
+            pie_chart = create_pie_chart(task1_data, task1_value, col_map, highlight=label, highlight_color=color)
+            bar_chart = create_bar_chart(task2_data, task2_value, color)
 
-        # If the segment is gray, restore its original color from col_map
-        if rgb_to_hex(color) == SECONDARY_COLOR:
-            color = col_map.get(label, '#000000')  # Default black if not found
+            # Update filters
+            filters = [{'category': task1_value, 'value': label, 'color': color}]
+            filter_div = html.Div(className="d-flex flex-wrap",
+                                  children=[filter_button(f['color'], f['value'], f['category']) for f in filters])
 
-        task1_data, task2_data, study_tags = get_dual_task_data(
-            task1_value, task2_value, label)
-        pie_chart = create_pie_chart(
-            task1_data, task1_value, col_map, highlight=label, highlight_color=color)
-        bar_chart = create_bar_chart(task2_data, task2_value, color)
+            # Update study display
+            study_data = get_studies_details(study_tags)
 
-        filters = [{'category': task1_value, 'value': label, 'color': color}]
-        filter_div = html.Div(className="d-flex flex-wrap",
-                              children=[filter_button(f['color'], f['value'], f['category']) for f in filters])
-
-        return bar_chart, pie_chart, style1, style2, "", filter_div
-
-
-# def register_filter(app):
-#     @app.callback(
-#         Output('accordion', 'children'),
-#         Input('active-filters', 'children'),
-#     )
-#     def update_study_view(filters):
-#         if not filters:
-#             return no_update
-#         studies = get_studies(filters)
-#         return [study_view(s, idx) for idx, s in enumerate(studies)]
+        return dual_task_layout(dropdown1_value, dropdown2_value), "", pie_chart, bar_chart, filter_div, study_data
 
 
 def reset_click_data(app):

@@ -40,7 +40,7 @@ def display_page(pathname: str):
         if pathname == '/explore/time':
             return content_layout([time_graph(), search_filter, filtered_display])
         elif pathname == '/explore/dual-task':
-            return content_layout(dual_task_layout(), id='dual-task-layout')
+            return content_layout(dual_task_layout('Substances', 'Condition'), id='dual-task-layout')
         else:
             return content_layout([home_layout(), search_filter, filtered_display])
     elif pathname.startswith('/insights'):
