@@ -130,6 +130,21 @@ def get_pred(task: str, threshold: float = 0.1) -> pd.DataFrame:
         session.close()
 
 
+def get_pred_filtered(task: str, ids: list[int], threshold: float = 0.1) -> pd.DataFrame:
+    """Get the prediction data for a given task and filter the data based on the paper IDs."""
+    session = Session()
+    try:
+        query = session.query(Prediction).filter(
+            Prediction.task == task,
+            Prediction.paper_id.in_(ids),
+            Prediction.probability >= threshold
+        )
+        result = pd.read_sql(query.statement, session.bind)
+        return result
+    finally:
+        session.close()
+
+
 def get_freq_grouped(task: str, group_task: str, threshold: float = 0.1, labels: list[str] = None, ) -> pd.DataFrame:
     """Get the predictions where task is labels, group by group task and labels, then count the frequency. 
     The output is a dataframe with columns group_task, label, and Frequency."""

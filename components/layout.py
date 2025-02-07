@@ -27,7 +27,7 @@ def header_layout():
                                     dbc.DropdownMenuItem(
                                         "Number of Participants", href="/insights/participants"),
                                     dbc.DropdownMenuItem(
-                                        "Good Research Practices", href="/insights/good-research"),
+                                        "Study Protocol", href="/insights/study-protocol"),
                                     dbc.DropdownMenuItem(
                                         "Dosage", href="/insights/dosage"),
 

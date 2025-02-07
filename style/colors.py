@@ -105,7 +105,7 @@ def check_button_contrast(background_rgb_str: str) -> bool:
     return contrast_ratio >= 3
 
 
-def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb', check_contrast: bool = False) -> dict[str, str]:
+def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> dict[str, str]:
 
     if task not in TASK2COLOR:
         raise ValueError(f"Unsupported category: {task}")
@@ -117,7 +117,7 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb', chec
 
     n = len(list_labels)
     if n == 1:
-        return {list_labels[0]: palette_start}
+        return {list_labels[0]: palette_end}
     # Extrapolate colors evenly between the lightest and darkest colors
     selected_colors = [
         f"rgb({r}, {g}, {b})"
