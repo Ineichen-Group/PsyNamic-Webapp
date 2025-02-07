@@ -122,7 +122,7 @@ def filter_component(filter_buttons: list[dbc.Button] = [], comp_id: str = "acti
 
 def studies_display(study_tags: dict[str: list[html.Div]] = None):
     """
-    Main display function with AG Grid for studies, expandable text, pagination, and filtering.
+    Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
     """
     return html.Div(
         [
@@ -162,10 +162,14 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
                 style={"height": "500px", "width": "100%"},
             ),
 
+            dbc.Button("Download CSV", id="download-csv-button", color="primary", className="mt-3"),
+            dcc.Download(id="download-csv"),
+
             paper_details_modal(),
         ],
         id="studies-display-container",
     )
+
 
 
 def filter_button(color: str, label: str, task: str, editable: bool = False):

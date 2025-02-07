@@ -1,12 +1,14 @@
 import plotly.express as px
 
-from dash import callback_context, html, no_update
+from dash import callback_context, html, no_update, dcc
 from dash.dependencies import Input, Output, State, ALL
 
 from pages.explore.dual_task import get_dual_task_data, create_pie_chart, create_bar_chart, dual_task_layout
 from components.layout import filter_button
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
 from data.queries import get_studies_details, get_time_data
+import pandas as pd
+
 
 
 STYLE_NORMAL = {'border': '1px solid #ccc'}
@@ -21,6 +23,7 @@ def register_callbacks(app):
     # register_filter(app)
     register_pagination_callbacks(app)
     register_modal_callbacks(app)
+    register_download_csv_callback(app)
 
 
 def register_time_view_callbacks(app):
@@ -185,3 +188,29 @@ def register_modal_callbacks(app):
             return True, title, abstract, buttons
 
         return no_update  # No update if no row or multiple rows selected
+
+def register_download_csv_callback(app):
+    @app.callback(
+        Output("download-csv", "data"),
+        Input("download-csv-button", "n_clicks"),
+        State("studies-display", "rowData"),
+        prevent_initial_call=True,
+    )
+    def download_csv(n_clicks, row_data):
+        current_data_time = pd.Timestamp.now().strftime("%Y-%m-%d_%H-%M-%S")
+        if not row_data:
+            return no_update 
+        refactored_data = []
+        tasks = set(t['task'] for t in row_data[0]['tags'])
+        for row in row_data:
+            tags = row['tags']
+            for task in tasks:
+                row[task] = []
+            for tag in tags:
+                row[tag['task']].append(tag['label'])
+            row.pop('tags')
+            refactored_data.append(row)
+        
+        df = pd.DataFrame(refactored_data)
+         
+        return dcc.send_data_frame(df.to_csv, f"psynamic_data_{current_data_time}.csv", index=False)
