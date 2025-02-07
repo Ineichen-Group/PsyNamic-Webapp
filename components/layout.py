@@ -162,14 +162,14 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
                 style={"height": "500px", "width": "100%"},
             ),
 
-            dbc.Button("Download CSV", id="download-csv-button", color="primary", className="mt-3"),
+            dbc.Button("Download CSV", id="download-csv-button",
+                       color="primary", className="mt-3"),
             dcc.Download(id="download-csv"),
 
             paper_details_modal(),
         ],
         id="studies-display-container",
     )
-
 
 
 def filter_button(color: str, label: str, task: str, editable: bool = False):
@@ -207,7 +207,8 @@ def paper_details_modal():
             dbc.ModalBody(
                 [
                     html.P(id="paper-abstract", className="abstract-text"),
-                    filter_component(comp_id='active-filters-modal', label="Tags:"),
+                    filter_component(
+                        comp_id='active-filters-modal', label="Tags:"),
                 ]
             ),
         ],

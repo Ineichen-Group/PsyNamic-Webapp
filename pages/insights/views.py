@@ -250,3 +250,13 @@ def study_protocol_view():
         studies_display(study_tags)
     ]
     )
+
+
+def dosages_view():
+    title = "Inspecting dosage: How are different substances dosed?"
+
+    return html.Div([
+        html.H1(f'{title}', className="my-4"),
+        studies_display()
+    ]
+    )

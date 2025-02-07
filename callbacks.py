@@ -171,8 +171,6 @@ def register_modal_callbacks(app):
     def show_paper_details(selected_row_data):
         if not selected_row_data:
             return False, no_update, no_update, no_update
-        print("Triggered callback!")  # Debugging
-        print("Selected row:", selected_row_data)
         ctx = callback_context
         if ctx.triggered_id == "close-modal":
             return False, no_update, no_update, no_update

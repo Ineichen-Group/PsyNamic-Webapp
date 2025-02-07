@@ -52,7 +52,6 @@ def create_pie_chart(df, column, col_map, highlight=None, highlight_color=None):
 
 
 def create_bar_chart(df, column: str, color: str):
-    print(color)
     # all bars are the same color
     fig = px.bar(df, x='Frequency', y=column,
                  title=f'Task 2: {column}', orientation='h')
