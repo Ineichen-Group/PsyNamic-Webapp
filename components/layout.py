@@ -102,7 +102,6 @@ def content_layout(list_of_children: list, id: str = "content"):
 def filter_component(filter_buttons: list[dbc.Button] = [], comp_id: str = "active-filters", label="Active Filters:"):
     return html.Div(
         children=[
-            html.H4("Filtered Studies"),
             dbc.Row(
                 className="d-flex align-items-center mt-2 mb-2",
                 children=[
@@ -121,7 +120,7 @@ def filter_component(filter_buttons: list[dbc.Button] = [], comp_id: str = "acti
     )
 
 
-def studies_display(study_tags: dict[str: list[html.Div]] = None):
+def studies_display(study_tags: dict[str: list[html.Div]] = None, last_update: str = 'January 2024'):
     """
     Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
     """
@@ -129,18 +128,23 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
     total_studies = nr_studies()
     return html.Div(
         [
-            dbc.Row(
-                children=[html.Span(
-                f"Found Studies: {len(studies)} (out of {total_studies})", 
-                className="mb-3"),]
-            ),
+            html.Div(
+                children=[
+                    html.Span("Found Studies:", className="d-inline", style={"marginRight": "0.2rem"}),
+                    html.Span(children=str(len(studies)),
+                              id="studies-count", className="d-inline", style={"marginRight": "0.2rem"}),
+                    html.Span(f"(out of {total_studies})",
+                              className="d-inline"),
+                ],
+                className="d-flex",),
+
             dag.AgGrid(
                 id="studies-display",
                 columnDefs=[
                     {"field": "title", "headerName": "Title",
-                        "filter": True, "flex": 1},
+                     "filter": True, "flex": 1},
                     {"field": "year", "headerName": "Year",
-                        "filter": True, "width": 100},
+                     "filter": True, "width": 100},
                     {
                         "field": "abstract",
                         "headerName": "Abstract",
@@ -174,15 +178,22 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
                        color="primary", className="mt-3"),
             dcc.Download(id="download-csv"),
 
+            dbc.Row(
+                children=[html.Span(
+                    f'Last data update: {last_update}',
+                    className="d-flex justify-content-center",
+                ),
+                ]
+            ),
             paper_details_modal(),
         ],
-        id = "studies-display-container",
+        id="studies-display-container",
     )
 
 
-def filter_button(color: str, label: str, task: str, editable: bool=False):
-    children=[html.Span(f"{label} ", style={"marginRight": "0.5rem"})]
-    custom_style={
+def filter_button(color: str, label: str, task: str, editable: bool = False):
+    children = [html.Span(f"{label} ", style={"marginRight": "0.5rem"})]
+    custom_style = {
         "borderRadius": "1rem",
         "backgroundColor": f'{color}',
         "color": "white",
@@ -192,10 +203,10 @@ def filter_button(color: str, label: str, task: str, editable: bool=False):
     if editable:
         children.append(html.I(className="fa-solid fa-xmark"))
     else:
-        custom_style["backgroundColor"]=color
-        custom_style["border"]="none"
-        custom_style["boxShadow"]="none"
-        custom_style["cursor"]="default"
+        custom_style["backgroundColor"] = color
+        custom_style["border"] = "none"
+        custom_style["boxShadow"] = "none"
+        custom_style["cursor"] = "default"
 
     return dbc.Button(
         children=children,
@@ -227,11 +238,11 @@ def paper_details_modal():
 
 
 def ner_tag(text: str, category: str):
-    hilight_colors={
+    hilight_colors = {
         "Dosage": "#bbf484",
     }
 
-    color=hilight_colors[category]
+    color = hilight_colors[category]
 
     return html.Span(
         [

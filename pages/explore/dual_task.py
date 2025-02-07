@@ -144,4 +144,5 @@ def dual_task_layout(task1, task2, task1_label=None):
         df_task1, df_task2, study_tags = get_dual_task_data(task1, task2)
         filter_buttons = []
     graph = dual_task_graphs(df_task1, df_task2, task1, task2)
-    return graph, filter_component(filter_buttons), studies_display(study_tags)
+      
+    return graph, html.H4("Filtered Studies"), filter_component(filter_buttons), studies_display(study_tags)

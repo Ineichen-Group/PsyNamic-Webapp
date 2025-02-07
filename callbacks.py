@@ -55,6 +55,7 @@ def register_dual_task_view_callbacks(app):
             Output('task2-bar-graph', 'figure'),
             Output('active-filters', 'children'),
             Output('studies-display', 'rowData'),
+            Output('studies-count', 'children'),
         ],
         [
             Input('jux_dropdown1', 'value'),
@@ -103,7 +104,7 @@ def register_dual_task_view_callbacks(app):
             # Update study display
             study_data = get_studies_details(study_tags)
 
-        return dual_task_layout(dropdown1_value, dropdown2_value), "", pie_chart, bar_chart, filter_div, study_data
+        return dual_task_layout(dropdown1_value, dropdown2_value), "", pie_chart, bar_chart, filter_div, study_data, len(study_data)
 
 
 def reset_click_data(app):

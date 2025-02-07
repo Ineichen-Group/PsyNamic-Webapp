@@ -8,10 +8,11 @@ from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_l
 from callbacks import rgb_to_hex  # TODO: move this to colors
 
 
-def explore_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], study_tags: dict[str, list[html.Div]] = None) -> html.Div:
+def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], study_tags: dict[str, list[html.Div]] = None) -> html.Div:
     return html.Div([
         html.H1(f'{title}', className="my-4"),
         graph,
+        html.H4("Filtered Studies"),
         filter_component(filter_buttons),
         # studies_display(tag_data)
         studies_display(study_tags)
@@ -63,7 +64,7 @@ def rct_view():
             }
             study_tags[id].append(tag_info_subst)
 
-    return explore_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, study_tags)
 
 
 def efficacy_safety_view():
@@ -105,7 +106,7 @@ def efficacy_safety_view():
                 'color': rgb_to_hex(color_mapping_group_task[s])
             }
             study_tags[id].append(tag_info_subst)
-    return explore_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, study_tags)
 
 
 def longitudinal_view():
@@ -146,7 +147,7 @@ def longitudinal_view():
             }
             study_tags[id].append(tag_info_subst)
 
-    return explore_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, study_tags)
 
 
 def sex_bias_view():
@@ -188,7 +189,7 @@ def sex_bias_view():
             }
             study_tags[id].append(tag_info_subst)
 
-    return explore_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, study_tags)
 
 
 def nr_part_view():
@@ -219,7 +220,7 @@ def nr_part_view():
                 'color': rgb_to_hex(color_mapping[label])
             }
             study_tags[id].append(tag_info)
-    return explore_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, study_tags)
 
 
 def study_protocol_view():
@@ -245,6 +246,7 @@ def study_protocol_view():
     return html.Div([
         html.H1(f'{title}', className="my-4"),
         freq_span,
+        html.H4("Filtered Studies"),
         filter_component(filter_button(
             color_mapping[label], label, task, False)),
         studies_display(study_tags)
