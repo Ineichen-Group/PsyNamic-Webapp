@@ -1,20 +1,20 @@
 import plotly.express as px
-import pandas as pd
 
-import dash
+from dash import callback_context, html, no_update
 from dash.dependencies import Input, Output, State, ALL
-from dash import callback_context, html
+
 from pages.explore.dual_task import get_dual_task_data, create_pie_chart, create_bar_chart, dual_task_layout
 from components.layout import filter_button
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
-from data.queries import get_studies_details
+from data.queries import get_studies_details, get_time_data
+
 
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
 
 
-def register_callbacks(app, data_paths: dict):
-    register_time_view_callbacks(app, data_paths['frequency_df'])
+def register_callbacks(app):
+    register_time_view_callbacks(app)
     register_studyview_callbacks(app)
     reset_click_data(app)
     register_dual_task_view_callbacks(app)
@@ -22,23 +22,26 @@ def register_callbacks(app, data_paths: dict):
     register_pagination_callbacks(app)
 
 
-def register_time_view_callbacks(app, frequency_df: pd.DataFrame):
+# def register_time_view_callbacks(app):
+
+
+def register_time_view_callbacks(app):
     @app.callback(
-        Output('time-plot', 'figure'),
-        Input('start-year', 'value'),
-        Input('end-year', 'value')
+        Output("time-graph", "figure"),
+        Output("time-studies-display", "rowData"),
+        Input("start-year", "value"),
+        Input("end-year", "value"),
     )
-    def update_time_graph(start_year, end_year):
-        # Filter data based on input years
-        filtered_df = frequency_df[(frequency_df['Year'] >= start_year) & (
-            frequency_df['Year'] <= end_year)]
+    def update_time_view(start_year, end_year):
+        df, ids = get_time_data(start_year=start_year, end_year=end_year)
+        
+        # Create updated figure
+        fig = px.bar(df, x="Year", y="Frequency", title="Frequency of IDs per Year", labels={"Frequency": "Frequency"})
+        
+        # Fetch study details
+        studies = get_studies_details(ids=ids)
 
-        # Create the bar plot
-        fig = px.bar(filtered_df, x='Year', y='Frequency',
-                     title='Frequency of IDs per Year', labels={'Frequency': 'Frequency'})
-
-        return fig
-
+        return fig, studies
 
 def register_dual_task_view_callbacks(app):
     @app.callback(

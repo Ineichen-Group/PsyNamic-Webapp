@@ -23,7 +23,7 @@ engine = create_engine(DATABASE_URL, echo=True)
 Session = sessionmaker(bind=engine)
 
 
-def get_studies_details(study_tags: dict[str, list[html.Div]]) -> list[dict]:
+def get_studies_details(study_tags: dict[str, list[html.Div]] = None, ids: list[int] = None) -> list[dict]:
     """
     Retrieves studies from the database based on the provided filters.
 
@@ -38,7 +38,7 @@ def get_studies_details(study_tags: dict[str, list[html.Div]]) -> list[dict]:
         query = session.query(Paper)
         if study_tags:
             ids = study_tags.keys()
-        else:
+        elif not ids:
             ids = []
         studies = query.filter(Paper.id.in_(ids)).all()
         results = []
@@ -53,7 +53,7 @@ def get_studies_details(study_tags: dict[str, list[html.Div]]) -> list[dict]:
                 'authors': study.authors,
                 'link_to_fulltext': study.link_to_fulltext,
                 'link_to_pubmed': study.link_to_pubmed,
-                'tags': study_tags[study.id]
+                'tags': study_tags[study.id] if study_tags else []
             }
             results.append(result)
         return results
@@ -235,3 +235,26 @@ def get_all_labels(task: str) -> list[str]:
         return labels
     finally:
         session.close()
+
+
+def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.DataFrame, list[int]]:
+    """Get the frequency of IDs per year. Optionally filter by start and end year."""
+    session = Session()
+    try:
+        query = session.query(Paper.id, Paper.year)
+        df = pd.read_sql(query.statement, session.bind)
+    finally:
+        session.close()
+
+    # use year and id columns
+    df = df[['id', 'year']]
+    if end_year:
+        df = df[df['year'] <= end_year]
+    if start_year:
+        df = df[df['year'] >= start_year]
+
+    ids = df['id'].to_list()
+    # count IDs per year, rename columns to Year and Frequency
+    frequency_df = df.groupby('year').count().reset_index().rename(
+        columns={'id': 'Frequency', 'year': 'Year'})
+    return frequency_df, ids

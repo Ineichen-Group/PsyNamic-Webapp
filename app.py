@@ -6,14 +6,12 @@ from pages.about import about_layout
 from pages.contact import contact_layout
 from pages.home import home_layout
 from pages.explore.dual_task import dual_task_graphs, dual_task_layout
-from pages.explore.time import time_graph, get_time_data
+from pages.explore.time import time_layout
 from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view, nr_part_view
 
 from components.layout import header_layout, footer_layout, filter_component, studies_display, content_layout
 from callbacks import register_callbacks
 
-# Load data
-frequency_df = get_time_data()
 
 # Initialize the Dash app with suppress_callback_exceptions=True
 app = dash.Dash(__name__, external_stylesheets=[
@@ -38,7 +36,7 @@ def display_page(pathname: str):
         filtered_display = studies_display()
         search_filter = filter_component()  
         if pathname == '/explore/time':
-            return content_layout([time_graph(), search_filter, filtered_display])
+            return content_layout(time_layout())
         elif pathname == '/explore/dual-task':
             return content_layout(dual_task_layout('Substances', 'Condition'), id='dual-task-layout')
         else:
@@ -56,7 +54,7 @@ def display_page(pathname: str):
             return content_layout([nr_part_view()])
         
 # Register all callbacks and pass data
-register_callbacks(app, {'frequency_df': frequency_df})
+register_callbacks(app)
 
 
 if __name__ == '__main__':

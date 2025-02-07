@@ -124,8 +124,6 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None):
     """
     Main display function with AG Grid for studies, expandable text, pagination, and filtering.
     """
-    # Default page size and options
-    page_size_options = [10, 20, 50, 100]
     default_page_size = 20
 
     return html.Div(
