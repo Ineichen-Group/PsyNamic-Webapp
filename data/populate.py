@@ -8,14 +8,16 @@ from models import Paper, BatchRetrieval, Token, Prediction, PredictionToken
 import argparse
 import pandas as pd
 from settings import *
-
+from typing import Optional
 
 parent_folder_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, parent_folder_path)
 
+#
 
-def create_batch_retrieval(nr_new_papers: int, retrieval_time_needed: datetime):
+
+def create_batch_retrieval(date: datetime, nr_new_papers: int, retrieval_time_needed: timedelta) -> BatchRetrieval:
     return BatchRetrieval(
         date=datetime.now(timezone.utc),
         number_new_papers=nr_new_papers,
@@ -33,19 +35,21 @@ def create_paper(
         authors: str,
         link_to_fulltext: str,
         link_to_pubmed: str,
+        pubmed_id: str,
         retrieval_id: int
 ):
     return Paper(
         id=ID,
+        pubmed_id=pubmed_id if pubmed_id else None,
         title=title,
         abstract=abstract,
         prediction_input=prediction_input,
-        key_terms=key_terms,
-        doi=doi,
+        key_terms=key_terms if key_terms else None,
+        doi=doi if doi else None,
         year=year,
         authors=authors,
-        link_to_fulltext=link_to_fulltext,
-        link_to_pubmed=link_to_pubmed,
+        link_to_fulltext=link_to_fulltext if link_to_fulltext else None,
+        link_to_pubmed=link_to_pubmed if link_to_pubmed else None,
         retrieval_id=retrieval_id
     )
 
@@ -92,15 +96,19 @@ def populate_db(prediction_file: str, studies_file: str):
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
 
+    batch_date = studies_file[:-4].split('_')[-2]  # yyyymmdd
+    batch_date = datetime.strptime(batch_date, '%Y%m%d')
+    retrieval_duration = studies_file[:-4].split('_')[-1]  # hh:mm:ss
+    hours, minutes, seconds = map(int, retrieval_duration.split(':'))
+    retrieval_duration = timedelta(
+        hours=hours, minutes=minutes, seconds=seconds)
+
     pred_data = pd.read_csv(prediction_file)
     studies_data = pd.read_csv(studies_file)
     nr_studies = len(studies_data)
 
-    # duration of the retrieval, set to 0 for now, but datetime.timedelta
-    retrieval_time_needed = timedelta(0)
-    # Convert timedelta to datetime
-    retrieval_time_needed_datetime = timedelta(0)
-    batch = create_batch_retrieval(nr_studies, retrieval_time_needed_datetime)
+    # datetime duration
+    batch = create_batch_retrieval(batch_date, nr_studies, retrieval_duration)
     session.add(batch)
     session.commit()
     batch_id = batch.id
@@ -110,12 +118,22 @@ def populate_db(prediction_file: str, studies_file: str):
 
     # iterate through the studies data
     for i, row in studies_data.iterrows():
+        # Prevent duplicates
+        if check_if_paper_exists(session, row):
+            continue
         abstract = row['abstract']
+        # For now, we skip papers without abstracts #TODO: might need to change this
+        if not abstract:
+            continue
         title = row['title']
         prediction_input = title + '^\n' + abstract
+        paper_id = row['id']
+        if not paper_id:
+            paper_id = get_unused_id(session)
 
         paper = create_paper(
-            ID=row['id'],
+            ID=paper_id,
+            pubmed_id=row['pubmed_id'],
             title=title,
             abstract=abstract,
             prediction_input=prediction_input,
@@ -143,6 +161,42 @@ def populate_db(prediction_file: str, studies_file: str):
     session.commit()
 
     session.close()
+
+
+def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
+    pubmed_id = row['pubmed_id']
+    title = row['title']
+    doi = row['doi']
+    year = row['year']
+
+    if pubmed_id:
+        paper = session.query(Paper).filter(Paper.pubmed_id == pubmed_id).first()
+        if paper:
+            return True
+
+    if doi:
+        paper = session.query(Paper).filter(Paper.doi == doi).first()
+        if paper:
+            return True
+
+    paper = session.query(Paper).filter(
+        Paper.title == title, Paper.year == year).first()
+    if paper:
+        return True
+
+    return False
+
+
+def get_unused_id(session: Session):
+    # get all ids from papers, sort from lowest to highest
+    ids = session.query(Paper.id).all()
+    ids = sorted(ids)
+    session.close()
+
+    for i in range(ids[-1]):
+        if i not in ids:
+            return i
+    return ids[-1] + 1
 
 
 # args parser with the two files

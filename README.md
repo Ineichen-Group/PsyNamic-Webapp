@@ -45,4 +45,9 @@ https://www.postgresql.org/download/linux/ubuntu/
     python data/populate.py -p data/predictions.csv -s data/studies.csv
     ```
 
+* Delete database
+    ```bash
+    DROP DATABASE psynamic;
+    ```
+
 ## Scheduled job to retrieve new papers

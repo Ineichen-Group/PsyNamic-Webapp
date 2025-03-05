@@ -18,14 +18,15 @@ class Paper(Base):
     __tablename__ = 'paper'
     # Primary Key
     id = Column(Integer, primary_key=True)
+    pubmed_id = Column(Integer, nullable=True)
     # Columns
     title = Column(Text, nullable=False)
     abstract = Column(Text, nullable=False)
     prediction_input = Column(Text, nullable=False)  # Title + Abstract
     key_terms = Column(Text, nullable=True)
     doi = Column(String(100), nullable=True)
-    year = Column(Integer, nullable=True)
-    authors = Column(String(255), nullable=True)
+    year = Column(Integer, nullable=False)
+    authors = Column(String(255), nullable=False)
     link_to_fulltext = Column(String(255), nullable=True)
     link_to_pubmed = Column(String(255), nullable=True)
 
