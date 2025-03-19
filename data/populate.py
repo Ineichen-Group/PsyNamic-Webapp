@@ -87,14 +87,18 @@ def create_prediction_tokens(token_id, prediction_id, weight):
     )
 
 
-def populate_db(prediction_file: str, studies_file: str):
+def populate_db(prediction_file: str, studies_file: str, studies_id_column: Optional[str] = 'id'):
 
     # Using the settings.py file, create a connection to the database
     DATABASE_URL = f'postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{
         DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}'
-    engine = create_engine(DATABASE_URL, echo=True)
+    engine = create_engine(DATABASE_URL, echo=False)
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
+
+    # check how many papers are already in the database
+    nr_papers = session.query(Paper).count()
+    print(f"Number of papers in the database: {nr_papers}")
 
     batch_date = studies_file[:-4].split('_')[-2]  # yyyymmdd
     batch_date = datetime.strptime(batch_date, '%Y%m%d')
@@ -105,6 +109,12 @@ def populate_db(prediction_file: str, studies_file: str):
 
     pred_data = pd.read_csv(prediction_file)
     studies_data = pd.read_csv(studies_file)
+
+    # Check if studies_id_column is in the studies_data
+    if studies_id_column not in studies_data.columns:
+        raise ValueError(f"Studies file does not contain column '{studies_id_column
+                         }'. Please specify the correct column name with the --studies_id_column argument.")
+
     nr_studies = len(studies_data)
 
     # datetime duration
@@ -118,21 +128,23 @@ def populate_db(prediction_file: str, studies_file: str):
 
     # iterate through the studies data
     for i, row in studies_data.iterrows():
-        # Prevent duplicates
+        nr_papers = session.query(Paper).count()
         if check_if_paper_exists(session, row):
+            print(f"Paper already exists: {row[studies_id_column]}")
             continue
         abstract = row['abstract']
         # For now, we skip papers without abstracts #TODO: might need to change this
         if not abstract:
+            print(f"Paper without abstract: {row[studies_id_column]}")
             continue
         title = row['title']
-        prediction_input = title + '^\n' + abstract
-        paper_id = row['id']
-        if not paper_id:
+        prediction_input = title + '.^\n' + abstract
+        paper_id = row[studies_id_column]
+        if pd.isna(paper_id):
             paper_id = get_unused_id(session)
 
         paper = create_paper(
-            ID=paper_id,
+            ID=int(paper_id),
             pubmed_id=row['pubmed_id'],
             title=title,
             abstract=abstract,
@@ -149,8 +161,15 @@ def populate_db(prediction_file: str, studies_file: str):
     session.commit()
 
     for i, row in pred_data.iterrows():
+        paper_id = row['id']
+        paper = session.query(Paper).filter(Paper.id == paper_id).first()
+        if not paper:
+            # raise ValueError(f"No paper found with paper_id: {paper_id}")
+            print(f"No paper found with paper_id: {paper_id}")
+            continue
+
         pred = create_predictions(
-            paper_id=row['id'],
+            paper_id=paper_id,
             task=row['task'],
             label=row['label'],
             probability=row['probability'],
@@ -170,18 +189,22 @@ def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
     year = row['year']
 
     if pubmed_id:
-        paper = session.query(Paper).filter(Paper.pubmed_id == pubmed_id).first()
+        paper = session.query(Paper).filter(
+            Paper.pubmed_id == pubmed_id).first()
         if paper:
+            print(f"Paper with pubmed_id {pubmed_id} already exists")
             return True
 
-    if doi:
-        paper = session.query(Paper).filter(Paper.doi == doi).first()
-        if paper:
-            return True
+    # if doi:
+    #     paper = session.query(Paper).filter(Paper.doi == doi).first()
+    #     if paper:
+    #         print(f"Paper with doi {doi} already exists")
+    #         return True
 
     paper = session.query(Paper).filter(
         Paper.title == title, Paper.year == year).first()
     if paper:
+        print(f"Paper with title {title} and year {year} already exists")
         return True
 
     return False
@@ -209,10 +232,11 @@ def init_args_parser():
                             help='Path to the predictions file', required=True)
     arg_parser.add_argument('-s', '--studies_file', type=str,
                             help='Path to the studies file', required=True)
+    arg_parser.add_argument('--studies_id_column', type=str, default='id',)
     return arg_parser
 
 
 if __name__ == '__main__':
     parser = init_args_parser()
     args = parser.parse_args()
-    populate_db(args.predictions_file, args.studies_file)
+    populate_db(args.predictions_file, args.studies_file, args.studies_id_column)
