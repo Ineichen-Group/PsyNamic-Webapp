@@ -26,7 +26,7 @@ def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], 
         html.H4("Filtered Studies"),
         filter_component(filter_buttons),
         # studies_display(tag_data)
-        studies_display(study_tags)
+        # studies_display(study_tags)
     ])
 
 
