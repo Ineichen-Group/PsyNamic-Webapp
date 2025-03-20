@@ -1,6 +1,7 @@
 from datetime import datetime
 import sys
 import os
+import logging
 import pandas as pd
 from dash import html
 from sqlalchemy import create_engine, func, case
@@ -25,7 +26,25 @@ DATABASE_URL = os.getenv(
 engine = create_engine(DATABASE_URL, echo=True)
 Session = sessionmaker(bind=engine)
 
+# Set up logging
+logging.basicConfig(
+    filename="app.log",  # Save logs to a file (optional)
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 
+def log_time(func):
+    """Decorator to log the execution time of a function."""
+    def wrapper(*args, **kwargs):
+        start_time = datetime.now()
+        result = func(*args, **kwargs)
+        duration = (datetime.now() - start_time).total_seconds()
+        logging.info(f"{func.__name__} took {duration:.4f} seconds")
+        return result
+    return wrapper
+
+
+@log_time
 def get_studies_details(study_tags: dict[str, list[html.Div]] = None, ids: list[int] = None) -> list[dict]:
     """
     Retrieves studies from the database based on the provided filters.
@@ -63,7 +82,7 @@ def get_studies_details(study_tags: dict[str, list[html.Div]] = None, ids: list[
     finally:
         session.close()
 
-
+@log_time
 def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None) -> pd.DataFrame:
     """Get the prediction data for a given task and filter the data based on the filter task and label."""
     session = Session()
@@ -87,6 +106,7 @@ def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None
         session.close()
 
 
+@log_time
 def get_freq(task: str, labels: list[str] = None) -> pd.DataFrame:
     """
     Get the frequency of the labels for a given task. If no labels are provided, return the frequency of all labels."""
@@ -116,6 +136,7 @@ def get_freq(task: str, labels: list[str] = None) -> pd.DataFrame:
         session.close()
 
 
+@log_time
 def get_pred(task: str) -> pd.DataFrame:
     """Get the prediction data for a given task."""
     session = Session()
@@ -129,6 +150,7 @@ def get_pred(task: str) -> pd.DataFrame:
         session.close()
 
 
+@log_time
 def get_pred_filtered(task: str, ids: list[int]) -> pd.DataFrame:
     """Get the prediction data for a given task and filter the data based on the paper IDs."""
     session = Session()
@@ -143,6 +165,7 @@ def get_pred_filtered(task: str, ids: list[int]) -> pd.DataFrame:
         session.close()
 
 
+@log_time
 def get_freq_grouped(task: str, group_task: str, labels: list[str] = None, ) -> pd.DataFrame:
     """Get the predictions where task is labels, group by group task and labels, then count the frequency. 
     The output is a dataframe with columns group_task, label, and Frequency."""
@@ -190,7 +213,7 @@ def get_freq_grouped(task: str, group_task: str, labels: list[str] = None, ) -> 
     finally:
         session.close()
 
-
+@log_time
 def get_ids(task: str = None, label: str = None) -> set[int]:
     """Get the ids of the papers that have a specific label for a given task."""
     session = Session()
@@ -224,6 +247,7 @@ def get_ids(task: str = None, label: str = None) -> set[int]:
             session.close()
 
 
+@log_time
 def get_all_tasks() -> list[str]:
     """Get all unique tasks from the predictions."""
     session = Session()
@@ -235,6 +259,7 @@ def get_all_tasks() -> list[str]:
         session.close()
 
 
+@log_time
 def get_all_labels(task: str) -> list[str]:
     """Get all unique labels for a given task."""
     session = Session()
@@ -247,6 +272,7 @@ def get_all_labels(task: str) -> list[str]:
         session.close()
 
 
+@log_time
 def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.DataFrame, list[int]]:
     """Get the frequency of IDs per year. Optionally filter by start and end year."""
     session = Session()
@@ -269,7 +295,7 @@ def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.Data
         columns={'id': 'Frequency', 'year': 'Year'})
     return frequency_df, ids
 
-
+@log_time
 def nr_studies():
     """Get the number of studies in the database."""
     session = Session()
