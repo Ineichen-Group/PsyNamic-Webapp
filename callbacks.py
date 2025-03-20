@@ -1,4 +1,6 @@
 import plotly.express as px
+import logging
+import time 
 
 from dash import callback_context, html, no_update, dcc
 from dash.dependencies import Input, Output, State, ALL
@@ -13,6 +15,19 @@ import pandas as pd
 
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def log_time(func):
+    """Decorator to log execution time of functions."""
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        duration = time.time() - start_time
+        logging.info(f"{func.__name__} executed in {duration:.4f} seconds")
+        return result
+    return wrapper
 
 
 def register_callbacks(app):
@@ -33,6 +48,7 @@ def register_time_view_callbacks(app):
         Input("start-year", "value"),
         Input("end-year", "value"),
     )
+    @log_time
     def update_time_view(start_year, end_year):
         df, ids = get_time_data(start_year=start_year, end_year=end_year)
 
@@ -63,6 +79,7 @@ def register_dual_task_view_callbacks(app):
             Input('task1-pie-graph', 'clickData'),
         ],
     )
+    @log_time
     def update_dual_task_view(dropdown1_value, dropdown2_value, click_data):
         if dropdown1_value == dropdown2_value:
             return dual_task_layout(task1=None, task2=None), "Choose two different tasks.", no_update, no_update, no_update, no_update
@@ -128,6 +145,7 @@ def register_studyview_callbacks(app):
               'index': ALL}, 'n_clicks'),
         State({'type': 'collapse', 'index': ALL}, 'is_open'),
     )
+    @log_time
     def toggle_collapse(n_clicks_list: list, is_open_list):
         ctx = callback_context
         if not ctx.triggered:
@@ -145,6 +163,7 @@ def register_pagination_callbacks(app):
     @app.callback(
         Output("studies-ag-grid", "dashGridOptions"),
         Input("page-size-dropdown", "value"),)
+    @log_time
     def update_page_size(selected_page_size):
         """
         Updates the AG Grid pagination page size dynamically.
@@ -172,6 +191,7 @@ def register_modal_callbacks(app):
         [Input("studies-display", "selectedRows")],
         prevent_initial_call=True
     )
+    @log_time
     def show_paper_details(selected_row_data):
         if not selected_row_data:
             return False, no_update, no_update, no_update, no_update
@@ -199,6 +219,7 @@ def register_download_csv_callback(app):
         State("studies-display", "rowData"),
         prevent_initial_call=True,
     )
+    @log_time
     def download_csv(n_clicks, row_data):
         current_data_time = pd.Timestamp.now().strftime("%Y-%m-%d_%H-%M-%S")
         if not row_data:
