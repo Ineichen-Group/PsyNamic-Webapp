@@ -1,5 +1,6 @@
 import dash
 import dash_bootstrap_components as dbc
+import os
 from dash import html, dcc, State
 
 from pages.about import about_layout
@@ -75,4 +76,5 @@ def display_page(pathname: str):
 register_callbacks(app)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    port = int(os.getenv('PORT', 8050))
+    app.run_server(debug=True, host='0.0.0.0', port=port)
