@@ -197,3 +197,5 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,python
 __pycache__/callbacks.cpython-312.pyc
+
+!settings.py

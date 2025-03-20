@@ -12,8 +12,24 @@ from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_vi
 from components.layout import header_layout, footer_layout, filter_component, studies_display, content_layout
 from callbacks import register_callbacks
 
+from sqlalchemy import create_engine
+from settings import DATABASE_URL
 
-# Initialize the Dash app with suppress_callback_exceptions=True
+# Initialize the Database Connection
+engine = create_engine(DATABASE_URL)
+
+# Function to check database connection
+def test_database_connection():
+    try:
+        with engine.connect() as connection:
+            result = connection.execute("SELECT 'Database Connected!'")
+            print(result.fetchone()[0])  # Should print "Database Connected!"
+    except Exception as e:
+        print("Database Connection Failed:", e)
+
+test_database_connection()  # Test connection
+
+# Dash App Initialization
 app = dash.Dash(__name__, external_stylesheets=[
                 dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME], suppress_callback_exceptions=True)
 
@@ -23,7 +39,6 @@ app.layout = html.Div([
     html.Div(id='page-content', className='mx-5 my-2'),
     footer_layout()
 ])
-
 
 @app.callback(dash.Output('page-content', 'children'),
               [dash.Input('url', 'pathname')])
@@ -58,7 +73,6 @@ def display_page(pathname: str):
             return content_layout([dosages_view()])
 
 register_callbacks(app)
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
