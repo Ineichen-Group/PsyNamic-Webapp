@@ -46,9 +46,9 @@ app.layout = html.Div([
               [dash.Input('url', 'pathname')])
 def display_page(pathname: str):
     if pathname == '/about':
-        return about_layout()
+        return content_layout(about_layout())
     elif pathname == '/contact':
-        return contact_layout()
+        return content_layout(contact_layout())
     elif pathname.startswith('/explore'):
         filtered_display = studies_display()
         search_filter = filter_component()  
@@ -73,6 +73,8 @@ def display_page(pathname: str):
             return content_layout([study_protocol_view()])
         elif pathname == '/insights/dosage':
             return content_layout([dosages_view()])
+    else:
+        return content_layout(home_layout())
 
 register_callbacks(app)
 

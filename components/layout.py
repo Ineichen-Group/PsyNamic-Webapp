@@ -76,7 +76,7 @@ def footer_layout():
     return html.Footer(
         dbc.Container(
             html.Div(
-                "Copyright © 2024. STRIDE-Lab, Center for Reproducible Science, University of Zurich",
+                "Copyright © 2025. STRIDE-Lab, Center for Reproducible Science, University of Zurich",
                 className="text-center"
             ),
             className="py-3"
@@ -95,7 +95,9 @@ def content_layout(list_of_children: list, id: str = "content"):
     return dbc.Container(
         list_of_children,
         class_name="py-4",
-        id=id
+        id=id,
+        style={"minHeight": "82vh"},
+        
     )
 
 

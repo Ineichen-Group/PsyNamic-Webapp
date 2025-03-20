@@ -7,6 +7,17 @@ from components.graphs import bar_chart
 from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, get_freq
 from callbacks import rgb_to_hex  # TODO: move this to colors
 
+insight_views = [
+    ("Evidence Strength", "/insights/evidence-strength", "Understand the robustness of the scientific evidence."),
+    ("Efficacy & Safety", "/insights/efficacy-safety", "Compare how well treatments work and their safety profiles."),
+    ("Long-term Effects", "/insights/long-term", "Explore the potential long-term impacts of interventions."),
+    ("Sex Bias", "/insights/sex-bias", "See if research fairly represents all sexes."),
+    ("Study Participation", "/insights/participants", "Discover who is included in clinical studies."),
+    ("Study Protocols", "/insights/study-protocols", "Analyze how studies are designed and conducted."),
+    ("Dosages", "/insights/dosages", "Investigate dosage patterns and their implications.")
+]
+
+
 
 def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], study_tags: dict[str, list[html.Div]] = None) -> html.Div:
     return html.Div([

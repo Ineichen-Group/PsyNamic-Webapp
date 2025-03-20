@@ -35,3 +35,22 @@
 .ner-text {
     font-weight: normal;
 }
+
+.card-hover {
+    cursor: pointer; 
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    text-align: center; 
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+.card-hover:hover {
+    background-color: #e0e0e0 !important;  /* Slightly darker gray */
+    transform: scale(1.02); /* Slight zoom effect */
+}
+
+a, a:hover, a:focus, a:visited {
+    text-decoration: none !important;
+    color: inherit !important;
+}
