@@ -33,6 +33,7 @@ test_database_connection()  # Test connection
 # Dash App Initialization
 app = dash.Dash(__name__, external_stylesheets=[
                 dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME], suppress_callback_exceptions=True)
+server = app.server
 
 app.layout = html.Div([
     header_layout(),
