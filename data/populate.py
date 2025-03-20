@@ -154,7 +154,7 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
             year=row['year'],
             authors='',
             link_to_fulltext='',
-            link_to_pubmed='',
+            link_to_pubmed=row['pubmed_url'],
             retrieval_id=batch_id
         )
         session.add(paper)

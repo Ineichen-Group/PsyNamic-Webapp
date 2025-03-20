@@ -225,6 +225,12 @@ def paper_details_modal():
             dbc.ModalHeader(dbc.ModalTitle(id="paper-title")),
             dbc.ModalBody(
                 [
+                    html.Span("Link to PubMed: "),
+                    html.A(
+                        id="paper-link",
+                        target="_blank",
+                        href="paper-link",
+                    ),
                     html.P(id="paper-abstract", className="abstract-text"),
                     filter_component(
                         comp_id='active-filters-modal', label="Tags:"),

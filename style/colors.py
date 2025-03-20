@@ -6,14 +6,24 @@ import numpy as np
 
 SECONDARY_COLOR = '#c7c7c7'
 TASK2COLOR = {
-        "Study Type": sequential.Greens,
-        "Substances": sequential.Purples,
-        "Condition": sequential.Oranges,
-        "Study Purpose": sequential.Blues,
-        "Data Type": sequential.Reds,
-        "Sex of Participants": sequential.Magenta,
-        "Number of Participants": sequential.Bluered,
-    }
+    "Study Type": sequential.Greens,
+    "Study Purpose": sequential.Burg,
+    "Study Control": sequential.Peach,
+    "Data Type": sequential.Reds,
+    "Data Collection": sequential.Mint,
+    "Number of Participants": sequential.Bluered,
+    "Sex of Participants": sequential.Magenta,
+    "Age of Participants": sequential.Teal,
+    "Substances": sequential.Purples,
+    "Application Form": sequential.Burgyl,
+    "Regimen": sequential.Pinkyl,
+    "Setting": sequential.Bluyl,
+    "Substance Naivety": sequential.Darkmint,
+    "Condition": sequential.Oranges,
+    "Outcomes": sequential.PuBu,
+    "Clinical Trial Phase": sequential.PuBuGn,
+    "Study Concluesion": sequential.PuRd,
+}
 
 # s. https://plotly.com/python/builtin-colorscales/
 
@@ -109,7 +119,7 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
 
     if task not in TASK2COLOR:
         raise ValueError(f"Unsupported category: {task}")
-    
+
     palette_start = TASK2COLOR[task][0]
     palette_end = TASK2COLOR[task][-1]
 
@@ -136,7 +146,7 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
     return {list_labels[i]: selected_colors[i] for i in range(n)}
 
 
-def get_color(task:str, type: str = 'rgb') -> str:
+def get_color(task: str, type: str = 'rgb') -> str:
     if type == 'hex':
         return rgb_to_hex(TASK2COLOR[task][-1])
     return TASK2COLOR[task][0]

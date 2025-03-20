@@ -61,18 +61,16 @@ def get_studies_details(study_tags: dict[str, list[html.Div]] = None, ids: list[
         session.close()
 
 
-def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None, threshold: float = 0.1) -> pd.DataFrame:
+def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None) -> pd.DataFrame:
     """Get the prediction data for a given task and filter the data based on the filter task and label."""
     session = Session()
     try:
         subquery = session.query(Prediction.paper_id).filter(
             Prediction.task == filter_task,
             Prediction.label == filter_task_label,
-            Prediction.probability >= threshold
         ).subquery()
         query = session.query(Prediction.label, func.count(Prediction.id).label('Frequency')).filter(
             Prediction.task == task,
-            Prediction.probability >= threshold
         )
 
         query = query.filter(Prediction.paper_id.in_(subquery))
@@ -86,7 +84,7 @@ def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None
         session.close()
 
 
-def get_freq(task: str, labels: list[str] = None, threshold: float = 0.1) -> pd.DataFrame:
+def get_freq(task: str, labels: list[str] = None) -> pd.DataFrame:
     """
     Get the frequency of the labels for a given task. If no labels are provided, return the frequency of all labels."""
     session = Session()
@@ -97,7 +95,6 @@ def get_freq(task: str, labels: list[str] = None, threshold: float = 0.1) -> pd.
             func.count(Prediction.id).label('Frequency')
         ).filter(
             Prediction.task == task,
-            Prediction.probability >= threshold
         )
         if labels:
             query = query.filter(Prediction.label.in_(labels))
@@ -116,13 +113,12 @@ def get_freq(task: str, labels: list[str] = None, threshold: float = 0.1) -> pd.
         session.close()
 
 
-def get_pred(task: str, threshold: float = 0.1) -> pd.DataFrame:
+def get_pred(task: str) -> pd.DataFrame:
     """Get the prediction data for a given task."""
     session = Session()
     try:
         query = session.query(Prediction).filter(
             Prediction.task == task,
-            Prediction.probability >= threshold
         )
         result = pd.read_sql(query.statement, session.bind)
         return result
@@ -130,14 +126,13 @@ def get_pred(task: str, threshold: float = 0.1) -> pd.DataFrame:
         session.close()
 
 
-def get_pred_filtered(task: str, ids: list[int], threshold: float = 0.1) -> pd.DataFrame:
+def get_pred_filtered(task: str, ids: list[int]) -> pd.DataFrame:
     """Get the prediction data for a given task and filter the data based on the paper IDs."""
     session = Session()
     try:
         query = session.query(Prediction).filter(
             Prediction.task == task,
             Prediction.paper_id.in_(ids),
-            Prediction.probability >= threshold
         )
         result = pd.read_sql(query.statement, session.bind)
         return result
@@ -145,7 +140,7 @@ def get_pred_filtered(task: str, ids: list[int], threshold: float = 0.1) -> pd.D
         session.close()
 
 
-def get_freq_grouped(task: str, group_task: str, threshold: float = 0.1, labels: list[str] = None, ) -> pd.DataFrame:
+def get_freq_grouped(task: str, group_task: str, labels: list[str] = None, ) -> pd.DataFrame:
     """Get the predictions where task is labels, group by group task and labels, then count the frequency. 
     The output is a dataframe with columns group_task, label, and Frequency."""
     session = Session()
@@ -157,7 +152,7 @@ def get_freq_grouped(task: str, group_task: str, threshold: float = 0.1, labels:
                 Prediction.paper_id.label("paper_id"),
                 Prediction.label.label(group_task)
             )
-            .filter(Prediction.task == group_task, Prediction.probability > threshold)
+            .filter(Prediction.task == group_task)
             .subquery()
         )
 
@@ -178,7 +173,7 @@ def get_freq_grouped(task: str, group_task: str, threshold: float = 0.1, labels:
                 func.count(Prediction.id).label("Frequency")
             )
             .join(grouping_query, grouping_query.c.paper_id == Prediction.paper_id)
-            .filter(Prediction.task == task, Prediction.probability > threshold)
+            .filter(Prediction.task == task)
             .group_by(grouping_query.c[group_task], label_case)
         )
 
@@ -193,7 +188,7 @@ def get_freq_grouped(task: str, group_task: str, threshold: float = 0.1, labels:
         session.close()
 
 
-def get_ids(task: str = None, label: str = None, threshold: float = 0.1) -> set[int]:
+def get_ids(task: str = None, label: str = None) -> set[int]:
     """Get the ids of the papers that have a specific label for a given task."""
     session = Session()
     if task is None and label is None:
@@ -207,8 +202,7 @@ def get_ids(task: str = None, label: str = None, threshold: float = 0.1) -> set[
     elif task is not None:
         try:
             query = session.query(Prediction.paper_id).filter(
-                Prediction.task == task,
-                Prediction.probability >= threshold
+                Prediction.task == task
             )
             if label is not None:
                 query = query.filter(Prediction.label == label)
@@ -220,9 +214,7 @@ def get_ids(task: str = None, label: str = None, threshold: float = 0.1) -> set[
         try:
             query = session.query(Prediction.paper_id).filter(
                 Prediction.task == task,
-                Prediction.label == label,
-                Prediction.probability >= threshold
-            )
+                Prediction.label == label)
             ids = [item.paper_id for item in query.all()]
             return set(ids)
         finally:

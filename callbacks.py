@@ -73,6 +73,7 @@ def register_dual_task_view_callbacks(app):
 
         # Default empty values
         pie_chart, bar_chart, filter_div, study_data = no_update, no_update, no_update, no_update
+        nr_studies = 0
 
         # If click event exists, update the charts & filters
         if click_data:
@@ -103,8 +104,9 @@ def register_dual_task_view_callbacks(app):
 
             # Update study display
             study_data = get_studies_details(study_tags)
+            nr_studies = len(study_data) if study_data else 0
 
-        return dual_task_layout(dropdown1_value, dropdown2_value), "", pie_chart, bar_chart, filter_div, study_data, len(study_data)
+        return dual_task_layout(dropdown1_value, dropdown2_value), "", pie_chart, bar_chart, filter_div, study_data, nr_studies
 
 
 def reset_click_data(app):
@@ -163,6 +165,7 @@ def register_modal_callbacks(app):
     @app.callback(
         [Output("paper-modal", "is_open"),
          Output("paper-title", "children"),
+         Output("paper-link", "children"),
          Output("paper-abstract", "children"),
          Output("active-filters-modal", "children")
          ],
@@ -171,10 +174,10 @@ def register_modal_callbacks(app):
     )
     def show_paper_details(selected_row_data):
         if not selected_row_data:
-            return False, no_update, no_update, no_update
+            return False, no_update, no_update, no_update, no_update
         ctx = callback_context
         if ctx.triggered_id == "close-modal":
-            return False, no_update, no_update, no_update
+            return False, no_update, no_update, no_update, no_update
 
         # Ensure a single row is selected
         if selected_row_data and len(selected_row_data) == 1:
@@ -184,7 +187,7 @@ def register_modal_callbacks(app):
 
             buttons = [filter_button(tag['color'], tag['label'], tag['task'])
                        for tag in paper['tags']]
-            return True, title, abstract, buttons
+            return True, title, paper['link_to_pubmed'], abstract,  buttons
 
         return no_update  # No update if no row or multiple rows selected
 
