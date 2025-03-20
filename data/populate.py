@@ -90,8 +90,12 @@ def create_prediction_tokens(token_id, prediction_id, weight):
 def populate_db(prediction_file: str, studies_file: str, studies_id_column: Optional[str] = 'id'):
 
     # Using the settings.py file, create a connection to the database
-    DATABASE_URL = f'postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{
-        DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}'
+
+    DATABASE_URL = os.getenv(
+        "DATABASE_URL",
+        "postgresql://{0}:{1}@{2}:{3}/{4}".format(
+            DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME)
+    )
     engine = create_engine(DATABASE_URL, echo=False)
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
@@ -113,7 +117,7 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
     # Check if studies_id_column is in the studies_data
     if studies_id_column not in studies_data.columns:
         raise ValueError(f"Studies file does not contain column '{studies_id_column
-                         }'. Please specify the correct column name with the --studies_id_column argument.")
+                                                                  }'. Please specify the correct column name with the --studies_id_column argument.")
 
     nr_studies = len(studies_data)
 
@@ -239,4 +243,5 @@ def init_args_parser():
 if __name__ == '__main__':
     parser = init_args_parser()
     args = parser.parse_args()
-    populate_db(args.predictions_file, args.studies_file, args.studies_id_column)
+    populate_db(args.predictions_file, args.studies_file,
+                args.studies_id_column)

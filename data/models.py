@@ -1,3 +1,4 @@
+from settings import *
 from sqlalchemy import create_engine, Column, Integer, String, Text, Float, Boolean, ForeignKey, TIMESTAMP, Interval
 from sqlalchemy.orm import relationship, declarative_base
 from datetime import datetime
@@ -8,7 +9,6 @@ import os
 parent_folder_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, parent_folder_path)
-from settings import *
 
 # Base class for all models
 Base = declarative_base()
@@ -139,9 +139,12 @@ class PredictionToken(Base):
 
 def init_db():
     # Names from the settings are used
-    DATABASE_URL = f'postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{
-        DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}'
 
+    DATABASE_URL = os.getenv(
+        "DATABASE_URL",
+        "postgresql://{0}:{1}@{2}:{3}/{4}".format(
+            DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME)
+    )
     engine = create_engine(DATABASE_URL, echo=True)
 
     Base.metadata.create_all(engine)
