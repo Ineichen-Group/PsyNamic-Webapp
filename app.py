@@ -1,6 +1,8 @@
 import dash
 import dash_bootstrap_components as dbc
 import os
+import sys
+import logging
 from dash import html, dcc, State
 
 from pages.about import about_layout
@@ -13,22 +15,23 @@ from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_vi
 from components.layout import header_layout, footer_layout, filter_component, studies_display, content_layout
 from callbacks import register_callbacks
 
-from sqlalchemy import create_engine
-from settings import DATABASE_URL
 
-# Initialize the Database Connection
-engine = create_engine(DATABASE_URL)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,  # Change to WARNING or ERROR if too verbose
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout),  # Log to terminal
+        logging.FileHandler("app.log", mode="a"),  # Log to file
+    ],
+)
 
-# Function to check database connection
-def test_database_connection():
-    try:
-        with engine.connect() as connection:
-            result = connection.execute("SELECT 'Database Connected!'")
-            print(result.fetchone()[0])  # Should print "Database Connected!"
-    except Exception as e:
-        print("Database Connection Failed:", e)
+logging.getLogger("sqlalchemy").setLevel(logging.WARNING)
+logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+logging.getLogger("sqlalchemy.engine.Engine").setLevel(logging.WARNING)
+logging.getLogger("sqlalchemy.dialects").setLevel(logging.WARNING)
+logging.getLogger("sqlalchemy.orm").setLevel(logging.WARNING)
 
-test_database_connection()  # Test connection
 
 # Dash App Initialization
 app = dash.Dash(__name__, external_stylesheets=[

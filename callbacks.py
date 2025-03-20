@@ -16,16 +16,13 @@ import pandas as pd
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 def log_time(func):
     """Decorator to log execution time of functions."""
     def wrapper(*args, **kwargs):
         start_time = time.time()
         result = func(*args, **kwargs)
         duration = time.time() - start_time
-        logging.info(f"{func.__name__} executed in {duration:.4f} seconds")
+        logging.info(f"{func.__name__} callback executed in {duration:.4f} seconds")
         return result
     return wrapper
 
