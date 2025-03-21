@@ -2,7 +2,12 @@ var dagcomponentfuncs = (window.dashAgGridComponentFunctions = window.dashAgGrid
 
 dagcomponentfuncs.Tag = function (props) {
     const tags = props.value;
-    console.log(props);
+
+    // If no tags, return empty div
+    if (!tags || tags.length === 0) {
+        return React.createElement('div', {}); // Return an empty div if no tags
+    }
+
     return React.createElement(
         'div',
         {
@@ -16,24 +21,24 @@ dagcomponentfuncs.Tag = function (props) {
             const { task, label, color } = tagData;
 
             return React.createElement(
-            'span',
-            {
-                className: 'badge',
-                style: {
-                    backgroundColor: color,
-                    cursor: 'pointer',
-                    padding: '8px 13px',  // Tag like appearance
-                    marginRight: '5px',
-                    borderRadius: '20px',
-                    display: 'inline-block',
-                    textAlign: 'center',
+                'span',
+                {
+                    className: 'badge',
+                    style: {
+                        backgroundColor: color,
+                        cursor: 'pointer',
+                        padding: '8px 13px',  // Tag like appearance
+                        marginRight: '5px',
+                        borderRadius: '20px',
+                        display: 'inline-block',
+                        textAlign: 'center',
+                    },
+                    'data-toggle': 'tooltip',
+                    'data-placement': 'top',
+                    title: `${task}: ${label}`  // Tooltip
                 },
-                'data-toggle': 'tooltip',
-                'data-placement': 'top',
-                title: `${task}: ${label}`  // Tooltip
-            },
-            ''  // No text inside the tag itself
-        )
-    })
+                ''  // No text inside the tag itself
+            );
+        })
     );
 };

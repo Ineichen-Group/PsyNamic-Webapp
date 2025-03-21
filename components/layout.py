@@ -175,27 +175,24 @@ def studies_display(study_tags: dict[int, list[html.Div]] = None, last_update: s
     """
     Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
     """
-
-    studies = get_studies_details(study_tags)
+    # studies, nr = get_studies_details(study_tags)
     total_studies = nr_studies()
 
-    return study_grid(studies, total_studies, last_update)
+    return study_grid(total_studies, last_update, study_tags)
 
 
 def study_grid(
-        studies: list[dict],
-        total_studies: int,
+        nr_total_studies: int,
+        nr_filtered_studies: int,
         last_update: str,
         tags: bool = True,
-        id: str = "studies-display-container",
+        id: str = "studies-display",
         default_sort_column: str = "year",
-        default_sort_order: str = "desc"):  # Added sort order parameter
+        default_sort_order: str = "desc"):  
 
     columns = [
-        {"field": "title", "headerName": "Title",
-            "filter": True, "sortable": True, "flex": 1},
-        {"field": "year", "headerName": "Year",
-            "filter": True, "sortable": True, "width": 100},
+        {"field": "title", "headerName": "Title", "filter": True, "sortable": True, "flex": 1},
+        {"field": "year", "headerName": "Year", "filter": True, "sortable": True, "width": 100},
         {"field": "abstract", "headerName": "Abstract", "filter": True,
          "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2}
     ]
@@ -211,7 +208,6 @@ def study_grid(
         })
 
     ag_grid_options = {
-        "rowModelType": "serverSide",
         "pagination": True,
         "paginationPageSize": 20,
         "rowSelection": "single",
@@ -223,27 +219,21 @@ def study_grid(
         "sortModel": [{"colId": default_sort_column, "sort": default_sort_order}],
     }
 
-    sorted_studies = sorted(studies, key=lambda x: x.get(
-        default_sort_column, ""), reverse=(default_sort_order == "desc"))
-
     return html.Div(
         [
             html.Div(
                 children=[
                     html.Span("Found Studies:", className="d-inline",
                               style={"marginRight": "0.2rem"}),
-                    html.Span(children=str(len(studies)), id="studies-count",
-                              className="d-inline", style={"marginRight": "0.2rem"}),
-                    html.Span(f"(out of {total_studies})",
-                              className="d-inline"),
+                    html.Span(f"{nr_filtered_studies} (out of {nr_total_studies})", className="d-inline"),
                 ],
                 className="d-flex"
             ),
 
             dag.AgGrid(
-                id="studies-display",
+                id=id,
                 columnDefs=columns,
-                rowData=sorted_studies,
+                rowModelType="infinite",
                 dashGridOptions=ag_grid_options,
                 style={"height": "500px", "width": "100%"},
             ),
@@ -258,8 +248,8 @@ def study_grid(
             ),
             paper_details_modal(),
         ],
-        id=id,
     )
+
 
 
 def filter_button(color: str, label: str, task: str, editable: bool = False):

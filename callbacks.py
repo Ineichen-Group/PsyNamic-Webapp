@@ -1,6 +1,6 @@
 import plotly.express as px
 import logging
-import time 
+import time
 
 from dash import callback_context, html, no_update, dcc
 from dash.dependencies import Input, Output, State, ALL
@@ -8,14 +8,13 @@ from dash.dependencies import Input, Output, State, ALL
 from pages.explore.dual_task import get_dual_task_data, create_pie_chart, create_bar_chart, dual_task_layout
 from components.layout import filter_button, tag_component
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
-from data.queries import get_studies_details, get_time_data
+from data.queries import get_studies_details, get_time_data, get_studies_details
 import pandas as pd
-
-
 
 
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
+
 
 def log_time(func):
     """Decorator to log execution time of functions."""
@@ -23,7 +22,8 @@ def log_time(func):
         start_time = time.time()
         result = func(*args, **kwargs)
         duration = time.time() - start_time
-        logging.info(f"{func.__name__} callback executed in {duration:.4f} seconds")
+        logging.info(
+            f"{func.__name__} callback executed in {duration:.4f} seconds")
         return result
     return wrapper
 
@@ -32,7 +32,7 @@ def register_callbacks(app):
     register_time_view_callbacks(app)
     register_studyview_callbacks(app)
     reset_click_data(app)
-    register_dual_task_view_callbacks(app)
+    # register_dual_task_view_callbacks(app)
     # register_filter(app)
     register_pagination_callbacks(app)
     register_modal_callbacks(app)
@@ -42,21 +42,25 @@ def register_callbacks(app):
 def register_time_view_callbacks(app):
     @app.callback(
         Output("time-graph", "figure"),
+        # Update the Ag-Grid with study data
         Output("time-studies-display", "rowData"),
         Input("start-year", "value"),
         Input("end-year", "value"),
     )
     @log_time
     def update_time_view(start_year, end_year):
+        # Fetch the time data (e.g., number of publications per year)
         df, ids = get_time_data(start_year=start_year, end_year=end_year)
 
-        # Create updated figure
-        fig = px.bar(df, x="Year", y="Frequency", title="Frequency of IDs per Year", labels={
-                     "Frequency": "Frequency"})
+        # Create the graph figure
+        fig = px.bar(df, x="Year", y="Frequency", title="Frequency of Publications per Year", labels={
+            "Frequency": "Frequency"
+        })
 
-        # Fetch study details
+        # Fetch the corresponding study details
         studies = get_studies_details(ids=ids)
 
+        # Return the updated graph figure and the studies for the grid
         return fig, studies
 
 
@@ -158,29 +162,100 @@ def register_studyview_callbacks(app):
 
 
 def register_pagination_callbacks(app):
-    @app.callback(
-        Output("studies-ag-grid", "dashGridOptions"),
-        Input("page-size-dropdown", "value"),
-    )
-    @log_time
-    def update_page_size(selected_page_size):
-        """
-        Updates the AG Grid pagination page size dynamically.
-        """
-        if not selected_page_size:
-            return no_update
+    # @app.callback(
+    #     Output("studies-ag-grid", "dashGridOptions"),
+    #     Input("page-size-dropdown", "value"),
+    # )
+    # @log_time
+    # def update_page_size(selected_page_size):
+    #     """
+    #     Updates the AG Grid pagination page size dynamically.
+    #     """
+    #     if not selected_page_size:
+    #         return no_update
 
-        grid_options = {
-            "pagination": True,
-            "paginationPageSize": selected_page_size,
-            "groupDefaultExpanded": 0,
-            "autoGroupColumnDef": {
-                "headerName": "Abstract",
-                "field": "abstract",
-                "cellRenderer": "agGroupCellRenderer",
-            },
+    #     grid_options = {
+    #         "pagination": True,
+    #         "paginationPageSize": selected_page_size,
+    #         "groupDefaultExpanded": 0,
+    #         "autoGroupColumnDef": {
+    #             "headerName": "Abstract",
+    #             "field": "abstract",
+    #             "cellRenderer": "agGroupCellRenderer",
+    #         },
+    #     }
+    #     return grid_options
+
+    # @app.callback(
+    #     Output("study-view-test", "rowData"),
+    #     Output("studies-count", "children"),
+    #     Input("studies-display", "dashGridOptions"),
+    #     prevent_initial_call=False  # Ensure callback is triggered on initial load as well
+    # )
+    # def fetch_studies(grid_options):
+    #     """
+    #     Fetches paginated, sorted, and filtered studies dynamically.
+    #     """
+    #     # Ensure callback is triggered even on the initial page load
+    #     if not grid_options:
+    #         # Load initial data if grid options are not provided
+    #         grid_options = {}  # or set to default options, like an empty dictionary
+
+    #     # Extract pagination details (defaults to 0 and 20 if no options provided)
+    #     start_row = grid_options.get("startRow", 0)
+    #     end_row = grid_options.get("endRow", 20)
+
+    #     # Extract sorting details (defaults to sorting by 'year' in descending order)
+    #     sort_model = grid_options.get("sortModel", [{"colId": "year", "sort": "desc"}])
+
+    #     # Extract filters (empty dict if no filters)
+    #     filter_model = grid_options.get("filterModel", {})
+
+    #     # Fetch the data based on pagination, sorting, and filters
+    #     studies, total_filtered = get_studies_details_new(
+    #         start_row=start_row,
+    #         end_row=end_row,
+    #         sort_model=sort_model,
+    #         filter_model=filter_model
+    #     )
+
+    #     # Return data to populate the grid and update the count dynamically
+    #     return studies, str(total_filtered)
+
+    @app.callback(
+        Output("studies-display", "getRowsResponse"),
+        Input("studies-display", "getRowsRequest"),
+        State("filtered-study-ids", "data"),
+        State("filter-tags", "data"),
+        prevent_initial_call=True  # Trigger on initial load
+    )
+    def fetch_studies_infinite(request, filtered_ids, tags):
+        if not request:
+            return {}
+        start_row = request["startRow"]
+        end_row = request["endRow"]
+
+        # Extract sorting and filtering details from request
+        sort_model = request.get(
+            "sortModel", [{"colId": "year", "sort": "desc"}])
+        filter_model = request.get("filterModel", {})
+
+        # Fetch the paginated data based on the start and end rows
+        studies = get_studies_details(
+            ids=filtered_ids,
+            start_row=start_row,
+            end_row=end_row,
+            sort_model=sort_model,
+            filter_model=filter_model,
+            tags=tags
+        )
+
+        # Return the fetched data and total row count for pagination
+        return {
+            "rowData": studies,  # List of study data rows
+            # Total number of rows (for pagination)
+            "rowCount": len(filtered_ids)
         }
-        return grid_options
 
 
 def register_modal_callbacks(app):
@@ -214,7 +289,7 @@ def register_modal_callbacks(app):
             task_dict = {
                 'task': '',
                 'buttons': [],
-                'model': '', 
+                'model': '',
             }
 
             for tag in paper['tags']:
@@ -232,7 +307,8 @@ def register_modal_callbacks(app):
                     }
                 else:
                     # If the task is the same as the previous one, add to the existing task_dict
-                    task_dict['buttons'].append(filter_button(tag['color'], tag['label'], tag['task']))
+                    task_dict['buttons'].append(filter_button(
+                        tag['color'], tag['label'], tag['task']))
 
             # After the loop, append the last task_dict if it has data
             if task_dict['task']:
@@ -254,7 +330,7 @@ def register_download_csv_callback(app):
     def download_csv(n_clicks, row_data):
         current_data_time = pd.Timestamp.now().strftime("%Y-%m-%d_%H-%M-%S")
         if not row_data:
-            return no_update 
+            return no_update
         refactored_data = []
         tasks = set(t['task'] for t in row_data[0]['tags'])
         for row in row_data:
@@ -265,7 +341,7 @@ def register_download_csv_callback(app):
                 row[tag['task']].append(tag['label'])
             row.pop('tags')
             refactored_data.append(row)
-        
+
         df = pd.DataFrame(refactored_data)
-         
+
         return dcc.send_data_frame(df.to_csv, f"psynamic_data_{current_data_time}.csv", index=False)
