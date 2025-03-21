@@ -97,28 +97,77 @@ def content_layout(list_of_children: list, id: str = "content"):
         class_name="py-4",
         id=id,
         style={"minHeight": "82vh"},
-        
+
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = [], comp_id: str = "active-filters", label="Active Filters:"):
-    return html.Div(
-        children=[
+def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None):
+    children = [
+        dbc.Row(
+            className="mt-2 mb-2",
+            children=[
+                dbc.Col(
+                    html.Span("Active Filters"),
+                    width=2,
+                    className="text-start text-secondary",
+                ),
+                dbc.Col(
+                    id="active-filters",
+                    children=filter_buttons,
+                    width=10,
+                ),
+            ],
+        )
+    ]
+
+    if info_buttons:
+        children.append(
             dbc.Row(
-                className="d-flex align-items-center mt-2 mb-2",
+                className="mt-2 mb-2",
                 children=[
                     dbc.Col(
-                        html.Span(label),
-                        width="auto",
+                        html.Span("Info"),
+                        width=2,
+                        className="text-start text-secondary",
                     ),
                     dbc.Col(
-                        id=comp_id,
-                        children=filter_buttons,
-                        width="auto",
+                        id="info-buttons",
+                        children=info_buttons,
+                        width=10,
                     ),
                 ],
-            ),
-        ],
+            )
+        )
+
+    return html.Div(
+        children=children,
+    )
+
+
+def tag_component(tags: list[dict]):
+    rows = [dbc.Row(
+            className="d-flex align-items-center mt-2 mb-2",
+            children=[
+                dbc.Col(
+                    html.Span([tag['task'], ':']),
+                    width="auto",
+                ),
+                dbc.Col(
+                    id="active-filters",
+                    children=tag['buttons'],
+                    width="auto",
+                ),
+                dbc.Col(
+                    # make it secondary color
+                    html.Span(['Predicted by ', tag['model']],
+                              className="text-secondary"),
+                    width="auto",
+                ),
+            ],
+            )
+            for tag in tags]
+    return html.Div(
+        children=rows,
     )
 
 
@@ -126,69 +175,90 @@ def studies_display(study_tags: dict[int, list[html.Div]] = None, last_update: s
     """
     Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
     """
-   
+
     studies = get_studies_details(study_tags)
     total_studies = nr_studies()
+
+    return study_grid(studies, total_studies, last_update)
+
+
+def study_grid(
+        studies: list[dict],
+        total_studies: int,
+        last_update: str,
+        tags: bool = True,
+        id: str = "studies-display-container",
+        default_sort_column: str = "year",
+        default_sort_order: str = "desc"):  # Added sort order parameter
+
+    columns = [
+        {"field": "title", "headerName": "Title",
+            "filter": True, "sortable": True, "flex": 1},
+        {"field": "year", "headerName": "Year",
+            "filter": True, "sortable": True, "width": 100},
+        {"field": "abstract", "headerName": "Abstract", "filter": True,
+         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2}
+    ]
+
+    if tags:
+        columns.append({
+            "headerName": "Tags",
+            "field": "tags",
+            "filter": False,
+            "sortable": False,
+            "width": 200,
+            "cellRenderer": "Tag",
+        })
+
     ag_grid_options = {
         "rowModelType": "serverSide",
         "pagination": True,
         "paginationPageSize": 20,
         "rowSelection": "single",
         "cacheBlockSize": 20,
+        "defaultColDef": {
+            "sortable": True,
+            "resizable": True,
+        },
+        "sortModel": [{"colId": default_sort_column, "sort": default_sort_order}],
     }
+
+    sorted_studies = sorted(studies, key=lambda x: x.get(
+        default_sort_column, ""), reverse=(default_sort_order == "desc"))
 
     return html.Div(
         [
             html.Div(
                 children=[
-                    html.Span("Found Studies:", className="d-inline", style={"marginRight": "0.2rem"}),
-                    html.Span(children=str(len(studies)), id="studies-count", className="d-inline", style={"marginRight": "0.2rem"}),
-                    html.Span(f"(out of {total_studies})", className="d-inline"),
+                    html.Span("Found Studies:", className="d-inline",
+                              style={"marginRight": "0.2rem"}),
+                    html.Span(children=str(len(studies)), id="studies-count",
+                              className="d-inline", style={"marginRight": "0.2rem"}),
+                    html.Span(f"(out of {total_studies})",
+                              className="d-inline"),
                 ],
                 className="d-flex"
             ),
 
-            # AG Grid display for studies
             dag.AgGrid(
                 id="studies-display",
-                columnDefs=[
-                    {"field": "title", "headerName": "Title", "filter": True, "flex": 1},
-                    {"field": "year", "headerName": "Year", "filter": True, "width": 100},
-                    {
-                        "field": "abstract",
-                        "headerName": "Abstract",
-                        "filter": True,
-                        "cellStyle": {"whiteSpace": "pre-line"},
-                        "flex": 2,
-                    },
-                    {
-                        "headerName": "Tags",
-                        "field": "tags",
-                        "filter": False,
-                        "sortable": False,
-                        "width": 200,
-                        "cellRenderer": "Tag",
-                    },
-                ],
-                rowData=studies,
+                columnDefs=columns,
+                rowData=sorted_studies,
                 dashGridOptions=ag_grid_options,
-                defaultColDef={
-                    "sortable": True,
-                    "resizable": True,
-                },
                 style={"height": "500px", "width": "100%"},
             ),
 
-            dbc.Button("Download CSV", id="download-csv-button", color="primary", className="mt-3"),
+            dbc.Button("Download CSV", id="download-csv-button",
+                       color="primary", className="mt-3"),
             dcc.Download(id="download-csv"),
 
-            # Display last data update
             dbc.Row(
-                children=[html.Span(f'Last data update: {last_update}', className="d-flex justify-content-center")]
+                children=[html.Span(
+                    f'Last data update: {last_update}', className="d-flex justify-content-center")]
             ),
             paper_details_modal(),
         ],
-        id="studies-display-container",
+        id=id,
     )
 
 
@@ -233,8 +303,7 @@ def paper_details_modal():
                         href="paper-link",
                     ),
                     html.P(id="paper-abstract", className="abstract-text"),
-                    filter_component(
-                        comp_id='active-filters-modal', label="Tags:"),
+                    html.Div(id='modal-tags'),
                 ]
             ),
         ],

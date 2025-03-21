@@ -19,12 +19,12 @@ insight_views = [
 
 
 
-def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], study_tags: dict[str, list[html.Div]] = None) -> html.Div:
+def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], info_buttons: list[dbc.Button] =None, study_tags: dict[str, list[html.Div]] = None) -> html.Div:
     return html.Div([
         html.H1(f'{title}', className="my-4"),
         graph,
         html.H4("Filtered Studies"),
-        filter_component(filter_buttons),
+        filter_component(filter_buttons, info_buttons if info_buttons else None),
         studies_display(study_tags)
     ])
 
@@ -43,6 +43,15 @@ def rct_view():
         if label != 'Other':
             filter_buttons.append(filter_button(
                 color_mapping_task[label], label, task, False))
+    
+    info_buttons = []
+    group_labels = get_all_labels(group_task)
+    color_mapping_group_task = get_color_mapping(
+        group_task, group_labels)
+    for label in group_labels:
+        info_buttons.append(filter_button(
+            color_mapping_group_task[label], label, group_task, False))
+            
     graph = bar_chart(data_rct, group_task, 'Frequency', graph_title, group_task,
                       'Frequency', task, color_mapping_task, ['pan', 'select', 'lasso2d'], labels)
     study_tags = defaultdict(list)
@@ -74,7 +83,7 @@ def rct_view():
             }
             study_tags[id].append(tag_info_subst)
 
-    return view_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, info_buttons, study_tags)
 
 
 def efficacy_safety_view():
@@ -91,6 +100,15 @@ def efficacy_safety_view():
     for label in labels:
         filter_buttons.append(filter_button(
             color_mapping[label], label, task, False))
+    # Add info buttons for substances
+    info_buttons = []
+    group_labels = get_all_labels(group_task)
+    color_mapping_group_task = get_color_mapping(
+        group_task, group_labels)
+    for label in group_labels:
+        info_buttons.append(filter_button(
+            color_mapping_group_task[label], label, group_task, False))    
+    
     graph = bar_chart(data, group_task, 'Frequency', graph_title, group_task,
                       'Frequency', task, color_mapping, ['pan', 'select', 'lasso2d'], labels)
     study_tags = defaultdict(list)
@@ -116,7 +134,7 @@ def efficacy_safety_view():
                 'color': rgb_to_hex(color_mapping_group_task[s])
             }
             study_tags[id].append(tag_info_subst)
-    return view_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, info_buttons, study_tags)
 
 
 def longitudinal_view():
@@ -148,6 +166,15 @@ def longitudinal_view():
     group_task_pred = get_pred_filtered(group_task, all_ids)
     color_mapping_group_task = get_color_mapping(
         group_task, get_all_labels(group_task))
+    
+    info_buttons = []
+    group_labels = get_all_labels(group_task)
+    color_mapping_group_task = get_color_mapping(
+        group_task, group_labels)
+    for label in group_labels:
+        info_buttons.append(filter_button(
+            color_mapping_group_task[label], label, group_task, False))
+
     for id in all_ids:
         for s in group_task_pred[group_task_pred['paper_id'] == id]['label'].tolist():
             tag_info_subst = {
@@ -157,7 +184,7 @@ def longitudinal_view():
             }
             study_tags[id].append(tag_info_subst)
 
-    return view_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, info_buttons, study_tags)
 
 
 def sex_bias_view():
@@ -190,6 +217,15 @@ def sex_bias_view():
     group_task_pred = get_pred_filtered(group_task, all_ids)
     color_mapping_group_task = get_color_mapping(
         group_task, get_all_labels(group_task))
+    
+    info_buttons = []
+    group_labels = get_all_labels(group_task)
+    color_mapping_group_task = get_color_mapping(
+        group_task, group_labels)
+    for label in group_labels:
+        info_buttons.append(filter_button(
+            color_mapping_group_task[label], label, group_task, False))
+
     for id in all_ids:
         for s in group_task_pred[group_task_pred['paper_id'] == id]['label'].tolist():
             tag_info_subst = {
@@ -199,7 +235,7 @@ def sex_bias_view():
             }
             study_tags[id].append(tag_info_subst)
 
-    return view_layout(title, graph, filter_buttons, study_tags)
+    return view_layout(title, graph, filter_buttons, info_buttons, study_tags)
 
 
 def nr_part_view():
@@ -220,6 +256,7 @@ def nr_part_view():
     for label in labels:
         filter_buttons.append(filter_button(
             color_mapping[label], label, task, False))
+        
     study_tags = defaultdict(list)
     for label in labels:
         filered_ids = get_ids(task, label)
@@ -230,7 +267,8 @@ def nr_part_view():
                 'color': rgb_to_hex(color_mapping[label])
             }
             study_tags[id].append(tag_info)
-    return view_layout(title, graph, filter_buttons, study_tags)
+
+    return view_layout(title, graph, filter_buttons, study_tags=study_tags)
 
 
 def study_protocol_view():
