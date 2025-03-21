@@ -53,14 +53,13 @@ def display_page(pathname: str):
     elif pathname == '/contact':
         return content_layout(contact_layout())
     elif pathname.startswith('/explore'):
-        filtered_display = studies_display()
-        search_filter = filter_component()  
+        
         if pathname == '/explore/time':
             return content_layout(time_layout())
         elif pathname == '/explore/dual-task':
             return content_layout(dual_task_layout('Substances', 'Condition'), id='dual-task-layout')
         else:
-            return content_layout([home_layout(), search_filter, filtered_display])
+            return content_layout(home_layout())
     elif pathname.startswith('/insights'):
         if pathname == '/insights/evidence-strength':
             return content_layout([rct_view()])

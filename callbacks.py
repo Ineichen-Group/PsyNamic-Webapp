@@ -6,7 +6,7 @@ from dash import callback_context, html, no_update, dcc
 from dash.dependencies import Input, Output, State, ALL
 
 from pages.explore.dual_task import get_dual_task_data, create_pie_chart, create_bar_chart, dual_task_layout
-from components.layout import filter_button
+from components.layout import filter_button, tag_component
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
 from data.queries import get_studies_details, get_time_data
 import pandas as pd
@@ -189,7 +189,7 @@ def register_modal_callbacks(app):
          Output("paper-title", "children"),
          Output("paper-link", "children"),
          Output("paper-abstract", "children"),
-         Output("active-filters-modal", "children")
+         Output("modal-tags", "children")
          ],
         [Input("studies-display", "selectedRows")],
         prevent_initial_call=True
@@ -207,10 +207,38 @@ def register_modal_callbacks(app):
             paper = selected_row_data[0]
             title = paper["title"] + " (" + str(paper["year"]) + ")"
             abstract = paper["abstract"]
+            link_to_pubmed = paper["link_to_pubmed"]
 
-            buttons = [filter_button(tag['color'], tag['label'], tag['task'])
-                       for tag in paper['tags']]
-            return True, title, paper['link_to_pubmed'], abstract,  buttons
+            tags = []
+            prev_task = None  # Initialize to None for first comparison
+            task_dict = {
+                'task': '',
+                'buttons': [],
+                'model': '', 
+            }
+
+            for tag in paper['tags']:
+                if tag['task'] != prev_task:
+                    # Append the previous task_dict if it contains data
+                    if task_dict['task']:
+                        tags.append(task_dict)
+
+                    # Start a new task_dict for the current task
+                    prev_task = tag['task']
+                    task_dict = {
+                        'task': tag['task'],
+                        'buttons': [filter_button(tag['color'], tag['label'], tag['task'])],
+                        'model': 'BERT',  # You can replace 'BERT' with the actual model if needed
+                    }
+                else:
+                    # If the task is the same as the previous one, add to the existing task_dict
+                    task_dict['buttons'].append(filter_button(tag['color'], tag['label'], tag['task']))
+
+            # After the loop, append the last task_dict if it has data
+            if task_dict['task']:
+                tags.append(task_dict)
+            buttons = tag_component(tags)
+            return True, title, link_to_pubmed, abstract,  buttons
 
         return no_update  # No update if no row or multiple rows selected
 

@@ -81,7 +81,7 @@ def get_studies_details(study_tags: dict[int, list[html.Div]] = None, ids: list[
                 'doi': study.doi,
                 'year': study.year,
                 'link_to_pubmed': study.link_to_pubmed,
-                'tags': study_tags.get(study.id, [])
+                'tags': study_tags[study.id] if study_tags else []
             }
             for study in studies
         ]
