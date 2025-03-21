@@ -11,8 +11,8 @@ def home_layout():
     ("Long-term Effects", "/insights/long-term", "Do we have enough longitudinal studies and cross-sectional studies for each substance?"),
     ("Sex Bias", "/insights/sex-bias", "Is there sex bias per substance?"),
     ("Study Participation", "/insights/participants", "Study Participation: How many participants are included per study?"),
-    ("Study Protocols", "/insights/study-protocols", "How many study protocols are available?"),
-    ("Dosages", "/insights/dosages", "Inspecting dosage: How are different substances dosed?")
+    ("Study Protocols", "/insights/study-protocol", "How many study protocols are available?"),
+    ("Dosages", "/insights/dosage", "Inspecting dosage: How are different substances dosed?")
     ]
 
     random_insights = random.sample(insight_views, 3)
