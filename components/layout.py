@@ -122,31 +122,38 @@ def filter_component(filter_buttons: list[dbc.Button] = [], comp_id: str = "acti
     )
 
 
-def studies_display(study_tags: dict[str: list[html.Div]] = None, last_update: str = 'January 2024'):
+def studies_display(study_tags: dict[int, list[html.Div]] = None, last_update: str = 'January 2024'):
     """
     Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
     """
+   
     studies = get_studies_details(study_tags)
     total_studies = nr_studies()
+    ag_grid_options = {
+        "rowModelType": "serverSide",
+        "pagination": True,
+        "paginationPageSize": 20,
+        "rowSelection": "single",
+        "cacheBlockSize": 20,
+    }
+
     return html.Div(
         [
             html.Div(
                 children=[
                     html.Span("Found Studies:", className="d-inline", style={"marginRight": "0.2rem"}),
-                    html.Span(children=str(len(studies)),
-                              id="studies-count", className="d-inline", style={"marginRight": "0.2rem"}),
-                    html.Span(f"(out of {total_studies})",
-                              className="d-inline"),
+                    html.Span(children=str(len(studies)), id="studies-count", className="d-inline", style={"marginRight": "0.2rem"}),
+                    html.Span(f"(out of {total_studies})", className="d-inline"),
                 ],
-                className="d-flex",),
+                className="d-flex"
+            ),
 
+            # AG Grid display for studies
             dag.AgGrid(
                 id="studies-display",
                 columnDefs=[
-                    {"field": "title", "headerName": "Title",
-                     "filter": True, "flex": 1},
-                    {"field": "year", "headerName": "Year",
-                     "filter": True, "width": 100},
+                    {"field": "title", "headerName": "Title", "filter": True, "flex": 1},
+                    {"field": "year", "headerName": "Year", "filter": True, "width": 100},
                     {
                         "field": "abstract",
                         "headerName": "Abstract",
@@ -164,11 +171,7 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None, last_update: s
                     },
                 ],
                 rowData=studies,
-                dashGridOptions={
-                    "pagination": True,
-                    "paginationPageSize": 20,
-                    "rowSelection": "single",
-                },
+                dashGridOptions=ag_grid_options,
                 defaultColDef={
                     "sortable": True,
                     "resizable": True,
@@ -176,16 +179,12 @@ def studies_display(study_tags: dict[str: list[html.Div]] = None, last_update: s
                 style={"height": "500px", "width": "100%"},
             ),
 
-            dbc.Button("Download CSV", id="download-csv-button",
-                       color="primary", className="mt-3"),
+            dbc.Button("Download CSV", id="download-csv-button", color="primary", className="mt-3"),
             dcc.Download(id="download-csv"),
 
+            # Display last data update
             dbc.Row(
-                children=[html.Span(
-                    f'Last data update: {last_update}',
-                    className="d-flex justify-content-center",
-                ),
-                ]
+                children=[html.Span(f'Last data update: {last_update}', className="d-flex justify-content-center")]
             ),
             paper_details_modal(),
         ],

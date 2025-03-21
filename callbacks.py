@@ -13,6 +13,7 @@ import pandas as pd
 
 
 
+
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
 
@@ -159,13 +160,17 @@ def register_studyview_callbacks(app):
 def register_pagination_callbacks(app):
     @app.callback(
         Output("studies-ag-grid", "dashGridOptions"),
-        Input("page-size-dropdown", "value"),)
+        Input("page-size-dropdown", "value"),
+    )
     @log_time
     def update_page_size(selected_page_size):
         """
         Updates the AG Grid pagination page size dynamically.
         """
-        return {
+        if not selected_page_size:
+            return no_update
+
+        grid_options = {
             "pagination": True,
             "paginationPageSize": selected_page_size,
             "groupDefaultExpanded": 0,
@@ -175,6 +180,7 @@ def register_pagination_callbacks(app):
                 "cellRenderer": "agGroupCellRenderer",
             },
         }
+        return grid_options
 
 
 def register_modal_callbacks(app):

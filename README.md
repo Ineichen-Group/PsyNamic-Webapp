@@ -50,4 +50,16 @@ https://www.postgresql.org/download/linux/ubuntu/
     DROP DATABASE psynamic;
     ```
 
+## Dealing with the database when deployed
+
+* Make dump and load dump into database
+    ```bash
+    pg_dump -h localhost -U postgres -d psynamic -F c -f <dump_file>
+    pg_restore --no-owner --dbname  <external_db_link> <dump_file>
+    ```
+
+* Add indexes to the database
+    ```bash
+    psql -d <database_name> -f data/indexes.sql
+    ```
 ## Scheduled job to retrieve new papers

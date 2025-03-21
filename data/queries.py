@@ -39,39 +39,52 @@ def log_time(func):
 
 
 @log_time
-def get_studies_details(study_tags: dict[str, list[html.Div]] = None, ids: list[int] = None) -> list[dict]:
+def get_studies_details(study_tags: dict[int, list[html.Div]] = None, ids: list[int] = None) -> list[dict]:
     """
     Retrieves studies from the database based on the provided filters.
 
     Parameters:
-    filters (list of dict): List of filters to apply to the study data.
+    - study_tags (dict): Mapping of study IDs to tags.
+    - ids (list): List of study IDs to filter.
 
     Returns:
-    list of dict: A list of dictionaries containing the studies that match the filters.
+    - list of dict: A list of dictionaries containing the studies that match the filters.
     """
     session = Session()
     try:
         query = session.query(Paper)
+        
         if study_tags:
-            ids = study_tags.keys()
-        elif not ids:
-            ids = []
-        studies = query.filter(Paper.id.in_(ids)).all()
-        results = []
-        for study in studies:
-            result = {
+            ids = list(study_tags.keys())
+        if ids:
+            query = query.filter(Paper.id.in_(ids))
+        
+
+        query = query.with_entities(
+            Paper.id,
+            Paper.title,
+            Paper.abstract,
+            Paper.key_terms,
+            Paper.doi,
+            Paper.year,
+            Paper.link_to_pubmed
+        )
+
+        studies = query.all()
+        
+        results = [
+            {
                 'id': study.id,
                 'title': study.title,
                 'abstract': study.abstract,
                 'key_terms': study.key_terms,
                 'doi': study.doi,
                 'year': study.year,
-                'authors': study.authors,
-                'link_to_fulltext': study.link_to_fulltext,
                 'link_to_pubmed': study.link_to_pubmed,
-                'tags': study_tags[study.id] if study_tags else []
+                'tags': study_tags.get(study.id, [])
             }
-            results.append(result)
+            for study in studies
+        ]
         return results
     finally:
         session.close()
