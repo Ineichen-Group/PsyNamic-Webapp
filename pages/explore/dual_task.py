@@ -1,11 +1,18 @@
+from collections import OrderedDict
 import pandas as pd
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from plotly import express as px
-from collections import defaultdict, OrderedDict
 
-from components.layout import filter_component, studies_display, filter_button, study_grid
-from data.queries import get_filtered_freq, get_all_tasks, get_ids, get_pred, get_freq, get_all_labels, nr_studies
+from components.layout import filter_component, filter_button, study_grid
+from data.queries import (
+    get_filtered_freq,
+    get_all_tasks,
+    get_ids,
+    get_freq,
+    get_all_labels,
+    nr_studies,
+)
 from style.colors import get_color_mapping, SECONDARY_COLOR, get_color
 
 

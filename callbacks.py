@@ -233,24 +233,40 @@ def register_download_csv_callback(app):
     @app.callback(
         Output("download-csv", "data"),
         Input("download-csv-button", "n_clicks"),
-        State("studies-grid", "rowData"),
+        State("filtered-study-ids", "data"),
+        State("filter-tags", "data"),
         prevent_initial_call=True,
     )
     @log_time
-    def download_csv(n_clicks, row_data):
+    def download_csv(n_clicks, filtered_ids, tags):
         current_data_time = pd.Timestamp.now().strftime("%Y-%m-%d_%H-%M-%S")
-        if not row_data:
+        
+        studies = get_studies_details(
+            ids=filtered_ids if filtered_ids else [],
+            start_row=0,
+            end_row=len(filtered_ids) if filtered_ids else None,
+            tags=tags
+        )
+
+        if not studies:
             return no_update
+
         refactored_data = []
-        tasks = set(t['task'] for t in row_data[0]['tags'])
-        for row in row_data:
-            tags = row['tags']
+        tasks = set(t['task'] for study in studies for t in study['tags'])
+        for study in studies:
+            study_data = study.copy()
+            tags = study_data.pop('tags', [])
+
             for task in tasks:
-                row[task] = []
+                study_data[task] = []
+
             for tag in tags:
-                row[tag['task']].append(tag['label'])
-            row.pop('tags')
-            refactored_data.append(row)
+                study_data[tag['task']].append(tag['label'])
+
+            for task in tasks:
+                study_data[task] = ", ".join(study_data[task])
+
+            refactored_data.append(study_data)
 
         df = pd.DataFrame(refactored_data)
 
