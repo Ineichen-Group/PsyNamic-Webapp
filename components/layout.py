@@ -328,16 +328,19 @@ def get_tags(tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[str]]:
 
 
 def filter_button(color: str, label: str, task: str, editable: bool = False):
-    children = [html.Span(f"{label} ", style={"marginRight": "0.5rem"})]
+    children = [html.Span(f"{label}", style={"font-size": "16px"})]
     custom_style = {
         "borderRadius": "1rem",
         "backgroundColor": f'{color}',
         "color": "white",
-        "marginRight": "0.5rem",
+        "padding": "0.2rem 0.8rem",
+        "margin": "0.1rem",
     }
 
     if editable:
-        children.append(html.I(className="fa-solid fa-xmark"))
+        children.append(
+            html.I(className="fa-solid fa-xmark", style={"marginLeft": "0.5rem"})
+            )
     else:
         custom_style["backgroundColor"] = color
         custom_style["border"] = "none"
