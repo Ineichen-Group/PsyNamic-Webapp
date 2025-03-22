@@ -109,7 +109,7 @@ def dual_study_grid(ids: list[int], tags: OrderedDict) -> html.Div:
     return html.Div([
         dcc.Store(id='filtered-study-ids', data=ids, storage_type='memory'),
         dcc.Store(id='filter-tags', data=tags, storage_type='memory'),
-        study_grid(nr_studies(), len(ids), 'January 2024', tags)
+        study_grid(nr_studies(), len(ids), 'January 2024', tags, id={"type": "studies-grid", "index": 6})
     ], id='dual-study-grid')
 
 

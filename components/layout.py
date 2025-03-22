@@ -1,7 +1,12 @@
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 from dash import html, dcc
-from data.queries import get_studies_details, nr_studies
+from collections import OrderedDict
+from data.queries import nr_studies, get_all_tasks, get_all_labels
+from style.colors import get_color_mapping
+
+tasks = get_all_tasks()
+filter_data = OrderedDict({task: get_all_labels(task) for task in tasks})
 
 
 def header_layout():
@@ -28,8 +33,8 @@ def header_layout():
                                         "Number of Participants", href="/insights/participants"),
                                     dbc.DropdownMenuItem(
                                         "Study Protocol", href="/insights/study-protocol"),
-                                    dbc.DropdownMenuItem(
-                                        "Dosage", href="/insights/dosage"),
+                                    # dbc.DropdownMenuItem(
+                                    #     "Dosage", href="/insights/dosage"),
 
                                 ],
                                 nav=True,
@@ -41,9 +46,12 @@ def header_layout():
                             dbc.DropdownMenu(
                                 children=[
                                     dbc.DropdownMenuItem(
+                                        "Filter all studies", href="/explore/filter"),
+                                    dbc.DropdownMenuItem(
                                         "Dual Task Analysis", href="/explore/dual-task"),
                                     dbc.DropdownMenuItem(
-                                        "Time", href="/explore/time"),],
+                                        "Time", href="/explore/time"),
+                                ],
                                 nav=True,
                                 in_navbar=True,
                                 label="Explore",
@@ -101,7 +109,7 @@ def content_layout(list_of_children: list, id: str = "content"):
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None):
+def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None, id: 'str' = 'active-filters'):
     children = [
         dbc.Row(
             className="mt-2 mb-2",
@@ -112,7 +120,7 @@ def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[d
                     className="text-start text-secondary",
                 ),
                 dbc.Col(
-                    id="active-filters",
+                    id=id,
                     children=filter_buttons,
                     width=10,
                 ),
@@ -188,11 +196,11 @@ def study_grid(
         tags: bool = True,
         id: str = "studies-grid",
         default_sort_column: str = "year",
-        default_sort_order: str = "desc"):  
+        default_sort_order: str = "desc"):
 
     columns = [
-        {"field": "title", "headerName": "Title", "filter": True, "sortable": True, "flex": 1},
-        {"field": "year", "headerName": "Year", "filter": True, "sortable": True, "width": 100},
+        {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
+        {"field": "year", "headerName": "Year","sortable": True, "width": 100},
         {"field": "abstract", "headerName": "Abstract", "filter": True,
          "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2}
     ]
@@ -267,9 +275,56 @@ def study_grid(
                     f'Last data update: {last_update}', className="d-flex justify-content-center")]
             ),
             paper_details_modal(),
-        ], id = "studies-display"
+        ], id="studies-display"
     )
 
+
+def filter_selection():
+    return dbc.Container([
+        dbc.Row([
+            dbc.Col([
+                dcc.Dropdown(
+                    id="task-dropdown",
+                    options=[{"label": task, "value": task}
+                             for task in filter_data.keys()],
+                    placeholder="Select a task",
+                    clearable=False,
+                ),
+            ], width=9),
+
+            dbc.Col([
+                dbc.Button("Add Filter", id="add-filter-btn",
+                           n_clicks=0,),
+            ], width=3),
+        ], className="mb-4"),
+        dbc.Row([
+            dbc.Col([
+                html.Div(id="checkbox-container"),
+            ], width=12),
+        ], className="mb-4"),
+
+        html.H3("Filtered Studies"),
+        filter_component(id='selected-filters'),
+
+        dcc.Store(id="filter-store", data={}),
+    ], className="m-0 p-0")
+
+
+def get_tags(tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[str]]:
+    ordered_tags = OrderedDict()
+    for task, labels in tags.items():
+        all_labels_task = get_all_labels(task)
+        task_color_mapping = get_color_mapping(task, all_labels_task)
+        for label in labels:
+            tag_info = {
+                'task': task,
+                'label': label,
+                'color': task_color_mapping[label]
+            }
+            if task not in ordered_tags:
+                ordered_tags[task] = []
+            ordered_tags[task].append(tag_info)
+    return ordered_tags
 
 
 def filter_button(color: str, label: str, task: str, editable: bool = False):
@@ -289,11 +344,13 @@ def filter_button(color: str, label: str, task: str, editable: bool = False):
         custom_style["boxShadow"] = "none"
         custom_style["cursor"] = "default"
 
+    id = {'type': 'filter-button', 'task': task,
+          'label': label} if editable else 'tag-button'
     return dbc.Button(
         children=children,
         style=custom_style,
         color="light",
-        id=f'{task}-{label}',
+        id=id,
         n_clicks=0,
         value={"category": task, "value": label},
         title=f'{task}: {label}',
@@ -310,8 +367,7 @@ def paper_details_modal():
                     html.A(
                         id="paper-link",
                         target="_blank",
-                        href="paper-link",
-                    ),
+                        href="",                    ),
                     html.P(id="paper-abstract", className="abstract-text"),
                     html.Div(id='modal-tags'),
                 ]

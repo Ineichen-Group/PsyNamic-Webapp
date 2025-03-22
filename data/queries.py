@@ -1,16 +1,20 @@
+"""
+This module contains database query functions for the PsyNamic-Webapp.
+"""
+
 from datetime import datetime
 import sys
 import os
 import logging
+from collections import OrderedDict
 import pandas as pd
-from dash import html
-from sqlalchemy import create_engine, func, case
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import func
-from sqlalchemy import and_, tuple_
+from sqlalchemy.sql import select
+from sqlalchemy import and_, tuple_, case
 
-from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
-from settings import *
+from style.colors import get_color_mapping
+from settings import DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME
 from .models import Paper, Prediction
 
 # Add the parent folder to the Python search path
@@ -38,6 +42,7 @@ def log_time(func):
         return result
     return wrapper
 
+
 def get_studies_details(
     ids: list[int] = None,
     start_row: int = 0,
@@ -46,6 +51,7 @@ def get_studies_details(
     filter_model: dict = None,
     tags: dict[str, list] = None
 ):
+
     session = Session()
     try:
         query = session.query(Paper)
@@ -117,7 +123,7 @@ def get_studies_details(
 def get_study_tags(ids: list[int], tags: dict[str, list]) -> dict[int, list[dict]]:
     study_tags = {}
     session = Session()
-    
+
     try:
 
         valid_task_label_pairs = [
@@ -130,8 +136,9 @@ def get_study_tags(ids: list[int], tags: dict[str, list]) -> dict[int, list[dict
             Prediction.label
         ).filter(
             and_(
-                Prediction.task.in_(tags.keys()), 
-                tuple_(Prediction.task, Prediction.label).in_(valid_task_label_pairs),
+                Prediction.task.in_(tags.keys()),
+                tuple_(Prediction.task, Prediction.label).in_(
+                    valid_task_label_pairs),
                 Prediction.paper_id.in_(ids)
             )
         )
@@ -140,7 +147,8 @@ def get_study_tags(ids: list[int], tags: dict[str, list]) -> dict[int, list[dict
 
         study_tags = {}
         # TODO: cache color mappings
-        color_mappings = {task: get_color_mapping(task, get_all_labels(task)) for task in tags.keys()}
+        color_mappings = {task: get_color_mapping(
+            task, get_all_labels(task)) for task in tags.keys()}
 
         for paper_id, task, label in results:
             tag_info = {
@@ -173,31 +181,38 @@ def get_study_tags(ids: list[int], tags: dict[str, list]) -> dict[int, list[dict
         session.close()
 
 
-@log_time
 def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None) -> pd.DataFrame:
-    """Get the prediction data for a given task and filter the data based on the filter task and label."""
+    """
+    Get the prediction data for a given task and filter the data 
+    based on the filter task and label.
+    """
     session = Session()
     try:
-        subquery = session.query(Prediction.paper_id).filter(
-            Prediction.task == filter_task,
-            Prediction.label == filter_task_label,
+        # Explicitly use select() for the subquery
+        subquery = (
+            select(Prediction.paper_id)
+            .where(
+                Prediction.task == filter_task,
+                Prediction.label == filter_task_label
+            )
         ).subquery()
-        query = session.query(Prediction.label, func.count(Prediction.id).label('Frequency')).filter(
-            Prediction.task == task,
+
+        query = (
+            select(Prediction.label, func.count(
+                Prediction.id).label("Frequency"))
+            .where(Prediction.task == task, Prediction.paper_id.in_(select(subquery)))
+            .group_by(Prediction.label)
+            .order_by("Frequency")
         )
 
-        query = query.filter(Prediction.paper_id.in_(subquery))
-
-        query = query.group_by(Prediction.label).order_by('Frequency')
-        result = pd.read_sql(query.statement, session.bind)
+        result = pd.read_sql(query, session.bind)
         result.rename(
-            columns={'label': task, 'Frequency': 'Frequency'}, inplace=True)
+            columns={"label": task, "Frequency": "Frequency"}, inplace=True)
         return result
     finally:
         session.close()
 
 
-@log_time
 def get_freq(task: str, labels: list[str] = None) -> pd.DataFrame:
     """
     Get the frequency of the labels for a given task. If no labels are provided, return the frequency of all labels."""
@@ -227,7 +242,6 @@ def get_freq(task: str, labels: list[str] = None) -> pd.DataFrame:
         session.close()
 
 
-@log_time
 def get_pred(task: str) -> pd.DataFrame:
     """Get the prediction data for a given task."""
     session = Session()
@@ -241,7 +255,6 @@ def get_pred(task: str) -> pd.DataFrame:
         session.close()
 
 
-@log_time
 def get_pred_filtered(task: str, ids: list[int]) -> pd.DataFrame:
     """Get the prediction data for a given task and filter the data based on the paper IDs."""
     session = Session()
@@ -256,7 +269,6 @@ def get_pred_filtered(task: str, ids: list[int]) -> pd.DataFrame:
         session.close()
 
 
-@log_time
 def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd.DataFrame:
     """Get the predictions where task is labels, group by group task and labels. 
     The output is a dataframe with columns group_task, label, and Study_ID (without frequency)."""
@@ -264,7 +276,7 @@ def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd
 
     try:
         use_rest = 'Other' in labels if labels else False
-        
+
         # Subquery to group by the group_task
         grouping_query = (
             session.query(
@@ -306,7 +318,6 @@ def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd
         session.close()
 
 
-@log_time
 def get_ids(task: str = None, label: str = None) -> set[int]:
     """Get the ids of the papers that have a specific label for a given task."""
     session = Session()
@@ -340,7 +351,6 @@ def get_ids(task: str = None, label: str = None) -> set[int]:
             session.close()
 
 
-@log_time
 def get_all_tasks() -> list[str]:
     """Get all unique tasks from the predictions."""
     session = Session()
@@ -352,7 +362,6 @@ def get_all_tasks() -> list[str]:
         session.close()
 
 
-@log_time
 def get_all_labels(task: str) -> list[str]:
     """Get all unique labels for a given task."""
     session = Session()
@@ -365,7 +374,6 @@ def get_all_labels(task: str) -> list[str]:
         session.close()
 
 
-@log_time
 def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.DataFrame, list[int]]:
     """Get the frequency of IDs per year. Optionally filter by start and end year."""
     session = Session()
@@ -389,7 +397,6 @@ def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.Data
     return frequency_df, ids
 
 
-@log_time
 def nr_studies():
     """Get the number of studies in the database."""
     session = Session()
@@ -399,3 +406,19 @@ def nr_studies():
         return result[0]
     finally:
         session.close()
+
+
+def get_filtered_study_ids(filter: OrderedDict[str, list[str]]) -> list[int]:
+    """Get the IDs of the studies that match all the labels for each task."""
+    # TODO: Maybe check if the previous filter is a subset of the new filter and only query the new labels
+    valid_task_label_pairs = [
+        (task, label) for task, labels in filter.items() for label in labels
+    ]
+    # TODO: Check if this is the most efficient way to get the IDs
+    # or rather use database queries instead
+    all_ids = set(get_ids())
+
+    for pair in valid_task_label_pairs:
+        ids = get_ids(pair[0], pair[1])
+        all_ids = all_ids.intersection(ids)
+    return list(all_ids)

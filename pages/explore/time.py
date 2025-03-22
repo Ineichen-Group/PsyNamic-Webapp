@@ -15,8 +15,9 @@ def time_layout():
     grid = study_grid(
         nr_total_studies=total_studies,
         nr_filtered_studies=total_studies, 
-        last_update='January 2021',  # Update this as needed
-        tags=False
+        last_update='January 2024',  # Update this as needed
+        tags=False,
+        id={"type": "studies-grid", "index": 6}
     )
     min_year = 1955
     max_year = time.localtime().tm_year

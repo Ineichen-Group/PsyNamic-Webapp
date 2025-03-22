@@ -21,8 +21,7 @@ def get_filter_buttons(task, labels):
     return buttons
 
 
-def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button],  ids: list[int], info_buttons: list[dbc.Button] = None, tags: OrderedDict = None) -> html.Div:
-
+def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button],  ids: list[int], id: str, info_buttons: list[dbc.Button] = None, tags: OrderedDict = None, ) -> html.Div:
     return html.Div([
         html.H1(f'{title}', className="my-4"),
         graph,
@@ -31,9 +30,8 @@ def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], 
             filter_buttons, info_buttons if info_buttons else None),
         dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
         dcc.Store(id="filter-tags", data=tags, storage_type="memory"),
-        study_grid(nr_studies(), len(ids), 'today', tags=True)
+        study_grid(nr_studies(), len(ids), 'today', tags=True, id=id)
     ])
-    
 
 
 def rct_view():
@@ -47,7 +45,8 @@ def rct_view():
     color_mapping = get_color_mapping(task, labels)
 
     data_rct = get_freq_grouped(task, group_task, labels=labels)
-    data_rct_freq = data_rct_freq = data_rct.groupby([group_task, task]).size().reset_index(name='Frequency')
+    data_rct_freq = data_rct_freq = data_rct.groupby(
+        [group_task, task]).size().reset_index(name='Frequency')
     graph = bar_chart(data_rct_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
                       task, color_mapping, ['pan', 'select', 'lasso2d'], labels)
 
@@ -55,16 +54,16 @@ def rct_view():
     group_labels = get_all_labels(group_task)
     info_buttons = get_filter_buttons(
         group_task, group_labels)
-    
-    ids = data_rct[data_rct[task].isin(labels[:-1])]['Study_ID'].unique().tolist()
+
+    ids = data_rct[data_rct[task].isin(
+        labels[:-1])]['Study_ID'].unique().tolist()
 
     # Setting tags
     tags = OrderedDict()
     tags[task] = labels[:-1]
-    tags[group_task] = group_labels 
+    tags[group_task] = group_labels
 
-
-    return view_layout(title, graph, filter_buttons, ids, info_buttons, tags)
+    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 0}, info_buttons=info_buttons, tags=tags)
 
 
 def efficacy_safety_view():
@@ -75,7 +74,8 @@ def efficacy_safety_view():
     graph_title = 'Number of studies measuring efficacy and safety endpoints per substance'
 
     data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = data.groupby([group_task, task]).size().reset_index(name='Frequency')
+    data_freq = data.groupby(
+        [group_task, task]).size().reset_index(name='Frequency')
 
     graph = bar_chart(data_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
                       task, get_color_mapping(task, labels), ['pan', 'select', 'lasso2d'], labels)
@@ -92,7 +92,7 @@ def efficacy_safety_view():
     tags[task] = labels
     tags[group_task] = group_labels
 
-    return view_layout(title, graph, filter_buttons, ids, info_buttons, tags)
+    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 1}, info_buttons=info_buttons, tags=tags)
 
 
 def longitudinal_view():
@@ -103,19 +103,22 @@ def longitudinal_view():
     graph_title = 'Number of studies per substance for different data types'
 
     data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = data.groupby([group_task, task]).size().reset_index(name='Frequency')
+    data_freq = data.groupby(
+        [group_task, task]).size().reset_index(name='Frequency')
 
     graph = bar_chart(data_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
                       task, get_color_mapping(task, labels), ['pan', 'select', 'lasso2d'], labels)
 
-
     filter_buttons = get_filter_buttons(task, labels)
     info_buttons = get_filter_buttons(
         group_task, get_all_labels(group_task))
-    
-    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
 
-    return view_layout(title, graph, filter_buttons, ids, info_buttons)
+    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
+    tags = OrderedDict()
+    tags[task] = labels
+    tags[group_task] = get_all_labels(group_task)
+
+    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 2}, info_buttons=info_buttons, tags=tags)
 
 
 def sex_bias_view():
@@ -126,7 +129,8 @@ def sex_bias_view():
     graph_title = 'Sex of participants of studies per substance'
 
     data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = data.groupby([group_task, task]).size().reset_index(name='Frequency')
+    data_freq = data.groupby(
+        [group_task, task]).size().reset_index(name='Frequency')
 
     filter_buttons = get_filter_buttons(task, labels)
     graph = bar_chart(data_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
@@ -134,10 +138,13 @@ def sex_bias_view():
 
     info_buttons = get_filter_buttons(
         group_task, get_all_labels(group_task))
-    
-    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
 
-    return view_layout(title, graph, filter_buttons, ids, info_buttons)
+    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
+    tags = OrderedDict()
+    tags[task] = labels
+    tags[group_task] = get_all_labels(group_task)
+
+    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 3}, info_buttons=info_buttons, tags=tags)
 
 
 def nr_part_view():
@@ -149,43 +156,37 @@ def nr_part_view():
     graph_title = 'Number of Participants per Substance'
 
     data = get_freq_grouped(task, group_task)
-    data_freq = data.groupby([group_task, task]).size().reset_index(name='Frequency')
+    data_freq = data.groupby(
+        [group_task, task]).size().reset_index(name='Frequency')
     filter_buttons = get_filter_buttons(task, labels)
     graph = bar_chart(data_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
                       task, get_color_mapping(task, labels), ['pan', 'select', 'lasso2d'], labels)
 
     info_buttons = get_filter_buttons(
         group_task, get_all_labels(group_task))
-    
-    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
 
-    return view_layout(title, graph, filter_buttons, ids, info_buttons)
+    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
+    tags = OrderedDict()
+    tags[task] = labels
+    tags[group_task] = get_all_labels(group_task)
+
+    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 4}, info_buttons=info_buttons, tags=tags)
 
 
 def study_protocol_view():
-    return
     title = "How many study protocols are available?"
     task = "Study Type"
     label = "Study protocol"
-    graph_title = "Number of Study Protocols"
 
     # Fetch data
     color_mapping = get_color_mapping(task, [label])
     ids = get_ids(task, label)
 
-    # Create study tags
-    study_tags = defaultdict(list)
-    for id in ids:
-        tag_info = {
-            'task': task,
-            'label': label,
-            'color': rgb_to_hex(color_mapping[label])
-        }
-        study_tags[id].append(tag_info)
+    tags = OrderedDict()
+    tags[task] = [label]
 
-    # Count ids
-    freq_span = html.Span(
-        f"Total number of study protocols: {len(ids)}", className="my-4")
+    freq_span = html.P(
+        f"Total number of study protocols: {len(ids)}", className="mb-4")
 
     return html.Div([
         html.H1(f'{title}', className="my-4"),
@@ -193,26 +194,28 @@ def study_protocol_view():
         html.H4("Filtered Studies"),
         filter_component(filter_button(
             color_mapping[label], label, task, False)),
-        studies_display(study_tags)
+        dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
+        dcc.Store(id="filter-tags", data=tags, storage_type="memory"),
+        study_grid(nr_studies(), len(ids), 'today', tags=True,
+                   id={"type": "studies-grid", "index": 5})
     ])
 
 
+# def dosages_view():
+#     title = "Inspecting dosage: How are different substances dosed?"
+#     # return html.Div([
+#     #     html.H1(f'{title}', className="my-4"),
+#     #     studies_display()
+#     # ])
+#     id = 'study_view_test'
 
-def dosages_view():
-    title = "Inspecting dosage: How are different substances dosed?"
-    # return html.Div([
-    #     html.H1(f'{title}', className="my-4"),
-    #     studies_display()
-    # ])
-    id = 'study_view_test'
+#     tags = False
+#     last_update = 'today'
+#     total_nr = nr_studies()
+#     ids = list(get_ids('Substances', 'LSD'))
+#     # Persist ids into store
 
-    tags = False
-    last_update = 'today'
-    total_nr = nr_studies()
-    ids = list(get_ids('Substances', 'LSD'))
-    # Persist ids into store
-    
-    return html.Div([
-        html.H1(f'{title}', className="my-4"),
-        studies_display()
-    ])
+#     return html.Div([
+#         html.H1(f'{title}', className="my-4"),
+#         studies_display()
+#     ])

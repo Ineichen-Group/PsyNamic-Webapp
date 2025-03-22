@@ -3,16 +3,21 @@ import dash_bootstrap_components as dbc
 import random
 
 
-
 def home_layout():
     insight_views = [
-    ("Evidence Strength", "/insights/evidence-strength", "Assessing evidence strength: How many Randomized Controlled Trials (RCTs) and Systematic Reviews are there per substance?"),
-    ("Efficacy & Safety", "/insights/efficacy-safety", "Effectiveness and safety: Is there enough studies measuring efficacy and safety endpoints per substance?"),
-    ("Long-term Effects", "/insights/long-term", "Do we have enough longitudinal studies and cross-sectional studies for each substance?"),
-    ("Sex Bias", "/insights/sex-bias", "Is there sex bias per substance?"),
-    ("Study Participation", "/insights/participants", "Study Participation: How many participants are included per study?"),
-    ("Study Protocols", "/insights/study-protocol", "How many study protocols are available?"),
-    ("Dosages", "/insights/dosage", "Inspecting dosage: How are different substances dosed?")
+        ("Evidence Strength", "/insights/evidence-strength",
+         "Assessing evidence strength: How many Randomized Controlled Trials (RCTs) and Systematic Reviews are there per substance?"),
+        ("Efficacy & Safety", "/insights/efficacy-safety",
+         "Effectiveness and safety: Is there enough studies measuring efficacy and safety endpoints per substance?"),
+        ("Long-term Effects", "/insights/long-term",
+         "Do we have enough longitudinal studies and cross-sectional studies for each substance?"),
+        ("Sex Bias", "/insights/sex-bias", "Is there sex bias per substance?"),
+        ("Study Participation", "/insights/participants",
+         "Study Participation: How many participants are included per study?"),
+        ("Study Protocols", "/insights/study-protocol",
+         "How many study protocols are available?"),
+        # ("Dosages", "/insights/dosage",
+        #  "Inspecting dosage: How are different substances dosed?")
     ]
 
     random_insights = random.sample(insight_views, 3)
@@ -29,8 +34,6 @@ def home_layout():
             ),
         ], width=12, md=4) for title, link, description in random_insights
     ]
-
-
 
     return html.Div([
         html.Div([
@@ -75,18 +78,30 @@ def home_layout():
         ]),
 
         dbc.Row(insight_cards),
-        
+
         html.Div([
             html.P('Or explore the data:', style={
                 'font-size': '16px'})
         ]),
 
-                dbc.Row([
+        dbc.Row([
             dbc.Col([
                 html.A(
                     dbc.Card([
                         dbc.CardBody([
-                            html.H5('Dual Task',
+                            html.H5('Filter Studies',
+                                    className='card-title'),
+                            html.P('Filter studies by all available categories.')
+                        ]),
+                    ], color="light", outline=True, className='mb-4 card-hover', ),
+                    href='/explore/filter',
+                ),
+            ], width=12, md=4),
+            dbc.Col([
+                html.A(
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.H5('Dual Task Analysis',
                                     className='card-title'),
                             html.P('Juxtapose two information categories.')
                         ]),
@@ -101,7 +116,8 @@ def home_layout():
                         dbc.CardBody([
                             html.H5('Time',
                                     className='card-title'),
-                            html.P('Visualize the distribution of studies over time.')
+                            html.P(
+                                'Visualize the distribution of studies over time.')
                         ]),
                     ], color="light", outline=True, className='mb-4 card-hover',),
                     href='/explore/time',
@@ -109,4 +125,4 @@ def home_layout():
             ], width=12, md=4),
 
         ], className='mb-2'),
-])
+    ])

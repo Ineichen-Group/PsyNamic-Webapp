@@ -3,16 +3,18 @@ import dash_bootstrap_components as dbc
 import os
 import sys
 import logging
-from dash import html, dcc, State
+
+from dash import html, dcc
 
 from pages.about import about_layout
 from pages.contact import contact_layout
 from pages.home import home_layout
 from pages.explore.dual_task import dual_task_layout
 from pages.explore.time import time_layout
-from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view, nr_part_view, study_protocol_view, dosages_view
+from pages.explore.filter import filter_layout
+from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view, nr_part_view, study_protocol_view# dosages_view
 
-from components.layout import header_layout, footer_layout, filter_component, studies_display, content_layout
+from components.layout import header_layout, footer_layout, content_layout
 from callbacks import register_callbacks
 
 
@@ -58,6 +60,8 @@ def display_page(pathname: str):
             return content_layout(time_layout())
         elif pathname == '/explore/dual-task':
             return content_layout(dual_task_layout('Substances', 'Condition'), id='dual-task-layout')
+        elif pathname == '/explore/filter':
+            return content_layout(filter_layout())
         else:
             return content_layout(home_layout())
     elif pathname.startswith('/insights'):
@@ -73,8 +77,8 @@ def display_page(pathname: str):
             return content_layout([nr_part_view()])
         elif pathname == '/insights/study-protocol':
             return content_layout([study_protocol_view()])
-        elif pathname == '/insights/dosage':
-            return content_layout([dosages_view()])
+        # elif pathname == '/insights/dosage':
+        #     return content_layout([dosages_view()])
     else:
         return content_layout(home_layout())
 

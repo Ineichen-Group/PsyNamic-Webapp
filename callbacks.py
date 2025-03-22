@@ -1,11 +1,12 @@
 import logging
 import time
-
+import json
 import pandas as pd
 import plotly.express as px
+import dash_bootstrap_components as dbc
 
-from dash import callback_context, no_update, dcc
-from dash.dependencies import Input, Output, State, ALL
+from dash import callback_context, no_update, dcc, ALL
+from dash.dependencies import Input, Output, State
 
 from pages.explore.dual_task import (
     get_dual_task_data,
@@ -15,10 +16,9 @@ from pages.explore.dual_task import (
     get_dual_filters,
     dual_task_graphs,
 )
-from components.layout import filter_button, tag_component
+from components.layout import filter_button, tag_component, get_tags, filter_data
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
-from data.queries import get_studies_details, get_time_data
-
+from data.queries import get_studies_details, get_filtered_study_ids, get_time_data, nr_studies, get_all_labels
 
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
@@ -40,15 +40,16 @@ def register_callbacks(app):
     register_time_view_callbacks(app)
     register_studyview_callbacks(app)
     register_dual_task_view_callbacks(app)
-    # register_filter(app)
     register_pagination_callbacks(app)
     register_modal_callbacks(app)
     register_download_csv_callback(app)
+    register_filter_callback(app)
 
 
 def register_time_view_callbacks(app):
     @app.callback(
-        Output("studies-grid", "getRowsResponse", allow_duplicate=True),
+        Output({"type": "studies-grid", "index": 6},
+               "getRowsResponse", allow_duplicate=True),
         Output("time-graph", "figure"),
         Output("count-filtered", "children"),
         Input("start-year", "value"),
@@ -57,12 +58,13 @@ def register_time_view_callbacks(app):
     )
     def update_time_view(start_year, end_year):
         df, ids = get_time_data(start_year=start_year, end_year=end_year)
-        fig = px.bar(df, x="Year", y="Frequency", title="Frequency of Publications per Year", labels={
-            "Frequency": "Frequency"
-        })
-        studies = get_studies_details(
-            ids=ids,
+        fig = px.bar(
+            df, x="Year", y="Frequency", title="Frequency of Publications per Year",
+            labels={"Frequency": "Frequency"}
         )
+
+        studies = get_studies_details(ids=ids)
+
         return {
             "rowData": studies,
             "rowCount": len(ids)
@@ -86,7 +88,6 @@ def register_dual_task_view_callbacks(app):
         ],
         prevent_initial_call=True
     )
-    @log_time
     def update_dual_task_view(dropdown1_value, dropdown2_value, click_data):
         ctx = callback_context
         # Reset click data if dropdown value changes
@@ -101,7 +102,7 @@ def register_dual_task_view_callbacks(app):
 
             task1_data, task2_data, ids, tags = get_dual_task_data(
                 dropdown1_value, dropdown2_value, label)
-            task1_all_labels = task1_data[dropdown1_value].unique()
+            task1_all_labels = get_all_labels(dropdown1_value)
             col_map = get_color_mapping(dropdown1_value, task1_all_labels)
 
             if rgb_to_hex(color) == SECONDARY_COLOR:
@@ -130,7 +131,6 @@ def register_studyview_callbacks(app):
               'index': ALL}, 'n_clicks'),
         State({'type': 'collapse', 'index': ALL}, 'is_open'),
     )
-    @log_time
     def toggle_collapse(n_clicks_list: list, is_open_list):
         ctx = callback_context
         if not ctx.triggered:
@@ -146,85 +146,109 @@ def register_studyview_callbacks(app):
 
 def register_pagination_callbacks(app):
     @app.callback(
-        Output("studies-grid", "getRowsResponse", allow_duplicate=True),
-        Input("studies-grid", "getRowsRequest"),
+        Output({"type": "studies-grid", "index": ALL}, "getRowsResponse"),
+        Output('count-filtered', 'children', allow_duplicate=True),
+        Input({"type": "studies-grid", "index": ALL}, "getRowsRequest"),
+        Input("filter-tags", "data"),
         State("filtered-study-ids", "data"),
-        State("filter-tags", "data"),
         prevent_initial_call=True
     )
-    def fetch_studies_infinite(request, filtered_ids, tags):
-        start_row = request["startRow"]
-        end_row = request["endRow"]
+    def fetch_studies_infinite(requests, tags, filtered_ids):
+        if not requests:
+            return no_update, no_update
 
-        sort_model = request.get(
-            "sortModel", [{"colId": "year", "sort": "desc"}])
-        filter_model = request.get("filterModel", {})
-        studies = get_studies_details(
-            ids=filtered_ids if filtered_ids else [],
-            start_row=start_row,
-            end_row=end_row,
-            sort_model=sort_model,
-            filter_model=filter_model,
-            tags=tags
-        )
+        responses = []
+        for request in requests:
+            start_row = request["startRow"]
+            end_row = request["endRow"]
 
-        return {
-            "rowData": studies,
-            "rowCount": len(filtered_ids) if filtered_ids else len(studies)
-        }
+            sort_model = request.get(
+                "sortModel", [{"colId": "year", "sort": "desc"}])
+            filter_model = request.get("filterModel", {})
+
+            studies = get_studies_details(
+                ids=filtered_ids if filtered_ids else [],
+                start_row=start_row,
+                end_row=end_row,
+                sort_model=sort_model,
+                filter_model=filter_model,
+                tags=tags
+            )
+            if len(studies) == 0:
+                row_count = 0
+            else:
+                row_count = len(filtered_ids) if filtered_ids else nr_studies()
+
+            responses.append({
+                "rowData": studies,
+                "rowCount": row_count
+            })
+
+        return responses, row_count
 
 
 def register_modal_callbacks(app):
     @app.callback(
-        [Output("paper-modal", "is_open", allow_duplicate=True),
-         Output("paper-title", "children", allow_duplicate=True),
-         Output("paper-link", "children", allow_duplicate=True),
-         Output("paper-abstract", "children", allow_duplicate=True),
-         Output("modal-tags", "children", allow_duplicate=True)
-         ],
-        [Input("studies-grid", "selectedRows")],
+        [
+            Output("paper-modal", "is_open", allow_duplicate=True),
+            Output("paper-title", "children", allow_duplicate=True),
+            Output("paper-link", "href", allow_duplicate=True),
+            Output("paper-link", "children", allow_duplicate=True),
+            Output("paper-abstract", "children", allow_duplicate=True),
+            Output("modal-tags", "children", allow_duplicate=True),
+        ],
+        [Input({"type": "studies-grid", "index": ALL}, "selectedRows")],
         prevent_initial_call=True
     )
-    @log_time
-    def show_study_paper_details(selected_row_data):
+    def show_study_paper_details(selected_rows_list):
+        if not selected_rows_list:
+            return False, no_update, no_update, no_update, no_update, no_update
+
+        triggered_id = callback_context.triggered_id
+        if not triggered_id:
+            return no_update
+
+        selected_row_data = next(
+            (rows for i, rows in enumerate(selected_rows_list) if rows), None
+        )
+
         if not selected_row_data:
-            return False, no_update, no_update, no_update, no_update
+            return False, no_update, no_update, no_update, no_update, no_update
 
         if len(selected_row_data) == 1:
             paper = selected_row_data[0]
-            title = paper["title"] + " (" + str(paper["year"]) + ")"
+            title = f"{paper['title']} ({paper['year']})"
             abstract = paper["abstract"]
             link_to_pubmed = paper["link_to_pubmed"]
 
+            link_text = link_to_pubmed
+            link_href = link_to_pubmed
+
             tags = []
             prev_task = None
-            task_dict = {
-                'task': '',
-                'buttons': [],
-                'model': '',
-            }
+            task_dict = {"task": "", "buttons": [], "model": ""}
 
-            for tag in paper['tags']:
-                if tag['task'] != prev_task:
-                    if task_dict['task']:
+            for tag in paper["tags"]:
+                if tag["task"] != prev_task:
+                    if task_dict["task"]:
                         tags.append(task_dict)
 
-                    prev_task = tag['task']
+                    prev_task = tag["task"]
                     task_dict = {
-                        'task': tag['task'],
-                        'buttons': [filter_button(tag['color'], tag['label'], tag['task'])],
-                        'model': 'BERT',  # Replace with actual model if necessary
+                        "task": tag["task"],
+                        "buttons": [filter_button(tag["color"], tag["label"], tag["task"])],
+                        "model": "BERT",  # Replace with actual model if needed
                     }
                 else:
-                    task_dict['buttons'].append(filter_button(
-                        tag['color'], tag['label'], tag['task']))
+                    task_dict["buttons"].append(filter_button(
+                        tag["color"], tag["label"], tag["task"]))
 
-            if task_dict['task']:
+            if task_dict["task"]:
                 tags.append(task_dict)
 
             buttons = tag_component(tags)
 
-            return True, title, link_to_pubmed, abstract, buttons
+            return True, title, link_href, link_text, abstract, buttons
 
         return no_update
 
@@ -237,10 +261,9 @@ def register_download_csv_callback(app):
         State("filter-tags", "data"),
         prevent_initial_call=True,
     )
-    @log_time
     def download_csv(n_clicks, filtered_ids, tags):
         current_data_time = pd.Timestamp.now().strftime("%Y-%m-%d_%H-%M-%S")
-        
+
         studies = get_studies_details(
             ids=filtered_ids if filtered_ids else [],
             start_row=0,
@@ -271,3 +294,83 @@ def register_download_csv_callback(app):
         df = pd.DataFrame(refactored_data)
 
         return dcc.send_data_frame(df.to_csv, f"psynamic_data_{current_data_time}.csv", index=False)
+
+
+def register_filter_callback(app):
+    @app.callback(
+        Output("checkbox-container", "children"),
+        Input("task-dropdown", "value"),
+        State("filter-store", "data"),
+        prevent_initial_call=False,
+    )
+    def update_checkboxes(selected_task, current_filters):
+        if not selected_task:
+            return ""
+
+        labels = filter_data[selected_task]
+        checked_labels = current_filters.get(selected_task, [])
+        return dbc.Checklist(
+            options=[{"label": label, "value": label} for label in labels],
+            id="label-checklist",
+            inline=True,
+            value=checked_labels,
+        )
+
+    @app.callback(
+        Output("selected-filters", "children"),
+        Output("filter-store", "data"),
+        Output("filtered-study-ids", "data"),
+        Output("filter-tags", "data"),
+        Output("label-checklist", "value"),
+        Input("add-filter-btn", "n_clicks"),
+        Input({'type': 'filter-button', 'task': ALL, 'label': ALL}, 'n_clicks'),
+        State("task-dropdown", "value"),
+        State("label-checklist", "value"),
+        State("filter-store", "data"),
+        prevent_initial_call=True,
+    )
+    def modify_filter(add_clicks, remove_clicks, selected_task, selected_labels, current_filters):
+        triggered_id = callback_context.triggered[0]['prop_id'].split('.')[0]
+
+        # Case 1: Add filter
+        if add_clicks and triggered_id == "add-filter-btn":
+            if not selected_task or not selected_labels:
+                return current_filters, current_filters, [], [], selected_labels
+
+            current_filters[selected_task] = selected_labels
+            ordered_tags = get_tags(current_filters)
+            filter_buttons = [
+                filter_button(tag['color'], tag['label'],
+                              tag['task'], editable=True)
+                for task in ordered_tags for tag in ordered_tags[task]
+            ]
+            filtered_ids = get_filtered_study_ids(current_filters)
+            return filter_buttons, current_filters, filtered_ids, current_filters, selected_labels
+
+        # Case 2: Remove filter
+        elif remove_clicks:
+            button_data = json.loads(triggered_id)
+            task, label = button_data['task'], button_data['label']
+
+            current_filters = current_filters.copy()
+            if task in current_filters and label in current_filters[task]:
+                current_filters[task].remove(label)
+                if not current_filters[task]:
+                    del current_filters[task]
+
+            new_checked_labels = [
+                label for label in selected_labels if label != button_data['label']]
+
+            tags = get_tags(current_filters)
+
+            filter_buttons = [
+                filter_button(tag['color'], tag['label'],
+                              tag['task'], editable=True)
+                for task in tags for tag in tags[task]
+            ]
+
+            filtered_ids = get_filtered_study_ids(current_filters)
+
+            return filter_buttons, current_filters, filtered_ids, current_filters, new_checked_labels
+
+        return no_update, no_update, no_update, no_update, no_update
