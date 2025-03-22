@@ -223,9 +223,29 @@ def study_grid(
         [
             html.Div(
                 children=[
-                    html.Span("Found Studies:", className="d-inline",
-                              style={"marginRight": "0.2rem"}),
-                    html.Span(f"{nr_filtered_studies} (out of {nr_total_studies})", className="d-inline"),
+                    html.Span(
+                        "Found Studies: ",
+                        className="d-inline",
+                        style={"marginRight": "0.2rem"}
+                    ),
+                    html.Span(
+                        f"{nr_filtered_studies}",
+                        className="d-inline",
+                        id="count-filtered",
+                    ),
+                    html.Span(
+                        " (out of ",
+                        className="d-inline"
+                    ),
+                    html.Span(
+                        f"{nr_total_studies}",
+                        id="count-total",
+                        className="d-inline"
+                    ),
+                    html.Span(
+                        " )",
+                        className="d-inline"
+                    ),
                 ],
                 className="d-flex"
             ),

@@ -41,27 +41,25 @@ def register_callbacks(app):
 
 def register_time_view_callbacks(app):
     @app.callback(
+        Output("studies-display", "getRowsResponse", allow_duplicate=True),
         Output("time-graph", "figure"),
-        # Update the Ag-Grid with study data
-        Output("time-studies-display", "rowData"),
+        Output("count-filtered", "children"),
         Input("start-year", "value"),
         Input("end-year", "value"),
+        prevent_initial_call=True
     )
-    @log_time
     def update_time_view(start_year, end_year):
-        # Fetch the time data (e.g., number of publications per year)
         df, ids = get_time_data(start_year=start_year, end_year=end_year)
-
-        # Create the graph figure
         fig = px.bar(df, x="Year", y="Frequency", title="Frequency of Publications per Year", labels={
             "Frequency": "Frequency"
         })
-
-        # Fetch the corresponding study details
-        studies = get_studies_details(ids=ids)
-
-        # Return the updated graph figure and the studies for the grid
-        return fig, studies
+        studies = get_studies_details(
+            ids=ids,
+        )
+        return {
+            "rowData": studies,
+            "rowCount": len(ids)
+        }, fig, len(ids)
 
 
 def register_dual_task_view_callbacks(app):
@@ -162,87 +160,22 @@ def register_studyview_callbacks(app):
 
 
 def register_pagination_callbacks(app):
-    # @app.callback(
-    #     Output("studies-ag-grid", "dashGridOptions"),
-    #     Input("page-size-dropdown", "value"),
-    # )
-    # @log_time
-    # def update_page_size(selected_page_size):
-    #     """
-    #     Updates the AG Grid pagination page size dynamically.
-    #     """
-    #     if not selected_page_size:
-    #         return no_update
-
-    #     grid_options = {
-    #         "pagination": True,
-    #         "paginationPageSize": selected_page_size,
-    #         "groupDefaultExpanded": 0,
-    #         "autoGroupColumnDef": {
-    #             "headerName": "Abstract",
-    #             "field": "abstract",
-    #             "cellRenderer": "agGroupCellRenderer",
-    #         },
-    #     }
-    #     return grid_options
-
-    # @app.callback(
-    #     Output("study-view-test", "rowData"),
-    #     Output("studies-count", "children"),
-    #     Input("studies-display", "dashGridOptions"),
-    #     prevent_initial_call=False  # Ensure callback is triggered on initial load as well
-    # )
-    # def fetch_studies(grid_options):
-    #     """
-    #     Fetches paginated, sorted, and filtered studies dynamically.
-    #     """
-    #     # Ensure callback is triggered even on the initial page load
-    #     if not grid_options:
-    #         # Load initial data if grid options are not provided
-    #         grid_options = {}  # or set to default options, like an empty dictionary
-
-    #     # Extract pagination details (defaults to 0 and 20 if no options provided)
-    #     start_row = grid_options.get("startRow", 0)
-    #     end_row = grid_options.get("endRow", 20)
-
-    #     # Extract sorting details (defaults to sorting by 'year' in descending order)
-    #     sort_model = grid_options.get("sortModel", [{"colId": "year", "sort": "desc"}])
-
-    #     # Extract filters (empty dict if no filters)
-    #     filter_model = grid_options.get("filterModel", {})
-
-    #     # Fetch the data based on pagination, sorting, and filters
-    #     studies, total_filtered = get_studies_details_new(
-    #         start_row=start_row,
-    #         end_row=end_row,
-    #         sort_model=sort_model,
-    #         filter_model=filter_model
-    #     )
-
-    #     # Return data to populate the grid and update the count dynamically
-    #     return studies, str(total_filtered)
-
     @app.callback(
-        Output("studies-display", "getRowsResponse"),
+        Output("studies-display", "getRowsResponse", allow_duplicate=True),
         Input("studies-display", "getRowsRequest"),
         State("filtered-study-ids", "data"),
         State("filter-tags", "data"),
-        prevent_initial_call=True  # Trigger on initial load
+        prevent_initial_call=True
     )
     def fetch_studies_infinite(request, filtered_ids, tags):
-        if not request:
-            return {}
         start_row = request["startRow"]
         end_row = request["endRow"]
 
-        # Extract sorting and filtering details from request
         sort_model = request.get(
             "sortModel", [{"colId": "year", "sort": "desc"}])
         filter_model = request.get("filterModel", {})
-
-        # Fetch the paginated data based on the start and end rows
         studies = get_studies_details(
-            ids=filtered_ids,
+            ids=filtered_ids if filtered_ids else [],
             start_row=start_row,
             end_row=end_row,
             sort_model=sort_model,
@@ -250,42 +183,36 @@ def register_pagination_callbacks(app):
             tags=tags
         )
 
-        # Return the fetched data and total row count for pagination
         return {
-            "rowData": studies,  # List of study data rows
-            # Total number of rows (for pagination)
-            "rowCount": len(filtered_ids)
+            "rowData": studies,
+            "rowCount": len(filtered_ids) if filtered_ids else len(studies)
         }
 
 
 def register_modal_callbacks(app):
     @app.callback(
-        [Output("paper-modal", "is_open"),
-         Output("paper-title", "children"),
-         Output("paper-link", "children"),
-         Output("paper-abstract", "children"),
-         Output("modal-tags", "children")
+        [Output("paper-modal", "is_open", allow_duplicate=True),
+         Output("paper-title", "children", allow_duplicate=True),
+         Output("paper-link", "children", allow_duplicate=True),
+         Output("paper-abstract", "children", allow_duplicate=True),
+         Output("modal-tags", "children", allow_duplicate=True)
          ],
         [Input("studies-display", "selectedRows")],
         prevent_initial_call=True
     )
     @log_time
-    def show_paper_details(selected_row_data):
+    def show_study_paper_details(selected_row_data):
         if not selected_row_data:
             return False, no_update, no_update, no_update, no_update
-        ctx = callback_context
-        if ctx.triggered_id == "close-modal":
-            return False, no_update, no_update, no_update, no_update
 
-        # Ensure a single row is selected
-        if selected_row_data and len(selected_row_data) == 1:
+        if len(selected_row_data) == 1:
             paper = selected_row_data[0]
             title = paper["title"] + " (" + str(paper["year"]) + ")"
             abstract = paper["abstract"]
             link_to_pubmed = paper["link_to_pubmed"]
 
             tags = []
-            prev_task = None  # Initialize to None for first comparison
+            prev_task = None
             task_dict = {
                 'task': '',
                 'buttons': [],
@@ -294,29 +221,27 @@ def register_modal_callbacks(app):
 
             for tag in paper['tags']:
                 if tag['task'] != prev_task:
-                    # Append the previous task_dict if it contains data
                     if task_dict['task']:
                         tags.append(task_dict)
 
-                    # Start a new task_dict for the current task
                     prev_task = tag['task']
                     task_dict = {
                         'task': tag['task'],
                         'buttons': [filter_button(tag['color'], tag['label'], tag['task'])],
-                        'model': 'BERT',  # You can replace 'BERT' with the actual model if needed
+                        'model': 'BERT',  # Replace with actual model if necessary
                     }
                 else:
-                    # If the task is the same as the previous one, add to the existing task_dict
                     task_dict['buttons'].append(filter_button(
                         tag['color'], tag['label'], tag['task']))
 
-            # After the loop, append the last task_dict if it has data
             if task_dict['task']:
                 tags.append(task_dict)
-            buttons = tag_component(tags)
-            return True, title, link_to_pubmed, abstract,  buttons
 
-        return no_update  # No update if no row or multiple rows selected
+            buttons = tag_component(tags)
+
+            return True, title, link_to_pubmed, abstract, buttons
+
+        return no_update
 
 
 def register_download_csv_callback(app):
