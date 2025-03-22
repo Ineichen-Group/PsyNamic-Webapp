@@ -139,12 +139,14 @@ def get_study_tags(ids: list[int], tags: dict[str, list]) -> dict[int, list[dict
         results = query.all()
 
         study_tags = {}
+        # TODO: cache color mappings
+        color_mappings = {task: get_color_mapping(task, get_all_labels(task)) for task in tags.keys()}
 
         for paper_id, task, label in results:
             tag_info = {
                 'task': task,
                 'label': label,
-                'color': get_color_mapping(task, tags[task])[label]
+                'color': color_mappings[task][label],
             }
 
             if paper_id not in study_tags:
@@ -313,7 +315,7 @@ def get_ids(task: str = None, label: str = None) -> set[int]:
         try:
             query = session.query(Prediction.paper_id)
             ids = [item.paper_id for item in query.all()]
-            return set(ids)
+            return list(set(ids))
         finally:
             session.close()
     elif task is not None:
@@ -324,7 +326,7 @@ def get_ids(task: str = None, label: str = None) -> set[int]:
             if label is not None:
                 query = query.filter(Prediction.label == label)
             ids = [item.paper_id for item in query.all()]
-            return set(ids)
+            return list(set(ids))
         finally:
             session.close()
     else:
@@ -333,7 +335,7 @@ def get_ids(task: str = None, label: str = None) -> set[int]:
                 Prediction.task == task,
                 Prediction.label == label)
             ids = [item.paper_id for item in query.all()]
-            return set(ids)
+            return list(set(ids))
         finally:
             session.close()
 

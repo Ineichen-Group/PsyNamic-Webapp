@@ -186,7 +186,7 @@ def study_grid(
         nr_filtered_studies: int,
         last_update: str,
         tags: bool = True,
-        id: str = "studies-display",
+        id: str = "studies-grid",
         default_sort_column: str = "year",
         default_sort_order: str = "desc"):  
 
@@ -267,7 +267,7 @@ def study_grid(
                     f'Last data update: {last_update}', className="d-flex justify-content-center")]
             ),
             paper_details_modal(),
-        ],
+        ], id = "studies-display"
     )
 
 

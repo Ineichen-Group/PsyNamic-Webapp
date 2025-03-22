@@ -22,7 +22,7 @@ TASK2COLOR = {
     "Condition": sequential.Oranges,
     "Outcomes": sequential.PuBu,
     "Clinical Trial Phase": sequential.PuBuGn,
-    "Study Concluesion": sequential.PuRd,
+    "Study Conclusion": sequential.PuRd,
 }
 
 # s. https://plotly.com/python/builtin-colorscales/
