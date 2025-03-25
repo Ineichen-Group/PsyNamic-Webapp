@@ -33,8 +33,8 @@ def header_layout():
                                         "Number of Participants", href="/insights/participants"),
                                     dbc.DropdownMenuItem(
                                         "Study Protocol", href="/insights/study-protocol"),
-                                    # dbc.DropdownMenuItem(
-                                    #     "Dosage", href="/insights/dosage"),
+                                    dbc.DropdownMenuItem(
+                                         "Dosage", href="/insights/dosage"),
 
                                 ],
                                 nav=True,
@@ -382,20 +382,40 @@ def paper_details_modal():
     )
 
 
-def ner_tag(text: str, category: str):
+def ner_tag(text: str, category: str = None):
     hilight_colors = {
-        "Dosage": "#bbf484",
+        "Dosage": "#CCFF00",
     }
+    default_highlight = "#FFFF00"
 
-    color = hilight_colors[category]
+    color = hilight_colors[category] if category in hilight_colors else default_highlight
 
     return html.Span(
         [
             html.Span(text, className="ner-text"),
-            html.Span(category, className="ner-category"),
+            html.Span(category, className="ner-category") if category else None,
         ],
         className="ner-tag",
         style={
             "backgroundColor": color,
         },
     )
+
+
+def highlighted_text(text: str, cutpoints: list) -> html.Span:
+    elements = []
+    last_index = 0
+    
+    for cp in cutpoints:
+        start, end, tag = cp['start'], cp['end'], cp['tag']
+        
+        if last_index < start:
+            elements.append(html.Span(text[last_index:start]))
+        
+        elements.append(ner_tag(text[start:end], category=tag))
+        last_index = end
+    
+    if last_index < len(text):
+        elements.append(html.Span(text[last_index:]))
+    
+    return html.Span(elements)
