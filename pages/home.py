@@ -30,7 +30,7 @@ def home_layout():
                         html.P(description, style={'font-size': '16px'}),
                     ]),
                 ], color="light", outline=True, className='mb-4 card-hover'),
-                href=link,
+                href=link, className='box-link'
             ),
         ], width=12, md=4) for title, link, description in random_insights
     ]
@@ -94,7 +94,7 @@ def home_layout():
                             html.P('Filter studies by all available categories.')
                         ]),
                     ], color="light", outline=True, className='mb-4 card-hover', ),
-                    href='/explore/filter',
+                    href='/explore/filter', className='box-link'
                 ),
             ], width=12, md=4),
             dbc.Col([
@@ -106,7 +106,7 @@ def home_layout():
                             html.P('Juxtapose two information categories.')
                         ]),
                     ], color="light", outline=True, className='mb-4 card-hover', ),
-                    href='/explore/dual-task',
+                    href='/explore/dual-task', className='box-link'
                 ),
             ], width=12, md=4),
 
@@ -120,7 +120,7 @@ def home_layout():
                                 'Visualize the distribution of studies over time.')
                         ]),
                     ], color="light", outline=True, className='mb-4 card-hover',),
-                    href='/explore/time',
+                    href='/explore/time', className='box-link'
                 ),
             ], width=12, md=4),
 

@@ -15,7 +15,7 @@ from sqlalchemy import and_, tuple_, case
 
 from style.colors import get_color_mapping
 from settings import DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME
-from .models import Paper, Prediction
+from .models import Paper, Prediction, NerTag
 
 # Add the parent folder to the Python search path
 parent_folder_path = os.path.abspath(
@@ -116,6 +116,91 @@ def get_studies_details(
         ]
 
         return results
+    finally:
+        session.close()
+
+
+def get_studies_details_ner(
+    ids: list[int] = None,
+    start_row: int = 0,
+    end_row: int = 20,
+    sort_model: list[dict] = None,
+    filter_model: dict = None,
+    tags: dict[str, list] = None
+):
+
+    session = Session()
+    try:
+        tags = {
+            'Substances': get_all_labels('Substances'),
+        }
+        query = session.query(Paper)
+
+        # Apply any filters based on the filter model
+        if filter_model:
+            for field, condition in filter_model.items():
+                if "filter" in condition:
+                    query = query.filter(
+                        getattr(Paper, field) == condition["filter"])
+
+        # Apply filtering by paper IDs
+        if ids:
+            query = query.filter(Paper.id.in_(ids))
+
+        # Set default sorting if no sort_model is provided
+        if not sort_model or len(sort_model) == 0:
+            # Default sorting by 'year' in descending order
+            sort_field = "year"
+            sort_order = "desc"
+        else:
+            # Use the sorting provided in the sort_model
+            sort_field = sort_model[0]["colId"]
+            sort_order = sort_model[0]["sort"]
+
+        # Apply the sorting
+        order_column = getattr(Paper, sort_field, None)
+        if order_column is not None:
+            query = query.order_by(
+                order_column.desc() if sort_order == "desc" else order_column.asc())
+
+        # Pagination with offset and limit
+        query = query.offset(start_row).limit(end_row - start_row)
+
+        # Specify which fields to retrieve
+        query = query.with_entities(
+            Paper.id, Paper.title, Paper.abstract,
+            Paper.key_terms, Paper.doi, Paper.year,
+            Paper.link_to_pubmed,
+            Paper.prediction_input
+        )
+
+        # Execute the query
+        studies = query.all()
+
+        # Fetch tags if provided
+        if tags:
+            study_tags = get_study_tags([study.id for study in studies], tags)
+            breakpoint()
+
+        # Prepare the results
+        results = [
+            {
+                'id': study.id,
+                'title': study.title,
+                'abstract': study.abstract,
+                'pred_text': study.prediction_input,
+                'key_terms': study.key_terms,
+                'doi': study.doi,
+                'year': study.year,
+                'link_to_pubmed': study.link_to_pubmed,
+                'tags': study_tags.get(study.id, []) if tags else [],
+                'dosage': get_dosages(study.id)
+            }
+            for study in studies
+        ]
+
+        return results
+
     finally:
         session.close()
 
@@ -422,3 +507,81 @@ def get_filtered_study_ids(filter: OrderedDict[str, list[str]]) -> list[int]:
         ids = get_ids(pair[0], pair[1])
         all_ids = all_ids.intersection(ids)
     return list(all_ids)
+
+
+def get_ner_tags(id: int) -> list[dict]:
+    """Get the named entity recognition tags for a given paper ID."""
+    session = Session()
+    try:
+        query = session.query(NerTag).filter(NerTag.paper_id == id)
+        results = query.all()
+
+        # sort according to the start id
+        results = sorted(results, key=lambda x: x.start_id)
+
+        tags = []
+        for r in results:
+            tags.append({
+                'tag': r.tag,
+                'start': r.start_id,
+                'end': r.end_id,
+            })
+        return tags
+    finally:
+        session.close()
+
+
+def get_pred_text(id: int) -> str:
+    session = Session()
+    try:
+        query = session.query(Paper.prediction_input).filter(Paper.id == id)
+        result = query.first()
+        return result[0]
+    finally:
+        session.close()
+
+
+def get_dosages(paper_id: int) -> str:
+    """Get all dosage tags for a given paper ID."""
+    session = Session()
+    try:
+        query = session.query(NerTag).filter(
+            NerTag.paper_id == paper_id, NerTag.tag == 'Dosage')
+        results = query.all()
+
+        dosages = ''
+        for tag in results:
+            dosages += tag.text + ' | '
+
+        dosages = dosages[:-3]
+        return dosages
+    finally:
+        session.close()
+
+
+def ner_tags_type(paper_id: int, type: str, in_titel=False) -> list[dict]:
+    """Get all tags of a specific type for a given paper ID."""
+    session = Session()
+    try:
+        query = session.query(NerTag).filter(
+            NerTag.paper_id == paper_id, NerTag.tag == type)
+        results = query.all()
+
+        # get title, abstract and text
+        query = session.query(Paper).filter(Paper.id == paper_id)
+        paper = query.first()
+        title = paper.title
+        end_id_of_title = len(title + '.^\n')
+        tags = []
+        for tag in results:
+            if not in_titel and tag.start_id < end_id_of_title:
+                continue
+
+            tags.append({
+                'start': tag.start_id if in_titel else tag.start_id - end_id_of_title,
+                'end': tag.end_id if in_titel else tag.end_id - end_id_of_title,
+                'tag': tag.tag,
+            })
+        return tags
+    finally:
+        session.close()

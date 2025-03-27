@@ -28,7 +28,7 @@
     font-size: 10px;
     text-transform: uppercase;
     margin-left: 6px;
-    color: dimgray;
+    color: grey;
     font-weight: bold;
 }
 
@@ -50,3 +50,8 @@
     transform: scale(1.02); /* Slight zoom effect */
 }
 
+.box-link {
+    display: block;
+    text-decoration: none !important;
+    color: black;
+}

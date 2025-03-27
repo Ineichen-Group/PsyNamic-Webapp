@@ -1,10 +1,12 @@
 from datetime import datetime, timezone, timedelta
 import os
 import sys
+import json
+import re
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from models import Paper, BatchRetrieval, Token, Prediction, PredictionToken
+from models import Paper, BatchRetrieval, Prediction, NerTag
 import argparse
 import pandas as pd
 from settings import *
@@ -13,8 +15,6 @@ from typing import Optional
 parent_folder_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, parent_folder_path)
-
-#
 
 
 def create_batch_retrieval(date: datetime, nr_new_papers: int, retrieval_time_needed: timedelta) -> BatchRetrieval:
@@ -38,6 +38,10 @@ def create_paper(
         pubmed_id: str,
         retrieval_id: int
 ):
+    prediction_input = prediction_input.replace('\xa0', '').replace('\u2009', '')
+    title = title.replace('\xa0', '').replace('\u2009', '')
+    abstract = abstract.replace('\xa0', '').replace('\u2009', '')
+    
     return Paper(
         id=ID,
         pubmed_id=pubmed_id if pubmed_id else None,
@@ -52,20 +56,6 @@ def create_paper(
         link_to_pubmed=link_to_pubmed if link_to_pubmed else None,
         retrieval_id=retrieval_id
     )
-
-
-def create_tokens(token_list: list[str], ner_list: list[str], paper_id) -> list[Token]:
-    if len(token_list) != len(ner_list):
-        raise ValueError("Token and NER lists must have the same length")
-    tokens = []
-    for i, (t, ner) in enumerate(zip(token_list, ner_list)):
-        tokens.append(Token(
-            paper_id=paper_id,
-            text=t,
-            ner_tag=ner,
-            position_id=i
-        ))
-    return tokens
 
 
 def create_predictions(paper_id: int, task: str, label: str, probability: float, model: str, is_multilabel: bool) -> list[Prediction]:
@@ -87,40 +77,69 @@ def create_prediction_tokens(token_id, prediction_id, weight):
     )
 
 
-def populate_db(prediction_file: str, studies_file: str, studies_id_column: Optional[str] = 'id'):
+def create_ner_tags(session: Session, tag: str, start_id: int, end_id: int, text: str, probability: float, model: str, paper_id: int, pred_text: str) -> NerTag:
+    print(text,'\t', pred_text[start_id:end_id])
 
-    # Using the settings.py file, create a connection to the database
+    ner_tag = session.query(NerTag).filter(
+        NerTag.paper_id == paper_id,
+        NerTag.start_id == start_id,
+        NerTag.end_id == end_id,
+        NerTag.tag == tag,
+        NerTag.text == text
+    ).first()
+    if ner_tag:
+        print(f"NER tag already exists: {ner_tag}")
+        return ner_tag
 
-    DATABASE_URL = os.getenv(
-        "DATABASE_URL",
-        "postgresql://{0}:{1}@{2}:{3}/{4}".format(
-            DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME)
+
+    return NerTag(
+        tag=tag,
+        start_id=start_id,
+        end_id=end_id,
+        text=text,
+        probability=probability,
+        model=model,
+        paper_id=paper_id,
     )
+
+
+def populate_db(args: argparse.Namespace):
+    # prediction_file: str, studies_file: str, studies_id_column: Optional[str] = 'id'
     engine = create_engine(DATABASE_URL, echo=False)
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
 
-    # check how many papers are already in the database
-    nr_papers = session.query(Paper).count()
-    print(f"Number of papers in the database: {nr_papers}")
+    if args.studies_file:
+        populate_studies(session, args.studies_file, args.studies_id_column)
+        nr_papers = session.query(Paper).count()
+        print(f"Number of papers: {nr_papers}")
 
-    batch_date = studies_file[:-4].split('_')[-2]  # yyyymmdd
-    batch_date = datetime.strptime(batch_date, '%Y%m%d')
-    retrieval_duration = studies_file[:-4].split('_')[-1]  # hh:mm:ss
-    hours, minutes, seconds = map(int, retrieval_duration.split(':'))
-    retrieval_duration = timedelta(
-        hours=hours, minutes=minutes, seconds=seconds)
+    if args.predictions_file:
+        if 'ner' in args.predictions_file:
+            populate_ner_manual(session, args.predictions_file)
+        else:
+            populate_predictions(session, args.predictions_file)
 
-    pred_data = pd.read_csv(prediction_file)
-    studies_data = pd.read_csv(studies_file)
+    session.commit()
+    session.close()
+
+
+def populate_studies(session: Session, file: str, studies_id_column: str):
+    studies_data = pd.read_csv(file, encoding='utf-8')
 
     # Check if studies_id_column is in the studies_data
     if studies_id_column not in studies_data.columns:
         raise ValueError(f"Studies file does not contain column '{studies_id_column
                                                                   }'. Please specify the correct column name with the --studies_id_column argument.")
 
-    nr_studies = len(studies_data)
+    batch_date = file[:-4].split('_')[-2]  # yyyymmdd
+    batch_date = datetime.strptime(batch_date, '%Y%m%d')
+    retrieval_duration = file[:-4].split('_')[-1]  # hh:mm:ss
+    hours, minutes, seconds = map(int, retrieval_duration.split(':'))
+    retrieval_duration = timedelta(
+        hours=hours, minutes=minutes, seconds=seconds)
 
+    nr_studies = len(studies_data)
     # datetime duration
     batch = create_batch_retrieval(batch_date, nr_studies, retrieval_duration)
     session.add(batch)
@@ -164,8 +183,11 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
         session.add(paper)
     session.commit()
 
+
+def populate_predictions(session: Session, file: str):
+    pred_data = pd.read_csv(file, encoding='utf-8')
     for i, row in pred_data.iterrows():
-        paper_id = row['id']
+        paper_id = int(row['id'])
         paper = session.query(Paper).filter(Paper.id == paper_id).first()
         if not paper:
             # raise ValueError(f"No paper found with paper_id: {paper_id}")
@@ -183,7 +205,132 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
         session.add(pred)
     session.commit()
 
-    session.close()
+
+def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str) -> tuple[int, int]:
+    # Create the regex pattern to match the token list with optional whitespace between tokens
+    pattern = r'\s?'.join(re.escape(token) for token in token_list)
+    pattern = r'\s?' + pattern + r'\s?'
+
+    matches = list(re.finditer(pattern, text))
+
+    if not matches:
+        raise ValueError(
+            "No match found for the given token list in the text.")
+
+    if len(matches) == 1:
+        return matches[0].start(), matches[0].end()
+    # Iterate through the matches to find the correct one using prev_token and next_token
+    for match in matches:
+        # Get the start and end positions of the match
+        start_pos = match.start()
+        end_pos = match.end()
+
+        # Get the surrounding text (prev_token and next_token) for disambiguation
+        before_match = text[:start_pos].split()[-1]
+        after_match = text[end_pos:].split(
+        )[0] if end_pos < len(text) else None
+
+        
+        # If prev_token is None, don't check it. Same for next_token.
+        if (prev_token is None or before_match == prev_token) and (next_token is None or after_match == next_token):
+            return start_pos, end_pos  # Return the start and end positions of the match
+        elif before_match.endswith(prev_token) and after_match.startswith(next_token):
+            return start_pos, end_pos
+    raise ValueError("No match found for the given token list in the text.")
+
+
+def populate_ner_manual(session: Session, file: str):
+    # Load jsonl file
+    with open(file, 'r', encoding='utf-8') as f:
+        data = f.readlines()
+
+        for row in data:
+            row = json.loads(row)
+            paper = session.query(Paper).filter(Paper.id == row['id']).first()
+            if not paper:
+                raise ValueError(f"No paper found with paper_id: {row['id']}")
+
+            pred_text = paper.prediction_input
+            tokens = row['tokens']
+            ner_tags = row['ner_tags']
+
+            current_tag = None
+            entity_tokens = []
+            nr_tags = 0
+
+            for i, (token, tag) in enumerate(zip(tokens, ner_tags)):
+                prev_id = len(entity_tokens) + 1
+                prev_token = tokens[i-prev_id] if prev_id > 0 else None
+                next_token = tokens[i] if i < len(tokens) - 1 else None
+
+                if tag.startswith("B-Dosage"):  # Beginning of a new entity
+                    if current_tag:
+                        start_id, end_id = find_pos(
+                            pred_text, entity_tokens, prev_token, next_token)
+                        ner_tag = create_ner_tags(
+                            session=session,
+                            tag=current_tag,
+                            start_id=start_id,
+                            end_id=end_id,
+                            text=" ".join(entity_tokens),
+                            probability=1.0,
+                            model="manual",
+                            paper_id=row['id'],
+                            pred_text=pred_text
+                        )
+                        nr_tags += 1
+                        session.add(ner_tag)
+
+                    current_tag = tag[2:]  # Extract the entity type
+                    entity_tokens = [token]  # Start new entity with this token
+
+                # Inside the same entity
+                elif tag.startswith("I-Dosage") and current_tag == tag[2:]:
+                    entity_tokens.append(token)
+
+                else:  # End of the current entity or no entity
+                    if current_tag:
+                        start_id, end_id = find_pos(
+                            pred_text, entity_tokens, prev_token, next_token)
+                        ner_tag = create_ner_tags(
+                            session=session,
+                            tag=current_tag,
+                            start_id=start_id,
+                            end_id=end_id,
+                            text=" ".join(entity_tokens),
+                            probability=1.0,
+                            model="manual",
+                            paper_id=row['id'],
+                            pred_text=pred_text
+                        )
+                        nr_tags += 1
+                        session.add(ner_tag)
+                        current_tag = None
+                        entity_tokens = []
+
+            # Handle the last entity if needed
+            if current_tag:
+
+                prev_id = len(entity_tokens) + 1
+                prev_token = tokens[i-prev_id] if prev_id > 0 else None
+                next_token = tokens[i] if i < len(tokens) - 1 else None
+                start_id, end_id = find_pos(
+                    pred_text, entity_tokens, prev_token, next_token)
+                ner_tag = create_ner_tags(
+                    session=session,
+                    tag=current_tag,
+                    start_id=start_id,
+                    end_id=end_id,
+                    text=" ".join(entity_tokens),
+                    probability=1.0,
+                    model="manual",
+                    paper_id=row['id'],
+                    pred_text=pred_text
+                )
+                nr_tags += 1
+                session.add(ner_tag)
+
+        session.commit()
 
 
 def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
@@ -226,16 +373,15 @@ def get_unused_id(session: Session):
     return ids[-1] + 1
 
 
-# args parser with the two files
 def init_args_parser():
     """Initialize and return the argument parser for the script."""
     arg_parser = argparse.ArgumentParser(
         description='Populate the database with data')
     # add short and long arguments
     arg_parser.add_argument('-p', '--predictions_file', type=str,
-                            help='Path to the predictions file', required=True)
+                            help='Path to the predictions file')
     arg_parser.add_argument('-s', '--studies_file', type=str,
-                            help='Path to the studies file', required=True)
+                            help='Path to the studies file')
     arg_parser.add_argument('--studies_id_column', type=str, default='id',)
     return arg_parser
 
@@ -243,5 +389,5 @@ def init_args_parser():
 if __name__ == '__main__':
     parser = init_args_parser()
     args = parser.parse_args()
-    populate_db(args.predictions_file, args.studies_file,
-                args.studies_id_column)
+
+    populate_db(args)

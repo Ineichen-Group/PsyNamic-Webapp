@@ -2,11 +2,12 @@ from collections import defaultdict
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from style.colors import get_color_mapping
-from components.layout import filter_component, studies_display, filter_button, study_grid
+from components.layout import filter_component, studies_display, filter_button, study_grid, ner_tag, highlighted_text, dosage_study_grid
 from components.graphs import bar_chart
-from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies
+from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_ner_tags, get_pred_text
 from callbacks import rgb_to_hex
 from collections import OrderedDict
+
 
 
 def get_filter_buttons(task, labels):
@@ -201,21 +202,32 @@ def study_protocol_view():
     ])
 
 
-# def dosages_view():
-#     title = "Inspecting dosage: How are different substances dosed?"
-#     # return html.Div([
-#     #     html.H1(f'{title}', className="my-4"),
-#     #     studies_display()
-#     # ])
-#     id = 'study_view_test'
+def dosages_view():
+    title = "Inspecting dosage: How are different substances dosed?"
+    # return html.Div([
+    #     html.H1(f'{title}', className="my-4"),
+    #     studies_display()
+    # ])
+    id = 'study_view_test'
 
-#     tags = False
-#     last_update = 'today'
-#     total_nr = nr_studies()
-#     ids = list(get_ids('Substances', 'LSD'))
-#     # Persist ids into store
-
-#     return html.Div([
-#         html.H1(f'{title}', className="my-4"),
-#         studies_display()
-#     ])
+    tags = False
+    last_update = 'January 2024'
+    total_nr = nr_studies()
+    ids = list(get_ids('Substances', 'LSD'))
+    # Persist ids into store
+    tag = ner_tag('This is a test', 'Dosage')
+    tag2 = ner_tag('Test')
+    
+    tags = get_ner_tags(2480)
+    text = get_pred_text(2480)
+    text_highlighted = highlighted_text(text, tags)
+    return html.Div([
+        html.H1(f'{title}', className="my-4"),
+        dosage_study_grid(total_nr, len(ids), last_update),
+        dcc.Store(id="filtered-study-ids", data=[], storage_type="memory"),
+        dcc.Store(id="filter-tags", data=[], storage_type="memory"),
+        tag,
+        tag2,
+        text_highlighted,
+        
+    ])

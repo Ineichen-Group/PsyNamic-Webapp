@@ -16,9 +16,9 @@ from pages.explore.dual_task import (
     get_dual_filters,
     dual_task_graphs,
 )
-from components.layout import filter_button, tag_component, get_tags, filter_data
+from components.layout import filter_button, tag_component, get_tags, filter_data, highlighted_text
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
-from data.queries import get_studies_details, get_filtered_study_ids, get_time_data, nr_studies, get_all_labels
+from data.queries import get_studies_details, get_filtered_study_ids, get_time_data, nr_studies, get_all_labels, get_studies_details_ner, ner_tags_type
 
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
@@ -44,6 +44,7 @@ def register_callbacks(app):
     register_modal_callbacks(app)
     register_download_csv_callback(app)
     register_filter_callback(app)
+    register_pagination_dosages_callbacks(app)
 
 
 def register_time_view_callbacks(app):
@@ -185,6 +186,105 @@ def register_pagination_callbacks(app):
             })
 
         return responses, row_count
+    
+def register_pagination_dosages_callbacks(app):
+    @app.callback(
+        Output('dosage-study-grid', "getRowsResponse"),
+        Output('count-filtered', 'children', allow_duplicate=True),
+        Input('dosage-study-grid', "getRowsRequest"),
+        Input("filter-tags", "data"),
+        State("filtered-study-ids", "data"),
+        prevent_initial_call=True
+    )
+    def fetch_studies_infinite(request, filtered_ids, tags):
+        if not request:
+            return no_update, no_update
+
+        print(request)
+        start_row = request["startRow"]
+        end_row = request["endRow"]
+
+        sort_model = request.get(
+            "sortModel", [{"colId": "year", "sort": "desc"}])
+        filter_model = request.get("filterModel", {})
+
+        studies = get_studies_details_ner(
+            ids=filtered_ids if filtered_ids else [],
+            start_row=start_row,
+            end_row=end_row,
+            sort_model=sort_model,
+            filter_model=filter_model,
+            tags=tags
+        )
+        if len(studies) == 0:
+            row_count = 0
+        else:
+            row_count = len(filtered_ids) if filtered_ids else nr_studies()
+
+        return {
+            "rowData": studies,
+            "rowCount": row_count
+        }, row_count
+    
+    @app.callback(
+        [
+            Output("dosage-modal", "is_open", allow_duplicate=True),
+            Output("paper-title", "children", allow_duplicate=True),
+            Output("paper-link", "href", allow_duplicate=True),
+            Output("paper-link", "children", allow_duplicate=True),
+            Output("paper-abstract", "children", allow_duplicate=True),
+            Output("modal-tags", "children", allow_duplicate=True),
+        ],
+        Input('dosage-study-grid', "selectedRows"),
+        prevent_initial_call=True
+    )
+    def show_study_paper_details(selected_rows_list):
+        if not selected_rows_list:
+            return False, no_update, no_update, no_update, no_update, no_update
+
+        triggered_id = callback_context.triggered_id
+        if not triggered_id:
+            return no_update
+
+        paper = selected_rows_list[0]
+        if not paper:
+            return False, no_update, no_update, no_update, no_update, no_update
+              
+        title = f"{paper['title']} ({paper['year']})"
+        abstract = paper["abstract"]
+        link_to_pubmed = paper["link_to_pubmed"]
+
+        link_text = link_to_pubmed
+        link_href = link_to_pubmed
+
+        tags = []
+        prev_task = None
+        task_dict = {"task": "", "buttons": [], "model": ""}
+
+        for tag in paper["tags"]:
+            if tag["task"] != prev_task:
+                if task_dict["task"]:
+                    tags.append(task_dict)
+
+                prev_task = tag["task"]
+                task_dict = {
+                    "task": tag["task"],
+                    "buttons": [filter_button(tag["color"], tag["label"], tag["task"])],
+                    "model": "BERT",  # Replace with actual model if needed
+                }
+            else:
+                task_dict["buttons"].append(filter_button(
+                    tag["color"], tag["label"], tag["task"]))
+
+        if task_dict["task"]:
+            tags.append(task_dict)
+
+        buttons = tag_component(tags)
+        
+        ner_tags = ner_tags_type(paper['id'], 'Dosage')
+        text_with_tag = highlighted_text(paper['abstract'], ner_tags)
+
+        return True, title, link_href, link_text, text_with_tag, buttons
 
 
 def register_modal_callbacks(app):

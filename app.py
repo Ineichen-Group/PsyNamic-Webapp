@@ -12,7 +12,7 @@ from pages.home import home_layout
 from pages.explore.dual_task import dual_task_layout
 from pages.explore.time import time_layout
 from pages.explore.filter import filter_layout
-from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view, nr_part_view, study_protocol_view# dosages_view
+from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view, nr_part_view, study_protocol_view, dosages_view
 
 from components.layout import header_layout, footer_layout, content_layout
 from callbacks import register_callbacks
@@ -77,8 +77,8 @@ def display_page(pathname: str):
             return content_layout([nr_part_view()])
         elif pathname == '/insights/study-protocol':
             return content_layout([study_protocol_view()])
-        # elif pathname == '/insights/dosage':
-        #     return content_layout([dosages_view()])
+        elif pathname == '/insights/dosage':
+            return content_layout([dosages_view()])
     else:
         return content_layout(home_layout())
 

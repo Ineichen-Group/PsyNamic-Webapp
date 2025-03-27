@@ -35,13 +35,17 @@ class Paper(Base):
 
     # Relationship to BatchRetrieval (Many-to-One)
     batch_retrieval = relationship('BatchRetrieval', back_populates='papers')
-    # Relationship to Token (One-to-Many)
-    tokens = relationship('Token', back_populates='paper')
+
     # Relationship to Prediction (One-to-Many)
     predictions = relationship('Prediction', back_populates='paper')
 
+    ner_tags = relationship('NerTag', back_populates='paper')
+
     def __repr__(self):
         return f"<Paper(id={self.id}, title={self.title}, authors={self.authors})>"
+    
+
+
 
 
 class BatchRetrieval(Base):
@@ -62,28 +66,26 @@ class BatchRetrieval(Base):
         return f"<BatchRetrieval(id={self.id}, date={self.date}, number_new_papers={self.number_new_papers})>"
 
 
-class Token(Base):
-    __tablename__ = 'token'
+class NerTag(Base):
+    __tablename__ = 'ner_tag'
 
-    # Primary Key
     id = Column(Integer, primary_key=True)
+    # Columns
+    tag = Column(String(255), nullable=False)
+    start_id = Column(Integer, nullable=False)
+    end_id = Column(Integer, nullable=False)
+    text = Column(String(255), nullable=False)
+    probability = Column(Float, nullable=False)
+    model = Column(String(255), nullable=False)
+    norm = Column(Float, nullable=True)
 
-    # Foreign Key to Paper
     paper_id = Column(Integer, ForeignKey('paper.id'), nullable=False)
 
-    # Columns
-    text = Column(String(255), nullable=False)
-    ner_tag = Column(String(255), nullable=True)  # Can be null
-    position_id = Column(Integer, nullable=False)
-
-    # Relationship to Paper (Many-to-One)
-    paper = relationship('Paper', back_populates='tokens')
-
-    # Relationship to Prediction_Token (One-to-Many)
-    prediction_tokens = relationship('PredictionToken', back_populates='token')
+    # Correct back_populates should match 'ner_tags' in Paper
+    paper = relationship('Paper', back_populates='ner_tags')
 
     def __repr__(self):
-        return f"<Token(id={self.id}, text={self.text[:50]}, position_id={self.position_id})>"
+        return f"<NerTag(id={self.id}, tag={self.tag}, text={self.text})>"
 
 
 class Prediction(Base):
@@ -105,36 +107,8 @@ class Prediction(Base):
     # Relationship to Paper (Many-to-One)
     paper = relationship('Paper', back_populates='predictions')
 
-    # Relationship to Prediction_Token (One-to-Many)
-    prediction_tokens = relationship(
-        'PredictionToken', back_populates='prediction')
-
     def __repr__(self):
         return f"<Prediction(id={self.id}, task={self.task}, label={self.label}, probability={self.probability})>"
-
-
-class PredictionToken(Base):
-    __tablename__ = 'prediction_token'
-
-    # Primary Key
-    id = Column(Integer, primary_key=True)
-
-    # Foreign Keys
-    token_id = Column(Integer, ForeignKey('token.id'), nullable=False)
-    prediction_id = Column(Integer, ForeignKey(
-        'prediction.id'), nullable=False)
-
-    # Columns
-    weight = Column(Float, nullable=False)
-
-    # Relationship to Token (Many-to-One)
-    token = relationship('Token', back_populates='prediction_tokens')
-
-    # Relationship to Prediction (Many-to-One)
-    prediction = relationship('Prediction', back_populates='prediction_tokens')
-
-    def __repr__(self):
-        return f"<PredictionToken(id={self.id}, weight={self.weight})>"
 
 
 def init_db():

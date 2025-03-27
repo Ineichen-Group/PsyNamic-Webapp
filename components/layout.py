@@ -279,6 +279,96 @@ def study_grid(
     )
 
 
+def dosage_study_grid(
+        nr_total_studies: int,
+        nr_filtered_studies: int,
+        last_update: str,
+        tags: bool = True,
+        default_sort_column: str = "Dosage",
+        default_sort_order: str = "desc"):
+
+    columns = [
+        {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
+        {"field": "year", "headerName": "Year","sortable": True, "width": 100},
+        {"field": "abstract", "headerName": "Abstract", "filter": True,
+         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2},
+        {"field": "dosage", "headerName": "Dosage", "sortable": True, "flex": 2},
+    ]
+
+    if tags:
+        columns.append({
+            "headerName": "Tags",
+            "field": "tags",
+            "filter": False,
+            "sortable": False,
+            "width": 200,
+            "cellRenderer": "Tag",
+        })
+
+    ag_grid_options = {
+        "pagination": True,
+        "paginationPageSize": 20,
+        "rowSelection": "single",
+        "cacheBlockSize": 20,
+        "defaultColDef": {
+            "sortable": True,
+            "resizable": True,
+        },
+        "sortModel": [{"colId": default_sort_column, "sort": default_sort_order}],
+    }
+
+    return html.Div(
+        [
+            html.Div(
+                children=[
+                    html.Span(
+                        "Found Studies: ",
+                        className="d-inline",
+                        style={"marginRight": "0.2rem"}
+                    ),
+                    html.Span(
+                        f"{nr_filtered_studies}",
+                        className="d-inline",
+                        id="count-filtered",
+                    ),
+                    html.Span(
+                        " (out of ",
+                        className="d-inline"
+                    ),
+                    html.Span(
+                        f"{nr_total_studies}",
+                        id="count-total",
+                        className="d-inline"
+                    ),
+                    html.Span(
+                        " )",
+                        className="d-inline"
+                    ),
+                ],
+                className="d-flex"
+            ),
+
+            dag.AgGrid(
+                id='dosage-study-grid',
+                columnDefs=columns,
+                rowModelType="infinite",
+                dashGridOptions=ag_grid_options,
+                style={"height": "500px", "width": "100%"},
+            ),
+
+            dbc.Button("Download CSV", id="download-csv-button",
+                       color="primary", className="mt-3"),
+            dcc.Download(id="download-csv"),
+
+            dbc.Row(
+                children=[html.Span(
+                    f'Last data update: {last_update}', className="d-flex justify-content-center")]
+            ),
+            paper_details_modal(id="dosage-modal"),
+        ], id="studies-display"
+    )
+
+
 def filter_selection():
     return dbc.Container([
         dbc.Row([
@@ -360,7 +450,7 @@ def filter_button(color: str, label: str, task: str, editable: bool = False):
     )
 
 
-def paper_details_modal():
+def paper_details_modal(id="paper-modal"):
     return dbc.Modal(
         [
             dbc.ModalHeader(dbc.ModalTitle(id="paper-title")),
@@ -376,7 +466,7 @@ def paper_details_modal():
                 ]
             ),
         ],
-        id="paper-modal",
+        id=id,
         size="xl",
         is_open=False,
     )
