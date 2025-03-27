@@ -165,12 +165,12 @@ def tag_component(tags: list[dict]):
                     children=tag['buttons'],
                     width="auto",
                 ),
-                dbc.Col(
-                    # make it secondary color
-                    html.Span(['Predicted by ', tag['model']],
-                              className="text-secondary"),
-                    width="auto",
-                ),
+                # dbc.Col(
+                #     # make it secondary color
+                #     html.Span(['Predicted by ', tag['model']],
+                #               className="text-secondary"),
+                #     width="auto",
+                # ),
             ],
             )
             for tag in tags]

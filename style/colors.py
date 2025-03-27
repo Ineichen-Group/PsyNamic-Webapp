@@ -7,13 +7,13 @@ import numpy as np
 SECONDARY_COLOR = '#c7c7c7'
 TASK2COLOR = {
     "Study Type": sequential.Greens,
-    "Study Purpose": sequential.Burg,
-    "Study Control": sequential.Peach,
+    "Study Purpose": sequential.Teal,
+    "Study Control": sequential.Burg,
     "Data Type": sequential.Reds,
-    "Data Collection": sequential.Mint,
+    "Data Collection": sequential.Magenta,
     "Number of Participants": sequential.Bluered,
-    "Sex of Participants": sequential.Magenta,
-    "Age of Participants": sequential.Teal,
+    "Sex of Participants": sequential.Mint,
+    "Age of Participants": sequential.Peach,
     "Substances": sequential.Purples,
     "Application Form": sequential.Burgyl,
     "Regimen": sequential.Pinkyl,
