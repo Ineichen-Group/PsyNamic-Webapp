@@ -1,5 +1,13 @@
-from settings import *
 from sqlalchemy import create_engine, Column, Integer, String, Text, Float, Boolean, ForeignKey, TIMESTAMP, Interval
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+DATABASE_USER = os.getenv("DATABASE_USER")
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DATABASE_HOST = os.getenv("DATABASE_HOST")
+DATABASE_PORT = os.getenv("DATABASE_PORT")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
 from sqlalchemy.orm import relationship, declarative_base
 from datetime import datetime
 import sys
