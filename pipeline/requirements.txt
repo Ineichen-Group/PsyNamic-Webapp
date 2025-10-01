@@ -1,0 +1,9 @@
+numpy
+pandas
+torch
+transformers
+sqlalchemy
+dotenv
+pandas
+lxml
+psycopg2-binary==2.9.10

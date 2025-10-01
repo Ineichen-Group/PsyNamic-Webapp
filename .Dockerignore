@@ -1,0 +1,4 @@
+pipeline/
+data/
+web_env/
+.env*
