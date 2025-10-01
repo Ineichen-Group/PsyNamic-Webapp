@@ -1,13 +1,15 @@
 # Installation - How to set up the dash up locally
 
-## General
+
+## NON-Docker setup
+### General
 * Make virtual environment and install requirements
 * Start webapp:
 ```bash
     python app.py
 ```
 
-## Database
+### Database
 * Install PostgreSQL
 https://www.postgresql.org/download/linux/ubuntu/
 
@@ -62,4 +64,9 @@ https://www.postgresql.org/download/linux/ubuntu/
     ```bash
     psql -d <database_name> -f data/indexes.sql
     ```
+    
 ## Scheduled job to retrieve new papers
+  ```bash
+0 3 * * 1 docker compose run --rm pipeline
+    ```
+
