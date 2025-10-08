@@ -10,12 +10,10 @@ show-db-user: load-env
 	@echo ${DATABASE_USER}
 
 load-dump: load-env
-	docker cp data/data_dump.sql db:/data/data_dump.sql
-	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -f /data/data_dump.sql
+	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -f /docker-entrypoint-initdb.d/db_dump.sql
 
 load-indexes:
-	docker cp data/indexes.sql db:/data/indexes.sql
-	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < data/indexes.sql
+	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < /docker-entrypoint-initdb.d/indexes.sql
 
 up:
 	docker compose up -d db web
