@@ -12,6 +12,8 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./data/data_dump.sql:/docker-entrypoint-initdb.d/data_dump.sql
+      - ./data/indexes.sql:/docker-entrypoint-initdb.d/indexes.sql
     env_file: .env
 
   web:
