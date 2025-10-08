@@ -9,11 +9,14 @@ load-env:
 show-db-user: load-env
 	@echo ${DATABASE_USER}
 
-populate: load-env
+load-dump: load-env
 	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -f /data/data_dump.sql
 
+load-indexes:
+	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < data/indexes.sql
+
 up:
-	docker compose up -d
+	docker compose up -d db web
 
 down:
 	docker compose down
@@ -41,3 +44,7 @@ ps:
 
 restart:
 	docker compose restart $(service)
+
+db-dump: load-env
+	DATE=$$(date +%Y%m%d_%H%M%S); \
+	docker compose exec db pg_dump -U ${DATABASE_USER} -d ${DATABASE_NAME} -F c -b -v -f /data/data_dump_$${DATE}.sql
