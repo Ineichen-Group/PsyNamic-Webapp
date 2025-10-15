@@ -3,6 +3,7 @@ settings.py
 pipeline/models/*
 .env*
 !.env.exp
+.vscode/*
 
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,python
@@ -183,7 +184,6 @@ pyrightconfig.json
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
