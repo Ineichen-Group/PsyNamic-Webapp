@@ -16,7 +16,7 @@ load-indexes:
 	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < /docker-entrypoint-initdb.d/indexes.sql
 
 up:
-	docker compose up -d db web
+	docker compose up -d db web pipeline
 
 down:
 	docker compose down
@@ -34,10 +34,10 @@ web-shell:
 	docker compose exec web /bin/bash
 
 pipeline-shell:
-	docker compose run --rm pipeline /bin/bash
+	docker compose exec pipeline /bin/sh
 
 run-pipeline:
-	docker compose run --rm pipeline
+	docker compose exec pipeline bash ./pipeline/run_pipeline.sh
 
 ps:
 	docker compose ps

@@ -33,9 +33,9 @@ services:
   pipeline:
     build:
       context: .
-      dockerfile: Dockerfile.pipeline
+      dockerfile: ./pipeline/Dockerfile.pipeline
     container_name: webapp_pipeline
-    restart: "no"
+    restart: always
     depends_on:
       - db
     environment:
@@ -44,7 +44,6 @@ services:
       - ./data:/app/data
       - ./pipeline:/app/pipeline
     env_file: .env
-    entrypoint: ["sh", "/app/entrypoint_pipeline.sh"]
 
 
 volumes:

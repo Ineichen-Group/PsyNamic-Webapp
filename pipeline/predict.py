@@ -14,8 +14,11 @@ from typing import Union
 from transformers import Trainer, AutoModelForTokenClassification, AutoModelForSequenceClassification, AutoTokenizer
 
 from datetime import datetime
+import pytz
 import pandas as pd
 from torch.utils.data import Dataset
+
+zurich = pytz.timezone('Europe/Zurich')
 
 
 class SimpleDataset(Dataset):
@@ -174,7 +177,7 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     log_dir = os.path.join(script_dir, 'log')
     os.makedirs(log_dir, exist_ok=True)
-    log_filename = f'predict_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log'
+    log_filename = f'predict_{datetime.now(zurich).strftime("%Y%m%d_%H%M%S")}.log'
     log_path = os.path.join(log_dir, log_filename)
     logging.basicConfig(
         filename=log_path,
@@ -183,14 +186,14 @@ def main():
     )
     logging.info('Prediction process started.')
     PUBMED_DATA_DIR = 'data/pubmed_fetch_results'
-    MODEL_INFO = 'data/model_paths.json'
+    MODEL_INFO = 'pipeline/model_paths.json'
     FINAL_PRED = 'data/predictions'
     RELEVANT_STUDIES = 'data/relevant_studies'
 
     try:
         csv_file = get_latest_data(PUBMED_DATA_DIR)
         logging.info(f'Loaded latest data file: {csv_file}')
-        now = datetime.now()
+        now = datetime.now(zurich)
         date = now.strftime("%Y-%m-%d")
         dfs = []
         with open(MODEL_INFO, 'r', encoding='utf-8') as file:
@@ -208,7 +211,7 @@ def main():
         else:
             # Predict relevance first
             relevant_model = next(
-                (m for m in model_info if m['task'].lower() == 'Relevant'), None)
+                (m for m in model_info if m['task'].lower() == 'relevant'), None)
             trainer = load_model(relevant_model['model_path'], relevant_model['task'])
             logging.info(f'Loaded relevant model: {relevant_model["model_path"]}')
             data = SimpleDataset(csv_file, trainer.tokenizer,
@@ -260,7 +263,7 @@ def main():
                 dfs.append(pd.DataFrame(processed_data))
 
             final_df = pd.concat(dfs, ignore_index=True)
-            time_passed = datetime.now() - now
+            time_passed = datetime.now(zurich) - now
             pred_filename = f'predictions_{date}_{time_passed}.csv'
             final_df.to_csv(os.path.join(FINAL_PRED, pred_filename), index=False)
             logging.info(f'Saved final predictions to {os.path.join(FINAL_PRED, pred_filename)}')
