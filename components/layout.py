@@ -304,9 +304,18 @@ def filter_selection():
         ], className="mb-4"),
 
         html.H3("Filtered Studies"),
-        filter_component(id='selected-filters'),
 
-        dcc.Store(id="filter-store", data={}),
+        filter_component(id='selected-filters'),
+        dcc.Store(
+            id="filtered-study-ids",
+            data=get_all_study_ids(),   # fetch all study IDs
+            storage_type="session"
+        ),
+        dcc.Store(
+            id="filter-tags",
+            data={},                     # empty initially
+            storage_type="session"
+        ),
     ], className="m-0 p-0")
 
 

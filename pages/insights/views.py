@@ -28,8 +28,8 @@ def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], 
         html.H4("Filtered Studies"),
         filter_component(
             filter_buttons, info_buttons if info_buttons else None),
-        dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
-        dcc.Store(id="filter-tags", data=tags, storage_type="memory"),
+        dcc.Store(id="filtered-study-ids", data=ids, storage_type="session"),
+        dcc.Store(id="filter-tags", data=tags, storage_type="session"),
         study_grid(nr_studies(), len(ids), 'January 2024', tags=True, id=id)
     ])
 
@@ -194,8 +194,8 @@ def study_protocol_view():
         html.H4("Filtered Studies"),
         filter_component(filter_button(
             color_mapping[label], label, task, False)),
-        dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
-        dcc.Store(id="filter-tags", data=tags, storage_type="memory"),
+        dcc.Store(id="filtered-study-ids", data=ids, storage_type="session"),
+        dcc.Store(id="filter-tags", data=tags, storage_type="session"),
         study_grid(nr_studies(), len(ids), 'January 2024', tags=True,
                    id={"type": "studies-grid", "index": 5})
     ])
