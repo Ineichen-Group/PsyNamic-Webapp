@@ -7,3 +7,4 @@ dotenv
 pandas
 lxml
 psycopg2-binary==2.9.10
+accelerate>=0.26.0

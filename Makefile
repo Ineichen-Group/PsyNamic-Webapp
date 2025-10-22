@@ -9,6 +9,9 @@ load-env:
 show-db-user: load-env
 	@echo ${DATABASE_USER}
 
+load-datamodel: load-env
+	docker compose exec web python data/models.py
+
 load-dump: load-env
 	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -f /docker-entrypoint-initdb.d/db_dump.sql
 
@@ -34,10 +37,10 @@ web-shell:
 	docker compose exec web /bin/bash
 
 pipeline-shell:
-	docker compose run --rm pipeline /bin/bash
+	docker compose exec pipeline /bin/sh
 
 run-pipeline:
-	docker compose run --rm pipeline
+	docker compose up -d pipeline
 
 ps:
 	docker compose ps
