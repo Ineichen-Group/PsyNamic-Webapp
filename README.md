@@ -101,6 +101,8 @@ git clone git@github.com:Ineichen-Group/PsyNamic-Webapp.git
 
 * Set envs in `.env` file (copy from `.env.exp`) and edit accordingly
 
+* In app.py, change debug=False
+
 * Set up nginx as a reverse proxy with SSL
     What is this and why do we need it?
 

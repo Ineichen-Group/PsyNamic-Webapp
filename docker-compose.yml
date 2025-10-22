@@ -35,7 +35,7 @@ services:
       context: .
       dockerfile: ./pipeline/Dockerfile.pipeline
     container_name: webapp_pipeline
-    restart: always
+    restart: no
     depends_on:
       - db
     environment:
