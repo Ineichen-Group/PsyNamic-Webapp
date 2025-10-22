@@ -161,6 +161,7 @@ def register_pagination_callbacks(app):
 
         for request in requests:
             if request is None:
+                responses.append({"rowData": [], "rowCount": row_count})
                 continue
             start_row = request["startRow"]
             end_row = request["endRow"]
