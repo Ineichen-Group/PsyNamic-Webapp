@@ -156,8 +156,9 @@ def register_pagination_callbacks(app):
     def fetch_studies_infinite(requests, tags, filtered_ids):
         if not requests:
             return no_update, no_update
-
         responses = []
+        row_count = len(filtered_ids) if filtered_ids else nr_studies()
+
         for request in requests:
             if request is None:
                 continue
