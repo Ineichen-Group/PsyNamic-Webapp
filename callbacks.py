@@ -159,6 +159,8 @@ def register_pagination_callbacks(app):
 
         responses = []
         for request in requests:
+            if request is None:
+                continue
             start_row = request["startRow"]
             end_row = request["endRow"]
 
