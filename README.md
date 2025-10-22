@@ -72,6 +72,11 @@ https://www.postgresql.org/download/linux/ubuntu/
 
 # Deployment on server
 
+* Install make if not already installed
+```bash
+sudo apt install make
+```
+
 * Install docker according to: [https://docs.docker.com/engine/install/ubuntu/]https://docs.docker.com/engine/install/ubuntu/
 
     * Check if it's running with `sudo systemctl status docker` and `sudo docker run hello-world`
@@ -95,6 +100,8 @@ git clone git@github.com:Ineichen-Group/PsyNamic-Webapp.git
 ``` 
 
 * Set envs in `.env` file (copy from `.env.exp`) and edit accordingly
+
+* In app.py, change debug=False
 
 * Set up nginx as a reverse proxy with SSL
     What is this and why do we need it?
@@ -120,7 +127,7 @@ git clone git@github.com:Ineichen-Group/PsyNamic-Webapp.git
         server_name psynamic.dcr.unibe.ch;
 
         location / {
-            proxy_pass http://localhost:8050;
+            proxy_pass http://0.0.0.0:8050/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
         }
@@ -132,8 +139,10 @@ git clone git@github.com:Ineichen-Group/PsyNamic-Webapp.git
     ```bash
     sudo ln -s /etc/nginx/sites-available/psynamic /etc/nginx/sites-enabled/
     sudo nginx -t
+    sudo rm /etc/nginx/sites-enabled/default
     sudo systemctl reload nginx
     ```
+
     * Obtain SSL certificate with certbot
     ```bash
         sudo apt install certbot python3-certbot-nginx
@@ -148,16 +157,32 @@ make up
 
 * Add inital data dump and load
 ```bash
-make load-dump
-make load-indexes
+make db-shell
 ```
+```sql
+\i /docker-entrypoint-initdb.d/dump.sql
+\i /docker-entrypoint-initdb.d/indexes.sql
+```
+(there is also make commands, but they sometimes lead to errors, so better do it manually)
 
 * Visit https://psynamic.dcr.unibe.ch
 
 * Copy models to and adjust `model_paths.json` accordingly
+
+## Common errors
+`entrypoint.sh": permission denied: unknown`
+
+This error usually occurs when the `entrypoint.sh` script does not have the executable permission. To fix this, you can run the following command in the terminal:
+
+```bash
+chmod +x entrypoint.sh
+docker compose build --no-cache
+```
+
 
 # Other useful commands
 * Check if DNS is working (replace with your domain)
 ```bash
 nslookup psynamic.dcr.unibe.ch
 ``` 
+

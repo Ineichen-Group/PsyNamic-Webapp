@@ -6,7 +6,7 @@ until psql $DATABASE_URL -c '\l'; do
 done
 
 # Create tables
-python data/models.py
+# python data/models.py
 
 # Start Dash app
 python app.py
