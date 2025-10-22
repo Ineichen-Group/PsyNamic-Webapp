@@ -307,6 +307,12 @@ def filter_selection():
 
         filter_component(id='selected-filters'),
         dcc.Store(
+            id="filter-store",
+            data={},
+            storage_type="session"
+        ),
+
+        dcc.Store(
             id="filtered-study-ids",
             data=get_ids(),   # fetch all study IDs
             storage_type="session"
