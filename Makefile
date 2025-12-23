@@ -51,3 +51,8 @@ restart:
 db-dump: load-env
 	DATE=$$(date +%Y%m%d_%H%M%S); \
 	docker compose exec db pg_dump -U ${DATABASE_USER} -d ${DATABASE_NAME} -F c -b -v -f /data/data_dump_$${DATE}.sql
+
+clean-containers:
+	# Stop all running containers (no error if none), then remove all containers
+	-@docker ps -q | xargs -r docker stop
+	-@docker ps -aq | xargs -r docker rm -f

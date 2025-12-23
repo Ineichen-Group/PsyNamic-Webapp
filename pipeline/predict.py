@@ -37,6 +37,10 @@ class SimpleDataset(Dataset):
         self.is_multilabel = multilabel
         self.is_ner = is_ner
 
+        # Check if pubmed_id exists, else use 'id'
+        if self.ID_COL not in self.df.columns:
+            self.ID_COL = 'pubmed_id'
+
     def __len__(self):
         return len(self.df)
 
@@ -51,6 +55,7 @@ class SimpleDataset(Dataset):
             dummy_label = [-100] * len(tokens)  # ignored by loss function
             return {
                 'id': id_,
+                'text': text,
                 'tokens': tokens,
                 'labels': dummy_label
             }
@@ -65,6 +70,7 @@ class SimpleDataset(Dataset):
             )
             return {
                 'id': id_,
+                'text': text,
                 **{key: val.squeeze(0) for key, val in encoding.items()}
             }
 
@@ -74,6 +80,10 @@ def predict(trainer: Trainer, test_dataset: SimpleDataset, threshold: float = 0.
     Predicts the labels for the test dataset and saves predictions to a CSV.
     Works for classification and token-level NER using a SimpleDataset.
     """
+
+    # Ensure threshold is a float
+    threshold = float(threshold)
+
 
     # Make predictions
     predictions = trainer.predict(test_dataset)
@@ -223,10 +233,10 @@ def main():
                 (k for k, v in relevant_model['id2label'].items() if v == 'relevant'), None)
             relevant_df = relevant_predictions_df[relevant_predictions_df['prediction'] == int(
                 relevant_label_id)]
-        
-            # Write relevant studies to a CSV, extract retrieval time from filename
-            retrieval_time = os.path.basename(csv_file).split('_')[2]  # yyyymmdd
-            relevant_output_file = f'studies_{date}_{retrieval_time}.csv'
+
+            # Write relevant studies to a CSV, extract retrieval date from filename
+            retrieval_date = os.path.basename(csv_file).split('_')[2]  # yyyymmdd
+            relevant_output_file = f'studies_{retrieval_date}.csv'
             os.makedirs(RELEVANT_STUDIES, exist_ok=True)
             relevant_df.to_csv(os.path.join(RELEVANT_STUDIES, relevant_output_file), index=False)
             logging.info(f'Saved relevant studies to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
@@ -249,12 +259,44 @@ def main():
                 logging.info(f'Completed predictions for model: {m["model_path"]}')
                 processed_data = []
                 for _, row in predictions_df.iterrows():
-                    for i, prob in enumerate(literal_eval(row['probability'])):
-                        model_name = os.path.basename(os.path.dirname(m['model_path']))
+                    # probability field can be a stringified list, a JSON list, a Python list, or a numpy array.
+                    prob_field = row.get('probability') if isinstance(row, dict) else row['probability']
+                    prob_values = []
+                    if isinstance(prob_field, str):
+                        # try ast.literal_eval first, then json as fallback
+                        try:
+                            prob_values = literal_eval(prob_field)
+                        except Exception:
+                            try:
+                                prob_values = json.loads(prob_field)
+                            except Exception:
+                                logging.warning(f"Could not parse probability field: {prob_field!r}")
+                                prob_values = []
+                    else:
+                        # list, tuple, numpy array, etc.
+                        prob_values = prob_field
+
+                    # Convert numpy arrays or other sequences to plain Python list
+                    try:
+                        # numpy arrays have tolist()
+                        if hasattr(prob_values, 'tolist'):
+                            prob_list = prob_values.tolist()
+                        else:
+                            prob_list = list(prob_values)
+                    except Exception:
+                        logging.warning(f"Unexpected probability format, using empty list: {type(prob_values)!r}")
+                        prob_list = []
+
+                    model_name = os.path.basename(os.path.dirname(m['model_path']))
+                    id2label = m.get('id2label', {})
+                    # make sure it's a int to string mapping
+                    id2label = {int(k): v for k, v in id2label.items()}
+
+                    for i, prob in enumerate(prob_list):
                         pred_dict = {
                             'id': row['id'],
                             'task': m['task'],
-                            'label': m['id2label'][i],
+                            'label': id2label[i],
                             'probability': prob,
                             'is_multilabel': m['is_multilabel'],
                             'model': model_name
