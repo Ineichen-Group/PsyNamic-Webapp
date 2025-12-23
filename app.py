@@ -16,6 +16,7 @@ from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_vi
 
 from components.layout import header_layout, footer_layout, content_layout
 from callbacks import register_callbacks
+from flask_talisman import Talisman
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -42,6 +43,29 @@ logging.getLogger("sqlalchemy.orm").setLevel(logging.WARNING)
 app = dash.Dash(__name__, external_stylesheets=[
                 dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME], suppress_callback_exceptions=True)
 server = app.server
+csp = {
+    "default-src": ["'self'"],
+    "script-src": ["'self'"] + app.csp_hashes(),
+    "style-src": [
+        "'self'", 
+        "https://cdn.jsdelivr.net",  # Bootstrap CDN
+        "https://use.fontawesome.com", # Font Awesome
+        "'unsafe-inline'"             # Required for Plotly's internal styling
+    ],
+    "font-src": [
+        "'self'", 
+        "data:",
+        "https://cdn.jsdelivr.net", 
+        "https://use.fontawesome.com"
+    ],
+    "connect-src": [
+        "'self'",
+        "https://cdn.jsdelivr.net"],
+    "img-src": ["'self'", "data:"],
+    "object-src": ["'none'"],
+}
+
+Talisman(server, content_security_policy=csp)
 app.logger.setLevel(logging.DEBUG)
 
 app.layout = html.Div([
