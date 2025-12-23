@@ -10,6 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from models import Paper, BatchRetrieval, Token, Prediction, PredictionToken
+from pipeline.predict import check_if_pred_exist
 
 load_dotenv()
 
@@ -264,8 +265,13 @@ if __name__ == '__main__':
         # get the latest file in the directory
         args.studies_file = max([os.path.join(STUDIES_DIR, f) for f in os.listdir(
             STUDIES_DIR) if f.endswith('.csv')], key=os.path.getctime)
-        args.predictions_file = max([os.path.join(PREDICTIONS_DIR, f) for f in os.listdir(
-            PREDICTIONS_DIR) if f.endswith('.csv')], key=os.path.getctime)
+        # get prediction file with the same date as studies file
+        date_str = args.studies_file[:-4].split('_')[-2]  #
+        args.predictions_file = check_if_pred_exist(PREDICTIONS_DIR, date_str)
+        if not args.predictions_file:
+            print(
+                f"No predictions file found for date {date_str}. Please provide a predictions file.")
+            sys.exit(1)
 
     populate_db(args.predictions_file, args.studies_file,
                 args.studies_id_column)
