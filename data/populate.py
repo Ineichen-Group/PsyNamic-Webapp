@@ -306,8 +306,8 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                         nr_tags += 1
                         session.add(ner_tag)
 
-                    current_tag = tag[2:]
-                    entity_tokens = [token]
+                    current_tag = tag[2:]  # Extract the entity type
+                    entity_tokens = [token]  # Start new entity with this token
 
                 # Inside the same entity
                 elif tag.startswith("I-Dosage") and current_tag == tag[2:]:
