@@ -1,0 +1,8 @@
+pipeline/
+data/
+web_env/
+.env*
+
+!pipeline/requirements.txt
+!pipeline/Dockerfile.pipeline
+!pipeline/run_pipeline.sh

@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 from dash import html, dcc
 from collections import OrderedDict
-from data.queries import nr_studies, get_all_tasks, get_all_labels
+from data.queries import nr_studies, get_all_tasks, get_all_labels, get_ids
 from style.colors import get_color_mapping
 
 tasks = get_all_tasks()
@@ -165,12 +165,12 @@ def tag_component(tags: list[dict]):
                     children=tag['buttons'],
                     width="auto",
                 ),
-                dbc.Col(
-                    # make it secondary color
-                    html.Span(['Predicted by ', tag['model']],
-                              className="text-secondary"),
-                    width="auto",
-                ),
+                # dbc.Col(
+                #     # make it secondary color
+                #     html.Span(['Predicted by ', tag['model']],
+                #               className="text-secondary"),
+                #     width="auto",
+                # ),
             ],
             )
             for tag in tags]
@@ -394,9 +394,24 @@ def filter_selection():
         ], className="mb-4"),
 
         html.H3("Filtered Studies"),
-        filter_component(id='selected-filters'),
 
-        dcc.Store(id="filter-store", data={}),
+        filter_component(id='selected-filters'),
+        dcc.Store(
+            id="filter-store",
+            data={},
+            storage_type="session"
+        ),
+
+        dcc.Store(
+            id="filtered-study-ids",
+            data=get_ids(),   # fetch all study IDs
+            storage_type="session"
+        ),
+        dcc.Store(
+            id="filter-tags",
+            data={},                     # empty initially
+            storage_type="session"
+        ),
     ], className="m-0 p-0")
 
 
