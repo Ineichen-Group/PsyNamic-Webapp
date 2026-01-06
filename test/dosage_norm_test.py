@@ -1,6 +1,6 @@
 import os
 import unittest
-from data.psynamic_dosage_norm import normalize_dosage, extract_dosages
+from data.dosage_norm import normalize_dosage, extract_dosages
 
 class DosageNormTest(unittest.TestCase):
     

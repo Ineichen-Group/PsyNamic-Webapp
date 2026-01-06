@@ -81,16 +81,35 @@ class NerTag(Base):
     end_id = Column(Integer, nullable=False)
     text = Column(String(255), nullable=False)
     probability = Column(Float, nullable=False)
-    model = Column(String(255), nullable=False)
-    norm = Column(Float, nullable=True)
-
+    model = Column(String(255), nullable=False)    
+    
     paper_id = Column(Integer, ForeignKey('paper.id'), nullable=False)
 
     # Correct back_populates should match 'ner_tags' in Paper
+    dosage_norm = relationship('DosageNormalization', back_populates='ner_tag', uselist=False)
     paper = relationship('Paper', back_populates='ner_tags')
 
     def __repr__(self):
         return f"<NerTag(id={self.id}, tag={self.tag}, text={self.text})>"
+
+
+class DosageNormalization(Base):
+    __tablename__ = 'dosage_normalization'
+
+    id = Column(Integer, primary_key=True)
+
+    ner_tag_id = Column(Integer, ForeignKey('ner_tag.id'), nullable=False, unique=True)
+
+    min = Column(Float, nullable=False)
+    max = Column(Float, nullable=False)
+    unit = Column(String(50), nullable=True)
+    per_weight_unit = Column(String(50), nullable=True)
+    weight_reference = Column(Float, nullable=True)
+    per_time_unit = Column(String(50), nullable=True)
+    dose_type = Column(String(50), nullable=False)
+    original_dosage = Column(String(255), nullable=False)
+
+    ner_tag = relationship('NerTag', back_populates='dosage_norm')
 
 
 class Prediction(Base):
