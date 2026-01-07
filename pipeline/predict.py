@@ -1,6 +1,7 @@
 
 import os
 import logging
+import math
 import numpy as np
 from ast import literal_eval
 import pandas as pd
@@ -20,6 +21,8 @@ from torch.utils.data import Dataset
 
 zurich = pytz.timezone('Europe/Zurich')
 
+
+# TODO: Use another Dataset class if needed for NER or multilabel
 
 class SimpleDataset(Dataset):
     """Dataset for prediction with BERT for Classification or NER."""
@@ -41,26 +44,70 @@ class SimpleDataset(Dataset):
         if self.ID_COL not in self.df.columns:
             self.ID_COL = 'pubmed_id'
 
+        if self.is_ner:
+            self.chunks = self._build_ner_chunks()
+
+    def _build_ner_chunks(self):
+        chunked_rows: list[dict[str, any]] = []
+
+        for _, row in self.df.iterrows():
+            id_ = row[self.ID_COL]
+            text = row[self.TEXT_COL]
+
+            tokens = self.tokenizer.tokenize(text)
+
+            if len(tokens) <= self.max_len:
+                chunked_rows.append({
+                    self.ID_COL: id_,
+                    self.TEXT_COL: text,
+                    'tokens': tokens,
+                    'chunk_idx': 0
+                })
+            else:
+                num_chunks = math.ceil(len(tokens) / self.max_len)
+
+                for i in range(num_chunks):
+                    start = i * self.max_len
+                    end = start + self.max_len
+                    chunk_tokens = tokens[start:end]
+
+                    chunked_rows.append({
+                        self.ID_COL: id_,
+                        self.TEXT_COL: text,
+                        'tokens': chunk_tokens,
+                        'chunk_idx': i
+                    })
+
+        return pd.DataFrame(chunked_rows)
+
     def __len__(self):
+        if self.is_ner:
+            return len(self.chunks)
         return len(self.df)
 
     def __getitem__(self, idx):
-        row = self.df.iloc[idx]
-        id_ = row[self.ID_COL]
-        text = row[self.TEXT_COL]
-
         if self.is_ner:
-            # Tokenize for NER, return dummy labels
-            tokens = self.tokenizer.tokenize(text)
-            dummy_label = [-100] * len(tokens)  # ignored by loss function
+            row = self.chunks.iloc[idx]
+            id_ = row[self.ID_COL]
+            text = row[self.TEXT_COL]
+            tokens = row['tokens']
+            chunk_idx = row['chunk_idx']
+
+            dummy_label = [-100] * len(tokens)
+
             return {
                 'id': id_,
                 'text': text,
                 'tokens': tokens,
-                'labels': dummy_label
+                'labels': dummy_label,
+                'chunk_idx': chunk_idx
             }
+
         else:
-            # Standard tokenization for classification/regression
+            row = self.df.iloc[idx]
+            id_ = row[self.ID_COL]
+            text = row[self.TEXT_COL]
+
             encoding = self.tokenizer(
                 text,
                 truncation=True,
@@ -68,6 +115,7 @@ class SimpleDataset(Dataset):
                 max_length=self.max_len,
                 return_tensors='pt'
             )
+
             return {
                 'id': id_,
                 'text': text,
@@ -100,16 +148,16 @@ def predict(trainer: Trainer, test_dataset: SimpleDataset, threshold: float = 0.
         for i, data in enumerate(test_dataset):
             id_ = data['id']
             tokens = data['tokens']
-            dummy_labels = data['labels']  # all -100
+            chunk_idx = data['chunk_idx']
             preds = pred_labels_idx[i]
 
             if len(preds) != len(tokens):
-                # Sometimes tokenizers add special tokens, truncate predictions accordingly
                 preds = preds[:len(tokens)]
 
             for token, pred_idx in zip(tokens, preds):
                 pred_data.append({
                     "id": id_,
+                    "chunk_idx": chunk_idx,
                     "token": token,
                     "prediction": test_dataset.labels[pred_idx],
                     "probability": probs[i, :len(tokens), pred_idx].tolist()
@@ -181,6 +229,7 @@ def check_if_pred_exist(pred_dir: str, retrieval_date: str) -> str:
         if retrieval_date in f:
             return os.path.join(pred_dir, f)
     return ""
+
 
 def main():
     # Setup logging
