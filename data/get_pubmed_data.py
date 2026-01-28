@@ -1,6 +1,8 @@
 import requests
 import time
 from lxml import etree as ET
+from lxml import html
+from html import unescape
 import pandas as pd
 import os
 
@@ -55,55 +57,28 @@ def get_pubmed_abstracts(pmids: list) -> str:
         return None
 
 
-def parse_abstracts(xml_data: str):
+def parse_pubmed_data(xml_data: str) -> list[dict]:
     """
     Parse the XML data and extract the relevant information
     """
-    root = ET.fromstring(xml_data.encode('utf-8'))
-    abstracts = []
+    articles = extract_pubmed_articles(xml_data)
+    articles_info = []
+    for article in articles:
+        article_info = {}
 
-    for article in root.xpath('//PubmedArticle'):
-        abstract_dict = {}
-
-        abstract_dict['keywords'] = [
+        article_info['keywords'] = [
             a.text for a in article.xpath('.//Keyword') if a.text]
 
-        article_list = article.find('.//PubmedData/ArticleIdList')
-        if article_list is not None:
-            pubmed_id_element = article_list.find(
-                './/ArticleId[@IdType="pubmed"]')
-            abstract_dict['pubmed_id'] = pubmed_id_element.text if pubmed_id_element is not None else None
-            abstract_dict['pubmed_url'] = f'https://pubmed.ncbi.nlm.nih.gov/{abstract_dict["pubmed_id"]}/' if abstract_dict['pubmed_id'] else None
-
-            doi_element = article_list.find('.//ArticleId[@IdType="doi"]')
-            abstract_dict['doi'] = doi_element.text if doi_element is not None else None
-        else:
-            abstract_dict['pubmed_id'] = None
-            abstract_dict['pubmed_url'] = None
-            abstract_dict['doi'] = None
+        article_info['pubmed_id'] = extract_pubmedid(article)
+        article_info['pubmed_url'] = f'https://pubmed.ncbi.nlm.nih.gov/{article_info["pubmed_id"]}/' if article_info['pubmed_id'] else None
+        article_info['doi'] = extract_doi(article)
 
         pub_date = article.find(
             './/History/PubMedPubDate[@PubStatus="pubmed"]/Year')
-        abstract_dict['year'] = pub_date.text if pub_date is not None else None
+        article_info['year'] = pub_date.text if pub_date is not None else None
 
-        title_element = article.find('.//Article/ArticleTitle')
-        if title_element is None:
-            abstract_dict['title'] = None
-        else:
-            abstract_dict['title'] = "".join(title_element.itertext())
-
-        abstract_dict['abstract'] = None
-        abstract_texts = article.findall('.//Article/Abstract/AbstractText')
-        if abstract_texts:
-            if len(abstract_texts) > 1:
-                abstract = ''
-                for a in abstract_texts:
-                    abstract += a.get("Label", "") + ': ' + a.text + ' '
-                abstract = abstract.strip()
-                abstract_dict['abstract'] = abstract
-            else:
-                abstract = article.find('.//Article/Abstract/AbstractText')
-                abstract_dict['abstract'] = "".join(abstract.itertext())
+        article_info['abstract'] = extract_abstract_text(article)
+        article_info['title'] = extract_title(article)
 
         authors = []
         for author in article.findall('.//Article/AuthorList/Author'):
@@ -116,10 +91,67 @@ def parse_abstracts(xml_data: str):
             elif collective_name is not None:
                 authors.append(collective_name.text)
 
-        abstract_dict['authors'] = ', '.join(authors) if authors else None
-        abstracts.append(abstract_dict)
+        article_info['authors'] = ', '.join(authors) if authors else None
+        articles_info.append(article_info)
 
-    return abstracts
+    return articles_info
+
+
+def extract_title(article: ET.Element) -> str:
+    title_element = article.find('.//ArticleTitle')
+    title = "".join(title_element.itertext()).strip()
+    if title:
+        title = unescape(html.fromstring(title).text_content())
+
+    return title
+
+
+def extract_pubmedid(article: ET.Element) -> str:
+    """
+    Extract PubMed ID from a PubmedArticle element
+    """
+    # <ArticleIdList>
+    #    <ArticleId IdType="pubmed">41498818</ArticleId>
+    pmid_element = article.find('.//PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]')
+    return pmid_element.text if pmid_element is not None else None
+
+
+def extract_doi(article: ET.Element) -> str:
+    #  <ArticleIdList>
+    #             <ArticleId IdType="pubmed">41498818</ArticleId>
+    #             <ArticleId IdType="doi">10.1021/acschemneuro.5c00892</ArticleId>
+    doi_element = article.find('.//PubmedData/ArticleIdList/ArticleId[@IdType="doi"]')
+    return doi_element.text if doi_element is not None else None
+
+
+def extract_pubmed_articles(xml_data: str) -> list[ET.Element]:
+    """
+    Extract PubmedArticle elements from the XML data
+    """
+    root = ET.fromstring(xml_data.encode('utf-8'))
+    articles = root.xpath('//PubmedArticle')
+    return articles
+
+
+def extract_abstract_text(article: ET.Element) -> str:
+    abstract_texts = article.findall('.//AbstractText')
+
+    parts = []
+
+    for a in abstract_texts:
+        label = a.get("Label")
+        text = "".join(a.itertext())
+        if label:
+            parts.append(f"{label}: {text}")
+        else:
+            parts.append(text)
+
+    abstract = " ".join(parts).strip()
+
+    if abstract:
+        abstract = unescape(html.fromstring(abstract).text_content())
+
+    return abstract
 
 
 def main():
@@ -127,9 +159,9 @@ def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     date_file = os.path.join(dir_path, 'last_data_fetch.txt')
 
-    # open last_data_fetch.txt
-    with open(date_file, 'r', encoding='utf-8') as f:
-        last_data_fetch = f.read()
+
+    with open(date_file, "r", encoding="utf-8") as f:
+        last_data_fetch = f.readlines()[-1].rstrip("\n")
 
     search_string_with_date = f'{SEARCH_STRING} AND (("{last_data_fetch}"[Date - Publication] : "3000"[Date - Publication]))'
 
@@ -140,6 +172,8 @@ def main():
 
     start_time = time.time()
 
+
+    # Paginate through results
     while True:
         xml_data = get_pubmed_data(search_string_with_date, retstart=start)
         if xml_data:
@@ -148,24 +182,21 @@ def main():
                 id_element.text for id_element in root.xpath('//IdList/Id')]
             count = int(root.find('Count').text)
 
-            # Step 2: Fetch abstracts for these articles
             if pmids:
                 abstract_data = get_pubmed_abstracts(pmids)
                 if abstract_data:
-                    parsed_abstracts = parse_abstracts(abstract_data)
+                    parsed_abstracts = parse_pubmed_data(abstract_data)
                     all_abstracts.extend(parsed_abstracts)
                     total_results += len(parsed_abstracts)
 
-                    # If we reached the max number of results, stop
                     if total_results >= count:
                         break
 
                     start += 2000
-                    # If we reached the max number of results, stop
                     if start >= count:
                         break
 
-                    time.sleep(1)  # Delay to respect the rate limit
+                    time.sleep(1)
                 else:
                     break
             else:
@@ -179,11 +210,16 @@ def main():
     df = pd.DataFrame(all_abstracts)
     df['text'] = df['title'] + '^\n' + df['abstract']
     today = time.strftime("%Y/%m/%d")
-    outfile = os.path.join(dir_path,'pubmed_fetch_results', f'pubmed_results_{today.replace("/", "")}_{duration}.csv')
+
+    # 2026/01/12 --> 20260112
+    from_date = last_data_fetch.replace("/", "")
+    to_date = today.replace("/", "")
+    
+    outfile = os.path.join(dir_path,'pubmed_fetch_results', f'pubmed_results_{from_date}_{to_date}_{duration}.csv')
     df.to_csv(outfile, index=False, encoding='utf-8')
 
-    with open(date_file, 'w', encoding='utf-8') as f:
-        f.write(today)
+    with open(date_file, "a", encoding="utf-8") as f:
+        f.write(today + "\n")
 
 
 if __name__ == "__main__":
