@@ -276,8 +276,9 @@
     },
     {
         "task": "NER",
-        "model_path": "pipeline/models/biomedbert-abstract_ner_bio_20250221/checkpoint-679",
-        "Int_to_label": {
+        "model_path": "models/biomedbert-abstract_ner_bio_20250221/checkpoint-679",
+        "prediction_threshold": "",
+        "id2label": {
             "0": "O",
             "1": "I-Dosage",
             "2": "I-Application area",

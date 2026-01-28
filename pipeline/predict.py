@@ -9,6 +9,7 @@ import torch
 import json
 import torch.nn.functional as F
 from torch.utils.data import Dataset
+from datetime import timedelta
 
 # Assuming Trainer, DataSplit, DataSplitBIO are defined elsewhere in your project
 from typing import Union
@@ -22,8 +23,9 @@ from torch.utils.data import Dataset
 zurich = pytz.timezone('Europe/Zurich')
 
 
-# TODO: Use another Dataset class if needed for NER or multilabel
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# TODO: A little redundant with pipeline/train.py's Dataset, consider refactoring
 class SimpleDataset(Dataset):
     """Dataset for prediction with BERT for Classification or NER."""
 
@@ -54,27 +56,37 @@ class SimpleDataset(Dataset):
             id_ = row[self.ID_COL]
             text = row[self.TEXT_COL]
 
-            tokens = self.tokenizer.tokenize(text)
+            # Tokenize with offsets to get word_ids
+            encoding = self.tokenizer(
+                text,
+                return_attention_mask=False,
+                return_token_type_ids=False,
+                return_offsets_mapping=True,
+                truncation=False
+            )
 
+            tokens = self.tokenizer.convert_ids_to_tokens(encoding["input_ids"])
+            word_ids = encoding.word_ids()
+
+            # Chunking
             if len(tokens) <= self.max_len:
                 chunked_rows.append({
                     self.ID_COL: id_,
                     self.TEXT_COL: text,
                     'tokens': tokens,
+                    'word_ids': word_ids,
                     'chunk_idx': 0
                 })
             else:
                 num_chunks = math.ceil(len(tokens) / self.max_len)
-
                 for i in range(num_chunks):
                     start = i * self.max_len
                     end = start + self.max_len
-                    chunk_tokens = tokens[start:end]
-
                     chunked_rows.append({
                         self.ID_COL: id_,
                         self.TEXT_COL: text,
-                        'tokens': chunk_tokens,
+                        'tokens': tokens[start:end],
+                        'word_ids': word_ids[start:end],
                         'chunk_idx': i
                     })
 
@@ -88,19 +100,16 @@ class SimpleDataset(Dataset):
     def __getitem__(self, idx):
         if self.is_ner:
             row = self.chunks.iloc[idx]
-            id_ = row[self.ID_COL]
-            text = row[self.TEXT_COL]
             tokens = row['tokens']
-            chunk_idx = row['chunk_idx']
-
             dummy_label = [-100] * len(tokens)
 
             return {
-                'id': id_,
-                'text': text,
+                'id': row[self.ID_COL],
+                'text': row[self.TEXT_COL],
                 'tokens': tokens,
                 'labels': dummy_label,
-                'chunk_idx': chunk_idx
+                'chunk_idx': row['chunk_idx'],
+                'word_ids': row['word_ids']
             }
 
         else:
@@ -123,90 +132,151 @@ class SimpleDataset(Dataset):
             }
 
 
-def predict(trainer: Trainer, test_dataset: SimpleDataset, threshold: float = 0.5) -> pd.DataFrame:
+def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceClassification], test_dataset: SimpleDataset, threshold: float = 0.5) -> pd.DataFrame:
     """
     Predicts the labels for the test dataset and saves predictions to a CSV.
     Works for classification and token-level NER using a SimpleDataset.
     """
 
     # Ensure threshold is a float
-    threshold = float(threshold)
-
-
-    # Make predictions
-    predictions = trainer.predict(test_dataset)
+    threshold = float(threshold) if threshold else None
     pred_data = []
 
-    # Check if this is NER
+    device = next(model.parameters()).device
+    model.eval()
+
+    # ---------- NER PREDICTION ----------
     if test_dataset.is_ner:
-        # predictions.predictions shape: (num_samples, seq_len, num_labels)
-        logits = torch.tensor(predictions.predictions)
-        probs = F.softmax(logits, dim=-1)
-        pred_labels_idx = torch.argmax(
-            probs, dim=-1).numpy()  # (num_samples, seq_len)
+        all_logits = []
+        all_probs = []
 
-        for i, data in enumerate(test_dataset):
-            id_ = data['id']
-            tokens = data['tokens']
-            chunk_idx = data['chunk_idx']
-            preds = pred_labels_idx[i]
+        # Run inference per chunk
+        for i in range(len(test_dataset)):
+            sample = test_dataset[i]
 
-            if len(preds) != len(tokens):
-                preds = preds[:len(tokens)]
+            input_ids = torch.tensor(
+                [test_dataset.tokenizer.convert_tokens_to_ids(sample["tokens"])],
+                device=device
+            )
 
-            for token, pred_idx in zip(tokens, preds):
-                pred_data.append({
-                    "id": id_,
-                    "chunk_idx": chunk_idx,
-                    "token": token,
-                    "prediction": test_dataset.labels[pred_idx],
-                    "probability": probs[i, :len(tokens), pred_idx].tolist()
-                })
+            attention_mask = torch.ones_like(input_ids, device=device)
 
-    else:
-        # Classification
-        logits = torch.tensor(predictions.predictions)
-        if getattr(test_dataset, 'is_multilabel', False):
-            probs = torch.sigmoid(logits).numpy()
-            pred_labels = (probs >= threshold).astype(int)
-        else:
-            probs = F.softmax(logits, dim=1).numpy(
-            ) if logits.ndim > 1 else F.softmax(logits, dim=0).numpy()
-            pred_labels = np.argmax(
-                probs, axis=1) if logits.ndim > 1 else np.argmax(probs)
+            with torch.no_grad():
+                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                logits = outputs.logits.squeeze(0)  # (seq_len, num_labels)
+                probs = torch.softmax(logits, dim=-1)
 
-        for i, data in enumerate(test_dataset):
-            id_ = data['id']
-            text = data['text']
-            pred_label = pred_labels[i] if logits.ndim > 1 else int(
-                pred_labels)
-            prob = probs[i].tolist() if logits.ndim > 1 else probs.tolist()
+            all_logits.append(logits.cpu().numpy())
+            all_probs.append(probs.cpu().numpy())
+
+        # Convert to numpy arrays
+        pred_labels_idx = [np.argmax(p, axis=-1) for p in all_probs]
+
+        # Now MERGE CHUNKS PROPERLY
+        for sample_id, group in test_dataset.chunks.groupby(test_dataset.ID_COL):
+            group = group.sort_values("chunk_idx")
+
+            merged_tokens = []
+            merged_labels = []
+            merged_probs = []
+
+            for chunk_row_idx in group.index:
+                tokens = test_dataset.chunks.loc[chunk_row_idx, "tokens"]
+                word_ids = test_dataset.chunks.loc[chunk_row_idx, "word_ids"]
+
+                preds_chunk = pred_labels_idx[chunk_row_idx]
+                probs_chunk = all_probs[chunk_row_idx]
+
+                last_word_id = None
+
+                for j, (token, word_id) in enumerate(zip(tokens, word_ids)):
+                    if word_id is None:
+                        continue
+
+                    if word_id != last_word_id:
+                        merged_tokens.append(token)
+                        merged_labels.append(int(preds_chunk[j]))
+                        merged_probs.append(float(probs_chunk[j].max()))
+                        last_word_id = word_id
 
             pred_data.append({
-                "id": id_,
-                "text": text,
-                "prediction": pred_label,
-                "probability": prob
+                "id": sample_id,
+                "text": group.iloc[0][test_dataset.TEXT_COL],
+                "tokens": merged_tokens,
+                "pred_labels": merged_labels,
+                "probabilities": merged_probs
             })
 
-    # Save to CSV
-    df = pd.DataFrame(pred_data)
-    return df
+    # ---------- CLASSIFICATION PREDICTION ----------
+    else:
+        probs = []
+        preds = []
+
+        for i in range(len(test_dataset)):
+            sample = test_dataset[i]
+
+            encoding = test_dataset.tokenizer(
+                sample["text"],
+                return_tensors="pt",
+                truncation=True,
+                max_length=test_dataset.max_len,
+                padding="max_length"
+            )
+
+            input_ids = encoding["input_ids"].to(device)
+            attention_mask = encoding["attention_mask"].to(device)
+
+            with torch.no_grad():
+                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                logits = outputs.logits.squeeze(0)
+
+            if test_dataset.is_multilabel:
+                probs_tensor = torch.sigmoid(logits)
+                pred_indices = (probs_tensor >= threshold).nonzero(as_tuple=False).squeeze().tolist()
+                if not isinstance(pred_indices, list):
+                    pred_indices = [pred_indices]
+                pred_probs = [probs_tensor[i].item() for i in pred_indices]
+                probs.append(pred_probs)
+                preds.append(pred_indices)
+            else:
+                prob = torch.softmax(logits, dim=-1)
+                pred = int(torch.argmax(prob).item())
+                probs.append(prob.tolist())
+                preds.append(pred)
+
+        for i in range(len(test_dataset)):
+            sample = test_dataset[i]
+
+            pred_data.append({
+                "id": sample["id"],
+                "text": sample["text"],
+                "prediction": preds[i],
+                "probability": probs[i]
+            })
+
+    return pd.DataFrame(pred_data)
 
 
 def load_model(model_path: str, task: str):
-    # detect device
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    if 'ner' in task.lower():
-        model = AutoModelForTokenClassification.from_pretrained(
-            model_path).to(device)
-    else:
-        model = AutoModelForSequenceClassification.from_pretrained(
-            model_path).to(device)
+    """
+    Load a fine-tuned BERT model and tokenizer from a save directory.
+    Returns the model and tokenizer. Trainer is optional for inference.
+    """
+    model_path = os.path.join(SCRIPT_DIR, model_path)
+    # For prediction on a laptop, CPU is usually safest
+    device = torch.device("cpu")
 
     tokenizer = AutoTokenizer.from_pretrained(model_path)
-    trainer = Trainer(model=model, tokenizer=tokenizer)
-    return trainer
+
+    if "ner" in task.lower():
+        model = AutoModelForTokenClassification.from_pretrained(model_path)
+    else:
+        model = AutoModelForSequenceClassification.from_pretrained(model_path)
+
+    model.to(device)
+    model.eval()
+
+    return model, tokenizer
 
 
 def get_latest_data(data_dir: str) -> str:
@@ -222,19 +292,33 @@ def get_latest_data(data_dir: str) -> str:
     return os.path.join(data_dir, latest_file)
 
 
-def check_if_pred_exist(pred_dir: str, retrieval_date: str) -> str:
+def check_if_pred_exist(pred_dir: str, retrieval_date: str, str_contain: str='') -> str:
     """Check if prediction file for the given retrieval date already exists."""
     pred_files = [f for f in os.listdir(pred_dir) if f.endswith('.csv')]
     for f in pred_files:
-        if retrieval_date in f:
+        if retrieval_date in f and str_contain in f:
             return os.path.join(pred_dir, f)
     return ""
 
 
+def extract_retrieval_date_from_filename(filename: str) -> str:
+    """pubmed_results_20231216_20260112_00:00:10.csv -> 20260112"""
+    base_name = os.path.basename(filename)
+    parts = base_name.split('_')
+    return parts[-2]
+
+
+def format_timedelta_hms(td: timedelta) -> str:
+    """Format timedelta to HH-MM-SS string."""
+    total_seconds = int(td.total_seconds())
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{hours:02d}-{minutes:02d}-{seconds:02d}"
+
+
 def main():
     # Setup logging
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    log_dir = os.path.join(script_dir, 'log')
+    log_dir = os.path.join(SCRIPT_DIR, 'log')
     os.makedirs(log_dir, exist_ok=True)
     log_filename = f'predict_{datetime.now(zurich).strftime("%Y%m%d_%H%M%S")}.log'
     log_path = os.path.join(log_dir, log_filename)
@@ -250,115 +334,142 @@ def main():
     RELEVANT_STUDIES = 'data/relevant_studies'
 
     try:
+        # Get latest pubmed data file
         csv_file = get_latest_data(PUBMED_DATA_DIR)
         logging.info(f'Loaded latest data file: {csv_file}')
-        now = datetime.now(zurich)
-        date = now.strftime("%Y-%m-%d")
-        dfs = []
+        retrieval_date = extract_retrieval_date_from_filename(csv_file)
         with open(MODEL_INFO, 'r', encoding='utf-8') as file:
             model_info = json.load(file)
-        logging.info(f'Loaded model info from {MODEL_INFO}')
+        logging.info(f'Loaded model info from {MODEL_INFO}')     
 
-        # Check if predictions for this retrieval date already exist
-        rel_pred = check_if_pred_exist(RELEVANT_STUDIES, date)
+        rel_pred = check_if_pred_exist(RELEVANT_STUDIES, retrieval_date)
+        # Check if relevance predictions already exist
         if rel_pred:
-            logging.info(f'Relevance predictions for date {date} already exist. Skipping prediction.')
-            # load existing relevant predictions
+            logging.info(f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.')
             relevant_df = pd.read_csv(rel_pred)
             logging.info(f'Loaded existing relevant studies from {rel_pred}')
         
         else:
+            start = datetime.now(zurich)
             # Predict relevance first
             relevant_model = next(
                 (m for m in model_info if m['task'].lower() == 'relevant'), None)
-            trainer = load_model(relevant_model['model_path'], relevant_model['task'])
+            model, tokenizer = load_model(relevant_model['model_path'], relevant_model['task'])
             logging.info(f'Loaded relevant model: {relevant_model["model_path"]}')
-            data = SimpleDataset(csv_file, trainer.tokenizer,
+            data = SimpleDataset(csv_file, tokenizer,
                                 multilabel=False, is_ner=False)
             relevant_predictions_df = predict(
-                trainer, data, threshold=relevant_model['prediction_threshold'])
+                model, data, threshold=relevant_model['prediction_threshold'])
             logging.info('Completed predictions for relevance model.')
             relevant_label_id = next(
                 (k for k, v in relevant_model['id2label'].items() if v == 'relevant'), None)
             relevant_df = relevant_predictions_df[relevant_predictions_df['prediction'] == int(
                 relevant_label_id)]
+            
+            end = datetime.now(zurich)
+            time_passed = end - start
 
-            # Write relevant studies to a CSV, extract retrieval date from filename
-            retrieval_date = os.path.basename(csv_file).split('_')[2]  # yyyymmdd
-            relevant_output_file = f'studies_{retrieval_date}.csv'
+            relevant_output_file = f'studies_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
             os.makedirs(RELEVANT_STUDIES, exist_ok=True)
             relevant_df.to_csv(os.path.join(RELEVANT_STUDIES, relevant_output_file), index=False)
-            logging.info(f'Saved relevant studies to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
+            logging.info(f'Saved relevant studies prediction to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
 
-        clas_ner_pred = check_if_pred_exist(FINAL_PRED, date)
-        if clas_ner_pred:
-            logging.info(f'Classification/NER predictions for date {date} already exist. Skipping prediction.')
-            return
+        # Now predict classification
+        class_pred = check_if_pred_exist(FINAL_PRED, retrieval_date, str_contain='class')
         
-        else: 
+        if class_pred:
+            logging.info(f'Classification {retrieval_date} already exist. Skipping prediction.')
+        
+        else:
+            start = datetime.now(zurich)
+            dfs = []
             for m in model_info:
-                if m['task'].lower() == 'relevant':
+                if m['task'].lower() == 'relevant' or m['task'] == 'NER':
                     continue  # already processed
-                trainer = load_model(m['model_path'], m['task'])
+                model, tokenizer = load_model(m['model_path'], m['task'])
                 logging.info(f'Loaded model: {m["model_path"]} for task: {m["task"]}')
-                data = SimpleDataset(relevant_df, trainer.tokenizer,
-                                    multilabel=m['is_multilabel'], is_ner=('ner' in m['task'].lower()))
+                is_ner = 'ner' in m['task'].lower()
+                data = SimpleDataset(relevant_df, tokenizer,
+                                    multilabel=m['is_multilabel'], is_ner=is_ner)
                 predictions_df = predict(
-                    trainer, data, threshold=m['prediction_threshold'])
+                    model, data, threshold=m['prediction_threshold'])
                 logging.info(f'Completed predictions for model: {m["model_path"]}')
                 processed_data = []
+                model_name = os.path.basename(os.path.dirname(m['model_path']))
+                id2label = {int(k): v for k, v in m['id2label'].items()}
+
                 for _, row in predictions_df.iterrows():
-                    # probability field can be a stringified list, a JSON list, a Python list, or a numpy array.
-                    prob_field = row.get('probability') if isinstance(row, dict) else row['probability']
-                    prob_values = []
-                    if isinstance(prob_field, str):
-                        # try ast.literal_eval first, then json as fallback
-                        try:
-                            prob_values = literal_eval(prob_field)
-                        except Exception:
-                            try:
-                                prob_values = json.loads(prob_field)
-                            except Exception:
-                                logging.warning(f"Could not parse probability field: {prob_field!r}")
-                                prob_values = []
+                    #TODO: Check if it is one-hot encoded
+                    # multilabel: prediction: list[int] (one-hot encoded), probability: list[float]
+                    # single label: prediction: int, probability: list[float]
+
+                    if not data.is_multilabel:
+                        predictions = list([row['prediction']])
+
                     else:
-                        # list, tuple, numpy array, etc.
-                        prob_values = prob_field
+                        predictions = row['prediction']
 
-                    # Convert numpy arrays or other sequences to plain Python list
-                    try:
-                        # numpy arrays have tolist()
-                        if hasattr(prob_values, 'tolist'):
-                            prob_list = prob_values.tolist()
-                        else:
-                            prob_list = list(prob_values)
-                    except Exception:
-                        logging.warning(f"Unexpected probability format, using empty list: {type(prob_values)!r}")
-                        prob_list = []
-
-                    model_name = os.path.basename(os.path.dirname(m['model_path']))
-                    id2label = m.get('id2label', {})
-                    # make sure it's a int to string mapping
-                    id2label = {int(k): v for k, v in id2label.items()}
-
-                    for i, prob in enumerate(prob_list):
+                    for i, pred in enumerate(predictions):
                         pred_dict = {
                             'id': row['id'],
                             'task': m['task'],
-                            'label': id2label[i],
-                            'probability': prob,
+                            'label': id2label[pred],
+                            'probability': row['probability'][i],
                             'is_multilabel': m['is_multilabel'],
                             'model': model_name
                         }
                         processed_data.append(pred_dict)
+
                 dfs.append(pd.DataFrame(processed_data))
 
             final_df = pd.concat(dfs, ignore_index=True)
-            time_passed = datetime.now(zurich) - now
-            pred_filename = f'predictions_{date}_{time_passed}.csv'
+            time_passed = datetime.now(zurich) - start
+            pred_filename = f'class_predictions_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
             final_df.to_csv(os.path.join(FINAL_PRED, pred_filename), index=False)
-            logging.info(f'Saved final predictions to {os.path.join(FINAL_PRED, pred_filename)}')
-            logging.info('Prediction process completed successfully.')
+            logging.info(f'Saved class predictions to {os.path.join(FINAL_PRED, pred_filename)}')
+
+        ner_pred = check_if_pred_exist(FINAL_PRED, retrieval_date, str_contain='ner')
+        if ner_pred:
+            logging.info(f'NER predictions for date {retrieval_date} already exist. Skipping prediction.')
+        else:
+            start = datetime.now(zurich)
+            ner_model = next(
+                (m for m in model_info if m['task'].lower() == 'ner'), None)
+            model, tokenizer = load_model(ner_model['model_path'], ner_model['task'])
+            id2label = {int(k): v for k, v in ner_model['id2label'].items()}
+            logging.info(f'Loaded NER model: {ner_model["model_path"]}')
+            data = SimpleDataset(relevant_df, tokenizer,
+                                multilabel=False, is_ner=True)
+            ner_predictions_df = predict(model, data)
+            logging.info('Completed predictions for NER model.')
+            model, tokenizer = load_model(m['model_path'], m['task'])
+            logging.info(f'Loaded model: {m["model_path"]} for task: {m["task"]}')
+            data = SimpleDataset(relevant_df, tokenizer,
+                                multilabel=m['is_multilabel'], is_ner=True)
+            predictions_df = predict(model, data)
+            logging.info(f'Completed predictions for model: {m["model_path"]}')
+            processed_data = []
+            model_name = os.path.basename(os.path.dirname(m['model_path']))
+            id2label = {int(k): v for k, v in id2label.items()}
+
+            for _, row in ner_predictions_df.iterrows():
+                pred_dict = {
+                    'id': row['id'],
+                    'text': row['text'],
+                    'tokens': row['tokens'],
+                    'ner_tags': [id2label[i] for i in row['pred_labels']],
+                    'probabilities': row['probabilities'],
+                    'model': model_name
+                }
+            
+                processed_data.append(pred_dict)
+            end = datetime.now(zurich)
+            time_passed = end - start
+            ner_output_file = f'ner_predictions_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
+            pd.DataFrame(processed_data).to_csv(os.path.join(FINAL_PRED, ner_output_file), index=False)
+            logging.info(f'Saved NER predictions to {os.path.join(FINAL_PRED, ner_output_file)}')
+
+        logging.info('Prediction process completed successfully.')
 
     except Exception as e:
         logging.error(f'Error during prediction process: {e}', exc_info=True)
