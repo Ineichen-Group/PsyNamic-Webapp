@@ -71,7 +71,7 @@
     },
     {
         "task": "Number of Participants",
-        "model_path": "models/biolinkbert_number_of_participants_20250221/checkpoint-864 c",
+        "model_path": "models/biolinkbert_number_of_participants_20250221/checkpoint-864",
         "prediction_threshold": "0.5",
         "id2label": {
             "0": "1-20",
