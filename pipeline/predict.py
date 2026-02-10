@@ -1,4 +1,3 @@
-
 import os
 import logging
 import math
@@ -9,19 +8,19 @@ import torch
 import json
 import torch.nn.functional as F
 from torch.utils.data import Dataset
-from datetime import timedelta
+from datetime import timedelta, datetime
+from data.populate import check_if_pred_exist
+import argparse
 
 # Assuming Trainer, DataSplit, DataSplitBIO are defined elsewhere in your project
 from typing import Union
 from transformers import Trainer, AutoModelForTokenClassification, AutoModelForSequenceClassification, AutoTokenizer
 
-from datetime import datetime
 import pytz
 import pandas as pd
 from torch.utils.data import Dataset
 
 zurich = pytz.timezone('Europe/Zurich')
-
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -292,20 +291,16 @@ def get_latest_data(data_dir: str) -> str:
     return os.path.join(data_dir, latest_file)
 
 
-def check_if_pred_exist(pred_dir: str, retrieval_date: str, str_contain: str='') -> str:
-    """Check if prediction file for the given retrieval date already exists."""
-    pred_files = [f for f in os.listdir(pred_dir) if f.endswith('.csv')]
-    for f in pred_files:
-        if retrieval_date in f and str_contain in f:
-            return os.path.join(pred_dir, f)
-    return ""
 
 
 def extract_retrieval_date_from_filename(filename: str) -> str:
     """pubmed_results_20231216_20260112_00:00:10.csv -> 20260112"""
     base_name = os.path.basename(filename)
     parts = base_name.split('_')
-    return parts[-2]
+    try: 
+        return parts[-2]
+    except:
+        return "unknown_date"
 
 
 def format_timedelta_hms(td: timedelta) -> str:
@@ -316,10 +311,54 @@ def format_timedelta_hms(td: timedelta) -> str:
     return f"{hours:02d}-{minutes:02d}-{seconds:02d}"
 
 
+def cleanup_old_logs(log_dir: str, keep_n: int = 50):
+    """Deletes old log files, keeping only the N most recent ones."""
+    try:
+        log_files = [f for f in os.listdir(log_dir) if f.startswith('predict_') and f.endswith('.log')]
+        if len(log_files) <= keep_n:
+            return
+
+        # Sort files by creation time (embedded in filename)
+        log_files.sort(key=lambda x: datetime.strptime(x.split('_')[1], "%Y%m%d"), reverse=True)
+
+        # Files to delete
+        files_to_delete = log_files[keep_n:]
+
+        for f in files_to_delete:
+            os.remove(os.path.join(log_dir, f))
+            logging.info(f"Removed old log file: {f}")
+
+    except Exception as e:
+        logging.warning(f"Could not clean up old logs: {e}")
+
+
 def main():
+
+    # add argument parser, if input file is given, use that instead of latest file
+    # -i or --input_file
+    # add output directory argument
+    # -o or --output_dir
+
+    parser = argparse.ArgumentParser(description="Run prediction pipeline")
+    parser.add_argument(
+        '-i', '--input_file',
+        type=str,
+        help='Path to the input CSV file for prediction. If not provided, the latest file from the data directory will be used.'
+    )
+    parser.add_argument(
+        '--skip_relevance',
+        action='store_true',
+        help='Skip relevance prediction step.'
+    )
+    args = parser.parse_args()
+
     # Setup logging
     log_dir = os.path.join(SCRIPT_DIR, 'log')
     os.makedirs(log_dir, exist_ok=True)
+
+    # Clean up old logs before creating a new one
+    cleanup_old_logs(log_dir)
+
     log_filename = f'predict_{datetime.now(zurich).strftime("%Y%m%d_%H%M%S")}.log'
     log_path = os.path.join(log_dir, log_filename)
     logging.basicConfig(
@@ -335,9 +374,15 @@ def main():
 
     try:
         # Get latest pubmed data file
-        csv_file = get_latest_data(PUBMED_DATA_DIR)
-        logging.info(f'Loaded latest data file: {csv_file}')
-        retrieval_date = extract_retrieval_date_from_filename(csv_file)
+        if args.input_file:
+            csv_file = args.input_file
+            logging.info(f'Using provided input file: {csv_file}')
+            retrieval_date = extract_retrieval_date_from_filename(csv_file)
+        else:
+            csv_file = get_latest_data(PUBMED_DATA_DIR)
+            logging.info(f'Loaded latest data file: {csv_file}')
+            retrieval_date = extract_retrieval_date_from_filename(csv_file)
+
         with open(MODEL_INFO, 'r', encoding='utf-8') as file:
             model_info = json.load(file)
         logging.info(f'Loaded model info from {MODEL_INFO}')     
@@ -348,7 +393,9 @@ def main():
             logging.info(f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.')
             relevant_df = pd.read_csv(rel_pred)
             logging.info(f'Loaded existing relevant studies from {rel_pred}')
-        
+        elif args.skip_relevance:
+            logging.info('Skipping relevance prediction as per argument. Assuming all studies are relevant.')
+            relevant_df = pd.read_csv(csv_file)
         else:
             start = datetime.now(zurich)
             # Predict relevance first
@@ -365,6 +412,10 @@ def main():
                 (k for k, v in relevant_model['id2label'].items() if v == 'relevant'), None)
             relevant_df = relevant_predictions_df[relevant_predictions_df['prediction'] == int(
                 relevant_label_id)]
+            # Add all others columns from original csv
+            original_df = pd.read_csv(csv_file)
+            # Drop the 'text' column from original_df to avoid suffixes after merge
+            relevant_df = relevant_df.merge(original_df.drop(columns=['text']), left_on='id', right_on='pubmed_id', how='left')
             
             end = datetime.now(zurich)
             time_passed = end - start
