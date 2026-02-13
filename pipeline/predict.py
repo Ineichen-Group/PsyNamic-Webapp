@@ -149,6 +149,8 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
         all_logits = []
         all_probs = []
 
+        total_chunks = len(test_dataset)
+        report_interval = max(1, total_chunks // 100)
         # Run inference per chunk
         for i in range(len(test_dataset)):
             sample = test_dataset[i]
@@ -167,6 +169,10 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
 
             all_logits.append(logits.cpu().numpy())
             all_probs.append(probs.cpu().numpy())
+
+            # Progress logging at ~10% intervals
+            if (i + 1) % report_interval == 0 or i == total_chunks - 1:
+                logging.info(f"\tNER progress: {i+1}/{total_chunks} ({int((i+1)/total_chunks*100)}%)")
 
         # Convert to numpy arrays
         pred_labels_idx = [np.argmax(p, axis=-1) for p in all_probs]
@@ -236,6 +242,9 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
         probs = []
         preds = []
 
+        total_samples = len(test_dataset)
+        report_interval = max(1, total_samples // 100)
+
         for i in range(len(test_dataset)):
             sample = test_dataset[i]
 
@@ -253,6 +262,10 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
             with torch.no_grad():
                 outputs = model(input_ids=input_ids, attention_mask=attention_mask)
                 logits = outputs.logits.squeeze(0)
+
+            # Progress logging at ~10% intervals
+            if (i + 1) % report_interval == 0 or i == total_samples - 1:
+                logging.info(f"\tClassification progress: {i+1}/{total_samples} ({int((i+1)/total_samples*100)}%)")
 
             if test_dataset.is_multilabel:
                 probs_tensor = torch.sigmoid(logits)
@@ -369,6 +382,11 @@ def main():
         help='Path to the input CSV file for prediction. If not provided, the latest file from the data directory will be used.'
     )
     parser.add_argument(
+        '-o', '--output_dir',
+        type=str, default='data/predictions',
+        help='Directory to save prediction outputs. Default is data/predictions.'
+    )
+    parser.add_argument(
         '--skip_relevance',
         action='store_true',
         help='Skip relevance prediction step.'
@@ -392,7 +410,7 @@ def main():
     logging.info('Prediction process started.')
     PUBMED_DATA_DIR = 'data/pubmed_fetch_results'
     MODEL_INFO = 'pipeline/model_paths.json'
-    FINAL_PRED = 'data/predictions'
+    FINAL_PRED = args.output_dir
     RELEVANT_STUDIES = 'data/relevant_studies'
 
     try:
@@ -412,13 +430,13 @@ def main():
 
         rel_pred = check_if_pred_exist(RELEVANT_STUDIES, retrieval_date)
         # Check if relevance predictions already exist
-        if rel_pred:
+        if args.skip_relevance:
+            logging.info('Skipping relevance prediction as per argument. Assuming all studies are relevant.')
+            relevant_df = pd.read_csv(csv_file)
+        elif rel_pred:
             logging.info(f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.')
             relevant_df = pd.read_csv(rel_pred)
             logging.info(f'Loaded existing relevant studies from {rel_pred}')
-        elif args.skip_relevance:
-            logging.info('Skipping relevance prediction as per argument. Assuming all studies are relevant.')
-            relevant_df = pd.read_csv(csv_file)
         else:
             start = datetime.now(zurich)
             # Predict relevance first
