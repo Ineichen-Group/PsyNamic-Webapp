@@ -173,6 +173,7 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
 
         # Now MERGE CHUNKS PROPERLY
         for sample_id, group in test_dataset.chunks.groupby(test_dataset.ID_COL):
+
             group = group.sort_values("chunk_idx")
 
             merged_tokens = []
@@ -186,17 +187,41 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                 preds_chunk = pred_labels_idx[chunk_row_idx]
                 probs_chunk = all_probs[chunk_row_idx]
 
-                last_word_id = None
+                current_word_tokens = []
+                current_word_label = None
+                current_word_prob = None
+                current_word_id = None
 
                 for j, (token, word_id) in enumerate(zip(tokens, word_ids)):
+
                     if word_id is None:
                         continue
 
-                    if word_id != last_word_id:
-                        merged_tokens.append(token)
-                        merged_labels.append(int(preds_chunk[j]))
-                        merged_probs.append(float(probs_chunk[j].max()))
-                        last_word_id = word_id
+                    # New word starts
+                    if word_id != current_word_id:
+                        # Save previous word
+                        if current_word_tokens:
+                            word = test_dataset.tokenizer.convert_tokens_to_string(current_word_tokens)
+                            merged_tokens.append(word)
+                            merged_labels.append(current_word_label)
+                            merged_probs.append(current_word_prob)
+
+                        # Start new word
+                        current_word_tokens = [token]
+                        current_word_label = int(preds_chunk[j])   # first subtoken label
+                        current_word_prob = float(probs_chunk[j].max())
+                        current_word_id = word_id
+
+                    else:
+                        current_word_tokens.append(token)
+
+                # Save last word
+                if current_word_tokens:
+                    word = test_dataset.tokenizer.convert_tokens_to_string(current_word_tokens)
+                    merged_tokens.append(word)
+                    merged_labels.append(current_word_label)
+                    merged_probs.append(current_word_prob)
+
 
             pred_data.append({
                 "id": sample_id,
@@ -289,8 +314,6 @@ def get_latest_data(data_dir: str) -> str:
     latest_file = max(csv_files, key=lambda x: datetime.strptime(
         x.split('_')[2], "%Y%m%d"))
     return os.path.join(data_dir, latest_file)
-
-
 
 
 def extract_retrieval_date_from_filename(filename: str) -> str:
@@ -493,14 +516,8 @@ def main():
                                 multilabel=False, is_ner=True)
             ner_predictions_df = predict(model, data)
             logging.info('Completed predictions for NER model.')
-            model, tokenizer = load_model(m['model_path'], m['task'])
-            logging.info(f'Loaded model: {m["model_path"]} for task: {m["task"]}')
-            data = SimpleDataset(relevant_df, tokenizer,
-                                multilabel=m['is_multilabel'], is_ner=True)
-            predictions_df = predict(model, data)
-            logging.info(f'Completed predictions for model: {m["model_path"]}')
             processed_data = []
-            model_name = os.path.basename(os.path.dirname(m['model_path']))
+            model_name = os.path.basename(os.path.dirname(ner_model['model_path']))
             id2label = {int(k): v for k, v in id2label.items()}
 
             for _, row in ner_predictions_df.iterrows():

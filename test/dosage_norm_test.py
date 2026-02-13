@@ -264,4 +264,16 @@ class DosageExtractTest(unittest.TestCase):
         self.assertIsNone(result["per_weight_unit"])
         self.assertIsNone(result["weight_reference"])
         self.assertIsNone(result["per_time_unit"])
-        self.assertEqual(result["dose_type"], "absolute")   
+        self.assertEqual(result["dose_type"], "absolute")
+
+    def test_or(self):
+        # 40 or 60 mg
+        result = extract_dosages("40 or 60 mg")
+        self.assertEqual(result["min"], 40)
+        self.assertEqual(result["max"], 60)
+        self.assertEqual(result["unit"], "mg")
+        self.assertIsNone(result["per_weight_unit"])
+        self.assertIsNone(result["weight_reference"])
+        self.assertIsNone(result["per_time_unit"])
+        self.assertEqual(result["dose_type"], "absolute")
+    

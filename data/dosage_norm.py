@@ -92,6 +92,7 @@ def extract_dosages(dosage: str) -> dict[str, str]:
     }
 
     # extract unit, last digit followed by space and then unit
+    unit = None
     if '/' in dosage:
         # unit last thing before first /
         match = re.search(rf"({all_unicode_characters}+)(?=/)", dosage)
@@ -99,9 +100,9 @@ def extract_dosages(dosage: str) -> dict[str, str]:
             unit = match.group(1)
             dosage_dict["unit"] = unit
     else:     
-        match = re.search(rf"\d+\s({all_unicode_characters}+)", dosage)
-        if match:
-            unit = match.group(1)
+        matches = re.findall(rf"\d+\s({all_unicode_characters}+)", dosage)
+        if matches:
+            unit = matches[-1]   # <-- last occurrence
             dosage_dict["unit"] = unit
 
     # \sor\s or \sand\s in dosage or comma separated numbers
