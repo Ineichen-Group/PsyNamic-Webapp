@@ -66,7 +66,13 @@ class DosageNormTest(unittest.TestCase):
             '0.25 mg / kg / body-weight' : '0.25 mg/kg',
             '( 200 microg / kg )' : '200 µg/kg',
             '.5mg/kg' : '0.5 mg/kg',
-            '2μg / kg / min' : '2 μg/kg/min',            
+            '2μg / kg / min' : '2 μg/kg/min',
+            '(56 mg or 84 mg' : '56 mg or 84 mg',
+            '15- or 20-mg ': '15 or 20 mg',
+            'one microgram per kilogram' : '1 µg/kg',
+            '60-, 120-, and 180-mg ': '60, 120, and 180 mg',
+            '80 mg or 120 mg ': '80 mg or 120 mg',
+            '6.5μg, ': '6.5 μg',
         }
         
         for inp, outp in input_output.items():
@@ -266,6 +272,17 @@ class DosageExtractTest(unittest.TestCase):
         self.assertIsNone(result["per_time_unit"])
         self.assertEqual(result["dose_type"], "absolute")
 
+    def test_range_with_to(self):
+        # '80 mg to 180'
+        result = extract_dosages("80 mg to 180")
+        self.assertEqual(result["min"], 80)
+        self.assertEqual(result["max"], 180)
+        self.assertEqual(result["unit"], "mg")
+        self.assertIsNone(result["per_weight_unit"])
+        self.assertIsNone(result["weight_reference"])
+        self.assertIsNone(result["per_time_unit"])
+        self.assertEqual(result["dose_type"], "absolute")
+
     def test_or(self):
         # 40 or 60 mg
         result = extract_dosages("40 or 60 mg")
@@ -321,6 +338,30 @@ class DosageExtractTest(unittest.TestCase):
         self.assertIsNone(result["weight_reference"])
         self.assertIsNone(result["per_time_unit"])
         self.assertEqual(result["dose_type"], "absolute")
+
+    def test_dosage_twice(self):
+        # '56 mg or 84 mg'
+        result = extract_dosages("56 mg or 84 mg")
+        self.assertEqual(result["min"], 56)
+        self.assertEqual(result["max"], 84)
+        self.assertEqual(result["unit"], "mg")
+        self.assertIsNone(result["per_weight_unit"])
+        self.assertIsNone(result["weight_reference"])
+        self.assertIsNone(result["per_time_unit"])
+        self.assertEqual(result["dose_type"], "absolute")
+
+
+    def test_missing_unit_trailing_whitespace(self):
+        # '100 μg and 200 '
+        result = extract_dosages("100 μg and 200 ")
+        self.assertEqual(result["min"], 100)
+        self.assertEqual(result["max"], 200)
+        self.assertEqual(result["unit"], "μg")
+        self.assertIsNone(result["per_weight_unit"])
+        self.assertIsNone(result["weight_reference"])
+        self.assertIsNone(result["per_time_unit"])
+        self.assertEqual(result["dose_type"], "absolute")   
+        
 
 if __name__ == '__main__':
     unittest.main()

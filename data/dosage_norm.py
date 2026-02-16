@@ -11,6 +11,24 @@ def remove_whitespace_around_slashes(dosage: str) -> str:
 
 def normalize_dosage(dosage: str) -> str:
     """Normalize dosage string by removing extra spaces and converting to lowercase."""
+    
+    number_words = {
+        "zero": "0",
+        "one": "1",
+        "two": "2",
+        "three": "3",
+        "four": "4",
+        "five": "5",
+        "six": "6",
+        "seven": "7",
+        "eight": "8",
+        "nine": "9",
+        "ten": "10",
+    }
+    # replace number words with digits
+    for word, digit in number_words.items():
+        dosage = re.sub(rf"\b{word}\b", digit, dosage, flags=re.IGNORECASE)    
+    
     rename_map = {
             "mcg": "µg",
             "microg": "µg",
@@ -29,8 +47,12 @@ def normalize_dosage(dosage: str) -> str:
     dosage = remove_whitespace_around_slashes(dosage)
     dosage = dosage.lower()
 
-    # replace ' to ' with '-'
-    dosage = re.sub(r"\sto\s", "-", dosage)
+    # replace weird decimal dot like 0·5 mg/kg with normal dot
+    dosage = re.sub(r"(\d)·(\d)", r"\1.\2", dosage)
+
+    dosage = re.sub(r"\s+per\s+", "/", dosage)
+
+
     # replace ± nubmer or +- with or without ' '
     dosage = re.sub(r"\s*(±|\+-)\s?.*?\s", "", dosage)
     # remove , in 4 or more digit numbers
@@ -42,6 +64,9 @@ def normalize_dosage(dosage: str) -> str:
     # replace kg(-1), kg (-1), kg-1 with /kg, make it also work with min(-1)
     dosage = re.sub(rf"({all_unicode_characters}+)\s*\(*-1\)*", r"/\1", dosage)
     dosage = remove_whitespace_around_slashes(dosage)
+
+    # replace ' to ' with '-'
+    dosage = re.sub(r"\sto\s", "-", dosage)
 
     # get unit, all letters after a number or / , not including white spaces
     match = re.search(rf"\d+\s*({all_unicode_characters}+(?:/{all_unicode_characters}+)*)", dosage)
@@ -68,10 +93,19 @@ def normalize_dosage(dosage: str) -> str:
     for unit in units:
         unit_str = unit.group(1)
         if unit_str in rename_map:
-            start, end = unit.span(1)
-            dosage = dosage[:start] + rename_map[unit_str] + dosage[end:]
+            dosage = dosage.replace(unit_str, rename_map[unit_str], 1)
+
     
-    dosage = dosage.rstrip(" ")
+    # Remove any - after numbers that are not followed by another number 15- or 20-mg
+    dosage = re.sub(r"(\d+)-(?=\D|$)", r"\1 ", dosage)
+
+    # Remove whitspaces
+    dosage = dosage.replace("  ", " ")
+    dosage = re.sub(r"(\d)\s+,", r"\1,", dosage) # remove white space around comma in numbers
+
+    dosage = dosage.rstrip(" ") # remove trailing white space
+    dosage = dosage.rstrip(",") # remove trailing comma
+    
 
     
     return dosage
@@ -91,11 +125,6 @@ def extract_dosages(dosage: str) -> dict[str, str]:
         "original_dosage": dosage,
     }
 
-    # Check if there is · between numbers and replace it with .
-    dosage = re.sub(r"(\d)·(\d)", r"\1.\2", dosage)
-
-    # check if there is 'per' + unit and replace it with /unit
-    dosage = re.sub(r"\s+per\s+", "/", dosage)
     # extract unit, last digit followed by space and then unit
     unit = None
     if '/' in dosage:
@@ -112,14 +141,18 @@ def extract_dosages(dosage: str) -> dict[str, str]:
 
     # \sor\s or \sand\s in dosage or comma separated numbers
     if re.search(r"\sor\s|\sand\s|\d\s?[-‐]\s?\d", dosage) or re.search(r",", dosage):
-        dosage_without_units = dosage.split(unit)[0]
+        dosage_without_units = dosage.split(unit)
+        if '/' in dosage_without_units[-1]:
+            dosage_without_units = dosage_without_units[:-1]  # remove last part after last unit if it contains another unit reference like /kg or /h
+
+        dosage_without_units = " ".join(dosage_without_units)
         # get first and last digit
-        numbers = re.findall(r"[\d.]+", dosage_without_units)
+        numbers = re.findall(r"[\d\.]+", dosage_without_units)
         if len(numbers) >= 2:
-            min = numbers[0]
-            max = numbers[-1]
-            dosage_dict["min"] = float(min)
-            dosage_dict["max"] = float(max)
+            # sort numbers and take first and last as min and max
+            numbers = sorted([float(n) for n in numbers])
+            dosage_dict["min"] = numbers[0]
+            dosage_dict["max"] = numbers[-1]
         else:
             raise ValueError(f"Could not extract min and max from dosage: {dosage}")
     
@@ -129,6 +162,12 @@ def extract_dosages(dosage: str) -> dict[str, str]:
         if len(numbers) == 1:
             dosage_dict["min"] = float(numbers[0])
             dosage_dict["max"] = float(numbers[0])
+
+        elif len(numbers) > 1 and '/' not in dosage:
+            # if more than 2 numbers and no /, take first and last as min and max
+            dosage_dict["min"] = float(numbers[0])
+            dosage_dict["max"] = float(numbers[-1])
+
         # Check if only one number before the unit (and other number is unit reference): '98 mg/70 kg'
         elif len(re.findall(rf"\d+\s*{unit}", dosage)) == 1:
             dosage_dict["min"] = float(numbers[0])
