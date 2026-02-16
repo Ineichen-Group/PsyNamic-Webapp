@@ -277,3 +277,50 @@ class DosageExtractTest(unittest.TestCase):
         self.assertIsNone(result["per_time_unit"])
         self.assertEqual(result["dose_type"], "absolute")
     
+    def test_weird_decimal_character(self):
+        # '0·5 mg/kg '
+        result = extract_dosages("0·5 mg/kg")
+        self.assertEqual(result["min"], 0.5)
+        self.assertEqual(result["max"], 0.5)
+        self.assertEqual(result["unit"], "mg")
+        self.assertEqual(result["per_weight_unit"], "kg")
+        self.assertEqual(result["weight_reference"], 1)
+        self.assertIsNone(result["per_time_unit"])
+        self.assertEqual(result["dose_type"], "relative_weight")    
+
+    def test_per_weight(self):
+        # '98 mg per 70 kg '
+        result = extract_dosages("98 mg per 70 kg")
+        self.assertEqual(result["min"], 98)
+        self.assertEqual(result["max"], 98)
+        self.assertEqual(result["unit"], "mg")
+        self.assertEqual(result["per_weight_unit"], "kg")
+        self.assertEqual(result["weight_reference"], 70)
+        self.assertIsNone(result["per_time_unit"])
+        self.assertEqual(result["dose_type"], "relative_weight")
+
+
+    def test_mg_kg(self):
+        # "20 mg/70 kg "
+        result = extract_dosages("20 mg/70 kg")
+        self.assertEqual(result["min"], 20)
+        self.assertEqual(result["max"], 20)
+        self.assertEqual(result["unit"], "mg")
+        self.assertEqual(result["per_weight_unit"], "kg")
+        self.assertEqual(result["weight_reference"], 70)
+        self.assertIsNone(result["per_time_unit"])
+        self.assertEqual(result["dose_type"], "relative_weight")
+
+    def test_weird_decimal(self):
+        # 25 and 125. mg
+        result = extract_dosages("25 and 125. mg")
+        self.assertEqual(result["min"], 25)
+        self.assertEqual(result["max"], 125)
+        self.assertEqual(result["unit"], "mg")
+        self.assertIsNone(result["per_weight_unit"])
+        self.assertIsNone(result["weight_reference"])
+        self.assertIsNone(result["per_time_unit"])
+        self.assertEqual(result["dose_type"], "absolute")
+
+if __name__ == '__main__':
+    unittest.main()
