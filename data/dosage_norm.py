@@ -105,7 +105,7 @@ def extract_dosages(dosage: str) -> dict[str, str]:
             unit = match.group(1)
             dosage_dict["unit"] = unit
     else:     
-        matches = re.findall(rf"\d+\s({all_unicode_characters}+)", dosage)
+        matches = re.findall(rf"[\d\.]+\s({all_unicode_characters}+)", dosage)
         if matches:
             unit = matches[-1]   # <-- last occurrence
             dosage_dict["unit"] = unit
