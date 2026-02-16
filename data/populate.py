@@ -111,7 +111,7 @@ def create_predictions(paper_id: int, task: str, label: str, probability: float,
 
 
 def create_ner_tag(session: Session, tag: str, start_id: int, end_id: int, text: str, probability: float, model: str, paper_id: int, pred_text: str) -> NerTag:
-    print(text,'\t', pred_text[start_id:end_id])
+    # print(text,'\t', pred_text[start_id:end_id])
     ner_tag = session.query(NerTag).filter(
         NerTag.paper_id == paper_id,
         NerTag.start_id == start_id,
@@ -145,13 +145,13 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
     session = SessionLocal()
 
     nr_papers = session.query(Paper).count()
-    print(f"Number of papers in the database: {nr_papers}")
+    # print(f"Number of papers in the database: {nr_papers}")
 
 
     if studies_file:
         populate_studies(session, studies_file, studies_id_column)
         nr_papers = session.query(Paper).count()
-        print(f"Number of papers: {nr_papers}")
+        # print(f"Number of papers: {nr_papers}")
 
     if prediction_file:
         if 'ner' in prediction_file:
