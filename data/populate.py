@@ -61,8 +61,8 @@ def normalize_for_db(s: str) -> str:
             s = bytes(s2, 'utf-8').decode('unicode_escape')
         except Exception:
             pass
-    # turn NBSP / thin-space into a regular space and collapse whitespace
-    s = s.replace('\u00A0', ' ').replace('\u2009', ' ')
+    # turn NBSP / thin-space into a regular space, remove zero-width space, and collapse whitespace
+    s = s.replace('\u00A0', ' ').replace('\u2009', ' ').replace('\u200b', '')
     s = re.sub(r'\s+', ' ', s).strip()
     return s
 
@@ -339,11 +339,12 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
     elif file.endswith('.jsonl'):
         with open(file, 'r', encoding='utf-8') as f:
             data = [json.loads(line) for line in f.readlines()]
-    # Load jsonl file
+
     for row in data:
         paper = session.query(Paper).filter(Paper.id == row['id']).first()
         if not paper:
-            raise ValueError(f"No paper found with paper_id: {row['id']}")
+            print(f"No paper found with paper_id: {row['id']}")
+            continue
 
         pred_text = paper.prediction_input
         tokens = literal_eval(row['tokens']) if isinstance(row['tokens'], str) else row['tokens']
