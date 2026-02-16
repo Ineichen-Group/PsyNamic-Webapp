@@ -1,6 +1,6 @@
 import re
 
-all_unicode_characters = r'[^\W\d_/]'
+all_unicode_characters = r'[^\W\d_/\.]'
 digit = r'\d+(\.\d+)?'
 
 
@@ -91,6 +91,11 @@ def extract_dosages(dosage: str) -> dict[str, str]:
         "original_dosage": dosage,
     }
 
+    # Check if there is · between numbers and replace it with .
+    dosage = re.sub(r"(\d)·(\d)", r"\1.\2", dosage)
+
+    # check if there is 'per' + unit and replace it with /unit
+    dosage = re.sub(r"\s+per\s+", "/", dosage)
     # extract unit, last digit followed by space and then unit
     unit = None
     if '/' in dosage:
@@ -122,6 +127,10 @@ def extract_dosages(dosage: str) -> dict[str, str]:
     else:
         numbers = [n for n in re.findall(r'\d*\.\d+|\d+', dosage)]
         if len(numbers) == 1:
+            dosage_dict["min"] = float(numbers[0])
+            dosage_dict["max"] = float(numbers[0])
+        # Check if only one number before the unit (and other number is unit reference): '98 mg/70 kg'
+        elif len(re.findall(rf"\d+\s*{unit}", dosage)) == 1:
             dosage_dict["min"] = float(numbers[0])
             dosage_dict["max"] = float(numbers[0])
         else:
