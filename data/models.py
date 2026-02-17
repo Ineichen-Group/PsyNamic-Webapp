@@ -99,7 +99,7 @@ class DosageNormalization(Base):
     id = Column(Integer, primary_key=True)
 
     ner_tag_id = Column(Integer, ForeignKey('ner_tag.id'), nullable=False, unique=True)
-
+    norm_text= Column(String(255), nullable=False)
     min = Column(Float, nullable=False)
     max = Column(Float, nullable=False)
     unit = Column(String(50), nullable=True)

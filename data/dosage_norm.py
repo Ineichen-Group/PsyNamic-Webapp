@@ -115,6 +115,7 @@ def extract_dosages(dosage: str) -> dict[str, str]:
     dosage = normalize_dosage(dosage)
 
     dosage_dict = {
+        "norm_text": dosage,
         "min": None,
         "max": None,
         "unit": None,

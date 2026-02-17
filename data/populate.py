@@ -26,6 +26,7 @@ DATABASE_HOST = os.getenv("DATABASE_HOST")
 DATABASE_PORT = os.getenv("DATABASE_PORT")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 
+# TODO: do logging instead of printing
 
 def check_if_pred_exist(pred_dir: str, retrieval_date: str, str_contain: str='') -> str:
     """Check if prediction file for the given retrieval date already exists."""
@@ -155,7 +156,10 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
 
     if prediction_file:
         if 'ner' in prediction_file:
-            populate_ner_predictions(session, prediction_file)
+            if 'predictions' in prediction_file:
+                populate_ner_predictions(session, prediction_file, manual=False)
+            else:
+                populate_ner_predictions(session, prediction_file, manual=True)
         else:
             populate_class_predictions(session, prediction_file)
 
@@ -247,21 +251,21 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
     # Lowercase
     text = text.lower()
     token_list = [token.lower() for token in token_list]
-    prev_token = prev_token.lower() if prev_token else None
-    next_token = next_token.lower() if next_token else None
+    prev_token = prev_token.lower() if prev_token else ''
+    next_token = next_token.lower() if next_token else ''
 
     # Remove . and ^ if (newline artefact from Prodigy) they are last two tokens in the token list
     if token_list[-1] == '^' and token_list[-2] == '.':
         token_list = token_list[:-2]
 
     # Create the regex pattern to match the token list with optional whitespace between tokens
-    pattern = r'\s?'.join(re.escape(token) for token in token_list)
+    pattern = r'\s?'.join(re.escape(token) if token != '[unk]' else r'.{0,10}' for token in token_list)
     pattern = pattern + r'\s*(\.+\^)?\s*' # Optional match for the .^ artefact (was used as a separator between title and abstract in Prodigy)
 
     matches = list(re.finditer(pattern, text))
 
     if not matches:
-        breakpoint()
+        # breakpoint()
         raise ValueError(
             "No match found for the given token list in the text.")
 
@@ -283,9 +287,9 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
             prev_token = ''
         if next_token == "[unk]" or next_token == "\n":
             next_token = ''
-        
+
         # TODO: this is very ugly, improve
-        if (prev_token is None or before_match == prev_token) and (next_token is None or after_match == next_token):
+        if (not prev_token or before_match == prev_token) and (not next_token or after_match == next_token):
             return start_pos+offset, end_pos+offset  # Return the start and end positions of the match
         
         elif before_match.endswith(prev_token) and after_match.startswith(next_token):
@@ -297,7 +301,6 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
         elif before_match.endswith(prev_token) and len(next_token) < 2:
             return start_pos+offset, end_pos+offset
     
-    breakpoint()
     raise ValueError("No match found for the given token list in the text.")
 
 def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
@@ -315,10 +318,12 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
         existing_norm.per_time_unit = norm_data['per_time_unit']
         existing_norm.dose_type = norm_data['dose_type']
         existing_norm.original_dosage = norm_data['original_dosage']
+        existing_norm.norm_text = norm_data['norm_text']
         return existing_norm
     else:
         norm_data = extract_dosages(entity_text)
         dosage_norm = DosageNormalization(
+            norm_text=norm_data['norm_text'],
             min=norm_data['min'],
             max=norm_data['max'],
             unit=norm_data['unit'],
@@ -342,30 +347,34 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
 
     for row in data:
         paper = session.query(Paper).filter(Paper.id == row['id']).first()
+        # if paper.id == 2255:
+        #     breakpoint()
         if not paper:
             print(f"No paper found with paper_id: {row['id']}")
             continue
 
         pred_text = paper.prediction_input
         tokens = literal_eval(row['tokens']) if isinstance(row['tokens'], str) else row['tokens']
-        ner_tags = literal_eval(row['ner_tags']) if isinstance(row['ner_tags'], str) else row['ner_tags']
+        ner_tags = literal_eval(row['ner_tags']) if isinstance(row['ner_tags'], str) else row['ner_tags']           
 
         current_tag = None
         entity_tokens = []
         nr_tags = 0
-
         model = None
-        probability = None
+        entity_probs = []
+        
 
         if manual:
             model = "manual"
-            probability = 1.0
+            probs = [1.0] * len(tokens)  # Assign a default probability of 1.0 for manual annotations
             
         else:
-            model = row.get('model_name', None)
-            probability = row.get('probability', None)
+            probs = literal_eval(row['probabilities']) if isinstance(row['probabilities'], str) else row['probabilities']
+            model = row.get('model', None)
+            
 
         offset = 0
+        entity_start_index = 0
         for i, (token, tag) in enumerate(zip(tokens, ner_tags)):
             # Determine entity type from B- or I- prefix
             entity_type = tag[2:] if tag != 'O' else None
@@ -387,8 +396,9 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                             next_token=token,
                             offset=offset
                         )
-                    except:
-                        breakpoint()
+                    except Exception as e:
+                        print(f"Error occurred: {e}")
+                        # breakpoint()
                     ner_tag = create_ner_tag(
                         session=session, tag=current_tag, start_id=start_id, end_id=end_id,
                         text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
@@ -408,17 +418,18 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                 # Start the new entity
                 current_tag = entity_type
                 entity_tokens = [token]
+                entity_probs = [probs[i]]
 
             # Case 2: continue entity
             elif tag.startswith("I-") and current_tag == entity_type:
                 entity_tokens.append(token)
+                entity_probs.append(probs[i])
 
             # Case 3: End of an entity (current tag is O or a new B- tag)
             else:
-                if current_tag:
-                    
-                    prev_token = tokens[entity_start_index - 1] if entity_start_index > 0 else None
-                    next_token = tokens[i] if i < len(tokens) else None
+                if current_tag:                    
+                    prev_token = tokens[entity_start_index - 1] if entity_start_index > 0 else ''
+                    next_token = tokens[i] if i < len(tokens) else ''
                     try: 
                         start_id, end_id = find_pos(
                             pred_text[offset:],
@@ -429,7 +440,9 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                         )
                     except Exception as e:
                         print(f"Error occurred: {e}")
-                        breakpoint()
+                        # breakpoint()
+                    # calculate mean probability for the entity
+                    probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
                     ner_tag = create_ner_tag(
                         session=session, tag=current_tag, start_id=start_id, end_id=end_id,
                         text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
@@ -451,6 +464,7 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                     # Reset for next entity
                     current_tag = None
                     entity_tokens = []
+                    entity_probs = []
 
         # Process any remaining entity at the end of the sequence
         if current_tag:
@@ -466,9 +480,10 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                     next_token,
                     offset=offset
                 )
-            except:
-                breakpoint()
-            
+            except Exception as e:
+                print(f"Error occurred: {e}")
+                # breakpoint()
+            probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
             ner_tag = create_ner_tag(
                 session=session, tag=current_tag, start_id=start_id, end_id=end_id,
                 text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
