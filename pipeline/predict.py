@@ -8,8 +8,8 @@ import torch
 import json
 import torch.nn.functional as F
 from torch.utils.data import Dataset
-from datetime import timedelta, datetime
-from data.populate import check_if_pred_exist
+from datetime import datetime
+from pipeline.helper import check_if_pred_exist, cleanup_old_logs, format_timedelta_hms
 import argparse
 
 # Assuming Trainer, DataSplit, DataSplitBIO are defined elsewhere in your project
@@ -25,6 +25,8 @@ zurich = pytz.timezone('Europe/Zurich')
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # TODO: A little redundant with pipeline/train.py's Dataset, consider refactoring
+
+
 class SimpleDataset(Dataset):
     """Dataset for prediction with BERT for Classification or NER."""
 
@@ -64,7 +66,8 @@ class SimpleDataset(Dataset):
                 truncation=False
             )
 
-            tokens = self.tokenizer.convert_ids_to_tokens(encoding["input_ids"])
+            tokens = self.tokenizer.convert_ids_to_tokens(
+                encoding["input_ids"])
             word_ids = encoding.word_ids()
 
             # Chunking
@@ -156,14 +159,16 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
             sample = test_dataset[i]
 
             input_ids = torch.tensor(
-                [test_dataset.tokenizer.convert_tokens_to_ids(sample["tokens"])],
+                [test_dataset.tokenizer.convert_tokens_to_ids(
+                    sample["tokens"])],
                 device=device
             )
 
             attention_mask = torch.ones_like(input_ids, device=device)
 
             with torch.no_grad():
-                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                outputs = model(input_ids=input_ids,
+                                attention_mask=attention_mask)
                 logits = outputs.logits.squeeze(0)  # (seq_len, num_labels)
                 probs = torch.softmax(logits, dim=-1)
 
@@ -172,7 +177,8 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
 
             # Progress logging at ~10% intervals
             if (i + 1) % report_interval == 0 or i == total_chunks - 1:
-                logging.info(f"\tNER progress: {i+1}/{total_chunks} ({int((i+1)/total_chunks*100)}%)")
+                logging.info(
+                    f"\tNER progress: {i+1}/{total_chunks} ({int((i+1)/total_chunks*100)}%)")
 
         # Convert to numpy arrays
         pred_labels_idx = [np.argmax(p, axis=-1) for p in all_probs]
@@ -207,14 +213,16 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                     if word_id != current_word_id:
                         # Save previous word
                         if current_word_tokens:
-                            word = test_dataset.tokenizer.convert_tokens_to_string(current_word_tokens)
+                            word = test_dataset.tokenizer.convert_tokens_to_string(
+                                current_word_tokens)
                             merged_tokens.append(word)
                             merged_labels.append(current_word_label)
                             merged_probs.append(current_word_prob)
 
                         # Start new word
                         current_word_tokens = [token]
-                        current_word_label = int(preds_chunk[j])   # first subtoken label
+                        # first subtoken label
+                        current_word_label = int(preds_chunk[j])
                         current_word_prob = float(probs_chunk[j].max())
                         current_word_id = word_id
 
@@ -223,11 +231,11 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
 
                 # Save last word
                 if current_word_tokens:
-                    word = test_dataset.tokenizer.convert_tokens_to_string(current_word_tokens)
+                    word = test_dataset.tokenizer.convert_tokens_to_string(
+                        current_word_tokens)
                     merged_tokens.append(word)
                     merged_labels.append(current_word_label)
                     merged_probs.append(current_word_prob)
-
 
             pred_data.append({
                 "id": sample_id,
@@ -260,16 +268,19 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
             attention_mask = encoding["attention_mask"].to(device)
 
             with torch.no_grad():
-                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                outputs = model(input_ids=input_ids,
+                                attention_mask=attention_mask)
                 logits = outputs.logits.squeeze(0)
 
             # Progress logging at ~10% intervals
             if (i + 1) % report_interval == 0 or i == total_samples - 1:
-                logging.info(f"\tClassification progress: {i+1}/{total_samples} ({int((i+1)/total_samples*100)}%)")
+                logging.info(
+                    f"\tClassification progress: {i+1}/{total_samples} ({int((i+1)/total_samples*100)}%)")
 
             if test_dataset.is_multilabel:
                 probs_tensor = torch.sigmoid(logits)
-                pred_indices = (probs_tensor >= threshold).nonzero(as_tuple=False).squeeze().tolist()
+                pred_indices = (probs_tensor >= threshold).nonzero(
+                    as_tuple=False).squeeze().tolist()
                 if not isinstance(pred_indices, list):
                     pred_indices = [pred_indices]
                 pred_probs = [probs_tensor[i].item() for i in pred_indices]
@@ -333,39 +344,10 @@ def extract_retrieval_date_from_filename(filename: str) -> str:
     """pubmed_results_20231216_20260112_00:00:10.csv -> 20260112"""
     base_name = os.path.basename(filename)
     parts = base_name.split('_')
-    try: 
+    try:
         return parts[-2]
     except:
         return "unknown_date"
-
-
-def format_timedelta_hms(td: timedelta) -> str:
-    """Format timedelta to HH-MM-SS string."""
-    total_seconds = int(td.total_seconds())
-    hours, remainder = divmod(total_seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"{hours:02d}-{minutes:02d}-{seconds:02d}"
-
-
-def cleanup_old_logs(log_dir: str, keep_n: int = 50):
-    """Deletes old log files, keeping only the N most recent ones."""
-    try:
-        log_files = [f for f in os.listdir(log_dir) if f.startswith('predict_') and f.endswith('.log')]
-        if len(log_files) <= keep_n:
-            return
-
-        # Sort files by creation time (embedded in filename)
-        log_files.sort(key=lambda x: datetime.strptime(x.split('_')[1], "%Y%m%d"), reverse=True)
-
-        # Files to delete
-        files_to_delete = log_files[keep_n:]
-
-        for f in files_to_delete:
-            os.remove(os.path.join(log_dir, f))
-            logging.info(f"Removed old log file: {f}")
-
-    except Exception as e:
-        logging.warning(f"Could not clean up old logs: {e}")
 
 
 def main():
@@ -391,22 +373,34 @@ def main():
         action='store_true',
         help='Skip relevance prediction step.'
     )
-    args = parser.parse_args()
-
-    # Setup logging
     log_dir = os.path.join(SCRIPT_DIR, 'log')
     os.makedirs(log_dir, exist_ok=True)
 
-    # Clean up old logs before creating a new one
+    default_log_file = os.path.join(
+        log_dir,
+        f'predict_{datetime.now(zurich).strftime("%Y%m%d_%H%M%S")}.log'
+    )
+    parser.add_argument(
+        '-l', '--log-file',
+        type=str,
+        default=default_log_file,
+        help='Path to logfile (defaults to SCRIPT_DIR/log).'
+    )
+
+    args = parser.parse_args()
+
+    log_dir = os.path.join(SCRIPT_DIR, 'log')
+    os.makedirs(log_dir, exist_ok=True)
     cleanup_old_logs(log_dir)
 
-    log_filename = f'predict_{datetime.now(zurich).strftime("%Y%m%d_%H%M%S")}.log'
-    log_path = os.path.join(log_dir, log_filename)
     logging.basicConfig(
-        filename=log_path,
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(message)s'
+    filename=args.log_file,
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    force=True
     )
+
+
     logging.info('Prediction process started.')
     PUBMED_DATA_DIR = 'data/pubmed_fetch_results'
     MODEL_INFO = 'pipeline/model_paths.json'
@@ -426,15 +420,17 @@ def main():
 
         with open(MODEL_INFO, 'r', encoding='utf-8') as file:
             model_info = json.load(file)
-        logging.info(f'Loaded model info from {MODEL_INFO}')     
+        logging.info(f'Loaded model info from {MODEL_INFO}')
 
         rel_pred = check_if_pred_exist(RELEVANT_STUDIES, retrieval_date)
         # Check if relevance predictions already exist
         if args.skip_relevance:
-            logging.info('Skipping relevance prediction as per argument. Assuming all studies are relevant.')
+            logging.info(
+                'Skipping relevance prediction as per argument. Assuming all studies are relevant.')
             relevant_df = pd.read_csv(csv_file)
         elif rel_pred:
-            logging.info(f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.')
+            logging.info(
+                f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.')
             relevant_df = pd.read_csv(rel_pred)
             logging.info(f'Loaded existing relevant studies from {rel_pred}')
         else:
@@ -442,10 +438,12 @@ def main():
             # Predict relevance first
             relevant_model = next(
                 (m for m in model_info if m['task'].lower() == 'relevant'), None)
-            model, tokenizer = load_model(relevant_model['model_path'], relevant_model['task'])
-            logging.info(f'Loaded relevant model: {relevant_model["model_path"]}')
+            model, tokenizer = load_model(
+                relevant_model['model_path'], relevant_model['task'])
+            logging.info(
+                f'Loaded relevant model: {relevant_model["model_path"]}')
             data = SimpleDataset(csv_file, tokenizer,
-                                multilabel=False, is_ner=False)
+                                 multilabel=False, is_ner=False)
             relevant_predictions_df = predict(
                 model, data, threshold=relevant_model['prediction_threshold'])
             logging.info('Completed predictions for relevance model.')
@@ -456,22 +454,27 @@ def main():
             # Add all others columns from original csv
             original_df = pd.read_csv(csv_file)
             # Drop the 'text' column from original_df to avoid suffixes after merge
-            relevant_df = relevant_df.merge(original_df.drop(columns=['text']), left_on='id', right_on='pubmed_id', how='left')
-            
+            relevant_df = relevant_df.merge(original_df.drop(
+                columns=['text']), left_on='id', right_on='pubmed_id', how='left')
+
             end = datetime.now(zurich)
             time_passed = end - start
 
             relevant_output_file = f'studies_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
             os.makedirs(RELEVANT_STUDIES, exist_ok=True)
-            relevant_df.to_csv(os.path.join(RELEVANT_STUDIES, relevant_output_file), index=False)
-            logging.info(f'Saved relevant studies prediction to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
+            relevant_df.to_csv(os.path.join(
+                RELEVANT_STUDIES, relevant_output_file), index=False)
+            logging.info(
+                f'Saved relevant studies prediction to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
 
         # Now predict classification
-        class_pred = check_if_pred_exist(FINAL_PRED, retrieval_date, str_contain='class')
-        
+        class_pred = check_if_pred_exist(
+            FINAL_PRED, retrieval_date, str_contain='class')
+
         if class_pred:
-            logging.info(f'Classification {retrieval_date} already exist. Skipping prediction.')
-        
+            logging.info(
+                f'Classification {retrieval_date} already exist. Skipping prediction.')
+
         else:
             start = datetime.now(zurich)
             dfs = []
@@ -479,19 +482,21 @@ def main():
                 if m['task'].lower() == 'relevant' or m['task'] == 'NER':
                     continue  # already processed
                 model, tokenizer = load_model(m['model_path'], m['task'])
-                logging.info(f'Loaded model: {m["model_path"]} for task: {m["task"]}')
+                logging.info(
+                    f'Loaded model: {m["model_path"]} for task: {m["task"]}')
                 is_ner = 'ner' in m['task'].lower()
                 data = SimpleDataset(relevant_df, tokenizer,
-                                    multilabel=m['is_multilabel'], is_ner=is_ner)
+                                     multilabel=m['is_multilabel'], is_ner=is_ner)
                 predictions_df = predict(
                     model, data, threshold=m['prediction_threshold'])
-                logging.info(f'Completed predictions for model: {m["model_path"]}')
+                logging.info(
+                    f'Completed predictions for model: {m["model_path"]}')
                 processed_data = []
                 model_name = os.path.basename(os.path.dirname(m['model_path']))
                 id2label = {int(k): v for k, v in m['id2label'].items()}
 
                 for _, row in predictions_df.iterrows():
-                    #TODO: Check if it is one-hot encoded
+                    # TODO: Check if it is one-hot encoded
                     # multilabel: prediction: list[int] (one-hot encoded), probability: list[float]
                     # single label: prediction: int, probability: list[float]
 
@@ -517,25 +522,31 @@ def main():
             final_df = pd.concat(dfs, ignore_index=True)
             time_passed = datetime.now(zurich) - start
             pred_filename = f'class_predictions_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
-            final_df.to_csv(os.path.join(FINAL_PRED, pred_filename), index=False)
-            logging.info(f'Saved class predictions to {os.path.join(FINAL_PRED, pred_filename)}')
+            final_df.to_csv(os.path.join(
+                FINAL_PRED, pred_filename), index=False)
+            logging.info(
+                f'Saved class predictions to {os.path.join(FINAL_PRED, pred_filename)}')
 
-        ner_pred = check_if_pred_exist(FINAL_PRED, retrieval_date, str_contain='ner')
+        ner_pred = check_if_pred_exist(
+            FINAL_PRED, retrieval_date, str_contain='ner')
         if ner_pred:
-            logging.info(f'NER predictions for date {retrieval_date} already exist. Skipping prediction.')
+            logging.info(
+                f'NER predictions for date {retrieval_date} already exist. Skipping prediction.')
         else:
             start = datetime.now(zurich)
             ner_model = next(
                 (m for m in model_info if m['task'].lower() == 'ner'), None)
-            model, tokenizer = load_model(ner_model['model_path'], ner_model['task'])
+            model, tokenizer = load_model(
+                ner_model['model_path'], ner_model['task'])
             id2label = {int(k): v for k, v in ner_model['id2label'].items()}
             logging.info(f'Loaded NER model: {ner_model["model_path"]}')
             data = SimpleDataset(relevant_df, tokenizer,
-                                multilabel=False, is_ner=True)
+                                 multilabel=False, is_ner=True)
             ner_predictions_df = predict(model, data)
             logging.info('Completed predictions for NER model.')
             processed_data = []
-            model_name = os.path.basename(os.path.dirname(ner_model['model_path']))
+            model_name = os.path.basename(
+                os.path.dirname(ner_model['model_path']))
             id2label = {int(k): v for k, v in id2label.items()}
 
             for _, row in ner_predictions_df.iterrows():
@@ -547,13 +558,15 @@ def main():
                     'probabilities': row['probabilities'],
                     'model': model_name
                 }
-            
+
                 processed_data.append(pred_dict)
             end = datetime.now(zurich)
             time_passed = end - start
             ner_output_file = f'ner_predictions_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
-            pd.DataFrame(processed_data).to_csv(os.path.join(FINAL_PRED, ner_output_file), index=False)
-            logging.info(f'Saved NER predictions to {os.path.join(FINAL_PRED, ner_output_file)}')
+            pd.DataFrame(processed_data).to_csv(
+                os.path.join(FINAL_PRED, ner_output_file), index=False)
+            logging.info(
+                f'Saved NER predictions to {os.path.join(FINAL_PRED, ner_output_file)}')
 
         logging.info('Prediction process completed successfully.')
 

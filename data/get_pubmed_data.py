@@ -5,8 +5,10 @@ from lxml import html
 from html import unescape
 import pandas as pd
 import os
+import logging
+import argparse
 import pytz
-from pipeline.predict import format_timedelta_hms
+from pipeline.helper import cleanup_old_logs, format_timedelta_hms
 
 PUBMED_API_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
 PUBMED_ABSTRACTS_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
@@ -35,7 +37,7 @@ def get_pubmed_data(query_string: str, retstart: int = 0, retmax: int = 2000):
         response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException as e:
-        print(f"Error occurred while querying PubMed: {e}")
+        logging.error(f"Error occurred while querying PubMed: {e}")
         return None
 
 
@@ -56,7 +58,7 @@ def get_pubmed_abstracts(pmids: list) -> str:
         response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException as e:
-        print(f"Error occurred while fetching abstracts: {e}")
+        logging.error(f"Error occurred while fetching abstracts: {e}")
         return None
 
 
@@ -162,6 +164,32 @@ def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     date_file = os.path.join(dir_path, 'last_data_fetch.txt')
 
+    parser = argparse.ArgumentParser(description='Fetch PubMed data')
+    parser.add_argument(
+        '-l', '--log-file',
+        type=str,
+        default=None,
+        help='Path to logfile. If not provided, logs go to terminal.'
+    )
+    args = parser.parse_args()
+
+    if args.log_file:
+        log_dir = os.path.dirname(args.log_file)
+        os.makedirs(log_dir, exist_ok=True)
+        cleanup_old_logs(log_dir)
+        logging.basicConfig(
+            filename=args.log_file,
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s %(message)s',
+            force=True
+        )
+    else:
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s %(message)s',
+            force=True
+        )
+
 
     with open(date_file, "r", encoding="utf-8") as f:
         last_data_fetch = f.readlines()[-1].rstrip("\n")
@@ -220,9 +248,11 @@ def main():
     
     outfile = os.path.join(dir_path,'pubmed_fetch_results', f'pubmed_results_{from_date}_{to_date}_{duration}.csv')
     df.to_csv(outfile, index=False, encoding='utf-8')
+    logging.info(f"Wrote {len(df)} abstracts to {outfile}")
 
     with open(date_file, "a", encoding="utf-8") as f:
         f.write(today + "\n")
+    logging.info(f"Updated last_data_fetch to {today}")
 
 
 if __name__ == "__main__":
