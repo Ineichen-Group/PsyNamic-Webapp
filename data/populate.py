@@ -46,10 +46,11 @@ def create_batch_retrieval(studies_file: str, nr_new_studies: int) -> BatchRetri
         retrieval_time_needed=retrieval_duration
     )
 
+
 def normalize_for_db(s: str) -> str:
     if s is None:
         return s
- 
+
     if '\\x' in s or '\\u' in s:
         s2 = s.replace('\\xa0', '\\u00A0')
         try:
@@ -60,6 +61,7 @@ def normalize_for_db(s: str) -> str:
     s = s.replace('\u00A0', ' ').replace('\u2009', ' ').replace('\u200b', '')
     s = re.sub(r'\s+', ' ', s).strip()
     return s
+
 
 def create_paper(
         ID: int,
@@ -77,7 +79,7 @@ def create_paper(
     prediction_input = normalize_for_db(prediction_input)
     title = normalize_for_db(title)
     abstract = normalize_for_db(abstract)
-    
+
     return Paper(
         id=ID,
         pubmed_id=pubmed_id if pubmed_id else None,
@@ -143,7 +145,6 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
     nr_papers = session.query(Paper).count()
     # print(f"Number of papers in the database: {nr_papers}")
 
-
     if studies_file:
         populate_studies(session, studies_file, studies_id_column)
         nr_papers = session.query(Paper).count()
@@ -152,7 +153,8 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
     if prediction_file:
         if 'ner' in prediction_file:
             if 'predictions' in prediction_file:
-                populate_ner_predictions(session, prediction_file, manual=False)
+                populate_ner_predictions(
+                    session, prediction_file, manual=False)
             else:
                 populate_ner_predictions(session, prediction_file, manual=True)
         else:
@@ -166,7 +168,8 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
 
     studies_data = pd.read_csv(file)
     if studies_id_column not in studies_data.columns:
-        raise ValueError(f"Studies file does not contain column '{studies_id_column}'. Please specify the correct column name with the --studies_id_column argument.")
+        raise ValueError(
+            f"Studies file does not contain column '{studies_id_column}'. Please specify the correct column name with the --studies_id_column argument.")
 
     nr_studies = len(studies_data)
     batch = create_batch_retrieval(file, nr_studies)
@@ -227,7 +230,8 @@ def populate_class_predictions(session: Session, file: str):
             Prediction.model == row['model']
         ).first()
         if existing_pred:
-            logging.info(f"Prediction already exists for paper_id {paper_id}, task {row['task']}, label {row['label']}, model {row['model']}")
+            logging.info(
+                f"Prediction already exists for paper_id {paper_id}, task {row['task']}, label {row['label']}, model {row['model']}")
             continue
 
         pred = create_predictions(
@@ -256,13 +260,16 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
         token_list = token_list[:-1]
 
     # Create the regex pattern to match the token list with optional whitespace between tokens
-    pattern = r'\s?'.join(re.escape(token) if token != '[unk]' else r'.{0,10}' for token in token_list)
-    pattern = pattern + r'\s*(\.+\^)?\s*' # Optional match for the .^ artefact (was used as a separator between title and abstract in Prodigy)
+    pattern = r'\s?'.join(re.escape(token) if token !=
+                          '[unk]' else r'.{0,10}' for token in token_list)
+    # Optional match for the .^ artefact (was used as a separator between title and abstract in Prodigy)
+    pattern = pattern + r'\s*(\.+\^)?\s*'
 
     matches = list(re.finditer(pattern, text))
 
     if not matches:
-        logging.warning(f"No match found for tokens '{token_list}' in text: '{text}' with prev_token: '{prev_token}' and next_token: '{next_token}'")
+        logging.warning(
+            f"No match found for tokens '{token_list}' in text: '{text}' with prev_token: '{prev_token}' and next_token: '{next_token}'")
         return 0, 0
 
     if len(matches) == 1:
@@ -272,7 +279,7 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
         # Get the start and end positions of the match
         start_pos = match.start()
         end_pos = match.end()
-       
+
         # Get the surrounding text (prev_token and next_token) for disambiguation
         before_match = text[:start_pos].split()[-1] if start_pos > 0 else ''
         after_match = text[end_pos:].split(
@@ -286,23 +293,26 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
 
         # TODO: this is very ugly, improve
         if (not prev_token or before_match == prev_token) and (not next_token or after_match == next_token):
-            return start_pos+offset, end_pos+offset  # Return the start and end positions of the match
-        
+            # Return the start and end positions of the match
+            return start_pos+offset, end_pos+offset
+
         elif before_match.endswith(prev_token) and after_match.startswith(next_token):
             return start_pos+offset, end_pos+offset
-        
+
         elif after_match.startswith(next_token) and len(prev_token) < 2:
             return start_pos+offset, end_pos+offset
-        
+
         elif before_match.endswith(prev_token) and len(next_token) < 2:
             return start_pos+offset, end_pos+offset
-    
+
     raise ValueError("No match found for the given token list in the text.")
+
 
 def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
     # First, check if a DosageNormalization already exists for this NerTag
-    existing_norm = session.query(DosageNormalization).filter_by(ner_tag_id=ner_tag.id).first()
-    
+    existing_norm = session.query(DosageNormalization).filter_by(
+        ner_tag_id=ner_tag.id).first()
+
     if existing_norm:
         # Option 1: replace fields with new normalization data
         norm_data = extract_dosages(entity_text)
@@ -333,6 +343,7 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
         session.add(dosage_norm)
         return dosage_norm
 
+
 def populate_ner_predictions(session: Session, file: str, manual: bool = True):
     # check if input file is json or csv
     if file.endswith('.csv'):
@@ -350,40 +361,43 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
             continue
 
         pred_text = paper.prediction_input
-        tokens = literal_eval(row['tokens']) if isinstance(row['tokens'], str) else row['tokens']
-        ner_tags = literal_eval(row['ner_tags']) if isinstance(row['ner_tags'], str) else row['ner_tags']           
+        tokens = literal_eval(row['tokens']) if isinstance(
+            row['tokens'], str) else row['tokens']
+        ner_tags = literal_eval(row['ner_tags']) if isinstance(
+            row['ner_tags'], str) else row['ner_tags']
 
         current_tag = None
         entity_tokens = []
         nr_tags = 0
         model = None
         entity_probs = []
-        
 
         if manual:
             model = "manual"
-            probs = [1.0] * len(tokens)  # Assign a default probability of 1.0 for manual annotations
-            
+            # Assign a default probability of 1.0 for manual annotations
+            probs = [1.0] * len(tokens)
+
         else:
-            probs = literal_eval(row['probabilities']) if isinstance(row['probabilities'], str) else row['probabilities']
+            probs = literal_eval(row['probabilities']) if isinstance(
+                row['probabilities'], str) else row['probabilities']
             model = row.get('model', None)
-            
 
         offset = 0
         entity_start_index = 0
         for i, (token, tag) in enumerate(zip(tokens, ner_tags)):
             # Determine entity type from B- or I- prefix
             entity_type = tag[2:] if tag != 'O' else None
-            
+
             # Case 1: new entity starts
             if tag.startswith("B-"):
                 entity_start_index = i
 
                 # If there was a previous entity, process it first
                 if current_tag:
-                    cur_entity_start_index = entity_start_index - (len(entity_tokens)+1)
+                    cur_entity_start_index = entity_start_index - \
+                        (len(entity_tokens)+1)
                     prev_token = tokens[cur_entity_start_index] if cur_entity_start_index > 0 else None
-                    
+
                     try:
                         start_id, end_id = find_pos(
                             pred_text[offset:],
@@ -398,17 +412,19 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                         session=session, tag=current_tag, start_id=start_id, end_id=end_id,
                         text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
                     )
-                    
+
                     session.add(ner_tag)
-                    session.flush() 
+                    session.flush()
                     nr_tags += 1
-                    
+
                     # If it's a Dosage tag, normalize it
                     if current_tag == 'Dosage':
                         try:
-                           create_dosage_norm(session, ner_tag, pred_text[start_id:end_id])
+                            create_dosage_norm(
+                                session, ner_tag, pred_text[start_id:end_id])
                         except (ValueError, IndexError) as e:
-                            logging.exception(f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
+                            logging.exception(
+                                f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
 
                 # Start the new entity
                 current_tag = entity_type
@@ -422,10 +438,11 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
 
             # Case 3: End of an entity (current tag is O or a new B- tag)
             else:
-                if current_tag:                    
-                    prev_token = tokens[entity_start_index - 1] if entity_start_index > 0 else ''
+                if current_tag:
+                    prev_token = tokens[entity_start_index -
+                                        1] if entity_start_index > 0 else ''
                     next_token = tokens[i] if i < len(tokens) else ''
-                    try: 
+                    try:
                         start_id, end_id = find_pos(
                             pred_text[offset:],
                             entity_tokens,
@@ -437,7 +454,8 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                         logging.exception(f"Error occurred: {e}")
                         # breakpoint()
                     # calculate mean probability for the entity
-                    probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
+                    probability = sum(entity_probs) / \
+                        len(entity_probs) if entity_probs else 0.0
                     ner_tag = create_ner_tag(
                         session=session, tag=current_tag, start_id=start_id, end_id=end_id,
                         text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
@@ -446,16 +464,18 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                     offset = end_id
 
                     session.add(ner_tag)
-                    session.flush() 
+                    session.flush()
                     nr_tags += 1
 
                     # If it's a Dosage tag, normalize it
                     if current_tag == 'Dosage':
                         try:
-                            create_dosage_norm(session, ner_tag, pred_text[start_id:end_id])
+                            create_dosage_norm(
+                                session, ner_tag, pred_text[start_id:end_id])
                         except (ValueError, IndexError) as e:
-                            logging.exception(f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
-                    
+                            logging.exception(
+                                f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
+
                     # Reset for next entity
                     current_tag = None
                     entity_tokens = []
@@ -463,10 +483,11 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
 
         # Process any remaining entity at the end of the sequence
         if current_tag:
-            
-            prev_token = tokens[entity_start_index - 1] if entity_start_index > 0 else None
+
+            prev_token = tokens[entity_start_index -
+                                1] if entity_start_index > 0 else None
             next_token = None
-            try: 
+            try:
 
                 start_id, end_id = find_pos(
                     pred_text[offset:],
@@ -478,7 +499,8 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
             except Exception as e:
                 logging.exception(f"Error occurred: {e}")
                 # breakpoint()
-            probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
+            probability = sum(entity_probs) / \
+                len(entity_probs) if entity_probs else 0.0
             ner_tag = create_ner_tag(
                 session=session, tag=current_tag, start_id=start_id, end_id=end_id,
                 text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
@@ -492,9 +514,11 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
             if current_tag == 'Dosage':
                 try:
                     # make sure to replace existing normalization if it exists, since this is the last entity and we might have found a better match for the text
-                    create_dosage_norm(session, ner_tag, pred_text[start_id:end_id])
+                    create_dosage_norm(
+                        session, ner_tag, pred_text[start_id:end_id])
                 except (ValueError, IndexError) as e:
-                    logging.exception(f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
+                    logging.exception(
+                        f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
 
         session.commit()
 
@@ -514,7 +538,8 @@ def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
     paper = session.query(Paper).filter(
         Paper.title == title, Paper.year == year).first()
     if paper:
-        logging.info(f"Paper with title {title} and year {year} already exists")
+        logging.info(
+            f"Paper with title {title} and year {year} already exists")
         return True
 
     return False
@@ -550,7 +575,8 @@ def init_args_parser():
 if __name__ == '__main__':
     STUDIES_DIR = 'data/relevant_studies'
     PREDICTIONS_DIR = 'data/predictions'
-    zurich = pytz.timezone('Europe/Zurich')  # Zurich is UTC+2 during daylight saving time
+    # Zurich is UTC+2 during daylight saving time
+    zurich = pytz.timezone('Europe/Zurich')
 
     parser = init_args_parser()
     args = parser.parse_args()
@@ -563,7 +589,7 @@ if __name__ == '__main__':
             level=logging.INFO,
             format='%(asctime)s %(levelname)s %(message)s',
             force=True
-    )
+        )
     else:
         logging.basicConfig(
             level=logging.INFO,
@@ -579,25 +605,32 @@ if __name__ == '__main__':
         # get prediction file with the same date as studies file
         date_str = args.studies_file[:-4].split('_')[-2]
 
-        logging.info(f"No input files provided. Automatically using latest studies file: {args.studies_file}")
+        logging.info(
+            f"No input files provided. Automatically using latest studies file: {args.studies_file}")
         populate_db(prediction_file=None, studies_file=args.studies_file)
         # Check if classification predictions file exists
-        class_predictions_file = check_if_pred_exist(PREDICTIONS_DIR, date_str, 'class')
+        class_predictions_file = check_if_pred_exist(
+            PREDICTIONS_DIR, date_str, 'class')
         if class_predictions_file:
-            logging.info(f"Found classification predictions file for date {date_str}: {class_predictions_file}")      
+            logging.info(
+                f"Found classification predictions file for date {date_str}: {class_predictions_file}")
             populate_db(class_predictions_file, None, args.studies_id_column)
         else:
-            logging.warning(f"No classification predictions file found for date {date_str}")
-            
-        
-        ner_prediction_file = check_if_pred_exist(PREDICTIONS_DIR, date_str, 'ner')
+            logging.warning(
+                f"No classification predictions file found for date {date_str}")
+
+        ner_prediction_file = check_if_pred_exist(
+            PREDICTIONS_DIR, date_str, 'ner')
         if ner_prediction_file:
-            logging.info(f"Found NER predictions file for date {date_str}: {ner_prediction_file}")
-            populate_db(ner_prediction_file,None, args.studies_id_column)
+            logging.info(
+                f"Found NER predictions file for date {date_str}: {ner_prediction_file}")
+            populate_db(ner_prediction_file, None, args.studies_id_column)
         else:
-            logging.warning(f"No NER predictions file found for date {date_str}")
+            logging.warning(
+                f"No NER predictions file found for date {date_str}")
 
     else:
-        logging.info(f"Using provided input files - Studies file: {args.studies_file}, Predictions file: {args.predictions_file}")
+        logging.info(
+            f"Using provided input files - Studies file: {args.studies_file}, Predictions file: {args.predictions_file}")
         populate_db(args.predictions_file, args.studies_file,
                     args.studies_id_column)

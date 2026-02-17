@@ -394,12 +394,11 @@ def main():
     cleanup_old_logs(log_dir)
 
     logging.basicConfig(
-    filename=args.log_file,
-    level=logging.INFO,
-    format='%(asctime)s %(levelname)s %(message)s',
-    force=True
+        filename=args.log_file,
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(message)s',
+        force=True
     )
-
 
     logging.info('Prediction process started.')
     PUBMED_DATA_DIR = 'data/pubmed_fetch_results'

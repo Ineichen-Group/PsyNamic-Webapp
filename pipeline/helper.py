@@ -3,6 +3,7 @@ import os
 import logging
 from datetime import datetime, timedelta
 
+
 def cleanup_old_logs(log_dir: str, keep_n: int = 50):
     """Deletes old log files, keeping only the N most recent ones."""
     try:
@@ -34,7 +35,7 @@ def format_timedelta_hms(td: timedelta) -> str:
     return f"{hours:02d}-{minutes:02d}-{seconds:02d}"
 
 
-def check_if_pred_exist(pred_dir: str, retrieval_date: str, str_contain: str='') -> str:
+def check_if_pred_exist(pred_dir: str, retrieval_date: str, str_contain: str = '') -> str:
     """Check if prediction file for the given retrieval date already exists."""
     pred_files = [f for f in os.listdir(pred_dir) if f.endswith('.csv')]
     for f in pred_files:

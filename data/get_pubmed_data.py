@@ -16,6 +16,7 @@ SEARCH_STRING = '((Randomized Controlled Trial[Publication Type] OR Controlled C
 
 zurich = pytz.timezone('Europe/Zurich')
 
+
 def get_pubmed_data(query_string: str, retstart: int = 0, retmax: int = 2000):
     """
     Get pubmed ids for a given query string (which includes the query and a time filter)
@@ -117,7 +118,8 @@ def extract_pubmedid(article: ET.Element) -> str:
     """
     # <ArticleIdList>
     #    <ArticleId IdType="pubmed">41498818</ArticleId>
-    pmid_element = article.find('.//PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]')
+    pmid_element = article.find(
+        './/PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]')
     return pmid_element.text if pmid_element is not None else None
 
 
@@ -125,7 +127,8 @@ def extract_doi(article: ET.Element) -> str:
     #  <ArticleIdList>
     #             <ArticleId IdType="pubmed">41498818</ArticleId>
     #             <ArticleId IdType="doi">10.1021/acschemneuro.5c00892</ArticleId>
-    doi_element = article.find('.//PubmedData/ArticleIdList/ArticleId[@IdType="doi"]')
+    doi_element = article.find(
+        './/PubmedData/ArticleIdList/ArticleId[@IdType="doi"]')
     return doi_element.text if doi_element is not None else None
 
 
@@ -190,7 +193,6 @@ def main():
             force=True
         )
 
-
     with open(date_file, "r", encoding="utf-8") as f:
         last_data_fetch = f.readlines()[-1].rstrip("\n")
 
@@ -202,7 +204,6 @@ def main():
     count = 0
 
     start_time = datetime.now(zurich)
-
 
     # Paginate through results
     while True:
@@ -234,7 +235,7 @@ def main():
                 break
         else:
             break
-    
+
     end_time = datetime.now(zurich)
     # duration in format hh:mm:ss
     duration = format_timedelta_hms(end_time - start_time)
@@ -245,8 +246,9 @@ def main():
     # 2026/01/12 --> 20260112
     from_date = last_data_fetch.replace("/", "")
     to_date = today.replace("/", "")
-    
-    outfile = os.path.join(dir_path,'pubmed_fetch_results', f'pubmed_results_{from_date}_{to_date}_{duration}.csv')
+
+    outfile = os.path.join(dir_path, 'pubmed_fetch_results',
+                           f'pubmed_results_{from_date}_{to_date}_{duration}.csv')
     df.to_csv(outfile, index=False, encoding='utf-8')
     logging.info(f"Wrote {len(df)} abstracts to {outfile}")
 
