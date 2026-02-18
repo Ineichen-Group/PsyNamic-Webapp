@@ -4,17 +4,20 @@ import json
 import re
 import argparse
 import pytz
+import time
 from typing import Optional
 from datetime import datetime, timezone, timedelta
 
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
+import psycopg2
+from psycopg2 import OperationalError
 from sqlalchemy.orm import sessionmaker, Session
 from data.models import Paper, BatchRetrieval, Prediction, NerTag, DosageNormalization
 from data.dosage_norm import extract_dosages
 from ast import literal_eval
-from pipeline.helper import cleanup_old_logs, check_if_pred_exist
+from data.helper import cleanup_old_logs, check_if_pred_exist
 
 import logging
 
@@ -138,6 +141,15 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
         "postgresql://{0}:{1}@{2}:{3}/{4}".format(
             DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME)
     )
+    # Wait for the database to be ready before proceeding
+    while True:
+        try:
+            conn = psycopg2.connect(DATABASE_URL)
+            break
+        except OperationalError:
+            print("Postgres not ready, waiting...")
+            time.sleep(2)
+
     engine = create_engine(DATABASE_URL, echo=False)
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
