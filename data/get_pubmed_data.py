@@ -4,11 +4,12 @@ from lxml import etree as ET
 from lxml import html
 from html import unescape
 import pandas as pd
+import time
 import os
 import logging
 import argparse
 import pytz
-from pipeline.helper import cleanup_old_logs, format_timedelta_hms
+from data.helper import cleanup_old_logs, format_timedelta_hms
 
 PUBMED_API_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
 PUBMED_ABSTRACTS_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'

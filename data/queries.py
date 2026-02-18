@@ -25,7 +25,7 @@ DATABASE_HOST = os.getenv("DATABASE_HOST")
 DATABASE_PORT = os.getenv("DATABASE_PORT")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 
-from .models import Paper, Prediction, NerTag
+from .models import Paper, Prediction, NerTag, DosageNormalization
 
 # Add the parent folder to the Python search path
 parent_folder_path = os.path.abspath(
@@ -145,6 +145,9 @@ def get_studies_details_ner(
             'Substances': get_all_labels('Substances'),
         }
         query = session.query(Paper)
+        
+        # Only include papers that have a 'Dosage' NER tag
+        query = query.join(NerTag, Paper.id == NerTag.paper_id).filter(NerTag.tag == 'Dosage').distinct()
 
         # Apply any filters based on the filter model
         if filter_model:
@@ -190,7 +193,6 @@ def get_studies_details_ner(
         # Fetch tags if provided
         if tags:
             study_tags = get_study_tags([study.id for study in studies], tags)
-            breakpoint()
 
         # Prepare the results
         results = [
@@ -559,9 +561,18 @@ def get_dosages(paper_id: int) -> str:
             NerTag.paper_id == paper_id, NerTag.tag == 'Dosage')
         results = query.all()
 
-        dosages = ''
+        norm_texts = set()
+        # get connected dosage normalization for each tag
         for tag in results:
-            dosages += tag.text + ' | '
+            query = session.query(DosageNormalization).filter(DosageNormalization.ner_tag_id == tag.id)
+            norm = query.first()
+            if norm:
+                tag.norm_text = norm.norm_text
+                norm_texts.add(tag.norm_text)
+
+        dosages = ''
+        for t in norm_texts:
+            dosages += t + ' | '
 
         dosages = dosages[:-3]
         return dosages

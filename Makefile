@@ -15,6 +15,11 @@ load-datamodel: load-env
 load-dump: load-env
 	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -f /docker-entrypoint-initdb.d/db_dump.sql
 
+db-reset:
+	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+	$(MAKE) db-init
+	docker compose exec web python data/models.py
+
 load-indexes:
 	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < /docker-entrypoint-initdb.d/indexes.sql
 
@@ -32,6 +37,15 @@ logs:
 
 db-shell: load-env
 	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME}
+
+db-init: load-env
+	docker compose up -d db_init
+
+# Drop all data and recreate an empty DB schema, then recreate tables
+empty-db: load-env
+	@echo "Dropping public schema and recreating empty database (backup recommended)"
+	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+	$(MAKE) load-datamodel
 
 web-shell:
 	docker compose exec web /bin/bash

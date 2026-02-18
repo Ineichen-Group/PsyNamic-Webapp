@@ -1,4 +1,3 @@
-
 services:
   db:
     image: postgres:15
@@ -12,8 +11,6 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./data/db_dump.sql:/docker-entrypoint-initdb.d/db_dump.sql
-      - ./data/indexes.sql:/docker-entrypoint-initdb.d/indexes.sql
     env_file: .env
 
   web:
@@ -32,8 +29,8 @@ services:
 
   pipeline:
     build:
-      context: .
-      dockerfile: ./pipeline/Dockerfile.pipeline
+      context: ./pipeline
+      dockerfile: Dockerfile.pipeline
     container_name: webapp_pipeline
     restart: no
     depends_on:
@@ -43,9 +40,27 @@ services:
     volumes:
       - ./data:/app/data
       - ./pipeline:/app/pipeline
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    mem_limit: 1800m
+    memswap_limit: 1800m
+    cpus: 1.0
+
+  db_init:
+    build:
+      context: ./pipeline
+      dockerfile: Dockerfile.pipeline
+    working_dir: /app
+    container_name: webapp_db_init
+    restart: "no"
+    depends_on:
+      - db
     env_file: .env
-
-
+    volumes:
+      - ./data:/app/data
+      - ./pipeline:/app/pipeline
+    command: ["sh", "/app/pipeline/init_db.sh"]
+    
 volumes:
   db_data:
-
