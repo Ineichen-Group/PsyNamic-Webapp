@@ -12,16 +12,24 @@ show-db-user: load-env
 load-datamodel: load-env
 	docker compose exec web python data/models.py
 
-load-dump: load-env
-	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -f /docker-entrypoint-initdb.d/db_dump.sql
-
-db-reset:
-	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-	$(MAKE) db-init
-	docker compose exec web python data/models.py
-
 load-indexes:
 	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < /docker-entrypoint-initdb.d/indexes.sql
+
+db-init: load-env
+	docker compose up -d db_init
+
+db-dump: load-env
+	DATE=$$(date +%Y%m%d_%H%M%S); \
+	docker compose exec db pg_dump -U ${DATABASE_USER} -d ${DATABASE_NAME} -F c -b -v -f /data/data_dump_$${DATE}.sql
+
+# Drop all data and recreate an empty DB schema, then recreate tables
+db-empty: load-env
+	@echo "Dropping public schema and recreating empty database (backup recommended)"
+	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+	$(MAKE) load-datamodel
+
+db-populate: load-env
+	docker compose exec web python -m data.populate
 
 up:
 	docker compose up -d db web
@@ -38,15 +46,6 @@ logs:
 db-shell: load-env
 	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME}
 
-db-init: load-env
-	docker compose up -d db_init
-
-# Drop all data and recreate an empty DB schema, then recreate tables
-empty-db: load-env
-	@echo "Dropping public schema and recreating empty database (backup recommended)"
-	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-	$(MAKE) load-datamodel
-
 web-shell:
 	docker compose exec web /bin/bash
 
@@ -61,10 +60,6 @@ ps:
 
 restart:
 	docker compose restart $(service)
-
-db-dump: load-env
-	DATE=$$(date +%Y%m%d_%H%M%S); \
-	docker compose exec db pg_dump -U ${DATABASE_USER} -d ${DATABASE_NAME} -F c -b -v -f /data/data_dump_$${DATE}.sql
 
 clean-containers:
 	# Stop all running containers (no error if none), then remove all containers
