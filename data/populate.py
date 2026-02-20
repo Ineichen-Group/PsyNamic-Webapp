@@ -38,15 +38,16 @@ def create_batch_retrieval(studies_file: str, nr_new_studies: int) -> BatchRetri
     # studies_file format: studies_20260203_00-00-14.csv
     batch_date = studies_file[:-4].split('_')[-2]  # yyyymmdd
     batch_date = datetime.strptime(batch_date, '%Y%m%d')
-    retrieval_duration = studies_file[:-4].split('_')[-1]  # hh-mm-ss
-    hours, minutes, seconds = map(int, retrieval_duration.split('-'))
-    retrieval_duration = timedelta(
+    relevant_pred_time = studies_file[:-4].split('_')[-1]  # hh-mm-ss
+    hours, minutes, seconds = map(int, relevant_pred_time.split('-'))
+    relevant_pred_duration = timedelta(
         hours=hours, minutes=minutes, seconds=seconds)
 
     return BatchRetrieval(
         date=datetime.now(timezone.utc),
         number_new_papers=nr_new_studies,
-        retrieval_time_needed=retrieval_duration
+        relevant_pred_time=relevant_pred_duration,
+        source_file=os.path.basename(studies_file)
     )
 
 
@@ -184,9 +185,15 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             f"Studies file does not contain column '{studies_id_column}'. Please specify the correct column name with the --studies_id_column argument.")
 
     nr_studies = len(studies_data)
-    batch = create_batch_retrieval(file, nr_studies)
-    session.add(batch)
-    session.commit()
+    # Try to reuse an existing BatchRetrieval for this source file if present
+    source_file = os.path.basename(file)
+    batch = session.query(BatchRetrieval).filter(
+        BatchRetrieval.source_file == source_file
+    ).first()
+    if not batch:
+        batch = create_batch_retrieval(file, nr_studies)
+        session.add(batch)
+        session.commit()
 
     # replace the NaN values with empty strings
     studies_data = studies_data.fillna('')
@@ -231,7 +238,10 @@ def populate_class_predictions(session: Session, file: str):
         paper_id = int(row['id'])
         paper = session.query(Paper).filter(Paper.id == paper_id).first()
         if not paper:
-            logging.warning(f"No paper found with paper_id: {paper_id}")
+            # check if there is a paper with the same pubmed_id as paper_id
+            paper = session.query(Paper).filter(Paper.pubmed_id == paper_id).first()
+            if not paper:
+                logging.warning(f"No paper found with paper_id: {paper_id}")
             continue
 
         # Check for duplicate prediction (same paper_id, task, label, model)
@@ -365,11 +375,13 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
             data = [json.loads(line) for line in f.readlines()]
 
     for row in data:
-        paper = session.query(Paper).filter(Paper.id == row['id']).first()
-        # if paper.id == 2255:
-        #     breakpoint()
+        paper_id = int(row['id'])
+        paper = session.query(Paper).filter(Paper.id == paper_id).first()
         if not paper:
-            logging.warning(f"No paper found with paper_id: {row['id']}")
+            # check if there is a paper with the same pubmed_id as paper_id
+            paper = session.query(Paper).filter(Paper.pubmed_id == paper_id).first()
+            if not paper:
+                logging.warning(f"No paper found with paper_id: {paper_id}")
             continue
 
         pred_text = paper.prediction_input
@@ -420,6 +432,8 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                         )
                     except Exception as e:
                         logging.exception(f"Error occurred: {e}")
+                    # calculate mean probability for the entity (was missing here)
+                    probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
                     ner_tag = create_ner_tag(
                         session=session, tag=current_tag, start_id=start_id, end_id=end_id,
                         text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text

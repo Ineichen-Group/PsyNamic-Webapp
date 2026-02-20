@@ -62,13 +62,14 @@ class BatchRetrieval(Base):
     # Columns
     date = Column(TIMESTAMP, default=datetime.utcnow)
     number_new_papers = Column(Integer, nullable=False)
-    retrieval_time_needed = Column(Interval, nullable=False)
+    relevant_pred_time = Column(Interval, nullable=False)
+    source_file = Column(String(255), nullable=True)
 
     # Relationship to Paper (One-to-Many)
     papers = relationship('Paper', back_populates='batch_retrieval')
 
     def __repr__(self):
-        return f"<BatchRetrieval(id={self.id}, date={self.date}, number_new_papers={self.number_new_papers})>"
+        return f"<BatchRetrieval(id={self.id}, date={self.date}, number_new_papers={self.number_new_papers}, source_file={self.source_file})>"
 
 
 class NerTag(Base):

@@ -87,6 +87,11 @@ def parse_pubmed_data(xml_data: str) -> list[dict]:
         article_info['abstract'] = extract_abstract_text(article)
         article_info['title'] = extract_title(article)
 
+        # Skip articles without abstracts — do not save them
+        if not article_info['abstract'] or not str(article_info['abstract']).strip():
+            logging.info(f"Skipping PubMed article without abstract: {article_info.get('pubmed_id')}")
+            continue
+
         authors = []
         for author in article.findall('.//Article/AuthorList/Author'):
             initials = author.find('.//Initials')
