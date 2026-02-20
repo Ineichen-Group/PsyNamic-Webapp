@@ -21,4 +21,10 @@ python -m data.populate \
 python -m data.populate \
   -p data/manual/ner_predictions_20240101_00-13-08.csv
 
+python -m data.populate \
+  -p data/predictions/class_predictions_20260218_45-25-00.csv
+
+python -m data.populate \
+  -p data/predictions/ner_predictions_20260218_00-04-32.csv
+
 echo "Database initialization completed successfully."
