@@ -44,7 +44,7 @@ def create_batch_retrieval(studies_file: str, nr_new_studies: int) -> BatchRetri
         hours=hours, minutes=minutes, seconds=seconds)
 
     return BatchRetrieval(
-        date=datetime.now(timezone.utc),
+        date=batch_date,
         number_new_papers=nr_new_studies,
         relevant_pred_time=relevant_pred_duration,
         source_file=os.path.basename(studies_file)

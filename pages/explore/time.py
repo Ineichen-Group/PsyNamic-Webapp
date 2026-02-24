@@ -2,7 +2,7 @@ import time
 from dash import dcc, html
 import pandas as pd
 import dash_ag_grid as dag
-from data.queries import get_time_data, get_studies_details
+from data.queries import get_time_data, get_studies_details, latest_update
 from components.layout import study_grid
 import plotly.express as px
 
@@ -15,7 +15,7 @@ def time_layout():
     grid = study_grid(
         nr_total_studies=total_studies,
         nr_filtered_studies=total_studies, 
-        last_update='January 2024',  # Update this as needed
+        last_update=latest_update(),  # Update this as needed
         tags=False,
         id={"type": "studies-grid", "index": 6}
     )

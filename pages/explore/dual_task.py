@@ -12,6 +12,7 @@ from data.queries import (
     get_freq,
     get_all_labels,
     nr_studies,
+    latest_update
 )
 from style.colors import get_color_mapping, SECONDARY_COLOR, get_color
 
@@ -109,7 +110,7 @@ def dual_study_grid(ids: list[int], tags: OrderedDict) -> html.Div:
     return html.Div([
         dcc.Store(id='filtered-study-ids', data=ids, storage_type='session'),
         dcc.Store(id='filter-tags', data=tags, storage_type='session'),
-        study_grid(nr_studies(), len(ids), 'January 2024', tags, id={"type": "studies-grid", "index": 6})
+        study_grid(nr_studies(), len(ids), last_update=latest_update(), tags=tags, id={"type": "studies-grid", "index": 6})
     ], id='dual-study-grid')
 
 

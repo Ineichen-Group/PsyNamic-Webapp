@@ -25,7 +25,7 @@ DATABASE_HOST = os.getenv("DATABASE_HOST")
 DATABASE_PORT = os.getenv("DATABASE_PORT")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 
-from .models import Paper, Prediction, NerTag, DosageNormalization
+from .models import Paper, Prediction, NerTag, DosageNormalization, BatchRetrieval
 
 # Add the parent folder to the Python search path
 parent_folder_path = os.path.abspath(
@@ -604,5 +604,17 @@ def ner_tags_type(paper_id: int, type: str, in_titel=False) -> list[dict]:
                 'tag': tag.tag,
             })
         return tags
+    finally:
+        session.close()
+
+def latest_update():
+    """Get the the retrieval date, formated like 20.01.2026, of the latest batch retrieval."""
+    session = Session()
+    try:
+        # The model uses `date` as the timestamp column on BatchRetrieval
+        query = session.query(BatchRetrieval).order_by(BatchRetrieval.date.desc()).first()
+        if query and query.date:
+            return query.date.strftime("%d.%m.%Y")
+        return "Unknown"
     finally:
         session.close()

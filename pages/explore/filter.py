@@ -1,6 +1,6 @@
 from dash import html, dcc
 from components.layout import filter_selection, study_grid
-from data.queries import get_studies_details, nr_studies
+from data.queries import get_studies_details, nr_studies, latest_update
 
 
 def filter_layout():
@@ -9,7 +9,7 @@ def filter_layout():
     grid = study_grid(
         nr_total_studies=total_nr,
         nr_filtered_studies=total_nr,
-        last_update='January 2024',
+        last_update=latest_update(),
         tags=True,
         id={"type": "studies-grid", "index": 5}
     )
