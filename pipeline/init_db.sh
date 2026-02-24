@@ -22,6 +22,9 @@ python -m data.populate \
   -p data/manual/ner_predictions_20240101_00-13-08.csv
 
 python -m data.populate \
+  -s data/relevant_studies/studies_20260218_00-15-00.csv
+
+python -m data.populate \
   -p data/predictions/class_predictions_20260218_45-25-00.csv
 
 python -m data.populate \
