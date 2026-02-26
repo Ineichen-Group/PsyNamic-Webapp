@@ -84,7 +84,7 @@ def footer_layout():
     return html.Footer(
         dbc.Container(
             html.Div(
-                "Copyright © 2025. STRIDE-Lab, Center for Reproducible Science, University of Zurich",
+                "Copyright © 2026. STRIDE-Lab, Department of Clinical Research, University of Bern.",
                 className="text-center"
             ),
             className="py-3"
