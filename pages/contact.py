@@ -3,8 +3,7 @@ import dash_bootstrap_components as dbc
 
 
 def contact_layout():
-    return html.Div(
-        dbc.Container(
+    return dbc.Container(
             [
 
                 # Page title
@@ -29,7 +28,7 @@ def contact_layout():
 
                 html.P(
                     [
-                        "Anything not working as expected? Please report bugs by opening up an issue on ",
+                        "Is something not working as expected? Please report bugs by opening up an issue on ",
                         html.A(
                             "GitHub",
                             href="https://github.com/Ineichen-Group/PsyNamic-Webapp/issues",
@@ -185,4 +184,3 @@ def contact_layout():
             ],
             fluid=True,
         )
-    )
