@@ -256,10 +256,9 @@ def register_pagination_dosages_callbacks(app):
               
         title = f"{paper['title']} ({paper['year']})"
         abstract = paper["abstract"]
-        link_to_pubmed = paper["link_to_pubmed"]
 
-        link_text = link_to_pubmed
-        link_href = link_to_pubmed
+        link_text = paper["url"]
+        link_href = paper["url"]
 
         tags = []
         prev_task = None
@@ -323,10 +322,9 @@ def register_modal_callbacks(app):
             paper = selected_row_data[0]
             title = f"{paper['title']} ({paper['year']})"
             abstract = paper["abstract"]
-            link_to_pubmed = paper["link_to_pubmed"]
 
-            link_text = link_to_pubmed
-            link_href = link_to_pubmed
+            link_text = paper["url"]
+            link_href = paper["url"]
 
             tags = []
             prev_task = None
@@ -396,6 +394,10 @@ def register_download_csv_callback(app):
             refactored_data.append(study_data)
 
         df = pd.DataFrame(refactored_data)
+
+        # remove abstract column due to legal issues
+        if 'abstract' in df.columns:
+            df.drop(columns=['abstract'], inplace=True)
 
         return dcc.send_data_frame(df.to_csv, f"psynamic_data_{current_data_time}.csv", index=False)
 

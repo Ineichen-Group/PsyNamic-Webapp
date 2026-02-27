@@ -37,6 +37,7 @@ class Paper(Base):
     authors = Column(String(255), nullable=False)
     link_to_fulltext = Column(String(255), nullable=True)
     link_to_pubmed = Column(String(255), nullable=True)
+    other_url = Column(Text, nullable=True)
 
     retrieval_id = Column(Integer, ForeignKey(
         'batch_retrieval.id'), nullable=False)
@@ -52,6 +53,16 @@ class Paper(Base):
     def __repr__(self):
         return f"<Paper(id={self.id}, title={self.title}, authors={self.authors})>"
     
+    @property
+    def url(self):
+        if self.doi:
+            return f"https://doi.org/{self.doi}"
+        elif self.link_to_pubmed:
+            return self.link_to_pubmed
+        elif self.other_url:
+            return self.other_url
+        else:
+            return None
 
 class BatchRetrieval(Base):
     __tablename__ = 'batch_retrieval'

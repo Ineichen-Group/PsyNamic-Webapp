@@ -9,7 +9,7 @@ import logging
 from collections import OrderedDict
 import pandas as pd
 from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, load_only
 from sqlalchemy.sql import select
 from sqlalchemy import and_, tuple_, case
 
@@ -96,12 +96,12 @@ def get_studies_details(
         # Pagination with offset and limit
         query = query.offset(start_row).limit(end_row - start_row)
 
-        # Specify which fields to retrieve
-        query = query.with_entities(
+        # Specify which fields to load into the Paper instances
+        query = query.options(load_only(
             Paper.id, Paper.title, Paper.abstract,
             Paper.key_terms, Paper.doi, Paper.year,
-            Paper.link_to_pubmed
-        )
+            Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
+        ))
 
         # Execute the query
         studies = query.all()
@@ -109,6 +109,7 @@ def get_studies_details(
         # Fetch tags if provided
         if tags:
             study_tags = get_study_tags([study.id for study in studies], tags)
+        
 
         # Prepare the results
         results = [
@@ -119,7 +120,8 @@ def get_studies_details(
                 'key_terms': study.key_terms,
                 'doi': study.doi,
                 'year': study.year,
-                'link_to_pubmed': study.link_to_pubmed,
+                'pubmed_id': study.pubmed_id,
+                'url': study.url,
                 'tags': study_tags.get(study.id, []) if tags else []
             }
             for study in studies
@@ -179,13 +181,12 @@ def get_studies_details_ner(
         # Pagination with offset and limit
         query = query.offset(start_row).limit(end_row - start_row)
 
-        # Specify which fields to retrieve
-        query = query.with_entities(
+        # Specify which fields to load into the Paper instances
+        query = query.options(load_only(
             Paper.id, Paper.title, Paper.abstract,
             Paper.key_terms, Paper.doi, Paper.year,
-            Paper.link_to_pubmed,
-            Paper.prediction_input
-        )
+            Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
+        ))
 
         # Execute the query
         studies = query.all()
@@ -204,7 +205,7 @@ def get_studies_details_ner(
                 'key_terms': study.key_terms,
                 'doi': study.doi,
                 'year': study.year,
-                'link_to_pubmed': study.link_to_pubmed,
+                'url': study.url,
                 'tags': study_tags.get(study.id, []) if tags else [],
                 'dosage': get_dosages(study.id)
             }

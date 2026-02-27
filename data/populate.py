@@ -78,7 +78,8 @@ def create_paper(
         link_to_fulltext: str,
         link_to_pubmed: str,
         pubmed_id: str,
-        retrieval_id: int
+        retrieval_id: int,
+        url: str
 ):
     prediction_input = normalize_for_db(prediction_input)
     title = normalize_for_db(title)
@@ -86,7 +87,7 @@ def create_paper(
 
     return Paper(
         id=ID,
-        pubmed_id=pubmed_id if pubmed_id else None,
+        pubmed_id=int(pubmed_id) if pubmed_id  else None,
         title=title,
         abstract=abstract,
         prediction_input=prediction_input,
@@ -95,7 +96,7 @@ def create_paper(
         year=year,
         authors=authors,
         link_to_fulltext=link_to_fulltext if link_to_fulltext else None,
-        link_to_pubmed=link_to_pubmed if link_to_pubmed else None,
+        other_url=url if url else None,
         retrieval_id=retrieval_id
     )
 

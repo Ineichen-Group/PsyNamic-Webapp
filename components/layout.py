@@ -34,7 +34,7 @@ def header_layout():
                                     dbc.DropdownMenuItem(
                                         "Study Protocol", href="/insights/study-protocol"),
                                     dbc.DropdownMenuItem(
-                                         "Dosage", href="/insights/dosage"),
+                                        "Dosage", href="/insights/dosage"),
 
                                 ],
                                 nav=True,
@@ -200,9 +200,10 @@ def study_grid(
 
     columns = [
         {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
-        {"field": "year", "headerName": "Year","sortable": True, "width": 100},
         {"field": "abstract", "headerName": "Abstract", "filter": True,
-         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2}
+         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2},
+        {"field": "year", "headerName": "Year", "sortable": True, "width": 100},
+        {"field": "url", "headerName": "URL", "sortable": False, "filter": False, "width": 150}
     ]
 
     if tags:
@@ -289,9 +290,9 @@ def dosage_study_grid(
 
     columns = [
         {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
-        {"field": "year", "headerName": "Year","sortable": True, "width": 100},
         {"field": "abstract", "headerName": "Abstract", "filter": True,
          "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2},
+        {"field": "year", "headerName": "Year", "sortable": True, "width": 100},
         {"field": "dosage", "headerName": "Dosage", "sortable": True, "flex": 2},
     ]
 
@@ -444,8 +445,9 @@ def filter_button(color: str, label: str, task: str, editable: bool = False):
 
     if editable:
         children.append(
-            html.I(className="fa-solid fa-xmark", style={"marginLeft": "0.5rem"})
-            )
+            html.I(className="fa-solid fa-xmark",
+                   style={"marginLeft": "0.5rem"})
+        )
     else:
         custom_style["backgroundColor"] = color
         custom_style["border"] = "none"
@@ -471,11 +473,11 @@ def paper_details_modal(id="paper-modal"):
             dbc.ModalHeader(dbc.ModalTitle(id="paper-title")),
             dbc.ModalBody(
                 [
-                    html.Span("Link to PubMed: "),
+                    html.Span("URL: "),
                     html.A(
                         id="paper-link",
                         target="_blank",
-                        href="",                    ),
+                        href="",),
                     html.P(id="paper-abstract", className="abstract-text"),
                     html.Div(id='modal-tags'),
                 ]
@@ -510,17 +512,17 @@ def ner_tag(text: str, category: str = None):
 def highlighted_text(text: str, cutpoints: list) -> html.Span:
     elements = []
     last_index = 0
-    
+
     for cp in cutpoints:
         start, end, tag = cp['start'], cp['end'], cp['tag']
-        
+
         if last_index < start:
             elements.append(html.Span(text[last_index:start]))
-        
+
         elements.append(ner_tag(text[start:end], category=tag))
         last_index = end
-    
+
     if last_index < len(text):
         elements.append(html.Span(text[last_index:]))
-    
+
     return html.Span(elements)
