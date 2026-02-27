@@ -55,3 +55,21 @@
     text-decoration: none !important;
     color: black;
 }
+
+.label-text {
+    color: grey;
+    padding: 0 !important;
+    margin: 0;
+    border: none;
+
+}
+
+.label-description {
+    font-size: 0.85em;
+    color: #555;
+    padding-left: 1em;
+}
+
+.label-text .accordion-button {
+    padding: 0.2rem 0.5rem !important;  /* overrides Bootstrap default */
+}
