@@ -41,7 +41,7 @@ logging.getLogger("sqlalchemy.orm").setLevel(logging.WARNING)
 
 # Dash App Initialization
 app = dash.Dash(__name__, external_stylesheets=[
-                dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME], suppress_callback_exceptions=True)
+                dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME], suppress_callback_exceptions=True, title="PsyNamic")
 server = app.server
 csp = {
     "default-src": ["'self'"],
