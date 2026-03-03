@@ -93,8 +93,13 @@ def get_studies_details(
             query = query.order_by(
                 order_column.desc() if sort_order == "desc" else order_column.asc())
 
-        # Pagination with offset and limit
-        query = query.offset(start_row).limit(end_row - start_row)
+        # Pagination with offset and optional limit. If `end_row` is None,
+        # don't apply a limit (fetch all after offset).
+        query = query.offset(start_row)
+        if end_row is not None:
+            limit_value = end_row - start_row
+            if limit_value > 0:
+                query = query.limit(limit_value)
 
         # Specify which fields to load into the Paper instances
         query = query.options(load_only(
@@ -178,8 +183,13 @@ def get_studies_details_ner(
             query = query.order_by(
                 order_column.desc() if sort_order == "desc" else order_column.asc())
 
-        # Pagination with offset and limit
-        query = query.offset(start_row).limit(end_row - start_row)
+        # Pagination with offset and optional limit. If `end_row` is None,
+        # don't apply a limit (fetch all after offset).
+        query = query.offset(start_row)
+        if end_row is not None:
+            limit_value = end_row - start_row
+            if limit_value > 0:
+                query = query.limit(limit_value)
 
         # Specify which fields to load into the Paper instances
         query = query.options(load_only(
