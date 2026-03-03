@@ -400,18 +400,18 @@ def filter_selection():
         dcc.Store(
             id="filter-store",
             data={},
-            storage_type="session"
+            storage_type="memory"
         ),
 
         dcc.Store(
             id="filtered-study-ids",
-            data=get_ids(),   # fetch all study IDs
-            storage_type="session"
+            data=get_ids(),
+            storage_type="memory"
         ),
         dcc.Store(
             id="filter-tags",
-            data={},                     # empty initially
-            storage_type="session"
+            data={},
+            storage_type="memory"
         ),
     ], className="m-0 p-0")
 

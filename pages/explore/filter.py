@@ -17,8 +17,8 @@ def filter_layout():
     return html.Div([
         html.H1("Explore and filter all studies", className="my-4"),
         html.P("Explore all studies by applying filters to the data."),
-        dcc.Store(id='filtered-study-ids', data=[]),
-        dcc.Store(id='filter-tags', data=[]),
+        dcc.Store(id='filtered-study-ids', data=[], storage_type='memory'),
+        dcc.Store(id='filter-tags', data=[], storage_type='memory'),
         filter_selection(),
         grid,
     ], className="container", id="filter-layout")

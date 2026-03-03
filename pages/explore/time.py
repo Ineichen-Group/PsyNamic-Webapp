@@ -29,7 +29,7 @@ def time_layout():
 
     return html.Div([
         html.H1("Number of publications over time", className="my-4"),
-        dcc.Store(id='filtered-study-ids', data=ids),
+        dcc.Store(id='filtered-study-ids', data=ids, storage_type='memory'),
         dcc.Store(id='filter-tags', data=[]),
         # Input fields for start and end year
         html.Div([

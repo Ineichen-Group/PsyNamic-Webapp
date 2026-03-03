@@ -108,8 +108,8 @@ def dual_task_layout(task1=None, task2=None, task1_label=None):
 
 def dual_study_grid(ids: list[int], tags: OrderedDict) -> html.Div:
     return html.Div([
-        dcc.Store(id='filtered-study-ids', data=ids, storage_type='session'),
-        dcc.Store(id='filter-tags', data=tags, storage_type='session'),
+        dcc.Store(id='filtered-study-ids', data=ids, storage_type='memory'),
+        dcc.Store(id='filter-tags', data=tags, storage_type='memory'),
         study_grid(nr_studies(), len(ids), last_update=latest_update(), tags=tags, id={"type": "studies-grid", "index": 6})
     ], id='dual-study-grid')
 
