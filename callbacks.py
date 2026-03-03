@@ -353,6 +353,27 @@ def register_modal_callbacks(app):
             return True, title, link_href, link_text, abstract, buttons
 
         return no_update
+    
+    @app.callback(
+        Output({"type": "studies-grid", "index": ALL}, "selectedRows", allow_duplicate=True),
+        Input("paper-modal", "is_open"),
+        State({"type": "studies-grid", "index": ALL}, "selectedRows"),
+        prevent_initial_call=True,
+    )
+    def clear_studies_grid_selection(paper_modal_open, selected_rows_lists):
+        if paper_modal_open:
+            return no_update
+        return [[] for _ in (selected_rows_lists or [])]
+
+    @app.callback(
+        Output("dosage-study-grid", "selectedRows", allow_duplicate=True),
+        Input("dosage-modal", "is_open"),
+        prevent_initial_call=True,
+    )
+    def clear_dosage_grid_selection(dosage_modal_open):
+        if dosage_modal_open:
+            return no_update
+        return []
 
 
 def register_download_csv_callback(app):
