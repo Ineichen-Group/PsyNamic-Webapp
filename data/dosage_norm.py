@@ -34,6 +34,7 @@ def normalize_dosage(dosage: str) -> str:
         "mcg": "µg",
         "microg": "µg",
         "microgram": "µg",
+        "micrograms": "µg",
         "mgs": "mg",
         "grams": "g",
         "kilogram": "kg",
