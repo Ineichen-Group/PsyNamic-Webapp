@@ -65,7 +65,7 @@ csp = {
     "object-src": ["'none'"],
 }
 
-Talisman(server, content_security_policy=csp)
+Talisman(server, content_security_policy=csp, force_https=False, strict_transport_security=False)
 app.logger.setLevel(logging.DEBUG)
 
 app.layout = html.Div([
