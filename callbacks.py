@@ -314,7 +314,8 @@ def register_filter_callback(app):
             return ""
 
         current_filters = current_filters or {}
-        labels = filter_data[selected_task]
+        # Fetch labels at runtime to avoid relying on module-level cached `filter_data`
+        labels = get_all_labels(selected_task)
         checked_labels = current_filters.get(selected_task, [])
 
         return dbc.Checklist(

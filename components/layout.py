@@ -371,13 +371,14 @@ def dosage_study_grid(
 
 
 def filter_selection():
+    # Build task options at runtime to avoid DB calls during module import
+    tasks = get_all_tasks() or []
     return dbc.Container([
         dbc.Row([
             dbc.Col([
                 dcc.Dropdown(
                     id="task-dropdown",
-                    options=[{"label": task, "value": task}
-                             for task in filter_data.keys()],
+                    options=[{"label": task, "value": task} for task in tasks],
                     placeholder="Select a task",
                     clearable=False,
                 ),
