@@ -554,9 +554,51 @@ def register_modal_callbacks(app):
         Input("dosage-study-grid", "selectedRows"),
         prevent_initial_call=True
     )
-    def show_dosage_modal(selected_rows):
+    def show_dosage_modal(selected_rows_list):
 
-        return _build_modal_content(selected_rows)
+        if not selected_rows_list:
+            return False, no_update, no_update, no_update, no_update, no_update
+
+        paper = selected_rows_list[0]
+        if not paper:
+            return False, no_update, no_update, no_update, no_update, no_update
+
+        title = f"{paper['title']} ({paper.get('year', '')})"
+        abstract = paper.get("abstract", "")
+        link_text = paper.get("url", "")
+        link_href = paper.get("url", "")
+
+        # Build tag buttons grouped by task (same logic as build_tag_buttons)
+        tags = []
+        prev_task = None
+        task_dict = {"task": "", "buttons": [], "model": ""}
+
+        for tag in paper.get("tags", []):
+            if tag["task"] != prev_task:
+                if task_dict["task"]:
+                    tags.append(task_dict)
+
+                prev_task = tag["task"]
+                task_dict = {
+                    "task": tag["task"],
+                    "buttons": [filter_button(tag["color"], tag["label"], tag["task"])],
+                    "model": "BERT",
+                }
+            else:
+                task_dict["buttons"].append(
+                    filter_button(tag["color"], tag["label"], tag["task"]) 
+                )
+
+        if task_dict["task"]:
+            tags.append(task_dict)
+
+        buttons = tag_component(tags)
+
+        # Restore NER highlighting for dosage modal
+        ner_tags = ner_tags_type(paper.get('id'), 'Dosage')
+        text_with_tag = highlighted_text(abstract, ner_tags)
+
+        return True, title, link_href, link_text, text_with_tag, buttons
 
 
     # =====================================================
