@@ -2,11 +2,12 @@ from collections import defaultdict
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from style.colors import get_color_mapping
-from components.layout import filter_component, studies_display, filter_button, study_grid
+from components.layout import filter_component, studies_display, filter_button, study_grid, ner_tag, highlighted_text, dosage_study_grid
 from components.graphs import bar_chart
-from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies
+from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_ner_tags, get_pred_text, latest_update
 from callbacks import rgb_to_hex
 from collections import OrderedDict
+
 
 
 def get_filter_buttons(task, labels):
@@ -28,9 +29,9 @@ def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button], 
         html.H4("Filtered Studies"),
         filter_component(
             filter_buttons, info_buttons if info_buttons else None),
-        dcc.Store(id="filtered-study-ids", data=ids, storage_type="session"),
-        dcc.Store(id="filter-tags", data=tags, storage_type="session"),
-        study_grid(nr_studies(), len(ids), 'January 2024', tags=True, id=id)
+        dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
+        dcc.Store(id="filter-tags", data=tags, storage_type="memory"),
+        study_grid(nr_studies(), len(ids), latest_update(), tags=True, id=id)
     ])
 
 
@@ -194,28 +195,26 @@ def study_protocol_view():
         html.H4("Filtered Studies"),
         filter_component(filter_button(
             color_mapping[label], label, task, False)),
-        dcc.Store(id="filtered-study-ids", data=ids, storage_type="session"),
-        dcc.Store(id="filter-tags", data=tags, storage_type="session"),
-        study_grid(nr_studies(), len(ids), 'January 2024', tags=True,
+        dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
+        dcc.Store(id="filter-tags", data=tags, storage_type="memory"),
+        study_grid(nr_studies(), len(ids), latest_update(), tags=True,
                    id={"type": "studies-grid", "index": 5})
     ])
 
 
-# def dosages_view():
-#     title = "Inspecting dosage: How are different substances dosed?"
-#     # return html.Div([
-#     #     html.H1(f'{title}', className="my-4"),
-#     #     studies_display()
-#     # ])
-#     id = 'study_view_test'
+def dosages_view():
+    title = "Inspecting dosage: How are different substances dosed?"
+    id = 'study_view_test'
 
-#     tags = False
-#     last_update = 'today'
-#     total_nr = nr_studies()
-#     ids = list(get_ids('Substances', 'LSD'))
-#     # Persist ids into store
 
-#     return html.Div([
-#         html.H1(f'{title}', className="my-4"),
-#         studies_display()
-#     ])
+    last_update = latest_update()
+    total_nr = nr_studies()
+    ids = list(get_ids('Substances', 'LSD'))
+
+    return html.Div([
+        html.H1(f'{title}', className="my-4"),
+        dosage_study_grid(total_nr, len(ids), last_update),
+        dcc.Store(id="filtered-study-ids", data=[], storage_type="memory"),
+        dcc.Store(id="filter-tags", data=[], storage_type="memory"),
+
+    ])

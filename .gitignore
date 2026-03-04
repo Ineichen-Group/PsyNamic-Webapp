@@ -202,3 +202,5 @@ pyrightconfig.json
 __pycache__/callbacks.cpython-312.pyc
 
 !settings.py
+
+*alembic*

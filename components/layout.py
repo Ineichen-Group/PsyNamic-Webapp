@@ -33,8 +33,8 @@ def header_layout():
                                         "Number of Participants", href="/insights/participants"),
                                     dbc.DropdownMenuItem(
                                         "Study Protocol", href="/insights/study-protocol"),
-                                    # dbc.DropdownMenuItem(
-                                    #     "Dosage", href="/insights/dosage"),
+                                    dbc.DropdownMenuItem(
+                                        "Dosage", href="/insights/dosage"),
 
                                 ],
                                 nav=True,
@@ -84,7 +84,7 @@ def footer_layout():
     return html.Footer(
         dbc.Container(
             html.Div(
-                "Copyright © 2025. STRIDE-Lab, Center for Reproducible Science, University of Zurich",
+                "Copyright © 2026. STRIDE-Lab, Department of Clinical Research, University of Bern.",
                 className="text-center"
             ),
             className="py-3"
@@ -200,9 +200,10 @@ def study_grid(
 
     columns = [
         {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
-        {"field": "year", "headerName": "Year","sortable": True, "width": 100},
         {"field": "abstract", "headerName": "Abstract", "filter": True,
-         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2}
+         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2},
+        {"field": "year", "headerName": "Year", "sortable": True, "width": 100},
+        {"field": "url", "headerName": "URL", "sortable": False, "filter": False, "width": 150}
     ]
 
     if tags:
@@ -279,6 +280,96 @@ def study_grid(
     )
 
 
+def dosage_study_grid(
+        nr_total_studies: int,
+        nr_filtered_studies: int,
+        last_update: str,
+        tags: bool = True,
+        default_sort_column: str = "Dosage",
+        default_sort_order: str = "desc"):
+
+    columns = [
+        {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
+        {"field": "abstract", "headerName": "Abstract", "filter": True,
+         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2},
+        {"field": "year", "headerName": "Year", "sortable": True, "width": 100},
+        {"field": "dosage", "headerName": "Dosage", "sortable": True, "flex": 2},
+    ]
+
+    if tags:
+        columns.append({
+            "headerName": "Tags",
+            "field": "tags",
+            "filter": False,
+            "sortable": False,
+            "width": 200,
+            "cellRenderer": "Tag",
+        })
+
+    ag_grid_options = {
+        "pagination": True,
+        "paginationPageSize": 20,
+        "rowSelection": "single",
+        "cacheBlockSize": 20,
+        "defaultColDef": {
+            "sortable": True,
+            "resizable": True,
+        },
+        "sortModel": [{"colId": default_sort_column, "sort": default_sort_order}],
+    }
+
+    return html.Div(
+        [
+            html.Div(
+                children=[
+                    html.Span(
+                        "Found Studies: ",
+                        className="d-inline",
+                        style={"marginRight": "0.2rem"}
+                    ),
+                    html.Span(
+                        f"{nr_filtered_studies}",
+                        className="d-inline",
+                        id="count-filtered",
+                    ),
+                    html.Span(
+                        " (out of ",
+                        className="d-inline"
+                    ),
+                    html.Span(
+                        f"{nr_total_studies}",
+                        id="count-total",
+                        className="d-inline"
+                    ),
+                    html.Span(
+                        " )",
+                        className="d-inline"
+                    ),
+                ],
+                className="d-flex"
+            ),
+
+            dag.AgGrid(
+                id='dosage-study-grid',
+                columnDefs=columns,
+                rowModelType="infinite",
+                dashGridOptions=ag_grid_options,
+                style={"height": "500px", "width": "100%"},
+            ),
+
+            dbc.Button("Download CSV", id="download-csv-button",
+                       color="primary", className="mt-3"),
+            dcc.Download(id="download-csv"),
+
+            dbc.Row(
+                children=[html.Span(
+                    f'Last data update: {last_update}', className="d-flex justify-content-center")]
+            ),
+            paper_details_modal(id="dosage-modal"),
+        ], id="studies-display"
+    )
+
+
 def filter_selection():
     return dbc.Container([
         dbc.Row([
@@ -309,18 +400,18 @@ def filter_selection():
         dcc.Store(
             id="filter-store",
             data={},
-            storage_type="session"
+            storage_type="memory"
         ),
 
         dcc.Store(
             id="filtered-study-ids",
-            data=get_ids(),   # fetch all study IDs
-            storage_type="session"
+            data=get_ids(),
+            storage_type="memory"
         ),
         dcc.Store(
             id="filter-tags",
-            data={},                     # empty initially
-            storage_type="session"
+            data={},
+            storage_type="memory"
         ),
     ], className="m-0 p-0")
 
@@ -354,8 +445,9 @@ def filter_button(color: str, label: str, task: str, editable: bool = False):
 
     if editable:
         children.append(
-            html.I(className="fa-solid fa-xmark", style={"marginLeft": "0.5rem"})
-            )
+            html.I(className="fa-solid fa-xmark",
+                   style={"marginLeft": "0.5rem"})
+        )
     else:
         custom_style["backgroundColor"] = color
         custom_style["border"] = "none"
@@ -375,42 +467,62 @@ def filter_button(color: str, label: str, task: str, editable: bool = False):
     )
 
 
-def paper_details_modal():
+def paper_details_modal(id="paper-modal"):
     return dbc.Modal(
         [
             dbc.ModalHeader(dbc.ModalTitle(id="paper-title")),
             dbc.ModalBody(
                 [
-                    html.Span("Link to PubMed: "),
+                    html.Span("URL: "),
                     html.A(
                         id="paper-link",
                         target="_blank",
-                        href="",                    ),
+                        href="",),
                     html.P(id="paper-abstract", className="abstract-text"),
                     html.Div(id='modal-tags'),
                 ]
             ),
         ],
-        id="paper-modal",
+        id=id,
         size="xl",
         is_open=False,
     )
 
 
-def ner_tag(text: str, category: str):
+def ner_tag(text: str, category: str = None):
     hilight_colors = {
-        "Dosage": "#bbf484",
+        "Dosage": "#CCFF00",
     }
+    default_highlight = "#FFFF00"
 
-    color = hilight_colors[category]
+    color = hilight_colors[category] if category in hilight_colors else default_highlight
 
     return html.Span(
         [
             html.Span(text, className="ner-text"),
-            html.Span(category, className="ner-category"),
+            html.Span(category, className="ner-category") if category else None,
         ],
         className="ner-tag",
         style={
             "backgroundColor": color,
         },
     )
+
+
+def highlighted_text(text: str, cutpoints: list) -> html.Span:
+    elements = []
+    last_index = 0
+
+    for cp in cutpoints:
+        start, end, tag = cp['start'], cp['end'], cp['tag']
+
+        if last_index < start:
+            elements.append(html.Span(text[last_index:start]))
+
+        elements.append(ner_tag(text[start:end], category=tag))
+        last_index = end
+
+    if last_index < len(text):
+        elements.append(html.Span(text[last_index:]))
+
+    return html.Span(elements)

@@ -1,6 +1,6 @@
 from dash import html, dcc
 from components.layout import filter_selection, study_grid
-from data.queries import get_studies_details, nr_studies
+from data.queries import get_studies_details, nr_studies, latest_update
 
 
 def filter_layout():
@@ -9,7 +9,7 @@ def filter_layout():
     grid = study_grid(
         nr_total_studies=total_nr,
         nr_filtered_studies=total_nr,
-        last_update='January 2024',
+        last_update=latest_update(),
         tags=True,
         id={"type": "studies-grid", "index": 5}
     )
@@ -17,8 +17,8 @@ def filter_layout():
     return html.Div([
         html.H1("Explore and filter all studies", className="my-4"),
         html.P("Explore all studies by applying filters to the data."),
-        dcc.Store(id='filtered-study-ids', data=[]),
-        dcc.Store(id='filter-tags', data=[]),
+        dcc.Store(id='filtered-study-ids', data=[], storage_type='memory'),
+        dcc.Store(id='filter-tags', data=[], storage_type='memory'),
         filter_selection(),
         grid,
     ], className="container", id="filter-layout")

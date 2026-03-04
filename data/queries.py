@@ -9,11 +9,12 @@ import logging
 from collections import OrderedDict
 import pandas as pd
 from sqlalchemy import create_engine, func
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, load_only
 from sqlalchemy.sql import select
 from sqlalchemy import and_, tuple_, case
 
 from style.colors import get_color_mapping
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -24,7 +25,7 @@ DATABASE_HOST = os.getenv("DATABASE_HOST")
 DATABASE_PORT = os.getenv("DATABASE_PORT")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 
-from .models import Paper, Prediction
+from .models import Paper, Prediction, NerTag, DosageNormalization, BatchRetrieval
 
 # Add the parent folder to the Python search path
 parent_folder_path = os.path.abspath(
@@ -92,15 +93,110 @@ def get_studies_details(
             query = query.order_by(
                 order_column.desc() if sort_order == "desc" else order_column.asc())
 
-        # Pagination with offset and limit
-        query = query.offset(start_row).limit(end_row - start_row)
+        # Pagination with offset and optional limit. If `end_row` is None,
+        # don't apply a limit (fetch all after offset).
+        query = query.offset(start_row)
+        if end_row is not None:
+            limit_value = end_row - start_row
+            if limit_value > 0:
+                query = query.limit(limit_value)
 
-        # Specify which fields to retrieve
-        query = query.with_entities(
+        # Specify which fields to load into the Paper instances
+        query = query.options(load_only(
             Paper.id, Paper.title, Paper.abstract,
             Paper.key_terms, Paper.doi, Paper.year,
-            Paper.link_to_pubmed
-        )
+            Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
+        ))
+
+        # Execute the query
+        studies = query.all()
+
+        # Fetch tags if provided
+        if tags:
+            study_tags = get_study_tags([study.id for study in studies], tags)
+        
+
+        # Prepare the results
+        results = [
+            {
+                'id': study.id,
+                'title': study.title,
+                'abstract': study.abstract,
+                'key_terms': study.key_terms,
+                'doi': study.doi,
+                'year': study.year,
+                'pubmed_id': study.pubmed_id,
+                'url': study.url,
+                'tags': study_tags.get(study.id, []) if tags else []
+            }
+            for study in studies
+        ]
+
+        return results
+    finally:
+        session.close()
+
+
+def get_studies_details_ner(
+    ids: list[int] = None,
+    start_row: int = 0,
+    end_row: int = 20,
+    sort_model: list[dict] = None,
+    filter_model: dict = None,
+    tags: dict[str, list] = None
+):
+
+    session = Session()
+    try:
+        tags = {
+            'Substances': get_all_labels('Substances'),
+        }
+        query = session.query(Paper)
+        
+        # Only include papers that have a 'Dosage' NER tag
+        query = query.join(NerTag, Paper.id == NerTag.paper_id).filter(NerTag.tag == 'Dosage').distinct()
+
+        # Apply any filters based on the filter model
+        if filter_model:
+            for field, condition in filter_model.items():
+                if "filter" in condition:
+                    query = query.filter(
+                        getattr(Paper, field) == condition["filter"])
+
+        # Apply filtering by paper IDs
+        if ids:
+            query = query.filter(Paper.id.in_(ids))
+
+        # Set default sorting if no sort_model is provided
+        if not sort_model or len(sort_model) == 0:
+            # Default sorting by 'year' in descending order
+            sort_field = "year"
+            sort_order = "desc"
+        else:
+            # Use the sorting provided in the sort_model
+            sort_field = sort_model[0]["colId"]
+            sort_order = sort_model[0]["sort"]
+
+        # Apply the sorting
+        order_column = getattr(Paper, sort_field, None)
+        if order_column is not None:
+            query = query.order_by(
+                order_column.desc() if sort_order == "desc" else order_column.asc())
+
+        # Pagination with offset and optional limit. If `end_row` is None,
+        # don't apply a limit (fetch all after offset).
+        query = query.offset(start_row)
+        if end_row is not None:
+            limit_value = end_row - start_row
+            if limit_value > 0:
+                query = query.limit(limit_value)
+
+        # Specify which fields to load into the Paper instances
+        query = query.options(load_only(
+            Paper.id, Paper.title, Paper.abstract,
+            Paper.key_terms, Paper.doi, Paper.year,
+            Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
+        ))
 
         # Execute the query
         studies = query.all()
@@ -115,16 +211,19 @@ def get_studies_details(
                 'id': study.id,
                 'title': study.title,
                 'abstract': study.abstract,
+                'pred_text': study.prediction_input,
                 'key_terms': study.key_terms,
                 'doi': study.doi,
                 'year': study.year,
-                'link_to_pubmed': study.link_to_pubmed,
-                'tags': study_tags.get(study.id, []) if tags else []
+                'url': study.url,
+                'tags': study_tags.get(study.id, []) if tags else [],
+                'dosage': get_dosages(study.id)
             }
             for study in studies
         ]
 
         return results
+
     finally:
         session.close()
 
@@ -431,3 +530,102 @@ def get_filtered_study_ids(filter: OrderedDict[str, list[str]]) -> list[int]:
         ids = get_ids(pair[0], pair[1])
         all_ids = all_ids.intersection(ids)
     return list(all_ids)
+
+
+def get_ner_tags(id: int) -> list[dict]:
+    """Get the named entity recognition tags for a given paper ID."""
+    session = Session()
+    try:
+        query = session.query(NerTag).filter(NerTag.paper_id == id)
+        results = query.all()
+
+        # sort according to the start id
+        results = sorted(results, key=lambda x: x.start_id)
+
+        tags = []
+        for r in results:
+            tags.append({
+                'tag': r.tag,
+                'start': r.start_id,
+                'end': r.end_id,
+            })
+        return tags
+    finally:
+        session.close()
+
+
+def get_pred_text(id: int) -> str:
+    session = Session()
+    try:
+        query = session.query(Paper.prediction_input).filter(Paper.id == id)
+        result = query.first()
+        return result[0]
+    finally:
+        session.close()
+
+
+def get_dosages(paper_id: int) -> str:
+    """Get all dosage tags for a given paper ID."""
+    session = Session()
+    try:
+        query = session.query(NerTag).filter(
+            NerTag.paper_id == paper_id, NerTag.tag == 'Dosage')
+        results = query.all()
+
+        norm_texts = set()
+        # get connected dosage normalization for each tag
+        for tag in results:
+            query = session.query(DosageNormalization).filter(DosageNormalization.ner_tag_id == tag.id)
+            norm = query.first()
+            if norm:
+                tag.norm_text = norm.norm_text
+                norm_texts.add(tag.norm_text)
+
+        dosages = ''
+        for t in norm_texts:
+            dosages += t + ' | '
+
+        dosages = dosages[:-3]
+        return dosages
+    finally:
+        session.close()
+
+
+def ner_tags_type(paper_id: int, type: str, in_titel=False) -> list[dict]:
+    """Get all tags of a specific type for a given paper ID."""
+    session = Session()
+    try:
+        query = session.query(NerTag).filter(
+            NerTag.paper_id == paper_id, NerTag.tag == type)
+        results = query.all()
+
+        # get title, abstract and text
+        query = session.query(Paper).filter(Paper.id == paper_id)
+        paper = query.first()
+        title = paper.title
+        end_id_of_title = len(title + '.^\n')
+        tags = []
+        for tag in results:
+            if not in_titel and tag.start_id < end_id_of_title:
+                continue
+
+            tags.append({
+                'start': tag.start_id if in_titel else tag.start_id - end_id_of_title,
+                'end': tag.end_id if in_titel else tag.end_id - end_id_of_title,
+                'tag': tag.tag,
+            })
+        return tags
+    finally:
+        session.close()
+
+def latest_update():
+    """Get the the retrieval date, formated like 20.01.2026, of the latest batch retrieval."""
+    session = Session()
+    try:
+        # The model uses `date` as the timestamp column on BatchRetrieval
+        query = session.query(BatchRetrieval).order_by(BatchRetrieval.date.desc()).first()
+        if query and query.date:
+            return query.date.strftime("%d.%m.%Y")
+        return "Unknown"
+    finally:
+        session.close()
