@@ -59,9 +59,29 @@ ps:
 	docker compose ps
 
 restart:
-	docker compose restart $(service)
+	docker compose down
+	docker compose up -d db web
 
 clean-containers:
 	# Stop all running containers (no error if none), then remove all containers
 	-@docker ps -q | xargs -r docker stop
 	-@docker ps -aq | xargs -r docker rm -f
+cronjobs:
+	sudo crontab -l
+
+
+cronlog:
+	@echo "===== ROOT CRONTAB (last 10 cron entries) ====="
+	@grep CRON /var/log/syslog | tail -n 10
+	@echo ""
+	@echo "===== GENERAL PIPELINE LOG (last 10 lines) ====="
+	@tail -n 10 /home/sysadmin/PsyNamic-Webapp/pipeline.log 2>/dev/null || echo "No general pipeline log found"
+	@echo ""
+	@echo "===== LATEST PIPELINE LOG (last 10 lines) ====="
+	@latest_log=$$(ls -1t /home/sysadmin/PsyNamic-Webapp/pipeline/log/pipeline_*.log 2>/dev/null | head -n 1); \
+	if [ -n "$$latest_log" ]; then \
+		echo "Tailing latest log: $$latest_log"; \
+		tail -n 10 "$$latest_log"; \
+	else \
+		echo "No pipeline logs found"; \
+	fi
