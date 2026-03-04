@@ -65,3 +65,13 @@ clean-containers:
 	# Stop all running containers (no error if none), then remove all containers
 	-@docker ps -q | xargs -r docker stop
 	-@docker ps -aq | xargs -r docker rm -f
+
+cronjobs:
+	sudo crontab -l
+
+cronlog:
+	@echo "===== ROOT CRONTAB ====="
+	@sudo crontab -l || echo "No root crontab found"
+	@echo ""
+	@echo "===== PIPELINE LOG (last 50 lines) ====="
+	@tail -n 50 /home/veral/PsyNamic/pipeline.log 2>/dev/null || echo "Log file not found"
