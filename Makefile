@@ -16,7 +16,7 @@ load-indexes:
 	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < /docker-entrypoint-initdb.d/indexes.sql
 
 db-init: load-env
-	docker compose up -d db_init
+	docker compose up db_init
 
 db-dump: load-env
 	DATE=$$(date +%Y%m%d_%H%M%S); \

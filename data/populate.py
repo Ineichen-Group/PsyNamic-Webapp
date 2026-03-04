@@ -227,7 +227,8 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             authors='',
             link_to_fulltext='',
             link_to_pubmed=row['pubmed_url'],
-            retrieval_id=batch.id
+            retrieval_id=batch.id,
+            url=row['url'] if 'url' in row else '',
         )
         session.add(paper)
     session.commit()
