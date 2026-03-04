@@ -72,6 +72,13 @@ https://www.postgresql.org/download/linux/ubuntu/
 
 # Deployment on server
 
+* Make sure everything is up to date
+```bash
+sudo apt list --upgradable
+sudo apt update
+sudo apt upgrade
+```
+
 * Install make if not already installed
 ```bash
 sudo apt install make
@@ -157,13 +164,8 @@ make up
 
 * Add inital data dump and load
 ```bash
-make db-shell
+make db-init
 ```
-```sql
-\i /docker-entrypoint-initdb.d/dump.sql
-\i /docker-entrypoint-initdb.d/indexes.sql
-```
-(there is also make commands, but they sometimes lead to errors, so better do it manually)
 
 * Visit https://psynamic.dcr.unibe.ch
 
