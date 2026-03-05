@@ -2,25 +2,13 @@ from collections import defaultdict
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from style.colors import get_color_mapping
-from components.layout import filter_component, studies_display, filter_button, study_grid, ner_tag, highlighted_text, dosage_study_grid
+from components.layout import filter_component, studies_display, filter_button, study_grid, ner_tag, highlighted_text, dosage_study_grid, get_filter_buttons
 from components.graphs import bar_chart
 from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_ner_tags, get_pred_text, latest_update
 from callbacks import rgb_to_hex
 from collections import OrderedDict
 
 
-
-def get_filter_buttons(task, labels):
-    """
-    Creates filter buttons based on task and labels.
-    """
-    labels = sorted(labels)
-    color_mapping = get_color_mapping(task, labels)
-    buttons = []
-    for label in labels:
-        buttons.append(filter_button(
-            color_mapping[label], label, task))
-    return buttons
 
 
 def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button],  ids: list[int], id: str, info_buttons: list[dbc.Button] = None, tags: OrderedDict = None, ) -> html.Div:

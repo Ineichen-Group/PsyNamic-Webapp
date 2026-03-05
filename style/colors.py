@@ -4,7 +4,8 @@ from plotly.express.colors import sequential
 import numpy as np
 
 
-SECONDARY_COLOR = '#c7c7c7'
+GREY = '#c7c7c7'
+SECONDARY_COLOR = '#e5ecf6'
 TASK2COLOR = {
     "Study Type": sequential.Greens,
     "Study Purpose": sequential.Teal,
@@ -132,7 +133,7 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
 
     # If all labels are special, return gray for all
     if len(non_special) == 0:
-        return {lbl: SECONDARY_COLOR for lbl in list_labels}
+        return {lbl: GREY for lbl in list_labels}
 
     n = len(non_special)
     if n == 1:
@@ -160,7 +161,7 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
     idx = 0
     for lbl in list_labels:
         if lbl in special_labels:
-            mapping[lbl] = SECONDARY_COLOR if type != 'hex' else SECONDARY_COLOR
+            mapping[lbl] = GREY if type != 'hex' else GREY
         else:
             mapping[lbl] = selected_colors[idx]
             idx += 1
