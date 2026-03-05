@@ -127,7 +127,7 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
 
     # Treat certain labels as special (use gray) and do not include them in
     # the interpolated palette so spacing of colors for real categories stays even.
-    special_labels = {"Unknown", "Not applicable"}
+    special_labels = {"Unknown", "Not applicable", "Other"}
     non_special = [lbl for lbl in list_labels if lbl not in special_labels]
 
     # If all labels are special, return gray for all
