@@ -14,6 +14,7 @@ def get_filter_buttons(task, labels):
     """
     Creates filter buttons based on task and labels.
     """
+    labels = sorted(labels)
     color_mapping = get_color_mapping(task, labels)
     buttons = []
     for label in labels:
