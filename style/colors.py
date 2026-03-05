@@ -125,25 +125,47 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
 
     lightest, darkest = find_luminance_boundaries(palette_start, palette_end)
 
-    n = len(list_labels)
+    # Treat certain labels as special (use gray) and do not include them in
+    # the interpolated palette so spacing of colors for real categories stays even.
+    special_labels = {"Unknown", "Not applicable", "Other"}
+    non_special = [lbl for lbl in list_labels if lbl not in special_labels]
+
+    # If all labels are special, return gray for all
+    if len(non_special) == 0:
+        return {lbl: SECONDARY_COLOR for lbl in list_labels}
+
+    n = len(non_special)
     if n == 1:
-        return {list_labels[0]: palette_end}
-    # Extrapolate colors evenly between the lightest and darkest colors
-    selected_colors = [
-        f"rgb({r}, {g}, {b})"
-        for r, g, b in [
+        palette = [palette_end]
+    else:
+        # Extrapolate colors evenly between the darkest and lightest colors
+        palette = [
             interpolate_color(darkest, lightest, i / (n - 1)) for i in range(n)
         ]
-    ]
 
-    # check against contrast ratio
+    # convert to rgb() strings
+    selected_colors = [f"rgb({r}, {g}, {b})" for r, g, b in palette]
+
+    # check against contrast ratio for generated colors only
     for color in selected_colors:
         if not check_button_contrast(color):
             raise ValueError(f"Contrast ratio not met for color: {color}")
+
+    # convert to hex when requested
     if type == 'hex':
         selected_colors = [rgb_to_hex(color) for color in selected_colors]
 
-    return {list_labels[i]: selected_colors[i] for i in range(n)}
+    # Build final mapping preserving original order; assign gray to special labels
+    mapping = {}
+    idx = 0
+    for lbl in list_labels:
+        if lbl in special_labels:
+            mapping[lbl] = SECONDARY_COLOR if type != 'hex' else SECONDARY_COLOR
+        else:
+            mapping[lbl] = selected_colors[idx]
+            idx += 1
+
+    return mapping
 
 
 def get_color(task: str, type: str = 'rgb') -> str:
