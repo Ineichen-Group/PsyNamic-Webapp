@@ -243,16 +243,18 @@ def study_grid(
                         id="count-filtered",
                     ),
                     html.Span(
-                        " (out of ",
-                        className="d-inline"
+                        "(of total",
+                        className="d-inline",
+                        style={"marginLeft": "0.25rem", "marginRight": "0.25rem"}
                     ),
                     html.Span(
                         f"{nr_total_studies}",
                         id="count-total",
-                        className="d-inline"
+                        className="d-inline",
+                        style={"marginRight": "0.25rem"}
                     ),
                     html.Span(
-                        " )",
+                        ")",
                         className="d-inline"
                     ),
                 ],
