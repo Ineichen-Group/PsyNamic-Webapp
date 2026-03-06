@@ -261,7 +261,7 @@ def get_study_tags(ids: list[int], tags: dict[str, list]) -> dict[int, list[dict
         study_tags = {}
         # TODO: cache color mappings
         color_mappings = {task: get_color_mapping(
-            task, get_all_labels(task)) for task in tags.keys()}
+            task, labels) for task, labels in tags.items()}
 
         for paper_id, task, label in results:
             tag_info = {
