@@ -64,9 +64,11 @@ def get_studies_details(
 
     session = Session()
     try:
+        # if ids empty list, assume not match
+        if ids is not None and len(ids) == 0:
+            return []
         query = session.query(Paper)
 
-        # Apply any filters based on the filter model
         if filter_model:
             for field, condition in filter_model.items():
                 if "filter" in condition:
@@ -148,6 +150,9 @@ def get_studies_details_ner(
 
     session = Session()
     try:
+        # if ids empty list, assume not match
+        if ids is not None and len(ids) == 0:
+            return []
         tags = {
             'Substances': get_all_labels('Substances'),
         }
