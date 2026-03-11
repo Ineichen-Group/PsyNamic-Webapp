@@ -203,7 +203,8 @@ def study_grid(
         {"field": "abstract", "headerName": "Abstract", "filter": True,
          "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2},
         {"field": "year", "headerName": "Year", "sortable": True, "width": 100},
-        {"field": "url", "headerName": "URL", "sortable": False, "filter": False, "width": 150}
+        {"field": "url", "headerName": "URL",
+            "sortable": False, "filter": False, "width": 150}
     ]
 
     if tags:
@@ -245,7 +246,8 @@ def study_grid(
                     html.Span(
                         "(of total",
                         className="d-inline",
-                        style={"marginLeft": "0.25rem", "marginRight": "0.25rem"}
+                        style={"marginLeft": "0.25rem",
+                               "marginRight": "0.25rem"}
                     ),
                     html.Span(
                         f"{nr_total_studies}",
@@ -335,20 +337,23 @@ def dosage_study_grid(
                         id="count-filtered",
                     ),
                     html.Span(
-                        " (out of ",
-                        className="d-inline"
+                        "(of total",
+                        className="d-inline",
+                        style={"marginLeft": "0.25rem",
+                               "marginRight": "0.25rem"}
                     ),
                     html.Span(
                         f"{nr_total_studies}",
                         id="count-total",
-                        className="d-inline"
+                        className="d-inline",
+                        style={"marginRight": "0.25rem"}
                     ),
                     html.Span(
-                        " )",
+                        ")",
                         className="d-inline"
                     ),
                 ],
-                className="d-flex"
+                className="d-flex",
             ),
 
             dag.AgGrid(
@@ -542,4 +547,3 @@ def get_filter_buttons(task, labels):
         buttons.append(filter_button(
             color_mapping[label], label, task))
     return buttons
-

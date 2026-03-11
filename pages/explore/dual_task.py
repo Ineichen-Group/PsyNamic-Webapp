@@ -3,8 +3,10 @@ import pandas as pd
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from plotly import express as px
-
 from components.layout import filter_component, filter_button, study_grid, get_filter_buttons
+from components.graphs import add_interaction_annotation
+
+
 from data.queries import (
     get_filtered_freq,
     get_all_tasks,
@@ -53,6 +55,9 @@ def dual_task_graphs(df_task1: pd.DataFrame = None, df_task2: pd.DataFrame = Non
 def create_pie_chart(df, column, col_map, highlight=None, highlight_color=None):
     fig = px.pie(df, values='Frequency', names=column,
                  title=f'Task 1: {column}', color=column, color_discrete_map=col_map)
+
+    add_interaction_annotation(fig, x=0.75, y=0.80)
+
     if highlight:
         fig.update_traces(marker=dict(colors=[
                           highlight_color if s == highlight else SECONDARY_COLOR for s in df[column]]))
