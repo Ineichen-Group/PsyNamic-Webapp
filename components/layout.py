@@ -109,7 +109,7 @@ def content_layout(list_of_children: list, id: str = "content"):
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None, id: 'str' = 'active-filters'):
+def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None, id: str = 'active-filters'):
     children = [
         dbc.Row(
             className="mt-2 mb-2",
@@ -243,16 +243,18 @@ def study_grid(
                         id="count-filtered",
                     ),
                     html.Span(
-                        " (out of ",
-                        className="d-inline"
+                        "(of total",
+                        className="d-inline",
+                        style={"marginLeft": "0.25rem", "marginRight": "0.25rem"}
                     ),
                     html.Span(
                         f"{nr_total_studies}",
                         id="count-total",
-                        className="d-inline"
+                        className="d-inline",
+                        style={"marginRight": "0.25rem"}
                     ),
                     html.Span(
-                        " )",
+                        ")",
                         className="d-inline"
                     ),
                 ],
@@ -527,3 +529,17 @@ def highlighted_text(text: str, cutpoints: list) -> html.Span:
         elements.append(html.Span(text[last_index:]))
 
     return html.Span(elements)
+
+
+def get_filter_buttons(task, labels):
+    """
+    Creates filter buttons based on task and labels.
+    """
+    labels = sorted(labels)
+    color_mapping = get_color_mapping(task, labels)
+    buttons = []
+    for label in labels:
+        buttons.append(filter_button(
+            color_mapping[label], label, task))
+    return buttons
+

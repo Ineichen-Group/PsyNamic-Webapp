@@ -4,7 +4,7 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 from plotly import express as px
 
-from components.layout import filter_component, filter_button, study_grid
+from components.layout import filter_component, filter_button, study_grid, get_filter_buttons
 from data.queries import (
     get_filtered_freq,
     get_all_tasks,
@@ -97,13 +97,15 @@ def dual_task_layout(task1=None, task2=None, task1_label=None):
         df_task1, df_task2, ids, tags = get_dual_task_data(
             task1, task2, task1_label)
         buttons = get_dual_filters(task1, task1_label)
+        info_buttons = get_filter_buttons(task2, get_all_labels(task2))
 
     else:
         df_task1, df_task2, ids, tags = get_dual_task_data(task1, task2)
         buttons = []
+        info_buttons = get_filter_buttons(task1, get_all_labels(task1)) + get_filter_buttons(task2, get_all_labels(task2))
 
     graph = dual_task_graphs(df_task1, df_task2, task1, task2)
-    return graph, html.H4("Filtered Studies"), filter_component(buttons), dual_study_grid(ids, tags)
+    return graph, html.H4("Filtered Studies"), filter_component(buttons, info_buttons), dual_study_grid(ids, tags)
 
 
 def dual_study_grid(ids: list[int], tags: OrderedDict) -> html.Div:

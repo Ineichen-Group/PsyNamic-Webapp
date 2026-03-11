@@ -25,11 +25,24 @@ def bar_chart(
         if group_order is not None:
             data[group] = pd.Categorical(data[group], categories=group_order, ordered=True)
             data = data.sort_values([group, x])
-        # Order x values alphabetically
+
+        order = data.groupby(x)[y].sum().sort_values(ascending=False).index.tolist()
+        data[x] = pd.Categorical(data[x], categories=order, ordered=True)
+
         fig = px.bar(data, x=x, y=y, color=group, title=title, barmode='group', text=y)
     else:
-        data = data.sort_values(x)
+
+        order = data.groupby(x)[y].sum().sort_values(ascending=False).index.tolist()
+        data[x] = pd.Categorical(data[x], categories=order, ordered=True)
+
         fig = px.bar(data, x=x, y=y, title=title, barmode='group', text=y)
+
+
+    if 'order' in locals() and order:
+        fig.update_xaxes(categoryorder='array', categoryarray=order)
+    elif pd.api.types.is_categorical_dtype(data[x].dtype):
+        fig.update_xaxes(categoryorder='array', categoryarray=list(data[x].cat.categories))
+
 
     # Update x and y axis labels
     fig.update_xaxes(title_text=x_label)
