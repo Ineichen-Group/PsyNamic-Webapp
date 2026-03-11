@@ -130,7 +130,6 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
     # the interpolated palette so spacing of colors for real categories stays even.
     special_labels = {"Unknown", "Not applicable", "Other"}
     non_special = [lbl for lbl in list_labels if lbl not in special_labels]
-
     # If all labels are special, return gray for all
     if len(non_special) == 0:
         return {lbl: GREY for lbl in list_labels}
@@ -138,14 +137,14 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
     n = len(non_special)
     if n == 1:
         palette = [palette_end]
+        selected_colors = palette
     else:
         # Extrapolate colors evenly between the darkest and lightest colors
         palette = [
             interpolate_color(darkest, lightest, i / (n - 1)) for i in range(n)
         ]
-
-    # convert to rgb() strings
-    selected_colors = [f"rgb({r}, {g}, {b})" for r, g, b in palette]
+        # convert to rgb() strings
+        selected_colors = [f"rgb({r}, {g}, {b})" for r, g, b in palette]
 
     # check against contrast ratio for generated colors only
     for color in selected_colors:
