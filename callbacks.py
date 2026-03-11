@@ -19,25 +19,10 @@ from pages.explore.dual_task import (
     dual_task_graphs,
 )
 
-from components.layout import (
-    filter_button,
-    tag_component,
-    get_tags,
-    filter_data,
-    highlighted_text,
-    get_filter_buttons,
-)
-
+from components.layout import filter_button, tag_component, get_tags, filter_data, highlighted_text, get_filter_buttons
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR, get_color
-from data.queries import (
-    get_studies_details,
-    get_filtered_study_ids,
-    get_time_data,
-    nr_studies,
-    get_all_labels,
-    get_studies_details_ner,
-    ner_tags_type,
-)
+from data.queries import get_studies_details, get_filtered_study_ids, get_time_data, nr_studies, get_all_labels, get_studies_details_ner, ner_tags_type, get_absolute_dosage_samples, get_ids
+from components.graphs import box_plot
 
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
@@ -100,6 +85,7 @@ def register_callbacks(app):
     register_download_csv_callback(app)
     register_filter_callback(app)
     register_pagination_dosages_callbacks(app)
+    # register_dosage_graph_callbacks(app)
 
 
 # =====================================================
@@ -109,7 +95,8 @@ def register_callbacks(app):
 def register_time_view_callbacks(app):
 
     @app.callback(
-        Output({"type": "studies-grid", "index": 6}, "getRowsResponse", allow_duplicate=True),
+        Output({"type": "studies-grid", "index": 6},
+               "getRowsResponse", allow_duplicate=True),
         Output("time-graph", "figure"),
         Output("count-filtered", "children"),
         Input("start-year", "value"),
@@ -139,6 +126,7 @@ def register_time_view_callbacks(app):
 # Study View (Collapse)
 # =====================================================
 
+
 def register_studyview_callbacks(app):
 
     @app.callback(
@@ -164,12 +152,12 @@ def register_studyview_callbacks(app):
 # Dual Task View
 # =====================================================
 
+
 def register_dual_task_view_callbacks(app):
     # Split behavior into two callbacks for clarity and to avoid overlapping
     # triggered logic: one handles dropdown changes and renders the full
     # dual-task graph; the other handles pie-segment clicks and updates the
     # pie/bar figures + filters/grid.
-
     @app.callback(
         [
             Output('validation-message', 'children'),
@@ -190,7 +178,8 @@ def register_dual_task_view_callbacks(app):
     @log_time
     def update_dual_task_view(dropdown1_value, dropdown2_value, click_data):
         ctx = callback_context
-        triggered = (ctx.triggered[0]['prop_id'].split('.')[0]) if ctx.triggered else None
+        triggered = (ctx.triggered[0]['prop_id'].split(
+            '.')[0]) if ctx.triggered else None
 
         if dropdown1_value and dropdown2_value and dropdown1_value == dropdown2_value:
             return "Choose two different tasks.", no_update, no_update, no_update, no_update, no_update, no_update
@@ -206,7 +195,8 @@ def register_dual_task_view_callbacks(app):
             label = click_data['points'][0]['label']
             color = click_data['points'][0].get('color')
 
-            task1_data, task2_data, ids, tags = get_dual_task_data(dropdown1_value, dropdown2_value, label)
+            task1_data, task2_data, ids, tags = get_dual_task_data(
+                dropdown1_value, dropdown2_value, label)
 
             task1_all_labels = get_all_labels(dropdown1_value)
             col_map = get_color_mapping(dropdown1_value, task1_all_labels)
@@ -214,37 +204,47 @@ def register_dual_task_view_callbacks(app):
             if color and rgb_to_hex(color) == SECONDARY_COLOR:
                 color = col_map.get(label, '#000000')
 
-            pie_chart = create_pie_chart(task1_data, dropdown1_value, col_map, highlight=label, highlight_color=color)
+            pie_chart = create_pie_chart(
+                task1_data, dropdown1_value, col_map, highlight=label, highlight_color=color)
             bar_chart = create_bar_chart(task2_data, dropdown2_value, color)
 
             filters = get_dual_filters(dropdown1_value, label)
             grid = dual_study_grid(ids, tags)
-            info_buttons = get_filter_buttons(dropdown2_value, get_all_labels(dropdown2_value))
+            info_buttons = get_filter_buttons(
+                dropdown2_value, get_all_labels(dropdown2_value))
             return "", no_update, pie_chart, bar_chart, filters, info_buttons, grid
 
         if not dropdown1_value or not dropdown2_value:
             return "", html.Div(), no_update, no_update, no_update, no_update, no_update
 
         # Build the combined dual-task graph and fresh figures (clears previous highlights)
-        df_task1, df_task2, ids, tags = get_dual_task_data(dropdown1_value, dropdown2_value)
-        graph = dual_task_graphs(df_task1, df_task2, dropdown1_value, dropdown2_value)
+        df_task1, df_task2, ids, tags = get_dual_task_data(
+            dropdown1_value, dropdown2_value)
+        graph = dual_task_graphs(
+            df_task1, df_task2, dropdown1_value, dropdown2_value)
 
         task1_all_labels = get_all_labels(dropdown1_value)
-        col_map = get_color_mapping(dropdown1_value, task1_all_labels) if df_task1 is not None else {}
-        pie_fig = create_pie_chart(df_task1, dropdown1_value, col_map) if df_task1 is not None else {}
-        bar_color = get_color(dropdown2_value, 'hex') if dropdown2_value else None
-        bar_fig = create_bar_chart(df_task2, dropdown2_value, bar_color) if df_task2 is not None else {}
+        col_map = get_color_mapping(
+            dropdown1_value, task1_all_labels) if df_task1 is not None else {}
+        pie_fig = create_pie_chart(
+            df_task1, dropdown1_value, col_map) if df_task1 is not None else {}
+        bar_color = get_color(
+            dropdown2_value, 'hex') if dropdown2_value else None
+        bar_fig = create_bar_chart(
+            df_task2, dropdown2_value, bar_color) if df_task2 is not None else {}
 
         # Clear active filters when switching tasks
         filters = []
         grid = dual_study_grid(ids, tags)
         info_buttons = get_filter_buttons(dropdown1_value, get_all_labels(dropdown1_value)) + \
-            get_filter_buttons(dropdown2_value, get_all_labels(dropdown2_value))
+            get_filter_buttons(
+                dropdown2_value, get_all_labels(dropdown2_value))
         return "", graph, pie_fig, bar_fig, filters, info_buttons, grid
 
 # =====================================================
 # CSV Download
 # =====================================================
+
 
 def register_download_csv_callback(app):
 
@@ -311,6 +311,7 @@ def register_download_csv_callback(app):
 # =====================================================
 # Filtering
 # =====================================================
+
 
 def register_filter_callback(app):
 
@@ -398,7 +399,8 @@ def register_filter_callback(app):
         ordered_tags = get_tags(current_filters)
 
         filter_buttons = [
-            filter_button(tag['color'], tag['label'], tag['task'], editable=True)
+            filter_button(tag['color'], tag['label'],
+                          tag['task'], editable=True)
             for task in ordered_tags
             for tag in ordered_tags[task]
         ]
@@ -416,6 +418,7 @@ def register_filter_callback(app):
 # =====================================================
 # Pagination
 # =====================================================
+
 
 def register_pagination_callbacks(app):
 
@@ -444,7 +447,8 @@ def register_pagination_callbacks(app):
                 ids=filtered_ids if filtered_ids else [],
                 start_row=request["startRow"],
                 end_row=request["endRow"],
-                sort_model=request.get("sortModel", [{"colId": "year", "sort": "desc"}]),
+                sort_model=request.get(
+                    "sortModel", [{"colId": "year", "sort": "desc"}]),
                 filter_model=request.get("filterModel", {}),
                 tags=tags
             )
@@ -485,7 +489,8 @@ def register_pagination_dosages_callbacks(app):
             ids=filtered_ids if filtered_ids else [],
             start_row=request["startRow"],
             end_row=request["endRow"],
-            sort_model=request.get("sortModel", [{"colId": "year", "sort": "desc"}]),
+            sort_model=request.get(
+                "sortModel", [{"colId": "year", "sort": "desc"}]),
             filter_model=request.get("filterModel", {}),
             tags=tags
         )
@@ -550,10 +555,10 @@ def register_modal_callbacks(app):
 
         return _build_modal_content(selected_row_data)
 
-
     # =====================================================
     # Dosage Grid Modal
     # =====================================================
+
     @app.callback(
         [
             Output("dosage-modal", "is_open", allow_duplicate=True),
@@ -598,7 +603,7 @@ def register_modal_callbacks(app):
                 }
             else:
                 task_dict["buttons"].append(
-                    filter_button(tag["color"], tag["label"], tag["task"]) 
+                    filter_button(tag["color"], tag["label"], tag["task"])
                 )
 
         if task_dict["task"]:
@@ -612,12 +617,13 @@ def register_modal_callbacks(app):
 
         return True, title, link_href, link_text, text_with_tag, buttons
 
-
     # =====================================================
     # Clear selection (shared logic)
     # =====================================================
+
     @app.callback(
-        Output({"type": "studies-grid", "index": ALL}, "selectedRows", allow_duplicate=True),
+        Output({"type": "studies-grid", "index": ALL},
+               "selectedRows", allow_duplicate=True),
         Input("paper-modal", "is_open"),
         State({"type": "studies-grid", "index": ALL}, "selectedRows"),
         prevent_initial_call=True,
@@ -629,7 +635,6 @@ def register_modal_callbacks(app):
             # invalid. Return the existing selections unchanged instead.
             return selected_rows_lists if selected_rows_lists is not None else []
         return [[] for _ in (selected_rows_lists or [])]
-
 
     @app.callback(
         Output("dosage-study-grid", "selectedRows", allow_duplicate=True),

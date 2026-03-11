@@ -2,6 +2,7 @@
 This module contains database query functions for the PsyNamic-Webapp.
 """
 
+from .models import Paper, Prediction, NerTag, DosageNormalization, BatchRetrieval
 from datetime import datetime
 import sys
 import os
@@ -18,14 +19,12 @@ from style.colors import get_color_mapping
 from dotenv import load_dotenv
 load_dotenv()
 
-import os
 DATABASE_USER = os.getenv("DATABASE_USER")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 DATABASE_HOST = os.getenv("DATABASE_HOST")
 DATABASE_PORT = os.getenv("DATABASE_PORT")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 
-from .models import Paper, Prediction, NerTag, DosageNormalization, BatchRetrieval
 
 # Add the parent folder to the Python search path
 parent_folder_path = os.path.abspath(
@@ -116,7 +115,6 @@ def get_studies_details(
         # Fetch tags if provided
         if tags:
             study_tags = get_study_tags([study.id for study in studies], tags)
-        
 
         # Prepare the results
         results = [
@@ -157,9 +155,10 @@ def get_studies_details_ner(
             'Substances': get_all_labels('Substances'),
         }
         query = session.query(Paper)
-        
+
         # Only include papers that have a 'Dosage' NER tag
-        query = query.join(NerTag, Paper.id == NerTag.paper_id).filter(NerTag.tag == 'Dosage').distinct()
+        query = query.join(NerTag, Paper.id == NerTag.paper_id).filter(
+            NerTag.tag == 'Dosage').distinct()
 
         # Apply any filters based on the filter model
         if filter_model:
@@ -580,7 +579,8 @@ def get_dosages(paper_id: int) -> str:
         norm_texts = set()
         # get connected dosage normalization for each tag
         for tag in results:
-            query = session.query(DosageNormalization).filter(DosageNormalization.ner_tag_id == tag.id)
+            query = session.query(DosageNormalization).filter(
+                DosageNormalization.ner_tag_id == tag.id)
             norm = query.first()
             if norm:
                 tag.norm_text = norm.norm_text
@@ -623,14 +623,112 @@ def ner_tags_type(paper_id: int, type: str, in_titel=False) -> list[dict]:
     finally:
         session.close()
 
+
+def to_mg(value, unit_str):
+    if value is None:
+        return None
+    try:
+        v = float(value)
+    except Exception:
+        return None
+
+    if not unit_str:
+        return v
+
+    u = unit_str.lower()
+    # normalize microgram variants
+    if u in ("µg", "μg", "ug", "microg"):
+        return v / 1000.0
+    if u in ("mg",):
+        return v
+    if u in ("g", "gram", "grams"):
+        return v * 1000.0
+    # fallback: return original value
+    return v
+
+
+def get_absolute_dosage_samples(substances: list[str] = None, relative_weight: bool = True) -> 'pd.DataFrame':
+    """Return a DataFrame with absolute dosage samples per substance.
+
+    When `relative_weight` is True, include `relative_weight` dose types and
+    scale them to a 70 kg person using the `weight_reference` field. The
+    returned DataFrame has columns: `Substance`, `Dosage_mg`, `Unit`,
+    `Study_ID`.
+    """
+    session = Session()
+
+    # Select necessary fields including per-weight metadata and dose_type
+    query = session.query(
+        Prediction.label,
+        Paper.id,
+        DosageNormalization.min,
+        DosageNormalization.max,
+        DosageNormalization.unit,
+        DosageNormalization.per_weight_unit,
+        DosageNormalization.weight_reference,
+        DosageNormalization.dose_type
+    ).join(Paper, Prediction.paper_id == Paper.id)
+    query = query.join(NerTag, NerTag.paper_id == Paper.id)
+    query = query.join(DosageNormalization,
+                       DosageNormalization.ner_tag_id == NerTag.id)
+    query = query.filter(Prediction.task == 'Substances')
+
+    if relative_weight:
+        query = query.filter(DosageNormalization.dose_type.in_(
+            ['absolute', 'relative_weight']))
+    else:
+        query = query.filter(DosageNormalization.dose_type == 'absolute')
+
+    if substances:
+        query = query.filter(Prediction.label.in_(substances))
+
+    rows = query.all()
+
+    samples = []
+    for label, paper_id, minv, maxv, unit, per_weight_unit, weight_reference, dose_type in rows:
+        if dose_type and dose_type.startswith('relative'):
+            try:
+                ref = float(weight_reference) if weight_reference else None
+            except Exception:
+                ref = None
+
+            if ref and ref > 0:
+                factor = 70.0 / ref
+            else:
+                factor = 70.0
+
+            min_val = (minv * factor) if minv is not None else None
+            max_val = (maxv * factor) if maxv is not None else None
+        else:
+            min_val = minv
+            max_val = maxv
+
+        min_mg = to_mg(min_val, unit)
+        max_mg = to_mg(max_val, unit)
+
+        if min_mg is not None:
+            samples.append({'Substance': label, 'Dosage_mg': min_mg,
+                           'Unit': 'mg', 'Study_ID': paper_id})
+        if max_mg is not None and max_mg != min_mg:
+            samples.append({'Substance': label, 'Dosage_mg': max_mg,
+                           'Unit': 'mg', 'Study_ID': paper_id})
+
+    df = pd.DataFrame(samples)
+    return df
+
+
 def latest_update():
     """Get the the retrieval date, formated like 20.01.2026, of the latest batch retrieval."""
     session = Session()
     try:
         # The model uses `date` as the timestamp column on BatchRetrieval
-        query = session.query(BatchRetrieval).order_by(BatchRetrieval.date.desc()).first()
+        query = session.query(BatchRetrieval).order_by(
+            BatchRetrieval.date.desc()).first()
         if query and query.date:
             return query.date.strftime("%d.%m.%Y")
         return "Unknown"
     finally:
         session.close()
+
+
+# def extract_dosage_information_by_date(date: str):

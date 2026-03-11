@@ -65,6 +65,7 @@ class Paper(Base):
         else:
             return None
 
+
 class BatchRetrieval(Base):
     __tablename__ = 'batch_retrieval'
 
