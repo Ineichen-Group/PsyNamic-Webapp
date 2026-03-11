@@ -2,6 +2,7 @@ import dash
 from dash import dcc, html
 import pandas as pd
 from plotly import express as px
+import plotly.graph_objects as go
 
 
 
@@ -65,6 +66,8 @@ def bar_chart(
                     marker_color=color) if trace.name == x_val else ())
 
     fig.update_layout(plot_bgcolor='#f8f8f8')
+    add_interaction_annotation(fig)
+
 
     if average:
         # add average number of participants per substance as a line
@@ -85,3 +88,106 @@ def bar_chart(
     }
 
     return dcc.Graph(figure=fig, config=config)
+
+
+def box_plot(
+        data: pd.DataFrame,
+        x: str,
+        y: str,
+        title: str,
+        x_label: str,
+        y_label: str,
+        group: str = None,
+        color_mapping: dict[str, str] = None,
+        id: str = None,
+) -> dcc.Graph:
+    """
+    Creates a translucent box plot with individual points overlaid.
+    Points receive `customdata=Study_ID` so clicks can be used to select studies.
+    """
+    # Create base box plot colored by category (x) so each substance has its own box
+    fig = px.box(data, x=x, y=y, color=x, title=title, points=False)
+
+    # Style boxes: semi-transparent and no legend entries
+    for trace in fig.data:
+        cat = trace.name
+        color = None
+        if color_mapping and cat in color_mapping:
+            color = color_mapping[cat]
+        if color:
+            trace.marker = trace.marker or {}
+            trace.marker.color = color
+            trace.fillcolor = color
+        trace.opacity = 0.35
+        trace.showlegend = False
+
+    # Overlay scatter of individual points (one dot per dosage mention)
+    if 'Study_ID' in data.columns:
+        # Use a strip plot so points remain clickable. Some plotly versions
+        # don't support a `jitter` kwarg on px.strip(), so omit it here.
+        # Create strip plot colored by category; use color_discrete_map if provided
+        if color_mapping:
+            scatter_fig = px.strip(data, x=x, y=y, color=x, color_discrete_map=color_mapping, custom_data=['Study_ID'])
+        else:
+            scatter_fig = px.strip(data, x=x, y=y, color=x, custom_data=['Study_ID'])
+
+        # Merge strip (points) traces into the box figure, keeping customdata
+        for tr in scatter_fig.data:
+            tr_marker = tr.marker or {}
+            tr_marker['size'] = 7
+            tr_marker['opacity'] = 0.9
+            tr.marker = tr_marker
+
+            # Set hovertemplate to show Study_ID clearly (customdata is an array)
+            tr.hovertemplate = f"Study ID: %{{customdata[0]}}<br>{y}: %{{y}}<extra></extra>"
+
+            fig.add_trace(tr)
+
+    # Update axes labels
+    fig.update_xaxes(title_text=x_label)
+    fig.update_yaxes(title_text=y_label)
+
+    fig.update_layout(plot_bgcolor='#f8f8f8')
+
+
+    add_interaction_annotation(fig)
+
+
+    config = {
+        'displaylogo': False,
+    }
+
+    return dcc.Graph(figure=fig, config=config, id=id)
+
+def add_interaction_annotation(fig, x=0.88, y=0.86, ax=36, ay=-72, text="Interact<br>with<br>the graph", font_size=13):
+    """Add a paper-anchored annotation (arrow + multiline text) to `fig`.
+
+    Uses paper coordinates so the annotation stays relative to the plot area
+    and will resize with the figure. `ax`/`ay` are pixel offsets for the
+    text relative to the arrow tip; these keep spacing visually constant.
+    """
+    ann = dict(
+        x=x,
+        y=y,
+        xref='paper',
+        yref='paper',
+        text=text,
+        showarrow=True,
+        arrowhead=2,
+        arrowcolor='rgba(0,0,0,0.7)',
+        ax=ax,
+        ay=ay,
+        font=dict(size=font_size),
+        align='center',
+        bgcolor='rgba(255,255,255,0.85)',
+        opacity=1.0,
+        captureevents=False,
+    )
+
+    # Ensure layout.annotations exists and append
+    if not hasattr(fig.layout, 'annotations') or fig.layout.annotations is None:
+        fig.layout.annotations = ()
+
+    existing = list(fig.layout.annotations)
+    existing.append(ann)
+    fig.layout.annotations = tuple(existing)
