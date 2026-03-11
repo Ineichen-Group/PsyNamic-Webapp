@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine, Column, Integer, String, Text, Float, Boolean, ForeignKey, TIMESTAMP, Interval
+from sqlalchemy import UniqueConstraint
 from dotenv import load_dotenv
 import os
 
@@ -85,6 +86,9 @@ class BatchRetrieval(Base):
 
 class NerTag(Base):
     __tablename__ = 'ner_tag'
+    __table_args__ = (
+        UniqueConstraint('paper_id', 'start_id', 'end_id', 'tag', 'text', name='uq_nertag_paper_span_tag_text'),
+    )
 
     id = Column(Integer, primary_key=True)
     # Columns
@@ -126,7 +130,9 @@ class DosageNormalization(Base):
 
 class Prediction(Base):
     __tablename__ = 'prediction'
-
+    __table_args__ = (
+        UniqueConstraint('paper_id', 'task', 'label', 'model', name='uq_prediction_paper_task_label_model'),
+    )
     # Primary Key
     id = Column(Integer, primary_key=True)
 

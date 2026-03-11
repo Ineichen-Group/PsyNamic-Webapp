@@ -4,6 +4,8 @@ import json
 import pandas as pd
 import plotly.express as px
 import dash_bootstrap_components as dbc
+from dash import html
+
 
 from dash import callback_context, no_update, dcc, ALL
 from dash.dependencies import Input, Output, State
@@ -23,9 +25,10 @@ from components.layout import (
     get_tags,
     filter_data,
     highlighted_text,
+    get_filter_buttons,
 )
 
-from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR
+from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR, get_color
 from data.queries import (
     get_studies_details,
     get_filtered_study_ids,
@@ -162,6 +165,10 @@ def register_studyview_callbacks(app):
 # =====================================================
 
 def register_dual_task_view_callbacks(app):
+    # Split behavior into two callbacks for clarity and to avoid overlapping
+    # triggered logic: one handles dropdown changes and renders the full
+    # dual-task graph; the other handles pie-segment clicks and updates the
+    # pie/bar figures + filters/grid.
 
     @app.callback(
         [
@@ -170,6 +177,7 @@ def register_dual_task_view_callbacks(app):
             Output('task1-pie-graph', 'figure'),
             Output('task2-bar-graph', 'figure'),
             Output('active-filters', 'children'),
+            Output('info-buttons', 'children'),
             Output('dual-study-grid', 'children'),
         ],
         [
@@ -177,59 +185,62 @@ def register_dual_task_view_callbacks(app):
             Input('jux_dropdown2', 'value'),
             Input('task1-pie-graph', 'clickData'),
         ],
-        prevent_initial_call=True
+        prevent_initial_call=True,
     )
     @log_time
     def update_dual_task_view(dropdown1_value, dropdown2_value, click_data):
         ctx = callback_context
+        triggered = (ctx.triggered[0]['prop_id'].split('.')[0]) if ctx.triggered else None
 
-        if 'dropdown' in (ctx.triggered_id or ''):
-            click_data = None
+        if dropdown1_value and dropdown2_value and dropdown1_value == dropdown2_value:
+            return "Choose two different tasks.", no_update, no_update, no_update, no_update, no_update, no_update
 
-        if dropdown1_value == dropdown2_value:
-            return "Choose two different tasks.", no_update, no_update, no_update, no_update, no_update
+        # If a pie segment was clicked, handle that interaction
+        if triggered == 'task1-pie-graph':
+            if not click_data:
+                return no_update, no_update, no_update, no_update, no_update, no_update, no_update
 
-        if click_data:
+            if not dropdown1_value or not dropdown2_value:
+                return "Choose two tasks first.", no_update, no_update, no_update, no_update, no_update, no_update
+
             label = click_data['points'][0]['label']
-            color = click_data['points'][0]['color']
+            color = click_data['points'][0].get('color')
 
-            task1_data, task2_data, ids, tags = get_dual_task_data(
-                dropdown1_value, dropdown2_value, label
-            )
+            task1_data, task2_data, ids, tags = get_dual_task_data(dropdown1_value, dropdown2_value, label)
 
             task1_all_labels = get_all_labels(dropdown1_value)
             col_map = get_color_mapping(dropdown1_value, task1_all_labels)
 
-            if rgb_to_hex(color) == SECONDARY_COLOR:
+            if color and rgb_to_hex(color) == SECONDARY_COLOR:
                 color = col_map.get(label, '#000000')
 
-            pie_chart = create_pie_chart(
-                task1_data,
-                dropdown1_value,
-                col_map,
-                highlight=label,
-                highlight_color=color,
-            )
-
+            pie_chart = create_pie_chart(task1_data, dropdown1_value, col_map, highlight=label, highlight_color=color)
             bar_chart = create_bar_chart(task2_data, dropdown2_value, color)
 
             filters = get_dual_filters(dropdown1_value, label)
             grid = dual_study_grid(ids, tags)
+            info_buttons = get_filter_buttons(dropdown2_value, get_all_labels(dropdown2_value))
+            return "", no_update, pie_chart, bar_chart, filters, info_buttons, grid
 
-            return "", no_update, pie_chart, bar_chart, filters, grid
+        if not dropdown1_value or not dropdown2_value:
+            return "", html.Div(), no_update, no_update, no_update, no_update, no_update
 
-        df_task1, df_task2, ids, tags = get_dual_task_data(
-            dropdown1_value, dropdown2_value
-        )
+        # Build the combined dual-task graph and fresh figures (clears previous highlights)
+        df_task1, df_task2, ids, tags = get_dual_task_data(dropdown1_value, dropdown2_value)
+        graph = dual_task_graphs(df_task1, df_task2, dropdown1_value, dropdown2_value)
 
-        graph = dual_task_graphs(
-            df_task1, df_task2, dropdown1_value, dropdown2_value
-        )
+        task1_all_labels = get_all_labels(dropdown1_value)
+        col_map = get_color_mapping(dropdown1_value, task1_all_labels) if df_task1 is not None else {}
+        pie_fig = create_pie_chart(df_task1, dropdown1_value, col_map) if df_task1 is not None else {}
+        bar_color = get_color(dropdown2_value, 'hex') if dropdown2_value else None
+        bar_fig = create_bar_chart(df_task2, dropdown2_value, bar_color) if df_task2 is not None else {}
 
-        filters = get_dual_filters()
+        # Clear active filters when switching tasks
+        filters = []
         grid = dual_study_grid(ids, tags)
-
-        return "", graph, no_update, no_update, filters, grid
+        info_buttons = get_filter_buttons(dropdown1_value, get_all_labels(dropdown1_value)) + \
+            get_filter_buttons(dropdown2_value, get_all_labels(dropdown2_value))
+        return "", graph, pie_fig, bar_fig, filters, info_buttons, grid
 
 # =====================================================
 # CSV Download
@@ -613,7 +624,10 @@ def register_modal_callbacks(app):
     )
     def clear_studies_selection(is_open, selected_rows_lists):
         if is_open:
-            return no_update
+            # For wildcard multi-outputs we must return a list/tuple with one
+            # value per matched output. Returning `no_update` directly is
+            # invalid. Return the existing selections unchanged instead.
+            return selected_rows_lists if selected_rows_lists is not None else []
         return [[] for _ in (selected_rows_lists or [])]
 
 

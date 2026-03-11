@@ -14,6 +14,7 @@ from sqlalchemy import create_engine
 import psycopg2
 from psycopg2 import OperationalError
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.exc import IntegrityError
 from data.models import Paper, BatchRetrieval, Prediction, NerTag, DosageNormalization
 from data.dosage_norm import extract_dosages
 from ast import literal_eval
@@ -267,6 +268,13 @@ def populate_class_predictions(session: Session, file: str):
             is_multilabel=row['is_multilabel']
         )
         session.add(pred)
+        try:
+            session.flush()
+        except IntegrityError:
+            session.rollback()
+            logging.info(
+                f"Skipped duplicate prediction for paper_id {paper_id}, task {row['task']}, label {row['label']}, model {row['model']}")
+            continue
     session.commit()
 
 
@@ -442,7 +450,15 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                     )
 
                     session.add(ner_tag)
-                    session.flush()
+                    try:
+                        session.flush()
+                    except IntegrityError:
+                        session.rollback()
+                        logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
+                        # continue processing (don't count as added)
+                        nr_tags += 0
+                    else:
+                        nr_tags += 1
                     nr_tags += 1
 
                     # If it's a Dosage tag, normalize it
@@ -492,8 +508,13 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                     offset = end_id
 
                     session.add(ner_tag)
-                    session.flush()
-                    nr_tags += 1
+                    try:
+                        session.flush()
+                    except IntegrityError:
+                        session.rollback()
+                        logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
+                    else:
+                        nr_tags += 1
 
                     # If it's a Dosage tag, normalize it
                     if current_tag == 'Dosage':
@@ -535,8 +556,13 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
             )
             offset = end_id
             session.add(ner_tag)
-            session.flush()
-            nr_tags += 1
+            try:
+                session.flush()
+            except IntegrityError:
+                session.rollback()
+                logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
+            else:
+                nr_tags += 1
 
             # If it's a Dosage tag, normalize it
             if current_tag == 'Dosage':
