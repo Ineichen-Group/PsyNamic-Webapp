@@ -427,10 +427,13 @@ def main():
             logging.info(
                 'Skipping relevance prediction as per argument. Assuming all studies are relevant.')
             relevant_df = pd.read_csv(csv_file)
+            # Keep the relevant studies only
+            relevant_df = relevant_df[relevant_df['prediction'] == 1]
         elif rel_pred:
             logging.info(
                 f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.')
             relevant_df = pd.read_csv(rel_pred)
+            relevant_df = relevant_df[relevant_df['prediction'] == 1]
             logging.info(f'Loaded existing relevant studies from {rel_pred}')
         else:
             start = datetime.now(zurich)
@@ -446,14 +449,11 @@ def main():
             relevant_predictions_df = predict(
                 model, data, threshold=relevant_model['prediction_threshold'])
             logging.info('Completed predictions for relevance model.')
-            relevant_label_id = next(
-                (k for k, v in relevant_model['id2label'].items() if v == 'relevant'), None)
-            relevant_df = relevant_predictions_df[relevant_predictions_df['prediction'] == int(
-                relevant_label_id)]
-            # Add all others columns from original csv
+
+            # Read original full CSV
             original_df = pd.read_csv(csv_file)
             # Drop the 'text' column from original_df to avoid suffixes after merge
-            relevant_df = relevant_df.merge(original_df.drop(
+            relevant_predictions_df = relevant_predictions_df.merge(original_df.drop(
                 columns=['text']), left_on='id', right_on='pubmed_id', how='left')
 
             end = datetime.now(zurich)
@@ -461,10 +461,11 @@ def main():
 
             relevant_output_file = f'studies_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
             os.makedirs(RELEVANT_STUDIES, exist_ok=True)
-            relevant_df.to_csv(os.path.join(
+            relevant_predictions_df.to_csv(os.path.join(
                 RELEVANT_STUDIES, relevant_output_file), index=False)
             logging.info(
                 f'Saved relevant studies prediction to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
+            relevant_df = relevant_predictions_df[relevant_predictions_df['prediction'] == 1]
 
         # Now predict classification
         class_pred = check_if_pred_exist(
