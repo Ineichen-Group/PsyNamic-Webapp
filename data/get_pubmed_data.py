@@ -79,18 +79,19 @@ def parse_pubmed_data(xml_data: str) -> list[dict]:
         article_info['pubmed_id'] = extract_pubmedid(article)
         article_info['pubmed_url'] = f'https://pubmed.ncbi.nlm.nih.gov/{article_info["pubmed_id"]}/' if article_info['pubmed_id'] else None
         article_info['doi'] = extract_doi(article)
-
-        pub_date = article.find(
-            './/History/PubMedPubDate[@PubStatus="pubmed"]/Year')
-        article_info['year'] = pub_date.text if pub_date is not None else None
-
-        article_info['abstract'] = extract_abstract_text(article)
+        article_info['date'] = extract_date(article)
+        # Corresponds to Date - Create in PubMed
+        entre_date = article.find(
+            './/History/PubMedPubDate[@PubStatus="entrez"]/Year')
+        article_info['entrez_year'] = entre_date.text if entre_date is not None else None
+        article_info['abstract'] = extract_abstract_text(article) or ''
         article_info['title'] = extract_title(article)
 
-        # Skip articles without abstracts — do not save them
+        # Include articles without abstracts in output CSV; set abstract to empty string
         if not article_info['abstract'] or not str(article_info['abstract']).strip():
-            logging.info(f"Skipping PubMed article without abstract: {article_info.get('pubmed_id')}")
-            continue
+            logging.info(
+                f"PubMed article has no abstract (included): {article_info.get('pubmed_id')}")
+            article_info['abstract'] = ''
 
         authors = []
         for author in article.findall('.//Article/AuthorList/Author'):
@@ -107,6 +108,54 @@ def parse_pubmed_data(xml_data: str) -> list[dict]:
         articles_info.append(article_info)
 
     return articles_info
+
+
+def extract_date(article: ET.Element) -> str:
+    """
+    Extracts a single publication date from a PubMed article XML element.
+    Raises an error if multiple <PubDate> elements are found.
+    Returns a string in 'YYYY-MM-DD' format.
+    If Month or Day is missing, sets them to '01'.
+    """
+    # Find all <PubDate> elements anywhere under the article
+    pub_date_elems = article.findall('.//PubDate')
+
+    if not pub_date_elems:
+        return None  # No publication date found
+
+    if len(pub_date_elems) > 1:
+        raise ValueError(
+            f"Multiple <PubDate> elements found ({len(pub_date_elems)}). Cannot decide which one to use.")
+
+    pub_date_elem = pub_date_elems[0]
+
+    # Extract Year, Month, Day
+    year = pub_date_elem.findtext('Year')
+    month = pub_date_elem.findtext('Month')
+    day = pub_date_elem.findtext('Day')
+
+    # Map month names to numbers
+    month_map = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+    }
+
+    if month:
+        # convert if text, leave numeric as-is
+        month = month_map.get(month, month)
+    else:
+        month = '01'
+
+    if day:
+        day = day.zfill(2)
+    else:
+        day = '01'
+
+    if year is None:
+        return None
+
+    return f"{year}-{month}-{day}"
 
 
 def extract_title(article: ET.Element) -> str:
@@ -202,7 +251,7 @@ def main():
     with open(date_file, "r", encoding="utf-8") as f:
         last_data_fetch = f.readlines()[-1].rstrip("\n")
 
-    search_string_with_date = f'{SEARCH_STRING} AND (("{last_data_fetch}"[Date - Publication] : "3000"[Date - Publication]))'
+    search_string_with_date = f'{SEARCH_STRING} AND (("{last_data_fetch}"[Date - Create] : "3000"[Date - Create]))'
 
     start = 0
     total_results = 0

@@ -34,7 +34,7 @@ class Paper(Base):
     prediction_input = Column(Text, nullable=False)  # Title + Abstract
     key_terms = Column(Text, nullable=True)
     doi = Column(String(100), nullable=True)
-    year = Column(Integer, nullable=False)
+    date = Column(TIMESTAMP, nullable=True)
     authors = Column(String(255), nullable=False)
     link_to_fulltext = Column(String(255), nullable=True)
     link_to_pubmed = Column(String(255), nullable=True)
@@ -62,6 +62,13 @@ class Paper(Base):
             return self.link_to_pubmed
         elif self.other_url:
             return self.other_url
+        else:
+            return None
+
+    @property
+    def year(self):
+        if self.date:
+            return self.date.year
         else:
             return None
 
