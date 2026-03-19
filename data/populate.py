@@ -74,7 +74,8 @@ def create_paper(
         abstract: str,
         prediction_input: str,
         key_terms: str,
-        doi: str, year: int,
+        doi: str, 
+        date: int,
         authors: str,
         link_to_fulltext: str,
         link_to_pubmed: str,
@@ -86,6 +87,14 @@ def create_paper(
     title = normalize_for_db(title)
     abstract = normalize_for_db(abstract)
 
+    # date is expected in format yyyy-mm-dd, convert to datetime
+    if date:
+        try:
+            date = datetime.strptime(str(date), '%Y-%m-%d')
+        except ValueError:
+            logging.warning(f"Date '{date}' is not in expected format 'yyyy-mm-dd'. Setting date to None.")
+            date = None
+
     return Paper(
         id=ID,
         pubmed_id=int(pubmed_id) if pubmed_id  else None,
@@ -94,7 +103,7 @@ def create_paper(
         prediction_input=prediction_input,
         key_terms=key_terms if key_terms else None,
         doi=doi if doi else None,
-        year=year,
+        date=date if date else None,
         authors=authors,
         link_to_fulltext=link_to_fulltext if link_to_fulltext else None,
         other_url=url if url else None,
@@ -216,6 +225,13 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
         if pd.isna(paper_id):
             paper_id = get_unused_id(session)
 
+        if 'date' in row and pd.notna(row['date']):
+            date = row['date']
+        elif 'year' in row and pd.notna(row['year']):
+            date = str(int(row['year'])) + '-01-01'  # set to first day of the year
+        else:
+            date = None
+
         paper = create_paper(
             ID=int(paper_id),
             pubmed_id=row['pubmed_id'],
@@ -224,7 +240,7 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             prediction_input=prediction_input,
             key_terms=row['keywords'],
             doi=row['doi'],
-            year=row['year'],
+            date=date,
             authors='',
             link_to_fulltext='',
             link_to_pubmed=row['pubmed_url'],
@@ -580,7 +596,11 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
 def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
     pubmed_id = row['pubmed_id']
     title = row['title']
-    year = row['year']
+    if 'date' in row:
+        date = row['date']
+        year = date.split('-')[0] if pd.notna(date) else None
+    elif 'year' in row:
+        year = row['year']
 
     if pubmed_id:
         paper = session.query(Paper).filter(
@@ -652,7 +672,6 @@ if __name__ == '__main__':
         )
 
     if not args.predictions_file and not args.studies_file:
-
         # get the latest file in the directory
         args.studies_file = max([os.path.join(STUDIES_DIR, f) for f in os.listdir(
             STUDIES_DIR) if f.endswith('.csv')], key=os.path.getctime)
