@@ -448,7 +448,7 @@ def main():
                                  multilabel=False, is_ner=False)
             relevant_predictions_df = predict(
                 model, data, threshold=relevant_model['prediction_threshold'])
-            logging.info('Completed predictions for relevance model.')
+            logging.info('Completed predictions of relevance model.')
 
             # Read original full CSV
             original_df = pd.read_csv(csv_file)
@@ -463,8 +463,10 @@ def main():
             os.makedirs(RELEVANT_STUDIES, exist_ok=True)
             relevant_predictions_df.to_csv(os.path.join(
                 RELEVANT_STUDIES, relevant_output_file), index=False)
+            nr_relevant = relevant_predictions_df['prediction'].sum()
+            nr_irrelevant = len(relevant_predictions_df) - nr_relevant
             logging.info(
-                f'Saved relevant studies prediction to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
+                f'Saved relevance predictions ({nr_relevant} relevant, {nr_irrelevant} irrelevant) to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
             relevant_df = relevant_predictions_df[relevant_predictions_df['prediction'] == 1]
 
         # Now predict classification
@@ -476,6 +478,7 @@ def main():
                 f'Classification {retrieval_date} already exist. Skipping prediction.')
 
         else:
+            logging.info(f'Running classification of {len(relevant_df)} relevant studies.')
             start = datetime.now(zurich)
             dfs = []
             for m in model_info:
