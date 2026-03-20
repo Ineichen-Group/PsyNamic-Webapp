@@ -10,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 
 import pandas as pd
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, extract
 import psycopg2
 from psycopg2 import OperationalError
 from sqlalchemy.orm import sessionmaker, Session
@@ -191,10 +191,18 @@ def populate_db(prediction_file: str, studies_file: str, studies_id_column: Opti
 def populate_studies(session: Session, file: str, studies_id_column: str):
 
     studies_data = pd.read_csv(file)
+
     if studies_id_column not in studies_data.columns:
         raise ValueError(
             f"Studies file does not contain column '{studies_id_column}'. Please specify the correct column name with the --studies_id_column argument.")
-
+    if 'prediction' not in studies_data.columns:
+        logging.info(f"Assuming all studies in {file} are relevant")
+    else:
+        nr_studies = len(studies_data)
+        # Keep relevant studies only
+        studies_data = studies_data[studies_data['prediction'] == 1]
+        logging.info(f"Loading only relevant studies from {file}: {len(studies_data)} out of {nr_studies} total studies")
+    
     nr_studies = len(studies_data)
     # Try to reuse an existing BatchRetrieval for this source file if present
     source_file = os.path.basename(file)
@@ -225,11 +233,56 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
         if pd.isna(paper_id):
             paper_id = get_unused_id(session)
 
-        if 'date' in row and pd.notna(row['date']):
-            date = row['date']
-        elif 'year' in row and pd.notna(row['year']):
+        if 'pub_date' in row and row['pub_date'] != '':
+            date = row['pub_date']
+        elif 'date' in row and row['date'] != '' and row['year'] != '':
+            month2number = {
+                'jan': '01',
+                'feb': '02',
+                'mar': '03',
+                'apr': '04',
+                'may': '05',
+                'jun': '06',
+                'jul': '07',
+                'aug': '08',
+                'sep': '09',
+                'oct': '10',
+                'nov': '11',
+                'dec': '12'
+            }
+                        
+            date_comp = row['date'].split()
+            # Case 1: date has both month and day (e.g. "Mar 15")
+            if len(date_comp) == 2:
+                month = date_comp[0].lower()
+                day = date_comp[1]
+                # Check if month is valid and day is a digit
+                if month not in month2number or not day.isdigit():
+                    logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                    date = f"{row['year']}-01-01"
+                else:
+                    month = month2number[month]
+                    day = date_comp[1].zfill(2)
+                    date = f"{row['year']}-{month}-{day}"
+            # Case 2: date has only month (e.g. "Mar")
+            elif len(date_comp) == 1:
+                month = date_comp[0].lower()
+                # Check if the single component is a valid month
+                if month in month2number:
+                    month = month2number[month]
+                    date = f"{row['year']}-{month}-01"
+                else:
+                    logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                    date = f"{row['year']}-01-01"
+            # Case 3: something weird in date field
+            else:
+                logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                date = f"{row['year']}-01-01"
+
+        elif 'year' in row and row['year'] != '':
             date = str(int(row['year'])) + '-01-01'  # set to first day of the year
         else:
+            logging.warning(f"No valid date found for paper: {row[studies_id_column]}")
             date = None
 
         paper = create_paper(
@@ -596,24 +649,36 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
 def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
     pubmed_id = row['pubmed_id']
     title = row['title']
-    if 'date' in row:
-        date = row['date']
+
+    year = None
+    if 'pub_date' in row:
+        date = row['pub_date']
         year = date.split('-')[0] if pd.notna(date) else None
     elif 'year' in row:
         year = row['year']
 
     if pubmed_id:
         paper = session.query(Paper).filter(
-            Paper.pubmed_id == pubmed_id).first()
+            Paper.pubmed_id == pubmed_id
+        ).first()
         if paper:
             logging.info(f"Paper with pubmed_id {pubmed_id} already exists")
             return True
 
-    paper = session.query(Paper).filter(
-        Paper.title == title, Paper.year == year).first()
+    query = session.query(Paper).filter(Paper.title == title)
+
+    if year is not None and year != '':
+        query = query.filter(extract('year', Paper.date) == int(year))
+    else:
+        # fallback if no year → match NULL dates
+        query = query.filter(Paper.date.is_(None))
+
+    paper = query.first()
+
     if paper:
         logging.info(
-            f"Paper with title {title} and year {year} already exists")
+            f"Paper with title {title} and year {year} already exists"
+        )
         return True
 
     return False

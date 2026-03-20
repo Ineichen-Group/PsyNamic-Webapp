@@ -9,7 +9,7 @@ import os
 import logging
 from collections import OrderedDict
 import pandas as pd
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, extract
 from sqlalchemy.orm import sessionmaker, load_only
 from sqlalchemy.sql import select
 from sqlalchemy import and_, tuple_, case
@@ -63,76 +63,83 @@ def get_studies_details(
 
     session = Session()
     try:
-        # if ids empty list, assume not match
         if ids is not None and len(ids) == 0:
             return []
-        query = session.query(Paper)
 
+        query = session.query(
+            Paper,
+            extract('year', Paper.date).label('year')
+        )
+
+        # Filtering
         if filter_model:
             for field, condition in filter_model.items():
                 if "filter" in condition:
                     query = query.filter(
-                        getattr(Paper, field) == condition["filter"])
+                        getattr(Paper, field) == condition["filter"]
+                    )
 
-        # Apply filtering by paper IDs
         if ids:
             query = query.filter(Paper.id.in_(ids))
 
-        # Set default sorting if no sort_model is provided
+        # Default sorting
         if not sort_model or len(sort_model) == 0:
-            # Default sorting by 'year' in descending order
             sort_field = "year"
             sort_order = "desc"
         else:
-            # Use the sorting provided in the sort_model
             sort_field = sort_model[0]["colId"]
             sort_order = sort_model[0]["sort"]
 
-        # Apply the sorting
-        order_column = getattr(Paper, sort_field, None)
+        if sort_field == "year":
+            order_column = Paper.date
+        else:
+            order_column = getattr(Paper, sort_field, None)
+
         if order_column is not None:
             query = query.order_by(
-                order_column.desc() if sort_order == "desc" else order_column.asc())
+                order_column.desc() if sort_order == "desc" else order_column.asc()
+            )
 
-        # Pagination with offset and optional limit. If `end_row` is None,
-        # don't apply a limit (fetch all after offset).
+        # Pagination
         query = query.offset(start_row)
         if end_row is not None:
             limit_value = end_row - start_row
             if limit_value > 0:
                 query = query.limit(limit_value)
 
-        # Specify which fields to load into the Paper instances
         query = query.options(load_only(
             Paper.id, Paper.title, Paper.abstract,
-            Paper.key_terms, Paper.doi, Paper.year,
-            Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
+            Paper.key_terms, Paper.doi,
+            Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url,
+            Paper.date
         ))
 
-        # Execute the query
         studies = query.all()
 
-        # Fetch tags if provided
-        if tags:
-            study_tags = get_study_tags([study.id for study in studies], tags)
+        papers = [row[0] for row in studies]
+        years = {row[0].id: row[1] for row in studies}
 
-        # Prepare the results
+        # Tags
+        if tags:
+            study_tags = get_study_tags([p.id for p in papers], tags)
+
         results = [
             {
-                'id': study.id,
-                'title': study.title,
-                'abstract': study.abstract,
-                'key_terms': study.key_terms,
-                'doi': study.doi,
-                'year': study.year,
-                'pubmed_id': study.pubmed_id,
-                'url': study.url,
-                'tags': study_tags.get(study.id, []) if tags else []
+                'id': paper.id,
+                'title': paper.title,
+                'abstract': paper.abstract,
+                'key_terms': paper.key_terms,
+                'doi': paper.doi,
+                'year': years.get(paper.id),
+                'pubmed_id': paper.pubmed_id,
+                'url': paper.url,
+                'tags': study_tags.get(paper.id, []) if tags else []
             }
-            for study in studies
+            for paper in papers
         ]
 
         return results
+
     finally:
         session.close()
 
@@ -198,7 +205,7 @@ def get_studies_details_ner(
         # Specify which fields to load into the Paper instances
         query = query.options(load_only(
             Paper.id, Paper.title, Paper.abstract,
-            Paper.key_terms, Paper.doi, Paper.year,
+            Paper.key_terms, Paper.doi, Paper.date,
             Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
         ))
 
@@ -218,7 +225,7 @@ def get_studies_details_ner(
                 'pred_text': study.prediction_input,
                 'key_terms': study.key_terms,
                 'doi': study.doi,
-                'year': study.year,
+                'year': study.date.year,
                 'url': study.url,
                 'tags': study_tags.get(study.id, []) if tags else [],
                 'dosage': get_dosages(study.id)
@@ -490,24 +497,32 @@ def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.Data
     """Get the frequency of IDs per year. Optionally filter by start and end year."""
     session = Session()
     try:
-        query = session.query(Paper.id, Paper.year)
+        query = session.query(
+            Paper.id,
+            extract('year', Paper.date).label('year')
+        )
+
         df = pd.read_sql(query.statement, session.bind)
     finally:
         session.close()
 
-    # use year and id columns
-    df = df[['id', 'year']]
+    # filter
     if end_year:
         df = df[df['year'] <= end_year]
     if start_year:
         df = df[df['year'] >= start_year]
 
     ids = df['id'].to_list()
-    # count IDs per year, rename columns to Year and Frequency
-    frequency_df = df.groupby('year').count().reset_index().rename(
-        columns={'id': 'Frequency', 'year': 'Year'})
-    return frequency_df, ids
 
+    # count IDs per year
+    frequency_df = (
+        df.groupby('year')
+        .count()
+        .reset_index()
+        .rename(columns={'id': 'Frequency', 'year': 'Year'})
+    )
+
+    return frequency_df, ids
 
 def nr_studies():
     """Get the number of studies in the database."""
