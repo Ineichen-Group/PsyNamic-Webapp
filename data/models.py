@@ -65,13 +65,6 @@ class Paper(Base):
         else:
             return None
 
-    @property
-    def year(self):
-        if self.date:
-            return self.date.year
-        else:
-            return None
-
 
 class BatchRetrieval(Base):
     __tablename__ = 'batch_retrieval'
