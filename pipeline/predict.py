@@ -419,22 +419,22 @@ def main():
 
         with open(MODEL_INFO, 'r', encoding='utf-8') as file:
             model_info = json.load(file)
-        logging.info(f'Loaded model info from {MODEL_INFO}')
+        logging.info(f'Loaded models info from {MODEL_INFO}')
 
         rel_pred = check_if_pred_exist(RELEVANT_STUDIES, retrieval_date)
-        # Check if relevance predictions already exist
+        # Case 1: No relevance prediction needed (all relevant)
         if args.skip_relevance:
             logging.info(
                 'Skipping relevance prediction as per argument. Assuming all studies are relevant.')
             relevant_df = pd.read_csv(csv_file)
-            # Keep the relevant studies only
-            relevant_df = relevant_df[relevant_df['prediction'] == 1]
+        # Case 2: Relevance predictions already exist, load them (keep only relevant ones)
         elif rel_pred:
             logging.info(
                 f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.')
             relevant_df = pd.read_csv(rel_pred)
             relevant_df = relevant_df[relevant_df['prediction'] == 1]
             logging.info(f'Loaded existing relevant studies from {rel_pred}')
+        # Case 3: Need to run relevance prediction
         else:
             start = datetime.now(zurich)
             # Predict relevance first
@@ -443,17 +443,25 @@ def main():
             model, tokenizer = load_model(
                 relevant_model['model_path'], relevant_model['task'])
             logging.info(
-                f'Loaded relevant model: {relevant_model["model_path"]}')
+                f'Loaded relevance model: {relevant_model["model_path"]}')
+            
+            # Drop samples with missing abstract or title and log the number of dropped samples
+            relevant_df = pd.read_csv(csv_file)
+            initial_count = len(relevant_df)
+            relevant_df = relevant_df.dropna(subset=['abstract', 'title'])
+            dropped_count = initial_count - len(relevant_df)
+            if dropped_count > 0:
+                logging.warning(
+                    f'Dropped {dropped_count} samples due to missing abstract or title. Remaining samples: {len(relevant_df)}')
+            
             data = SimpleDataset(csv_file, tokenizer,
                                  multilabel=False, is_ner=False)
             relevant_predictions_df = predict(
                 model, data, threshold=relevant_model['prediction_threshold'])
             logging.info('Completed predictions of relevance model.')
 
-            # Read original full CSV
-            original_df = pd.read_csv(csv_file)
             # Drop the 'text' column from original_df to avoid suffixes after merge
-            relevant_predictions_df = relevant_predictions_df.merge(original_df.drop(
+            relevant_predictions_df = relevant_predictions_df.merge(relevant_df.drop(
                 columns=['text']), left_on='id', right_on='pubmed_id', how='left')
 
             end = datetime.now(zurich)
