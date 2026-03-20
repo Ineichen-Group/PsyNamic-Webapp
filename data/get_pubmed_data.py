@@ -1,3 +1,4 @@
+import re
 import requests
 from datetime import timedelta, datetime
 from lxml import etree as ET
@@ -79,11 +80,12 @@ def parse_pubmed_data(xml_data: str) -> list[dict]:
         article_info['pubmed_id'] = extract_pubmedid(article)
         article_info['pubmed_url'] = f'https://pubmed.ncbi.nlm.nih.gov/{article_info["pubmed_id"]}/' if article_info['pubmed_id'] else None
         article_info['doi'] = extract_doi(article)
-        article_info['date'] = extract_date(article)
+        # extract publication date in YYYY-MM-DD format
+        article_info['pub_date'] = extract_date(article)
         # Corresponds to Date - Create in PubMed
-        entre_date = article.find(
+        entrez_date = article.find(
             './/History/PubMedPubDate[@PubStatus="entrez"]/Year')
-        article_info['entrez_year'] = entre_date.text if entre_date is not None else None
+        article_info['entrez_year'] = entrez_date.text if entrez_date is not None else None
         article_info['abstract'] = extract_abstract_text(article) or ''
         article_info['title'] = extract_title(article)
 
@@ -116,33 +118,54 @@ def extract_date(article: ET.Element) -> str:
     Raises an error if multiple <PubDate> elements are found.
     Returns a string in 'YYYY-MM-DD' format.
     If Month or Day is missing, sets them to '01'.
+    Handles <MedlineDate> formats like: '2026 Mar-Apr 01'
     """
-    # Find all <PubDate> elements anywhere under the article
+
     pub_date_elems = article.findall('.//PubDate')
 
     if not pub_date_elems:
-        return None  # No publication date found
+        return None
 
     if len(pub_date_elems) > 1:
-        raise ValueError(
-            f"Multiple <PubDate> elements found ({len(pub_date_elems)}). Cannot decide which one to use.")
+        logging.warning(f"Multiple <PubDate> elements found for article {extract_pubmedid(article)}. Using the first one.")
 
     pub_date_elem = pub_date_elems[0]
 
-    # Extract Year, Month, Day
     year = pub_date_elem.findtext('Year')
     month = pub_date_elem.findtext('Month')
     day = pub_date_elem.findtext('Day')
 
-    # Map month names to numbers
     month_map = {
         'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
         'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
         'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
     }
 
+    # ---- MedlineDate fallback ----
+    if year is None:
+        medline = pub_date_elem.findtext('MedlineDate')
+
+        if medline:
+            year_match = re.search(r'\b(\d{4})\b', medline)
+            if year_match:
+                year = year_match.group(1)
+
+            month_match = re.search(
+                r'\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b',
+                medline
+            )
+            if month_match:
+                month = month_match.group(1)  # keep raw for now
+
+            day_match = re.search(r'\b(\d{1,2})\b', medline)
+            if day_match:
+                day = day_match.group(1)
+
+    if not year:
+        logging.warning(f"No year found for article {extract_pubmedid(article)}. Cannot extract publication date.")
+        return None
+
     if month:
-        # convert if text, leave numeric as-is
         month = month_map.get(month, month)
     else:
         month = '01'
@@ -151,9 +174,6 @@ def extract_date(article: ET.Element) -> str:
         day = day.zfill(2)
     else:
         day = '01'
-
-    if year is None:
-        return None
 
     return f"{year}-{month}-{day}"
 
