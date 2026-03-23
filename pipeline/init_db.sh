@@ -24,14 +24,14 @@ python -m data.populate \
 python -m data.populate \
   -p data/manual/ner_predictions_20240101_00-13-08.csv
 
-# Pubmed data automatically downlaoded and predicted on 2026-02-18
+# Pubmed data automatically downlaoded and predicted on 2026-03-20
 python -m data.populate \
-  -s data/relevant_studies/studies_20260218_00-15-00.csv
+  -s data/relevant_studies/studies_20260320_00-09-37.csv
 
 python -m data.populate \
-  -p data/predictions/class_predictions_20260218_45-25-00.csv
+  -p data/predictions/class_predictions_20260320_01-32-38.csv
 
 python -m data.populate \
-  -p data/predictions/ner_predictions_20260218_00-04-32.csv
+  -p data/predictions/ner_predictions_20260320_00-04-24.csv
 
 echo "Database initialization completed successfully."
