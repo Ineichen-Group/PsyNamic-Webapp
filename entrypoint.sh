@@ -9,4 +9,4 @@ done
 # python data/models.py
 
 # Start Dash app
-python app.py
+exec gunicorn app:server --bind 0.0.0.0:8050 --workers 2 --threads 4
