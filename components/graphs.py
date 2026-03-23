@@ -20,7 +20,15 @@ def bar_chart(
         average: bool = False,
 ) -> dcc.Graph:
     """
-    Creates a bar chart with proper frequency labels on top of the bars.
+    Creates a bar chart.
+
+    data: pandas.DataFrame with columns `x` and `y`.
+    - `x`: categorical (or convertible) for x-axis categories.
+    - `y`: numeric values for bar heights (aggregated by sum).
+    - optional `group`: categorical column to group/color bars.
+    - optional `Study_ID`: allowed but unused here.
+
+    Returns a Dash `dcc.Graph`.
     """
     if group:
         if group_order is not None:
@@ -102,8 +110,13 @@ def box_plot(
         id: str = None,
 ) -> dcc.Graph:
     """
-    Creates a translucent box plot with individual points overlaid.
-    Points receive `customdata=Study_ID` so clicks can be used to select studies.
+    Creates a translucent box plot with overlaid points.
+
+    data: pandas.DataFrame with columns `x` (categorical) and `y` (numeric).
+    - optional `Study_ID`: included in point `customdata` when present.
+    - `color_mapping`: optional dict mapping `x` values to Plotly colors.
+
+    Returns a Dash `dcc.Graph`.
     """
     # Create base box plot colored by category (x) so each substance has its own box
     fig = px.box(data, x=x, y=y, color=x, title=title, points=False)
@@ -158,6 +171,7 @@ def box_plot(
     }
 
     return dcc.Graph(figure=fig, config=config, id=id)
+
 
 def add_interaction_annotation(fig, x=0.88, y=0.86, ax=36, ay=-72, text="Interact<br>with<br>the graph", font_size=13):
     """Add a paper-anchored annotation (arrow + multiline text) to `fig`.
