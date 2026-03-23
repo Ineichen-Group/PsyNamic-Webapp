@@ -13,7 +13,7 @@ load-datamodel: load-env
 	docker compose exec web python data/models.py
 
 load-indexes:
-	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < /docker-entrypoint-initdb.d/indexes.sql
+	docker exec -i db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < data/indexes.sql
 
 db-init: load-env
 	docker compose up db_init
