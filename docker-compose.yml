@@ -18,7 +18,7 @@ services:
     container_name: webapp_web
     restart: always
     ports:
-      - "8050:8050"
+      - "127.0.0.1:8050:8050"
     environment:
       DATABASE_URL: ${DATABASE_URL}
     depends_on:
