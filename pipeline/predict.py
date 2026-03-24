@@ -448,13 +448,15 @@ def main():
             # Drop samples with missing abstract or title and log the number of dropped samples
             relevant_df = pd.read_csv(csv_file)
             initial_count = len(relevant_df)
-            relevant_df = relevant_df.dropna(subset=['abstract', 'title'])
+            # replace all nana with empty string
+            relevant_df.fillna('', inplace=True)
+            relevant_df = relevant_df[relevant_df['abstract'] != '']
             dropped_count = initial_count - len(relevant_df)
             if dropped_count > 0:
                 logging.warning(
                     f'Dropped {dropped_count} samples due to missing abstract or title. Remaining samples: {len(relevant_df)}')
             
-            data = SimpleDataset(csv_file, tokenizer,
+            data = SimpleDataset(relevant_df, tokenizer,
                                  multilabel=False, is_ner=False)
             relevant_predictions_df = predict(
                 model, data, threshold=relevant_model['prediction_threshold'])
