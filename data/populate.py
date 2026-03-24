@@ -209,7 +209,11 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
     batch = session.query(BatchRetrieval).filter(
         BatchRetrieval.source_file == source_file
     ).first()
-    if not batch:
+    # If we've already processed this source file, skip populating again
+    if batch:
+        logging.info(f"BatchRetrieval for {source_file} already exists (id={batch.id}); skipping populate_studies.")
+        return
+    else:
         batch = create_batch_retrieval(file, nr_studies)
         session.add(batch)
         session.commit()
@@ -219,10 +223,8 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
 
     for _, row in studies_data.iterrows():
         if check_if_paper_exists(session, row):
-            logging.info(f"Paper already exists: {row[studies_id_column]}")
             continue
         abstract = row['abstract']
-        # For now, we skip papers without abstracts #TODO: might need to change this
         if not abstract:
             logging.info(f"Paper without abstract: {row[studies_id_column]}")
             continue
@@ -647,8 +649,8 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
 
 
 def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
-    pubmed_id = row['pubmed_id']
-    title = row['title']
+    pubmed_id = row.get('pubmed_id')
+    title = row.get('title')
 
     year = None
     if 'pub_date' in row:
@@ -657,27 +659,18 @@ def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
     elif 'year' in row:
         year = row['year']
 
-    if pubmed_id:
-        paper = session.query(Paper).filter(
-            Paper.pubmed_id == pubmed_id
-        ).first()
-        if paper:
-            logging.info(f"Paper with pubmed_id {pubmed_id} already exists")
-            return True
+    if not (pubmed_id and title and year):
+        return False
 
-    query = session.query(Paper).filter(Paper.title == title)
-
-    if year is not None and year != '':
-        query = query.filter(extract('year', Paper.date) == int(year))
-    else:
-        # fallback if no year → match NULL dates
-        query = query.filter(Paper.date.is_(None))
-
-    paper = query.first()
+    paper = session.query(Paper).filter(
+        Paper.pubmed_id == pubmed_id,
+        Paper.title == title,
+        extract('year', Paper.date) == year
+    ).first()
 
     if paper:
         logging.info(
-            f"Paper with title {title} and year {year} already exists"
+            f"Paper already exists: pubmed_id={pubmed_id}, title={title}, year={year}"
         )
         return True
 

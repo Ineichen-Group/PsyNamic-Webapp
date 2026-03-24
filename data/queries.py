@@ -744,6 +744,3 @@ def latest_update():
         return "Unknown"
     finally:
         session.close()
-
-
-# def extract_dosage_information_by_date(date: str):
