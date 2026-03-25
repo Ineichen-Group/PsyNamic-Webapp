@@ -731,10 +731,11 @@ if __name__ == '__main__':
 
     if not args.predictions_file and not args.studies_file:
         # get the latest file in the directory
-        args.studies_file = max(
+        latest = max(
             [f for f in os.listdir(STUDIES_DIR) if f.endswith('.csv')],
             key=lambda f: f.split('_')[1:]  # crude but works if format consistent
         )
+        args.studies_file = os.path.join(STUDIES_DIR, latest)
         # get prediction file with the same date as studies file
         date_str = args.studies_file[:-4].split('_')[-2]
 
