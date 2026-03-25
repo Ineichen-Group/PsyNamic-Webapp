@@ -735,7 +735,6 @@ if __name__ == '__main__':
             [f for f in os.listdir(STUDIES_DIR) if f.endswith('.csv')],
             key=lambda f: f.split('_')[1:]  # crude but works if format consistent
         )
-        breakpoint()
         # get prediction file with the same date as studies file
         date_str = args.studies_file[:-4].split('_')[-2]
 
