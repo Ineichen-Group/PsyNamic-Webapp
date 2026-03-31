@@ -39,17 +39,26 @@ def export_ner_data(outfile: str) -> str:
     return outfile
 
 def export_study_data(outfile: str) -> str:
-    """Export id and pubmed_id from Paper to CSV."""
+    """Export study metadata (id, pubmed_id, title, abstract) and
+    publication date to CSV. Publication date is formatted as yyyy-mm-dd
+    in the `Publication_Date` column.
+    """
 
     os.makedirs(os.path.dirname(outfile) or ".", exist_ok=True)
     sql = text(
-        "SELECT id AS Study_ID, pubmed_id FROM paper"
+        "SELECT id AS Study_ID, pubmed_id, title, abstract, date, retrieval_id AS batch_id FROM paper"
     )
     df = pd.read_sql(sql, engine)
+
+    # Format publication date as yyyy-mm-dd and expose under Publication_Date
+    df['Publication_Date'] = pd.to_datetime(df['date'], errors='coerce').dt.strftime('%Y-%m-%d')
+    df = df.drop(columns=['date'])
+
+
     df.to_csv(outfile, index=False)
     return outfile
 
 if __name__ == "__main__":
-    export_classification_data("export/classification_data.csv")
-    export_ner_data("export/ner_data.csv")
-    export_study_data("export/study_data.csv")
+    export_classification_data("analysis/export/classification_data.csv")
+    export_ner_data("analysis/export/ner_data.csv")
+    export_study_data("analysis/export/study_data.csv")
