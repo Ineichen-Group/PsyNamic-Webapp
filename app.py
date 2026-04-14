@@ -10,6 +10,7 @@ from pages.about import about_layout
 from pages.contact import contact_layout
 from pages.home import home_layout
 from pages.explore.dual_task import dual_task_layout
+from pages.explore.search import search_layout
 from pages.explore.time import time_layout
 from pages.explore.filter import filter_layout
 from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view, nr_part_view, study_protocol_view, dosages_view
@@ -86,6 +87,8 @@ def display_page(pathname: str):
         
         if pathname == '/explore/time':
             return content_layout(time_layout())
+        elif pathname == '/explore/search':
+            return content_layout(search_layout())
         elif pathname == '/explore/dual-task':
             return content_layout(dual_task_layout('Substances', 'Condition'), id='dual-task-layout')
         elif pathname == '/explore/filter':
