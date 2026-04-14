@@ -3,8 +3,9 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 from style.colors import get_color_mapping
 from components.layout import filter_component, studies_display, filter_button, study_grid, ner_tag, highlighted_text, dosage_study_grid, get_filter_buttons
-from components.graphs import bar_chart
-from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_ner_tags, get_pred_text, latest_update, get_studies_details_ner
+from components.graphs import bar_chart, box_plot_graph
+from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_pred_text, latest_update, get_studies_details_ner, get_dosage_samples
+from data.dosage_norm import remove_several_substances_dosages
 from callbacks import rgb_to_hex
 from collections import OrderedDict
 
@@ -202,8 +203,33 @@ def dosages_view():
     studies_with_dosage = get_studies_details_ner(start_row=0, end_row=None)
     ids = [s['id'] for s in studies_with_dosage]
 
+    # Fetch absolute dosage samples per substance and draw a box plot (values in mg)
+    df = remove_several_substances_dosages(get_dosage_samples())
+    if df is None or df.empty:
+        graph = html.P("No absolute dosage data available.")
+    else:
+        # get color mapping for substances
+        substance_labels = sorted(df['Substance'].unique().tolist())
+        col_map = get_color_mapping('Substances', substance_labels)
+
+        graph = box_plot_graph(
+            df,
+            x='Substance',
+            y='Dosage_mg',
+            title='Distribution of absolute dosages per substance (mg)',
+            x_label='Substance',
+            y_label='Dosage (mg)',
+            group=None,
+            color_mapping=col_map,
+            id='dosage-box-plot',
+        )
+
     return html.Div([
         html.H1(f'{title}', className="my-4"),
+        graph,
+        dbc.Row([
+            dbc.Col(dbc.Button("Reset selection", id="dosage-reset-btn", color="secondary", className="mb-3"), width="auto"),
+        ]),
         dosage_study_grid(total_nr, len(ids), last_update),
         dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
         dcc.Store(id="filter-tags", data={}, storage_type="memory"),
