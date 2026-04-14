@@ -1,4 +1,6 @@
 import re
+from collections import defaultdict
+import pandas as pd
 
 all_unicode_characters = r'[^\W\d_/\.]'
 digit = r'\d+(\.\d+)?'
@@ -114,7 +116,18 @@ def normalize_dosage(dosage: str) -> str:
 
 
 def extract_dosages(dosage: str) -> dict[str, str]:
-    """Extract quantity and unit from a dosage string."""
+    """Extract quantity and unit from a dosage string.
+
+    Some decision rules:
+    - If there is a range (e.g. 5-10 mg), extract min and max dosage
+    - If there is a per weight unit (e.g. mg/kg), extract weight reference if available (e.g. 98 mg/70 kg -> weight reference is 70 kg)
+    - If there is a per time unit (e.g. mg/h), extract time unit and set dose type to relative_time
+    - If there is both per weight and per time unit (e.g. mg/kg/h), set dose type to relative_weight_time
+    - If there is no per weight or per time unit, set dose type to absolute
+
+    Look at test cases in test_dosage_norm.py for examples of how this should work.
+
+    """
     dosage = normalize_dosage(dosage)
 
     dosage_dict = {
@@ -126,7 +139,6 @@ def extract_dosages(dosage: str) -> dict[str, str]:
         "weight_reference": None,
         "per_time_unit": None,
         "dose_type": None,
-        "original_dosage": dosage,
     }
 
     # extract unit, last digit followed by space and then unit
@@ -207,3 +219,121 @@ def extract_dosages(dosage: str) -> dict[str, str]:
         dosage_dict["dose_type"] = "absolute"
 
     return dosage_dict
+
+
+def to_mg(value, unit_str):
+    if value is None:
+        return None
+    try:
+        v = float(value)
+    except Exception:
+        return None
+
+    if not unit_str:
+        return v
+
+    u = unit_str.lower()
+    # normalize microgram variants
+    if u in ("µg", "μg", "ug", "microg"):
+        return v / 1000.0
+    if u in ("mg",):
+        return v
+    if u in ("g", "gram", "grams"):
+        return v * 1000.0
+    # fallback: return original value
+    return v
+
+
+def normalize_relative_weight_dosages(minv: float, maxv: float, dosage: float, per_weight_unit: str, factor: int = 70) -> tuple[float, float]:
+    try:
+        ref = float(dosage) if dosage else None
+    except Exception:
+        ref = None
+
+    if ref is not None:
+        if per_weight_unit == 'kg':
+            ref_kg = ref
+        elif per_weight_unit == 'g':
+            ref_kg = ref / 1000.0
+        elif per_weight_unit == 'mg':
+            ref_kg = ref / 1_000_000.0
+        else:
+            ref_kg = ref
+    else:
+        ref_kg = None
+
+    if ref_kg and ref_kg > 0:
+        factor = 70.0 / ref_kg  # Scale to 70 kg person, careful introducing bias
+    else:
+        factor = 70.0
+
+    min_val = (minv * factor) if minv is not None else None
+    max_val = (maxv * factor) if maxv is not None else None
+    return min_val, max_val
+
+
+def remove_several_substances_dosages(df: pd.DataFrame) -> pd.DataFrame:
+    """
+        Remove papers that have more than 1 substance, except for the allowed combinations:
+        * Combination Therapy + any other substance (e.g. "Combination Therapy + LSD", but not "Combination Therapy + Ketamine")
+        * Ketamine + S-ketamine (or similar, e.g. "Ketamine (S-ketamine)")
+        * Ketamine + Combination Therapy, if there is no other substance in the paper (i.e. the only substances are ketamine and combination therapy, but no other substance)
+    """
+    combinations_counts = defaultdict(list)
+    # find all study ids that have more than 1 substance,
+    for study_id, group in df.groupby('Study_ID'):
+        substances = group['Substance'].unique()
+        if len(substances) > 1:
+            # skip if it is just substance + combination therapy
+            if len(substances) == 2 and 'Combination Therapy' in substances:
+                continue
+
+            # allow ketamine + S-ketamine, but not ketamine + other substance
+            elif all('Ketamine' in s for s in substances):
+                continue
+
+            elif 'Ketamine' in substances and 'Combination Therapy' in substances:
+                substances = [s for s in substances if 'ketamine' not in s.lower(
+                ) and s != 'Combination Therapy']
+                if len(substances) == 0:
+                    continue
+
+            # use a tuple as a hashable dict key
+            key = tuple(substances)
+            combinations_counts[key].append(study_id)
+
+    combinations_counts = dict(sorted(
+        combinations_counts.items(), key=lambda item: len(item[1]), reverse=True))
+    
+    # Get all combinations and their counts
+    for combo, count in combinations_counts.items():
+        print(f"{combo}: {count}")
+
+    several_substances_ids = []
+    for combo, ids in combinations_counts.items():
+        several_substances_ids.extend(ids)
+
+    print(
+        f'Total papers with multiple substance: {len(several_substances_ids)}')
+
+    # Remove all papers that have more than 1 substance, except for the allowed combinations
+    df_refined = df[~df['Study_ID'].isin(
+        several_substances_ids)].reset_index(drop=True)
+    print(
+        f'Total papers in refined df: {len(df_refined)}')
+    removed_dosages = len(df) - \
+        len(df_refined)
+    total_dosages = len(df)
+    excluded_pct = (removed_dosages / total_dosages *
+                    100) if total_dosages else 0
+    total_papers = len(df['Study_ID'].unique())
+    total_papers_refined = len(df_refined['Study_ID'].unique())
+
+    print(
+        f'Total papers with multiple substances removed: {total_papers - total_papers_refined} ({(total_papers - total_papers_refined) / total_papers * 100:.1f}%)'
+    )
+
+    print(
+        f'Total dosages with multiple substances removed: {removed_dosages} ({excluded_pct:.1f}%)')
+    return df_refined
+

@@ -2,6 +2,7 @@ import logging
 import time
 import json
 import pandas as pd
+from data.dosage_norm import remove_several_substances_dosages
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash import html
@@ -21,9 +22,9 @@ from pages.explore.dual_task import (
 
 from components.layout import filter_button, tag_component, get_tags, filter_data, highlighted_text, get_filter_buttons
 from style.colors import rgb_to_hex, get_color_mapping, SECONDARY_COLOR, get_color
-from data.queries import get_studies_details, get_filtered_study_ids, get_time_data, nr_studies, get_all_labels, get_studies_details_ner, ner_tags_type, get_absolute_dosage_samples, get_ids
-from components.graphs import box_plot
-
+from data.queries import get_studies_details, get_filtered_study_ids, get_time_data, nr_studies, get_all_labels, get_studies_details_ner, ner_tags_type, get_dosage_samples, get_ids
+from data.queries import search_papers, get_all_tasks, get_study_tags
+from components.graphs import box_plot_graph
 STYLE_NORMAL = {'border': '1px solid #ccc'}
 STYLE_ERROR = {'border': '2px solid red'}
 
@@ -85,7 +86,8 @@ def register_callbacks(app):
     register_download_csv_callback(app)
     register_filter_callback(app)
     register_pagination_dosages_callbacks(app)
-    # register_dosage_graph_callbacks(app)
+    register_dosage_graph_callbacks(app)
+    register_search_callbacks(app)
 
 
 # =====================================================
@@ -147,6 +149,152 @@ def register_studyview_callbacks(app):
         new_is_open_list[index] = not is_open_list[index]
 
         return new_is_open_list
+
+
+def register_dosage_graph_callbacks(app):
+    @app.callback(
+        Output('dosage-study-grid', 'getRowsResponse', allow_duplicate=True),
+        Output('filtered-study-ids', 'data', allow_duplicate=True),
+        Output('count-filtered', 'children', allow_duplicate=True),
+        Output('dosage-box-plot', 'figure', allow_duplicate=True),
+        Input('dosage-box-plot', 'selectedData'),
+        Input('dosage-box-plot', 'clickData'),
+        Input('dosage-reset-btn', 'n_clicks'),
+        State('filtered-study-ids', 'data'),
+        prevent_initial_call=True,
+    )
+    def update_filtered_ids(selectedData, clickData, reset_clicks, current_ids):
+        ctx = callback_context
+        if not ctx.triggered:
+            return no_update, no_update, no_update, no_update
+
+        triggered = ctx.triggered_id
+        # Reset button pressed -> restore all ids
+        if triggered == 'dosage-reset-btn':
+            ids = get_ids()
+            # fetch first page for grid
+            studies = get_studies_details_ner(
+                ids=ids if ids else [], start_row=0, end_row=20)
+            row_count = len(ids) if ids else nr_studies()
+            # rebuild original figure (cleared selection)
+            df = remove_several_substances_dosages(get_dosage_samples())
+            if df is None or df.empty:
+                fig = None
+            else:
+                substance_labels = sorted(df['Substance'].unique().tolist())
+                col_map = get_color_mapping('Substances', substance_labels)
+                fig = box_plot_graph(
+                    df,
+                    x='Substance',
+                    y='Dosage_mg',
+                    title='Distribution of absolute dosages per substance (mg)',
+                    x_label='Substance',
+                    y_label='Dosage (mg)',
+                    group=None,
+                    color_mapping=col_map,
+                    id='dosage-box-plot',
+                ).figure
+
+            return {"rowData": studies, "rowCount": row_count}, ids, row_count, fig
+
+        ids_set = set()
+
+        # Selected multiple points (lasso/box)
+        if selectedData and 'points' in selectedData:
+            for pt in selectedData['points']:
+                custom = pt.get('customdata')
+                if custom:
+                    ids_set.add(custom[0])
+
+        # Single click
+        elif clickData and 'points' in clickData:
+            pt = clickData['points'][0]
+            custom = pt.get('customdata')
+            if custom:
+                ids_set.add(custom[0])
+
+        if not ids_set:
+            return no_update, no_update, no_update
+
+        ids = list(ids_set)
+        studies = get_studies_details_ner(ids=ids, start_row=0, end_row=20)
+        row_count = len(ids)
+
+        # rebuild figure and mark selected points
+        df = remove_several_substances_dosages(get_dosage_samples())
+        if df is None or df.empty:
+            fig = None
+        else:
+            substance_labels = sorted(df['Substance'].unique().tolist())
+            col_map = get_color_mapping('Substances', substance_labels)
+            graph_component = box_plot_graph(
+                df,
+                x='Substance',
+                y='Dosage_mg',
+                title='Distribution of absolute dosages per substance (mg)',
+                x_label='Substance',
+                y_label='Dosage (mg)',
+                group=None,
+                color_mapping=col_map,
+                id='dosage-box-plot',
+            )
+            fig = graph_component.figure
+
+            # For each trace, compute selectedpoints where customdata contains selected Study_ID
+            selected_ids = set(ids)
+            for tr in fig.data:
+                custom = getattr(tr, 'customdata', None)
+                if custom is None:
+                    # nothing to select on this trace
+                    continue
+                selected_points = [i for i, cd in enumerate(
+                    custom) if cd and cd[0] in selected_ids]
+                # set selectedpoints to show selection visually
+                tr.selectedpoints = selected_points
+                # Use trace.update to set selected/unselected marker appearance
+                tr.update(selected=dict(marker=dict(opacity=0.95)),
+                          unselected=dict(marker=dict(opacity=0.15)))
+
+        return {"rowData": studies, "rowCount": row_count}, ids, row_count, fig
+
+
+def register_pagination_dosages_callbacks(app):
+    @app.callback(
+        Output('dosage-study-grid', "getRowsResponse", allow_duplicate=True),
+        Output('count-filtered', 'children', allow_duplicate=True),
+        Input('dosage-study-grid', "getRowsRequest"),
+        Input("filter-tags", "data"),
+        State("filtered-study-ids", "data"),
+        prevent_initial_call=True
+    )
+    def fetch_studies_infinite(request, filtered_ids, tags):
+        if not request:
+            return no_update, no_update
+
+        start_row = request["startRow"]
+        end_row = request["endRow"]
+
+        sort_model = request.get(
+            "sortModel", [{"colId": "year", "sort": "desc"}])
+        filter_model = request.get("filterModel", {})
+
+        studies = get_studies_details_ner(
+            ids=filtered_ids if filtered_ids else [],
+            start_row=start_row,
+            end_row=end_row,
+            sort_model=sort_model,
+            filter_model=filter_model,
+            tags=tags
+        )
+        if len(studies) == 0:
+            row_count = 0
+        else:
+            row_count = len(filtered_ids) if filtered_ids else nr_studies()
+
+        return {
+            "rowData": studies,
+            "rowCount": row_count
+        }, row_count
 
 # =====================================================
 # Dual Task View
@@ -645,3 +793,182 @@ def register_modal_callbacks(app):
         if is_open:
             return no_update
         return []
+
+
+def register_search_callbacks(app):
+    """Register callbacks for the explore/search page."""
+
+    @app.callback(
+        Output('search-results', 'children', allow_duplicate=True),
+        Output('search-paper-details', 'children', allow_duplicate=True),
+        Output('last-search-store', 'data', allow_duplicate=True),
+        Input('search-button', 'n_clicks'),
+        State('search-input', 'value'),
+        prevent_initial_call=True,
+    )
+    @log_time
+    def perform_search(n_clicks, query):
+        if not query:
+            return html.Div("Please enter a search term."), "", None
+
+        studies = search_papers(query, start_row=0, end_row=50)
+
+        if not studies:
+            return html.Div("No matching papers found."), "", None
+
+        items = []
+        for s in studies:
+            year = s.get('year') or ''
+            subtitle = f"{s.get('pubmed_id') or s.get('doi') or ''} {year}"
+            items.append(
+                dbc.ListGroupItem([
+                    html.Div(s.get('title'), className='fw-bold'),
+                    html.Div(subtitle, className='text-muted small')
+                ], id={'type': 'search-result', 'id': s['id']}, action=True)
+            )
+
+        # Clear any existing details until a paper is clicked; store results
+        return dbc.ListGroup(items), "", studies
+
+    @app.callback(
+        Output({'type': 'search-result', 'id': ALL},
+               'active', allow_duplicate=True),
+        Output('search-paper-details', 'children', allow_duplicate=True),
+        Output('url', 'search', allow_duplicate=True),
+        Output('search-results', 'children', allow_duplicate=True),
+        Input({'type': 'search-result', 'id': ALL}, 'n_clicks'),
+        State({'type': 'search-result', 'id': ALL}, 'id'),
+        prevent_initial_call=True,
+    )
+    @log_time
+    def show_search_paper(n_clicks_list, ids_list):
+        ctx = callback_context
+        if not ctx.triggered:
+            return no_update, no_update
+
+        triggered_item = ctx.triggered[0]
+        triggered = triggered_item['prop_id'].split('.')[0]
+        # if the click value is falsy (0 or None), ignore
+        if not triggered_item.get('value'):
+            return no_update, no_update
+        try:
+            import json as _json
+            parsed = _json.loads(triggered)
+            paper_id = parsed.get('id')
+        except Exception:
+            return no_update, no_update
+
+        # Fetch base paper info
+        studies = get_studies_details(ids=[paper_id], start_row=0, end_row=1)
+        if not studies:
+            # clear active states
+            active_states = [False] * len(ids_list)
+            return active_states, html.Div("Paper not found")
+
+        paper = studies[0]
+
+        # Build classification tags
+        tasks = get_all_tasks() or []
+        tags_map = {task: get_all_labels(task) for task in tasks}
+        study_tags = get_study_tags([paper_id], tags_map).get(paper_id, [])
+        paper_obj = paper.copy()
+        paper_obj['tags'] = study_tags
+        tag_buttons = build_tag_buttons(paper_obj)
+
+        # NER highlighting
+        ner_tags = ner_tags_type(paper_id)
+        abstract = paper.get('abstract', '') or ''
+        highlighted = highlighted_text(
+            abstract, ner_tags) if ner_tags else abstract
+
+        details = html.Div([
+            html.H3(f"{paper.get('title')} ({paper.get('year', '')})"),
+            html.P([html.Span("URL: "), html.A(paper.get('url') or '',
+                   href=paper.get('url') or '', target='_blank')]),
+            html.H5("Abstract"),
+            html.Div(highlighted, className='mb-3'),
+            html.H5("Tags"),
+            tag_buttons,
+        ], className='p-3 border rounded')
+        # build active list based on ids_list
+        active_states = [False] * len(ids_list)
+        for idx, iddict in enumerate(ids_list):
+            # iddict is like {'type': 'search-result', 'id': <id>}
+            if iddict and iddict.get('id') == paper_id:
+                active_states[idx] = True
+                break
+
+        # update URL search param so linkable (internal id only)
+        search_str = f"?study_id={paper_id}"
+
+        # clear the search results display (we're on a dedicated paper view)
+        return active_states, details, search_str, ""
+
+    @app.callback(
+        Output('search-paper-details', 'children', allow_duplicate=True),
+        Output('search-results', 'children', allow_duplicate=True),
+        Input('url', 'search'),
+        State('last-search-store', 'data'),
+        prevent_initial_call=True,
+    )
+    @log_time
+    def load_paper_from_url(search, last_search):
+        # When `search` contains ?study_id=... show the paper details and hide results.
+        # When `search` is empty, restore the last search results (if any) and clear details.
+        if not search:
+            # restore results from store
+            if not last_search:
+                return "", ""
+            items = []
+            for s in last_search:
+                year = s.get('year') or ''
+                subtitle = f"{s.get('pubmed_id') or s.get('doi') or ''} {year}"
+                items.append(
+                    dbc.ListGroupItem([
+                        html.Div(s.get('title'), className='fw-bold'),
+                        html.Div(subtitle, className='text-muted small')
+                    ], id={'type': 'search-result', 'id': s['id']}, action=True)
+                )
+            return "", dbc.ListGroup(items)
+
+        # parse query string like ?study_id=123
+        try:
+            from urllib.parse import parse_qs
+            qs = parse_qs(search.lstrip('?'))
+            study_ids = qs.get('study_id') or []
+            if not study_ids:
+                return "", ""
+            paper_id = int(study_ids[0])
+        except Exception:
+            return "", ""
+
+        studies = get_studies_details(ids=[paper_id], start_row=0, end_row=1)
+        if not studies:
+            return html.Div("Paper not found"), ""
+
+        paper = studies[0]
+
+        tasks = get_all_tasks() or []
+        tags_map = {task: get_all_labels(task) for task in tasks}
+        study_tags = get_study_tags([paper_id], tags_map).get(paper_id, [])
+        paper_obj = paper.copy()
+        paper_obj['tags'] = study_tags
+        tag_buttons = build_tag_buttons(paper_obj)
+
+        ner_tags = ner_tags_type(paper_id)
+        abstract = paper.get('abstract', '') or ''
+        highlighted = highlighted_text(
+            abstract, ner_tags) if ner_tags else abstract
+
+        details = html.Div([
+            html.H3(f"{paper.get('title')} ({paper.get('year', '')})"),
+            html.P([html.Span("URL: "), html.A(paper.get('url') or '',
+                   href=paper.get('url') or '', target='_blank')]),
+            html.H5("Abstract"),
+            html.Div(highlighted, className='mb-3'),
+            html.H5("Tags"),
+            tag_buttons,
+        ], className='p-3 border rounded')
+
+        # hide the search results when showing details
+        return details, ""
