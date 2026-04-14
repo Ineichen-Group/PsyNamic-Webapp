@@ -426,7 +426,6 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
         existing_norm.weight_reference = norm_data['weight_reference']
         existing_norm.per_time_unit = norm_data['per_time_unit']
         existing_norm.dose_type = norm_data['dose_type']
-        existing_norm.original_dosage = norm_data['original_dosage']
         existing_norm.norm_text = norm_data['norm_text']
         return existing_norm
     else:
@@ -440,7 +439,6 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
             weight_reference=norm_data['weight_reference'],
             per_time_unit=norm_data['per_time_unit'],
             dose_type=norm_data['dose_type'],
-            original_dosage=norm_data['original_dosage'],
             ner_tag=ner_tag
         )
         session.add(dosage_norm)
