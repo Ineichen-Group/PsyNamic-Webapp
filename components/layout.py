@@ -48,6 +48,8 @@ def header_layout():
                                     dbc.DropdownMenuItem(
                                         "Filter all studies", href="/explore/filter"),
                                     dbc.DropdownMenuItem(
+                                        "Search", href="/explore/search"),
+                                    dbc.DropdownMenuItem(
                                         "Dual Task Analysis", href="/explore/dual-task"),
                                     dbc.DropdownMenuItem(
                                         "Time", href="/explore/time"),
