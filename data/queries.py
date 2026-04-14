@@ -3,7 +3,10 @@ This module contains database query functions for the PsyNamic-Webapp.
 """
 
 from .models import Paper, Prediction, NerTag, DosageNormalization, BatchRetrieval
+from .dosage_norm import to_mg, normalize_relative_weight_dosages
 from datetime import datetime
+from collections import defaultdict
+
 import sys
 import os
 import logging
@@ -228,7 +231,7 @@ def get_studies_details_ner(
                 'year': study.date.year,
                 'url': study.url,
                 'tags': study_tags.get(study.id, []) if tags else [],
-                'dosage': get_dosages(study.id)
+                'dosage': get_dosage_string(study.id)
             }
             for study in studies
         ]
@@ -524,6 +527,7 @@ def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.Data
 
     return frequency_df, ids
 
+
 def nr_studies():
     """Get the number of studies in the database."""
     session = Session()
@@ -531,6 +535,66 @@ def nr_studies():
         query = session.query(func.count(Paper.id))
         result = query.first()
         return result[0]
+    finally:
+        session.close()
+
+
+def search_papers(query: str, start_row: int = 0, end_row: int = 50):
+    """Search papers by pubmed id, study id, doi or title (partial match for title/doi).
+    Returns a list of dicts with similar shape to `get_studies_details`.
+    """
+    session = Session()
+    try:
+        q = query.strip()
+
+        query_stmt = session.query(Paper)
+
+        # numeric -> could be pubmed_id or internal id
+        if q.isdigit():
+            # match either id or pubmed_id
+            query_stmt = query_stmt.filter(
+                (Paper.id == int(q)) | (Paper.pubmed_id == q)
+            )
+        else:
+            # treat as doi if contains a slash and a dot (simple heuristic)
+            if '/' in q and '.' in q:
+                query_stmt = query_stmt.filter(Paper.doi.ilike(f"%{q}%"))
+            else:
+                # fallback to title partial match
+                query_stmt = query_stmt.filter(Paper.title.ilike(f"%{q}%"))
+
+        # pagination
+        query_stmt = query_stmt.offset(start_row)
+        if end_row is not None:
+            limit_value = end_row - start_row
+            if limit_value > 0:
+                query_stmt = query_stmt.limit(limit_value)
+
+        query_stmt = query_stmt.options(load_only(
+            Paper.id, Paper.title, Paper.abstract,
+            Paper.key_terms, Paper.doi, Paper.date,
+            Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
+        ))
+
+        studies = query_stmt.all()
+
+        # no tags by default
+        results = [
+            {
+                'id': s.id,
+                'title': s.title,
+                'abstract': s.abstract,
+                'key_terms': s.key_terms,
+                'doi': s.doi,
+                'year': s.date.year if s.date else None,
+                'pubmed_id': s.pubmed_id,
+                'url': s.url,
+                'tags': [],
+            }
+            for s in studies
+        ]
+
+        return results
     finally:
         session.close()
 
@@ -551,28 +615,6 @@ def get_filtered_study_ids(filter: OrderedDict[str, list[str]]) -> list[int]:
     return list(all_ids)
 
 
-def get_ner_tags(id: int) -> list[dict]:
-    """Get the named entity recognition tags for a given paper ID."""
-    session = Session()
-    try:
-        query = session.query(NerTag).filter(NerTag.paper_id == id)
-        results = query.all()
-
-        # sort according to the start id
-        results = sorted(results, key=lambda x: x.start_id)
-
-        tags = []
-        for r in results:
-            tags.append({
-                'tag': r.tag,
-                'start': r.start_id,
-                'end': r.end_id,
-            })
-        return tags
-    finally:
-        session.close()
-
-
 def get_pred_text(id: int) -> str:
     session = Session()
     try:
@@ -583,7 +625,7 @@ def get_pred_text(id: int) -> str:
         session.close()
 
 
-def get_dosages(paper_id: int) -> str:
+def get_dosage_string(paper_id: int) -> str:
     """Get all dosage tags for a given paper ID."""
     session = Session()
     try:
@@ -605,18 +647,22 @@ def get_dosages(paper_id: int) -> str:
         for t in norm_texts:
             dosages += t + ' | '
 
-        dosages = dosages[:-3]
+        dosages = dosages[:-3]  # Remove last ' | '
         return dosages
     finally:
         session.close()
 
 
-def ner_tags_type(paper_id: int, type: str, in_titel=False) -> list[dict]:
+def ner_tags_type(paper_id: int, ner_type: str = None, in_titel=False) -> list[dict]:
     """Get all tags of a specific type for a given paper ID."""
     session = Session()
     try:
-        query = session.query(NerTag).filter(
-            NerTag.paper_id == paper_id, NerTag.tag == type)
+        if ner_type is None:
+            query = session.query(NerTag).filter(
+                NerTag.paper_id == paper_id)
+        else:
+            query = session.query(NerTag).filter(
+                NerTag.paper_id == paper_id, NerTag.tag == ner_type)
         results = query.all()
 
         # get title, abstract and text
@@ -639,36 +685,14 @@ def ner_tags_type(paper_id: int, type: str, in_titel=False) -> list[dict]:
         session.close()
 
 
-def to_mg(value, unit_str):
-    if value is None:
-        return None
-    try:
-        v = float(value)
-    except Exception:
-        return None
+def get_dosage_samples(substances: list[str] = None, dosage_types: list[str] = ['absolute', 'relative_weight']) -> pd.DataFrame:
+    """Return a DataFrame with dosage samples per substance.
 
-    if not unit_str:
-        return v
-
-    u = unit_str.lower()
-    # normalize microgram variants
-    if u in ("µg", "μg", "ug", "microg"):
-        return v / 1000.0
-    if u in ("mg",):
-        return v
-    if u in ("g", "gram", "grams"):
-        return v * 1000.0
-    # fallback: return original value
-    return v
-
-
-def get_absolute_dosage_samples(substances: list[str] = None, relative_weight: bool = True) -> 'pd.DataFrame':
-    """Return a DataFrame with absolute dosage samples per substance.
-
-    When `relative_weight` is True, include `relative_weight` dose types and
-    scale them to a 70 kg person using the `weight_reference` field. The
-    returned DataFrame has columns: `Substance`, `Dosage_mg`, `Unit`,
-    `Study_ID`.
+    The following preprocessing steps are applied:
+    * normalize relative weight dosages to absolute dosages using a reference weight of 70kg 
+    * convert all dosages to mg using the provided unit information
+    * remove duplicates (same substance, dosage, unit, study id, and dose type)
+    * remove entries with substance "Unknown", "Analogue", or "Combination Therapy"
     """
     session = Session()
 
@@ -681,18 +705,15 @@ def get_absolute_dosage_samples(substances: list[str] = None, relative_weight: b
         DosageNormalization.unit,
         DosageNormalization.per_weight_unit,
         DosageNormalization.weight_reference,
-        DosageNormalization.dose_type
+        DosageNormalization.dose_type, DosageNormalization.norm_text
     ).join(Paper, Prediction.paper_id == Paper.id)
     query = query.join(NerTag, NerTag.paper_id == Paper.id)
     query = query.join(DosageNormalization,
                        DosageNormalization.ner_tag_id == NerTag.id)
     query = query.filter(Prediction.task == 'Substances')
 
-    if relative_weight:
-        query = query.filter(DosageNormalization.dose_type.in_(
-            ['absolute', 'relative_weight']))
-    else:
-        query = query.filter(DosageNormalization.dose_type == 'absolute')
+    if dosage_types:
+        query = query.filter(DosageNormalization.dose_type.in_(dosage_types))
 
     if substances:
         query = query.filter(Prediction.label.in_(substances))
@@ -700,20 +721,12 @@ def get_absolute_dosage_samples(substances: list[str] = None, relative_weight: b
     rows = query.all()
 
     samples = []
-    for label, paper_id, minv, maxv, unit, per_weight_unit, weight_reference, dose_type in rows:
+
+    # Normalize relative weight dosages & convert all dosages to mg
+    for label, paper_id, minv, maxv, unit, per_weight_unit, weight_reference, dose_type, norm_text in rows:
         if dose_type and dose_type.startswith('relative'):
-            try:
-                ref = float(weight_reference) if weight_reference else None
-            except Exception:
-                ref = None
-
-            if ref and ref > 0:
-                factor = 70.0 / ref
-            else:
-                factor = 70.0
-
-            min_val = (minv * factor) if minv is not None else None
-            max_val = (maxv * factor) if maxv is not None else None
+            min_val, max_val = normalize_relative_weight_dosages(
+                minv, maxv, weight_reference, per_weight_unit)
         else:
             min_val = minv
             max_val = maxv
@@ -723,13 +736,22 @@ def get_absolute_dosage_samples(substances: list[str] = None, relative_weight: b
 
         if min_mg is not None:
             samples.append({'Substance': label, 'Dosage_mg': min_mg,
-                           'Unit': 'mg', 'Study_ID': paper_id})
+                           'Unit': 'mg', 'Study_ID': paper_id, 'Dose_Type': dose_type, 'Norm_Text': norm_text})
         if max_mg is not None and max_mg != min_mg:
             samples.append({'Substance': label, 'Dosage_mg': max_mg,
-                           'Unit': 'mg', 'Study_ID': paper_id})
+                           'Unit': 'mg', 'Study_ID': paper_id, 'Dose_Type': dose_type, 'Norm_Text': norm_text})
 
     df = pd.DataFrame(samples)
+    # Remove duplicates same paper, dosage and substance
+    df = df.drop_duplicates(
+        subset=['Substance', 'Dosage_mg', 'Unit', 'Study_ID', 'Dose_Type', 'Norm_Text'])
+
+    # Remove "Unknown", "Analogue", "Combination Therapy"
+    df = df[~df['Substance'].isin(
+        ['Unknown', 'Analogue', 'Combination Therapy'])]
+
     return df
+
 
 
 def latest_update():
