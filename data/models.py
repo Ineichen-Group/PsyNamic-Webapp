@@ -124,7 +124,6 @@ class DosageNormalization(Base):
     weight_reference = Column(Float, nullable=True)
     per_time_unit = Column(String(50), nullable=True)
     dose_type = Column(String(50), nullable=False)
-    original_dosage = Column(String(255), nullable=False)
 
     ner_tag = relationship('NerTag', back_populates='dosage_norm')
 
