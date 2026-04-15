@@ -98,15 +98,18 @@ def bar_chart(
 
 
 def box_plot_graph(
-        data: pd.DataFrame,
-        x: str,
-        y: str,
-        title: str,
-        x_label: str,
-        y_label: str,
-        group: str = None,
-        color_mapping: dict[str, str] = None,
-        id: str = None,
+    data: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    x_label: str,
+    y_label: str,
+    group: str = None,
+    color_mapping: dict[str, str] = None,
+    height: int | None = None,
+    width: int | None = None,
+    add_annotation: bool = True,
+    id: str = None,
 ) -> dcc.Graph:
     """
     Creates a translucent box plot with overlaid points.
@@ -118,10 +121,11 @@ def box_plot_graph(
     Returns a Dash `dcc.Graph`.
     """
     # exclude Psychdelic mushrooms Unkown and LSD from the plot
-    data = data[~data[x].isin(['Psychedelic mushrooms', 'Unknown', 'LSD'])]
+    data = data[~data[x].isin(['Psychedelic mushrooms', 'Unknown'])]
 
-    fig = box_plot(data, x, y, title, x_label, y_label, group, color_mapping)
-    add_interaction_annotation(fig)
+    fig = box_plot(data, x, y, title, x_label, y_label, group, color_mapping, height=height, width=width)
+    if add_annotation:
+        add_interaction_annotation(fig)
     config = {
         'displaylogo': False,
     }

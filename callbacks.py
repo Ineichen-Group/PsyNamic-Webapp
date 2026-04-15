@@ -156,20 +156,26 @@ def register_dosage_graph_callbacks(app):
         Output('dosage-study-grid', 'getRowsResponse', allow_duplicate=True),
         Output('filtered-study-ids', 'data', allow_duplicate=True),
         Output('count-filtered', 'children', allow_duplicate=True),
-        Output('dosage-box-plot', 'figure', allow_duplicate=True),
-        Input('dosage-box-plot', 'selectedData'),
-        Input('dosage-box-plot', 'clickData'),
+        Output({'type': 'dosage-box-plot', 'index': ALL}, 'figure', allow_duplicate=True),
+        Input({'type': 'dosage-box-plot', 'index': ALL}, 'selectedData'),
+        Input({'type': 'dosage-box-plot', 'index': ALL}, 'clickData'),
         Input('dosage-reset-btn', 'n_clicks'),
         State('filtered-study-ids', 'data'),
         prevent_initial_call=True,
     )
-    def update_filtered_ids(selectedData, clickData, reset_clicks, current_ids):
+    def update_filtered_ids(selectedDatas, clickDatas, reset_clicks, current_ids):
         ctx = callback_context
-        if not ctx.triggered:
-            return no_update, no_update, no_update, no_update
+        # determine how many dosage graphs are present (length of pattern-matching inputs)
+        try:
+            n_graphs = max(len(selectedDatas) if selectedDatas is not None else 0, len(clickDatas) if clickDatas is not None else 0)
+        except Exception:
+            n_graphs = 1
+        figs_no_update = [no_update] * max(1, n_graphs)
 
+        if not ctx.triggered:
+            return no_update, no_update, no_update, figs_no_update
         triggered = ctx.triggered_id
-        # Reset button pressed -> restore all ids
+
         if triggered == 'dosage-reset-btn':
             ids = get_ids()
             # fetch first page for grid
@@ -183,79 +189,87 @@ def register_dosage_graph_callbacks(app):
             else:
                 substance_labels = sorted(df['Substance'].unique().tolist())
                 col_map = get_color_mapping('Substances', substance_labels)
-                fig = box_plot_graph(
-                    df,
-                    x='Substance',
-                    y='Dosage_mg',
-                    title='Distribution of absolute dosages per substance (mg)',
-                    x_label='Substance',
-                    y_label='Dosage (mg)',
-                    group=None,
-                    color_mapping=col_map,
-                    id='dosage-box-plot',
-                ).figure
 
-            return {"rowData": studies, "rowCount": row_count}, ids, row_count, fig
+                # Rebuild one figure per non-empty group to preserve individual
+                # heights/sizing used in the view (rest=700, ibogaine=200, lsd=200).
+                substances = sorted(df['Substance'].dropna().unique().tolist())
+                lsd_subs = ['LSD']
+                ibogaine_subs = ['Ibogaine']
+                rest_subs = [s for s in substances if s not in lsd_subs + ibogaine_subs]
+                groups = [rest_subs, ibogaine_subs, lsd_subs]
+
+                figs = []
+                for i, subs in enumerate(groups):
+                    sub_df = df[df['Substance'].isin(subs)]
+                    if sub_df.empty:
+                        continue
+                    if subs == ibogaine_subs:
+                        h = 200
+                    elif subs == lsd_subs:
+                        h = 200
+                    else:
+                        h = 700
+
+                    add_ann = False if subs == ibogaine_subs or subs == lsd_subs else True
+                    fig_i = box_plot_graph(
+                        sub_df,
+                        x='Substance',
+                        y='Dosage_mg',
+                        title='',
+                        x_label='Substance',
+                        y_label='Dosage (mg)',
+                        group=None,
+                        color_mapping=col_map,
+                        height=h,
+                        add_annotation=add_ann,
+                        id='dosage-box-plot',
+                    ).figure
+                    figs.append(fig_i)
+
+            # If no groups produced a figure, ensure we return placeholders
+            if not figs:
+                figs = [None] * max(1, n_graphs)
+            return {"rowData": studies, "rowCount": row_count}, ids, row_count, figs
 
         ids_set = set()
 
-        # Selected multiple points (lasso/box)
-        if selectedData and 'points' in selectedData:
-            for pt in selectedData['points']:
+        # Determine which input triggered and extract its payload
+        triggered_payload = ctx.triggered[0].get('value')
+        if triggered_payload and isinstance(triggered_payload, dict) and 'points' in triggered_payload:
+            # selection or click from a specific plot
+            for pt in triggered_payload['points']:
                 custom = pt.get('customdata')
-                if custom:
-                    ids_set.add(custom[0])
+                if custom is None or (hasattr(custom, '__len__') and len(custom) == 0):
+                    continue
 
-        # Single click
-        elif clickData and 'points' in clickData:
-            pt = clickData['points'][0]
-            custom = pt.get('customdata')
-            if custom:
-                ids_set.add(custom[0])
+                # normalize the Study_ID value to a hashable Python scalar
+                cd0 = custom[0] if isinstance(custom, (list, tuple)) else custom
+                # unwrap numpy scalar if present
+                try:
+                    if hasattr(cd0, 'item'):
+                        cd0 = cd0.item()
+                except Exception:
+                    pass
+
+                # fallback to string if still unhashable
+                try:
+                    hash(cd0)
+                    ids_set.add(cd0)
+                except TypeError:
+                    ids_set.add(str(cd0))
 
         if not ids_set:
-            return no_update, no_update, no_update
+            return no_update, no_update, no_update, figs_no_update
 
         ids = list(ids_set)
         studies = get_studies_details_ner(ids=ids, start_row=0, end_row=20)
         row_count = len(ids)
 
-        # rebuild figure and mark selected points
-        df = remove_several_substances_dosages(get_dosage_samples())
-        if df is None or df.empty:
-            fig = None
-        else:
-            substance_labels = sorted(df['Substance'].unique().tolist())
-            col_map = get_color_mapping('Substances', substance_labels)
-            graph_component = box_plot_graph(
-                df,
-                x='Substance',
-                y='Dosage_mg',
-                title='Distribution of absolute dosages per substance (mg)',
-                x_label='Substance',
-                y_label='Dosage (mg)',
-                group=None,
-                color_mapping=col_map,
-                id='dosage-box-plot',
-            )
-            fig = graph_component.figure
-
-            # For each trace, compute selectedpoints where customdata contains selected Study_ID
-            selected_ids = set(ids)
-            for tr in fig.data:
-                custom = getattr(tr, 'customdata', None)
-                if custom is None:
-                    # nothing to select on this trace
-                    continue
-                selected_points = [i for i, cd in enumerate(
-                    custom) if cd and cd[0] in selected_ids]
-                # set selectedpoints to show selection visually
-                tr.selectedpoints = selected_points
-                # Use trace.update to set selected/unselected marker appearance
-                tr.update(selected=dict(marker=dict(opacity=0.95)),
-                          unselected=dict(marker=dict(opacity=0.15)))
-
-        return {"rowData": studies, "rowCount": row_count}, ids, row_count, fig
+        # Do not modify figures on selection — only update the study grid and
+        # filtered ids. Return a list of `no_update` for the wildcard figure
+        # output so the client retains its current visual state (prevents
+        # server-driven figure changes).
+        return {"rowData": studies, "rowCount": row_count}, ids, row_count, figs_no_update
 
 
 def register_pagination_dosages_callbacks(app):
