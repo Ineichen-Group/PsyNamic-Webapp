@@ -1,0 +1,44 @@
+id,task,label,probability,is_multilabel,model
+41876058,Study Type,Systematic review/meta-analysis,0.012105007655918598,False,biolinkbert_study_type_20251005
+41869007,Study Type,Randomized-controlled trial (RCT),0.957962691783905,False,biolinkbert_study_type_20251005
+41876058,Study Purpose,Efficacy endpoints,0.9760061502456665,True,biobert_study_purpose_20250221
+41876058,Study Purpose,Safety endpoints,0.8983358144760132,True,biobert_study_purpose_20250221
+41869007,Study Purpose,Efficacy endpoints,0.9126811027526855,True,biobert_study_purpose_20250221
+41869007,Study Purpose,Safety endpoints,0.9651653170585632,True,biobert_study_purpose_20250221
+41876058,Study Control,Other control,0.24898827075958252,True,pubmedbert_study_control_20250221
+41876058,Study Control,Not applicable,0.40012744069099426,True,pubmedbert_study_control_20250221
+41869007,Study Control,Other control,0.9714776873588562,True,pubmedbert_study_control_20250221
+41876058,Data Type,Not applicable,0.006268499419093132,False,biobert_data_type_20250221
+41869007,Data Type,Longitudinal long,0.008095499128103256,False,biobert_data_type_20250221
+41876058,Data Collection,Not applicable,0.9917992353439331,False,biobert_data_collection_20250221
+41869007,Data Collection,Unknown,0.005034987814724445,False,biobert_data_collection_20250221
+41876058,Number of Participants,Not applicable,0.0014321014750748873,False,biolinkbert_number_of_participants_20250221
+41869007,Number of Participants,21-40,0.0014446565182879567,False,biolinkbert_number_of_participants_20250221
+41876058,Sex of Participants,Not applicable,0.07202573865652084,False,biobert_sex_of_participants_20250221
+41869007,Sex of Participants,Both sexes,0.996491014957428,False,biobert_sex_of_participants_20250221
+41876058,Age of Participants,Adult (≥18 years),0.6418605446815491,True,pubmedbert_age_of_participants_20250221
+41876058,Age of Participants,Not applicable,0.29756665229797363,True,pubmedbert_age_of_participants_20250221
+41869007,Age of Participants,Adult (≥18 years),0.9892768859863281,True,pubmedbert_age_of_participants_20250221
+41876058,Substances,Psilocybin,0.9604440927505493,True,biolinkbert_substances_20250228
+41876058,Substances,Combination Therapy,0.9842793941497803,True,biolinkbert_substances_20250228
+41869007,Substances,Psilocybin,0.9513024687767029,True,biolinkbert_substances_20250228
+41876058,Application Form,Not applicable,0.9051080942153931,True,scibert_application_form_20250221
+41869007,Application Form,Unknown,0.9922783374786377,True,scibert_application_form_20250221
+41876058,Regimen,Unknown,0.5666490793228149,True,pubmedbert_regimen_20250221
+41869007,Regimen,Multiple Applications,0.7186670899391174,True,pubmedbert_regimen_20250221
+41876058,Setting,Not applicable,0.935685932636261,True,pubmedbert_setting_20250221
+41869007,Setting,Clinical,0.9903572201728821,True,pubmedbert_setting_20250221
+41876058,Substance Naivety,Not applicable,0.9385836124420166,True,biomedbert-abstract_substance_naivety_20250221
+41869007,Substance Naivety,Substance-Naïve Participants,0.8060423135757446,True,biomedbert-abstract_substance_naivety_20250221
+41869007,Substance Naivety,Substance-non-naïve participants,0.9479169249534607,True,biomedbert-abstract_substance_naivety_20250221
+41876058,Condition,Psychiatric condition,0.9843626022338867,True,pubmedbert_condition_20250221
+41876058,Condition,Depression,0.9898005127906799,True,pubmedbert_condition_20250221
+41869007,Condition,Healthy Participants,0.9906855225563049,True,pubmedbert_condition_20250221
+41876058,Outcomes,Mental Functions,0.9864621758460999,True,scibert_outcomes_20250221
+41869007,Outcomes,Mental Functions,0.8260680437088013,True,scibert_outcomes_20250221
+41869007,Outcomes,Psychedelic experience,0.6192537546157837,True,scibert_outcomes_20250221
+41869007,Outcomes,Surveys,0.20331674814224243,True,scibert_outcomes_20250221
+41876058,Clinical Trial Phase,Not Applicable,0.9747881889343262,True,clinicalbert_clinical_trial_phase_20250221
+41869007,Clinical Trial Phase,Not Applicable,0.9710068702697754,True,clinicalbert_clinical_trial_phase_20250221
+41876058,Study Conclusion,Positive,0.7162916660308838,False,scibert_study_conclusion_20251005
+41869007,Study Conclusion,Positive,0.7327125072479248,False,scibert_study_conclusion_20251005

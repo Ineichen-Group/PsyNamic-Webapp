@@ -1,0 +1,68 @@
+id,task,label,probability,is_multilabel,model
+41918771,Study Type,Systematic review/meta-analysis,0.007698847446590662,False,biolinkbert_study_type_20251005
+41896202,Study Type,Randomized-controlled trial (RCT),0.9551447033882141,False,biolinkbert_study_type_20251005
+41890932,Study Type,Case report,0.03278375044465065,False,biolinkbert_study_type_20251005
+41918771,Study Purpose,Efficacy endpoints,0.9844713807106018,True,biobert_study_purpose_20250221
+41896202,Study Purpose,Safety endpoints,0.7821696400642395,True,biobert_study_purpose_20250221
+41896202,Study Purpose,Pharmacokinetics,0.9615538120269775,True,biobert_study_purpose_20250221
+41890932,Study Purpose,Efficacy endpoints,0.9019109606742859,True,biobert_study_purpose_20250221
+41890932,Study Purpose,Mechanism of action,0.4795730412006378,True,biobert_study_purpose_20250221
+41918771,Study Control,Not applicable,0.9311193823814392,True,pubmedbert_study_control_20250221
+41896202,Study Control,Placebo,0.9734855890274048,True,pubmedbert_study_control_20250221
+41890932,Study Control,Non-controlled,0.9546443819999695,True,pubmedbert_study_control_20250221
+41918771,Data Type,Not applicable,0.0073385112918913364,False,biobert_data_type_20250221
+41896202,Data Type,Unknown,0.3066706657409668,False,biobert_data_type_20250221
+41890932,Data Type,Unknown,0.023567620664834976,False,biobert_data_type_20250221
+41918771,Data Collection,Not applicable,0.9920904636383057,False,biobert_data_collection_20250221
+41896202,Data Collection,Unknown,0.0002610462252050638,False,biobert_data_collection_20250221
+41890932,Data Collection,Unknown,0.0006706855492666364,False,biobert_data_collection_20250221
+41918771,Number of Participants,200-499,0.0027737324126064777,False,biolinkbert_number_of_participants_20250221
+41896202,Number of Participants,1-20,0.990292489528656,False,biolinkbert_number_of_participants_20250221
+41890932,Number of Participants,1-20,0.9789142608642578,False,biolinkbert_number_of_participants_20250221
+41918771,Sex of Participants,Both sexes,0.9045089483261108,False,biobert_sex_of_participants_20250221
+41896202,Sex of Participants,Both sexes,0.997136116027832,False,biobert_sex_of_participants_20250221
+41890932,Sex of Participants,Unknown,0.014501340687274933,False,biobert_sex_of_participants_20250221
+41918771,Age of Participants,Adult (≥18 years),0.13282856345176697,True,pubmedbert_age_of_participants_20250221
+41918771,Age of Participants,Not applicable,0.8855390548706055,True,pubmedbert_age_of_participants_20250221
+41896202,Age of Participants,Adult (≥18 years),0.9894281029701233,True,pubmedbert_age_of_participants_20250221
+41890932,Age of Participants,Adult (≥18 years),0.9782723188400269,True,pubmedbert_age_of_participants_20250221
+41918771,Substances,Unknown,0.9190469980239868,True,biolinkbert_substances_20250228
+41896202,Substances,DMT,0.9019901156425476,True,biolinkbert_substances_20250228
+41890932,Substances,MDMA,0.9886481165885925,True,biolinkbert_substances_20250228
+41890932,Substances,Combination Therapy,0.9379106163978577,True,biolinkbert_substances_20250228
+41918771,Application Form,Not applicable,0.9585944414138794,True,scibert_application_form_20250221
+41896202,Application Form,Intravenous,0.9833005666732788,True,scibert_application_form_20250221
+41890932,Application Form,Unknown,0.9889290928840637,True,scibert_application_form_20250221
+41918771,Regimen,Unknown,0.9419644474983215,True,pubmedbert_regimen_20250221
+41896202,Regimen,Multiple Applications,0.7092800736427307,True,pubmedbert_regimen_20250221
+41896202,Regimen,Single Dose,0.6952758431434631,True,pubmedbert_regimen_20250221
+41890932,Regimen,Unknown,0.843365490436554,True,pubmedbert_regimen_20250221
+41918771,Setting,Not applicable,0.9648358225822449,True,pubmedbert_setting_20250221
+41896202,Setting,Clinical,0.9908808469772339,True,pubmedbert_setting_20250221
+41890932,Setting,Naturalistic,0.17696866393089294,True,pubmedbert_setting_20250221
+41890932,Setting,Unknown,0.2550336420536041,True,pubmedbert_setting_20250221
+41890932,Setting,Not applicable,0.14056268334388733,True,pubmedbert_setting_20250221
+41918771,Substance Naivety,Not applicable,0.9395375847816467,True,biomedbert-abstract_substance_naivety_20250221
+41896202,Substance Naivety,Unknown,0.9809653162956238,True,biomedbert-abstract_substance_naivety_20250221
+41890932,Substance Naivety,Unknown,0.9708827137947083,True,biomedbert-abstract_substance_naivety_20250221
+41918771,Condition,Psychiatric condition,0.9756616353988647,True,pubmedbert_condition_20250221
+41918771,Condition,Depression,0.9541401863098145,True,pubmedbert_condition_20250221
+41918771,Condition,Anxiety,0.873416006565094,True,pubmedbert_condition_20250221
+41918771,Condition,Palliative Setting,0.6340020298957825,True,pubmedbert_condition_20250221
+41896202,Condition,Healthy Participants,0.9875493049621582,True,pubmedbert_condition_20250221
+41890932,Condition,Psychiatric condition,0.9721533060073853,True,pubmedbert_condition_20250221
+41918771,Outcomes,Mental Functions,0.7381951808929443,True,scibert_outcomes_20250221
+41918771,Outcomes,Psychedelic experience,0.9465368390083313,True,scibert_outcomes_20250221
+41896202,Outcomes,Physiological Functions,0.840134859085083,True,scibert_outcomes_20250221
+41896202,Outcomes,Mental Functions,0.9894826412200928,True,scibert_outcomes_20250221
+41896202,Outcomes,Psychedelic experience,0.4122790992259979,True,scibert_outcomes_20250221
+41896202,Outcomes,Soluble biomarker,0.8776605725288391,True,scibert_outcomes_20250221
+41890932,Outcomes,Mental Functions,0.8719397783279419,True,scibert_outcomes_20250221
+41890932,Outcomes,Psychedelic experience,0.3823143243789673,True,scibert_outcomes_20250221
+41890932,Outcomes,Interviews,0.25041913986206055,True,scibert_outcomes_20250221
+41918771,Clinical Trial Phase,Not Applicable,0.9720564484596252,True,clinicalbert_clinical_trial_phase_20250221
+41896202,Clinical Trial Phase,Unknown,0.8266609907150269,True,clinicalbert_clinical_trial_phase_20250221
+41890932,Clinical Trial Phase,Not Applicable,0.9704360961914062,True,clinicalbert_clinical_trial_phase_20250221
+41918771,Study Conclusion,Not Applicable,0.04013120010495186,False,scibert_study_conclusion_20251005
+41896202,Study Conclusion,Not Applicable,0.28963354229927063,False,scibert_study_conclusion_20251005
+41890932,Study Conclusion,Not Applicable,0.03849178925156593,False,scibert_study_conclusion_20251005
