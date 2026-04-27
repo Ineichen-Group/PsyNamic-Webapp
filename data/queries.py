@@ -5,7 +5,6 @@ This module contains database query functions for the PsyNamic-Webapp.
 from .models import Paper, Prediction, NerTag, DosageNormalization, BatchRetrieval
 from .dosage_norm import to_mg, normalize_relative_weight_dosages
 from datetime import datetime
-from collections import defaultdict
 
 import sys
 import os
