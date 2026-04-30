@@ -35,6 +35,7 @@ class Paper(Base):
     key_terms = Column(Text, nullable=True)
     doi = Column(String(100), nullable=True)
     date = Column(TIMESTAMP, nullable=True)
+    entrez_year = Column(Integer, nullable=True)
     authors = Column(String(255), nullable=False)
     link_to_fulltext = Column(String(255), nullable=True)
     link_to_pubmed = Column(String(255), nullable=True)

@@ -76,6 +76,7 @@ def create_paper(
         key_terms: str,
         doi: str, 
         date: int,
+        entrez_year: Optional[int],
         authors: str,
         link_to_fulltext: str,
         link_to_pubmed: str,
@@ -104,6 +105,7 @@ def create_paper(
         key_terms=key_terms if key_terms else None,
         doi=doi if doi else None,
         date=date if date else None,
+        entrez_year=entrez_year if entrez_year else None,
         authors=authors,
         link_to_fulltext=link_to_fulltext if link_to_fulltext else None,
         other_url=url if url else None,
@@ -286,7 +288,6 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
         else:
             logging.warning(f"No valid date found for paper: {row[studies_id_column]}")
             date = None
-
         paper = create_paper(
             ID=int(paper_id),
             pubmed_id=row['pubmed_id'],
@@ -296,6 +297,7 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             key_terms=row['keywords'],
             doi=row['doi'],
             date=date,
+            entrez_year=int(row['entrez_year']) if 'entrez_year' in row and pd.notna(row['entrez_year']) else None,
             authors='',
             link_to_fulltext='',
             link_to_pubmed=row['pubmed_url'],
@@ -696,6 +698,8 @@ def init_args_parser():
                             help='Path to the predictions file', required=False)
     arg_parser.add_argument('-s', '--studies_file', type=str,
                             help='Path to the studies file', required=False)
+    ## add an --all flag
+    arg_parser.add_argument('--all', action='store_true')
     arg_parser.add_argument('--studies_id_column', type=str, default='id',)
     arg_parser.add_argument('-l', '--log-file', type=str, default=None,
                             help='Optional path to logfile. If not provided, logs go to terminal.')
@@ -727,7 +731,7 @@ if __name__ == '__main__':
             force=True
         )
 
-    if not args.predictions_file and not args.studies_file:
+    if not args.predictions_file and not args.studies_file and not args.all:
         # get the latest file in the directory
         latest = max(
             [f for f in os.listdir(STUDIES_DIR) if f.endswith('.csv')],
@@ -760,6 +764,24 @@ if __name__ == '__main__':
         else:
             logging.warning(
                 f"No NER predictions file found for date {date_str}")
+    elif args.all:
+        logging.info(
+            f"Using all files in {STUDIES_DIR} and {PREDICTIONS_DIR} for population.")
+        for file in os.listdir(STUDIES_DIR):
+            if file.endswith('.csv'):
+                logging.info(f"Processing studies file: {file}")
+                populate_db(prediction_file=None, studies_file=os.path.join(STUDIES_DIR, file), studies_id_column=args.studies_id_column)
+
+        for file in os.listdir(PREDICTIONS_DIR):
+            if file.endswith('.csv') or file.endswith('.jsonl'):
+                logging.info(f"Processing predictions file: {file}")
+                if 'ner' in file:
+                    if 'predictions' in file:
+                        populate_db(prediction_file=os.path.join(PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
+                    else:
+                        populate_db(prediction_file=os.path.join(PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
+                else:
+                    populate_db(prediction_file=os.path.join(PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
 
     else:
         logging.info(
