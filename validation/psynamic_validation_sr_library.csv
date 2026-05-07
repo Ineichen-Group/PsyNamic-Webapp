@@ -1,31 +1,802 @@
-﻿SR;Authors;Year;Included;Total Nr;Title;Comment;Journal
-1;"A. Bahji; C. A. Zarate; G. H. Vazquez";2021;6;6;Ketamine for Bipolar Depression: A Systematic Review;;Int J Neuropsychopharmacol
-2;"J. J. Breeksema; B. W. Kuin; J. Kamphuis; W. van den Brink; E. Vermetten; R. A. Schoevers";2022;45;45;Adverse events in clinical treatments with serotonergic psychedelics and MDMA: A mixed-methods systematic review;;J Psychopharmacol
-3;"J. Calleja-Conde; J. A. Morales-García; V. Echeverry-Alzate; K. M. Bühler; E. Giné; J. A. López-Moreno";2022;20;27;Classic psychedelics and alcohol use disorders: A systematic review of human and animal studies;;Addict Biol
-4;"E. Capuzzi; A. Caldiroli; M. Capellazzi; I. Tagliabue; M. Marcatili; F. Colmegna; M. Clerici; M. Buoli; A. Dakanalis";2021;7;7;Long-Term Efficacy of Intranasal Esketamine in Treatment-Resistant Major Depression: A Systematic Review;;Int J Mol Sci
-5;"V. B. Cavenaghi; L. P. da Costa; A. L. T. Lacerda; E. S. Hirata; E. C. Miguel; R. Fraguas";2021;11;12;Subcutaneous Ketamine in Depression: A Systematic Review;;Front Psychiatry
-6;"A. A. Conley; A. E. Q. Norwood; T. C. Hatvany; J. D. Griffith; K. E. Barber";2021;46;46;Efficacy of ketamine for major depressive episodes at 2, 4, and 6-weeks post-treatment: A meta-analysis;they only indicated 41 but i found 45...;Psychopharmacology (Berl)
-7;"C. M. H. de Vos; N. L. Mason; K. P. C. Kuypers";2021;4;20;Psychedelics and Neuroplasticity: A Systematic Review Unraveling the Biological Underpinnings of Psychedelics;;Front Psychiatry
-8;"R. Du; R. Han; K. Niu; J. Xu; Z. Zhao; G. Lu; Y. Shang";2022;10;10;The Multivariate Effect of Ketamine on PTSD: Systematic Review and Meta-Analysis;;Front Psychiatry
-9;"C. L. Felsch; K. P. C. Kuypers";2022;30;30;Don't be afraid, try to meditate- potential effects on neural activity and connectivity of psilocybin-assisted mindfulness-based intervention for social anxiety disorder: A systematic review;;Neurosci Biobehav Rev
-10;"N. L. Galvão-Coelho; W. Marx; M. Gonzalez; J. Sinclair; M. de Manincor; D. Perkins; J. Sarris";2021;12;12;Classic serotonergic psychedelics for mood and depressive symptoms: a meta-analysis of mood disorder patients and healthy participants;;Psychopharmacology (Berl)
-11;"A. Hochschild; M. F. Grunebaum; J. J. Mann";2021;12;12;The rapid anti-suicidal ideation effect of ketamine: A systematic review;;Prev Med
-12;"B. J. Illingworth; D. J. Lewis; A. T. Lambarth; K. Stocking; J. M. Duffy; L. A. Jelen; J. J. Rucker";2021;4;4;A comparison of MDMA-assisted psychotherapy to non-assisted psychotherapy in treatment-resistant PTSD: A systematic review and meta-analysis;;J Psychopharmacol
-13;"B. Joseph; A. K. Parsaik; A. T. Ahmed; P. J. Erwin; B. Singh";2021;5;5;A Systematic Review on the Efficacy of Intravenous Racemic Ketamine for Bipolar Depression;;J Clin Psychopharmacol
-14;"S. Kisely; M. Connor; A. A. Somogyi; D. Siskind";2023;14;14;A systematic literature review and meta-analysis of the effect of psilocybin and methylenedioxymethamphetamine on mental, behavioural or developmental disorders;;Aust N Z J Psychiatry
-15;"K. Ko; G. Knight; J. J. Rucker; A. J. Cleare";2022;12;12;Psychedelics, Mystical Experience, and Therapeutic Efficacy: A Systematic Review;;Front Psychiatry
-16;"P. Köck; K. Froelich; M. Walter; U. Lang; K. M. Dürsteler";2022;24;24;A systematic literature review of clinical trials and therapeutic applications of ibogaine;;J Subst Abuse Treat
-17;"R. F. Leger; E. M. Unterwald";2022;9;9;Assessing the effects of methodological differences on outcomes in the use of psychedelics in the treatment of anxiety and depressive disorders: A systematic review and meta-analysis;;J Psychopharmacol
-18;"H. Li; Y. Zhong; S. Yang; J. Wang; X. Li; J. Xu; H. Gao; G. Chen";2022;5;5;The potential role of lysergic acid diethylamide for psychological assisted therapy: A meta-analysis of randomised controlled trials in healthy volunteers;;Hum Psychopharmacol
-19;"N. X. Li; Y. R. Hu; W. N. Chen; B. Zhang";2022;5;5;Dose effect of psilocybin on primary and secondary depression: a preliminary systematic review and meta-analysis;;J Affect Disord
-20;"G. Ona; J. M. Rocha; J. C. Bouso; J. E. C. Hallak; T. Borràs; M. T. Colomina; R. G. Dos Santos";2022;18;18;The adverse events of ibogaine in humans: an updated systematic review of the literature (2015-2020);;Psychopharmacology (Berl)
-21;"D. Psiuk; E. M. Nowak; N. Dycha; U. Łopuszańska; J. Kurzepa; M. Samardakiewicz";2022;12;12;Esketamine and Psilocybin-The Comparison of Two Mind-Altering Agents in Depression Treatment: Systematic Review;;Int J Mol Sci
-22;"A. Regan; S. Margolis; H. de Wit; S. Lyubomirsky";2021;32;32;Does ±3,4-methylenedioxymethamphetamine (ecstasy) induce subjective feelings of social connection in humans? A multilevel meta-analysis;;PLoS One
-23;"L. S. Rodrigues; G. N. Rossi; J. M. Rocha; L. O. F; J. C. Bouso; J. E. C. Hallak; R. G. Dos Santos";2022;4;4;Effects of ayahuasca and its alkaloids on substance use disorders: an updated (2016-2020) systematic review of preclinical and human studies;;Eur Arch Psychiatry Clin Neurosci
-24;"B. Romeo; M. Hermand; A. Pétillion; L. Karila; A. Benyamina";2021;19;19;Clinical and biological predictors of psychedelic response in the treatment of psychiatric and addictive disorders: A systematic review;;J Psychiatr Res
-25;"J. D. Rosenblat; M. I. Husain; Y. Lee; R. S. McIntyre; R. B. Mansur; D. Castle; H. Offman; S. V. Parikh; B. N. Frey; A. Schaffer; K. T. Greenway; N. Garel; S. Beaulieu; S. H. Kennedy; R. W. Lam; R. Milev; A. V. Ravindran; V. Tourjman; M. V. Ameringen; L. N. Yatham; V. Taylor";2023;8;8;The Canadian Network for Mood and Anxiety Treatments (CANMAT) Task Force Report: Serotonergic Psychedelic Treatments for Major Depressive Disorder;Studies are difficult to find (match author name and year to sources), and Grobb et al. (2011) doesn't even exist in the sources, searched for it on pubmed directly and found something, not sure if it's the right one;Can J Psychiatry
-26;"N. Schimmers; J. J. Breeksema; S. Y. Smith-Apeldoorn; J. Veraart; W. van den Brink; R. A. Schoevers";2022;18;33;Psychedelics for the treatment of depression, anxiety, and existential distress in patients with a terminal illness: a systematic review;33 Studies included but only 18 listed;Psychopharmacology (Berl)
-27;"K. W. Smith; D. J. Sicignano; A. V. Hernandez; C. M. White";2022;8;9;MDMA-Assisted Psychotherapy for Treatment of Posttraumatic Stress Disorder: A Systematic Review With Meta-Analysis;it's explicitly mentioned that 9 studies were included, however, only 8 of them were cited (maybe because one study was retracted afterwards?);J Clin Pharmacol
-28;"B. Souza-Marques; C. Santos-Lima; L. Araújo-de-Freitas; F. Vieira; A. P. Jesus-Nunes; L. C. Quarantini; A. S. Sampaio";2021;14;14;Neurocognitive Effects of Ketamine and Esketamine for Treatment-Resistant Major Depressive Disorder: A Systematic Review;;Harv Rev Psychiatry
-29;"J. van Amsterdam; W. van den Brink";2022;11;15;The therapeutic potential of psilocybin: a systematic review;studies are extremely difficult to extract, some studies are referenced but not mentioned in the sources... some studies are missing (I only found 11/15);Expert Opin Drug Saf
-30;"T. Varker; L. Watson; K. Gibson; D. Forbes; M. L. O'Donnell";2021;10;10;Efficacy of Psychoactive Drugs for the Treatment of Posttraumatic Stress Disorder: A Systematic Review of MDMA, Ketamine, LSD and Psilocybin;;J Psychoactive Drugs
+﻿SR;Authors;Year;Included;Total Nr;Title;Comment;Journal;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+1;"A. Bahji; C. A. Zarate; G. H. Vazquez";2021;6;6;Ketamine for Bipolar Depression: A Systematic Review;;Int J Neuropsychopharmacol;;;24;;7;535-541;;;;;Jul 23;;;Ketamine for Bipolar Depression: A Systematic Review;;"1461-1457 (Print)
+1461-1457";10.1093/ijnp/pyab023;;;;;PMC8299822;;;;;;;33929489;;;"Bipolar Disorder/*drug therapy
+Excitatory Amino Acid Antagonists/administration & dosage/*pharmacology
+Humans
+Ketamine/administration & dosage/*pharmacology
+Bipolar disorder
+depression
+ketamine
+systematic review";"BACKGROUND: Ketamine appears to have a therapeutic role in certain mental disorders, most notably unipolar major depressive disorder. However, its efficacy in bipolar depression is less clear. This study aimed to assess the efficacy and tolerability of ketamine for bipolar depression. METHODS: We conducted a systematic review of experimental studies using ketamine for the treatment of bipolar depression. We searched PubMed, MEDLINE, Embase, PsycINFO, and the Cochrane Central Register for relevant studies published since each database's inception. We synthesized evidence regarding efficacy (improvement in depression rating scores) and tolerability (adverse events, dissociation, dropouts) across studies. RESULTS: We identified 6 studies, with 135 participants (53% female; 44.7 years; standard deviation, 11.7 years). All studies used 0.5 mg/kg of add-on intravenous racemic ketamine, with the number of doses ranging from 1 to 6; all participants continued a mood-stabilizing agent. The overall proportion achieving a response (defined as those having a reduction in their baseline depression severity of at least 50%) was 61% for those receiving ketamine and 5% for those receiving a placebo. The overall response rates varied from 52% to 80% across studies. Ketamine was reasonably well tolerated; however, 2 participants (1 receiving ketamine and 1 receiving placebo) developed manic symptoms. Some participants developed significant dissociative symptoms at the 40-minute mark following ketamine infusion in 2 trials. CONCLUSIONS: There is some preliminary evidence supporting use of intravenous racemic ketamine to treat adults with bipolar depression. There is a need for additional studies exploring longer-term outcomes and alterative formulations of ketamine.";"1469-5111
+Bahji, Anees
+Orcid: 0000-0002-3490-314x
+Zarate, Carlos A
+Vazquez, Gustavo H
+Journal Article
+Research Support, Non-U.S. Gov't
+Systematic Review
+England
+2021/05/01
+Int J Neuropsychopharmacol. 2021 Jul 23;24(7):535-541. doi: 10.1093/ijnp/pyab023.";;;;"Department of Psychiatry, University of Calgary, Calgary, Alberta, Canada; British Columbia Centre for Substance Use, Vancouver, British Columbia, Canada; Research in Addiction Medicine Scholars [RAMS] Program, Boston University Medical Centre, Boston, MA, USA.
+Section Neurobiology and Treatment of Mood Disorders, Division of Intramural Research Program, National Institute of Mental Health, Bethesda, Maryland, USA.
+Department of Psychiatry, Queen's University, Kingston, Ontario, Canada.";;;;;;;NLM;eng
+2;"J. J. Breeksema; B. W. Kuin; J. Kamphuis; W. van den Brink; E. Vermetten; R. A. Schoevers";2022;45;45;Adverse events in clinical treatments with serotonergic psychedelics and MDMA: A mixed-methods systematic review;;J Psychopharmacol;;;36;;10;1100-1117;;;;20220826;Oct;;;Adverse events in clinical treatments with serotonergic psychedelics and MDMA: A mixed-methods systematic review;;"0269-8811 (Print)
+0269-8811";10.1177/02698811221116926;;;;The authors declared the following potential conflicts of interest with respect to the research, authorship, and/or publication of this article: RS received a research grant from the Netherlands Organization Health Research and Development for a clinical study on oral esketamine, and is the co-investigator of a clinical study on psilocybin funded by Compass Pathways. He has also received an educational grant from Janssen, Pharmaceutical Companies of Johnson and Johnson, and honorarium from Clexio Biosciences. EV is the principal investigator of a clinical trial on MDMA funded by the Multidisciplinary Association for Psychedelic Studies. WvdB has been a consultant for Janssen Netherlands and is a member of the Scientific Advisory Board of Clearmind. JJB, BK and JK declare no conflicts of interest.;PMC9548934;;;;;;;36017784;;;"*Banisteriopsis
+*Hallucinogens
+Headache/chemically induced
+Humans
+Lysergic Acid Diethylamide
+*N-Methyl-3,4-methylenedioxyamphetamine/adverse effects
+Psilocybin/therapeutic use
+Lsd
+Mdma
+Psychedelics
+adverse effects
+adverse events
+ayahuasca
+psilocybin";"INTRODUCTION: Small-scale clinical studies with psychedelic drugs have shown promising results for the treatment of several mental disorders. Before psychedelics become registered medicines, it is important to know the full range of adverse events (AEs) for making balanced treatment decisions. OBJECTIVE: To systematically review the presence of AEs during and after administration of serotonergic psychedelics and 3,4-methyenedioxymethamphetamine (MDMA) in clinical studies. METHODS: We systematically searched PubMed, PsycINFO, Embase, and ClinicalTrials.gov for clinical trials with psychedelics since 2000 describing the results of quantitative and qualitative studies. RESULTS: We included 44 articles (34 quantitative + 10 qualitative), describing treatments with MDMA and serotonergic psychedelics (psilocybin, lysergic acid diethylamide, and ayahuasca) in 598 unique patients. In many studies, AEs were not systematically assessed. Despite this limitation, treatments seemed to be overall well tolerated. Nausea, headaches, and anxiety were commonly reported acute AEs across diagnoses and compounds. Late AEs included headaches (psilocybin, MDMA), fatigue, low mood, and anxiety (MDMA). One serious AE occurred during MDMA administration (increase in premature ventricular contractions requiring brief hospitalization); no other AEs required medical intervention. Qualitative studies suggested that psychologically challenging experiences may also be therapeutically beneficial. Except for ayahuasca, a large proportion of patients had prior experience with psychedelic drugs before entering studies. CONCLUSIONS: AEs are poorly defined in the context of psychedelic treatments and are probably underreported in the literature due to study design (lack of systematic assessment of AEs) and sample selection. Acute challenging experiences may be therapeutically meaningful, but a better understanding of AEs in the context of psychedelic treatments requires systematic and detailed reporting.";"1461-7285
+Breeksema, Joost J
+Orcid: 0000-0002-8787-4610
+Kuin, Bouwe W
+Kamphuis, Jeanine
+van den Brink, Wim
+Vermetten, Eric
+Orcid: 0000-0003-0579-4404
+Schoevers, Robert A
+Journal Article
+Systematic Review
+United States
+2022/08/27
+J Psychopharmacol. 2022 Oct;36(10):1100-1117. doi: 10.1177/02698811221116926. Epub 2022 Aug 26.";;;;"Department of Psychiatry, University of Groningen, University Medical Center Groningen, Groningen, The Netherlands.
+Department of Psychiatry, Leiden University Medical Center, Leiden, The Netherlands.
+OPEN Foundation, Amsterdam, The Netherlands.
+Department of Psychiatry, Amsterdam University Medical Center, Amsterdam, The Netherlands.";;;;;;;NLM;eng
+3;"J. Calleja-Conde; J. A. Morales-García; V. Echeverry-Alzate; K. M. Bühler; E. Giné; J. A. López-Moreno";2022;20;27;Classic psychedelics and alcohol use disorders: A systematic review of human and animal studies;;Addict Biol;;;27;;6;e13229;;;;;Nov;;;Classic psychedelics and alcohol use disorders: A systematic review of human and animal studies;;"1355-6215 (Print)
+1355-6215";10.1111/adb.13229;;;;The authors declare no conflict of interests.;PMC9541961;;;;;;;36301215;;;"Animals
+Humans
+*Hallucinogens/pharmacology/therapeutic use
+Psilocybin/pharmacology/therapeutic use
+*Alcoholism/drug therapy
+Lysergic Acid Diethylamide/pharmacology/therapeutic use
+Mescaline
+Lsd
+alcohol
+ayahuasca
+classic psychedelics
+psilocybin";Classic psychedelics refer to substances such as lysergic acid diethylamide (LSD), psilocybin, ayahuasca, and mescaline, which induce altered states of consciousness by acting mainly on 5-HT(2A) receptors. Recently, the interest of psychedelics as pharmacological treatment for psychiatric disorders has increased significantly, including their use on problematic use of alcohol. This systematic review is aimed to analyse the last two decades of studies examining the relationship between classic psychedelics and alcohol consumption. We searched PubMed and PsycInfo for human and preclinical studies published between January 2000 to December 2021. The search identified 639 publications. After selection, 27 studies were included. Human studies (n = 20) generally show promising data and seem to indicate that classic psychedelics could help reduce alcohol consumption. Nevertheless, some of these studies present methodological concerns such as low number of participants, lack of control group or difficulty in determining the effect of classic psychedelics in isolation. On the other hand, preclinical studies (n = 7) investigating the effect of these compounds on voluntary alcohol consumption are scarce and show some conflicting data. Among these compounds, psilocybin seems to show the most consistent data indicating that this compound could be a potential candidate to treat alcohol use disorders. In the absence of understanding the biological and/or psychological mechanisms, more studies including methodological quality parameters are needed to finally determine the effects of classic psychedelics on alcohol consumption.;"1369-1600
+Calleja-Conde, Javier
+Orcid: 0000-0003-0573-3863
+Morales-García, Jose Angel
+Orcid: 0000-0001-9008-0056
+Echeverry-Alzate, Víctor
+Bühler, Kora Mareen
+Giné, Elena
+López-Moreno, Jose Antonio
+Orcid: 0000-0001-6668-6568
+Journal Article
+Research Support, Non-U.S. Gov't
+Systematic Review
+United States
+2022/10/28
+Addict Biol. 2022 Nov;27(6):e13229. doi: 10.1111/adb.13229.";;;;"Cardenal Cisneros Higher Education Center, Madrid, Spain.
+Department of Cell Biology, Faculty of Medicine, Complutense University of Madrid, Madrid, Spain.
+School of Life and Nature Sciences, Nebrija University, Madrid, Spain.
+Department of Psychobiology and Methodology in Behavioral Sciences, Faculty of Psychology, Somosaguas Campus, Complutense University of Madrid, Madrid, Spain.";;;;;;;NLM;eng
+4;"E. Capuzzi; A. Caldiroli; M. Capellazzi; I. Tagliabue; M. Marcatili; F. Colmegna; M. Clerici; M. Buoli; A. Dakanalis";2021;7;7;Long-Term Efficacy of Intranasal Esketamine in Treatment-Resistant Major Depression: A Systematic Review;;Int J Mol Sci;;;22;;17;;;;;20210828;Aug 28;;;Long-Term Efficacy of Intranasal Esketamine in Treatment-Resistant Major Depression: A Systematic Review;;1422-0067;10.3390/ijms22179338;;;;"M.M. served as speaker for Janssen. All other authors declare they have no conflict of interest. The funders had no role in the design of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript, or in the decision to publish the results.";PMC8430977;;;;;;;34502248;;;"Administration, Intranasal
+Antidepressive Agents/administration & dosage/*pharmacology
+Major Depressive Disorder/*drug therapy
+Depressive Disorder, Treatment-Resistant/*drug therapy/pathology
+Humans
+Ketamine/administration & dosage/*pharmacology
+Secondary Prevention
+clinical trials
+continuation
+esketamine
+systematic review
+treatment-resistant depression";Esketamine (ESK) has been approved as a rapid-acting intranasal treatment for treatment-resistant depression (TRD). Although existing studies have investigated the efficacy of ESK in the 4-week induction phase, our knowledge about long-term ESK efficacy remains poor. The aim of this systematic review was to summarize the available data on long-term ESK efficacy for TRD. A systematic search was performed including articles in English, up to 31 March 2021. The search found 7 relevant studies, involving 1024 adult TRD patients. Continuing treatment with ESK after the 4-week induction phase may be associated with stable efficacy in relapse prevention among TRD patients. Conversely, the long-term antidepressant effectiveness upon discontinuation of ESK might be limited, although data from three studies had a moderate to high risk of bias. Overall, the results on the effectiveness of this compound in the long term are mixed. According to our findings, ESK treatment should be continued following the induction phase to reach a stable efficacy in relapse prevention, while the long-term antidepressant and anti-suicidal effects of ESK after discontinuation are inconsistent. Currently, the level of proof of ESK efficacy in long-term TRD treatment remains low and more RCTs with larger sample sizes and active comparators are needed.;"1422-0067
+Capuzzi, Enrico
+Orcid: 0000-0001-8350-499x
+Caldiroli, Alice
+Orcid: 0000-0002-8493-0779
+Capellazzi, Martina
+Tagliabue, Ilaria
+Marcatili, Matteo
+Orcid: 0000-0002-1436-1961
+Colmegna, Fabrizia
+Clerici, Massimo
+Buoli, Massimiliano
+Orcid: 0000-0003-3359-3191
+Dakanalis, Antonios
+Orcid: 0000-0002-2328-3862
+2019-3396/Fondazione Cariplo/
+Journal Article
+Systematic Review
+Switzerland
+2021/09/11
+Int J Mol Sci. 2021 Aug 28;22(17):9338. doi: 10.3390/ijms22179338.";;;;"Psychiatric Department, Azienda Socio Sanitaria Territoriale Monza, via G.B. Pergolesi 33, 20900 Monza, Italy.
+Department of Medicine and Surgery, University of Milano Bicocca, via Cadore 38, 20900 Monza, Italy.
+Department of Pathophysiology and Transplantation, University of Milan, via Festa del Perdono 7, 20122 Milan, Italy.
+Department of Neurosciences and Mental Health, Fondazione IRCCS Ca' Granda Ospedale Maggiore Policlinico, via F. Sforza 35, 20122 Milan, Italy.";;;;;;;NLM;eng
+5;"V. B. Cavenaghi; L. P. da Costa; A. L. T. Lacerda; E. S. Hirata; E. C. Miguel; R. Fraguas";2021;11;12;Subcutaneous Ketamine in Depression: A Systematic Review;;Front Psychiatry;;;12;;;513068;;;;20210528;;;;Subcutaneous Ketamine in Depression: A Systematic Review;;"1664-0640 (Print)
+1664-0640";10.3389/fpsyt.2021.513068;;;;AL has received consulting fees from Hoffmann–La Roche, Genentech, Janssen Pharmaceutical, Daiichi Sankyo, Cristalia Produtos Químicos e Farmacêuticos, Pfizer, Mantecorp Indústria Química e Farmacêutica, Libbs Farmacêutica, FQM Farma, and Sanofi-Aventis over the last 24 months and has received research fees from Janssen Pharmaceutical, Eli Lilly, Novartis, Biophytis, Celltrion, Azidus, H. Lundbeck A/S, Servier Laboratories, Hoffman-La Roche, FQM Farma, and Forum Pharmaceuticals. The remaining authors declare that the research was conducted in the absence of any commercial or financial relationships that could be construed as a potential conflict of interest.;PMC8193034;;;;;;;34122156;;;"antidepressant
+depression
+glutamate
+ketamine
+subcutaneous";Background: Ketamine has been shown to produce a rapid and robust antidepressant effect. Though numerous routes of administration have been studied, subcutaneous (SC) has proven to be a convenient and cost-effective route making its use particularly relevant in developing countries. Here we provide a systematic review covering the use of SC racemic ketamine and esketamine in depression, including its efficacy, safety and tolerability. Methods: A systematic literature search was carried out, from inception through March, 2021, using PubMed/MEDLINE, EMBASE and Web of Science, with no limits of language. After identifying 159 potentially relevant articles, 12 articles were selected after applying our inclusion/exclusion criteria. These comprised two randomized clinical trials, five case-reports and five retrospective studies. Given the small number of studies found and their heterogeneous nature, a meta-analysis was not considered appropriate. Here we provide a synthesis of these data including participant characteristics, dose range, efficacy, safety/ tolerability. Risk of bias was accessed using the Cochrane risk of bias tool. Results: SC Ketamine was administered to unipolar and bipolar patients a single or multiple doses, weekly or twice-weekly, a dose-titration approach was made in major studies, dose ranged from 0.1 to 0.5 mg/Kg of racemic ketamine and 0.5-1 mg/Kg of esketamine. Across all studies, SC ketamine showed a rapid and robust antidepressant effect, with response/ remission rates from 50 to 100% following both single or multiple doses, with transitory side effects. Conclusion: SC racemic ketamine and esketamine in depression is a promising strategy showing beneficial efficacy and tolerability. Future studies exploring the SC route, its cost-effectiveness, and a direct comparison with IV and intranasal (IN) protocols are warranted. Systematic Review Registration: CRD42019137434.;"1664-0640
+Cavenaghi, Vitor Breseghello
+da Costa, Leandro Paulino
+Lacerda, Acioly Luiz Tavares
+Hirata, Edson Shiguemi
+Miguel, Eurípedes Constantino
+Fraguas, Renério
+Journal Article
+Systematic Review
+Switzerland
+2021/06/15
+Front Psychiatry. 2021 May 28;12:513068. doi: 10.3389/fpsyt.2021.513068. eCollection 2021.";;;;"Department and Institute of Psychiatry, University of São Paulo Medical School, São Paulo, Brazil.
+Programa de Transtornos Afetivos, Laboratório Interdisciplinar de Neurociências Clínicas, Department of Psychiatry, Federal University of São Paulo, São Paulo, Brazil.
+University Hospital, University of São Paulo, São Paulo, Brazil.";;;;;;;NLM;eng
+6;"A. A. Conley; A. E. Q. Norwood; T. C. Hatvany; J. D. Griffith; K. E. Barber";2021;46;46;Efficacy of ketamine for major depressive episodes at 2, 4, and 6-weeks post-treatment: A meta-analysis;they only indicated 41 but i found 45...;Psychopharmacology (Berl);;;238;;7;1737-1752;;;;20210331;Jul;;;Efficacy of ketamine for major depressive episodes at 2, 4, and 6-weeks post-treatment: A meta-analysis;;0033-3158;10.1007/s00213-021-05825-8;;;;;;;;;;;;33787963;;;"Affect/drug effects/physiology
+Clinical Trials as Topic/*methods
+Major Depressive Disorder/diagnosis/*drug therapy/*psychology
+Excitatory Amino Acid Antagonists/pharmacology/*therapeutic use
+Humans
+Ketamine/pharmacology/*therapeutic use
+Time Factors
+Treatment Outcome
+Bipolar
+Depression
+Ketamine
+Mdd
+Major depressive episodes";"RATIONALE: Major depressive episodes are severe mood episodes which occur both in major depressive disorder and bipolar I and II disorder. Major depressive episodes are characterized by debilitating symptoms that often persist and interfere with typical daily functioning. Various treatments exist for major depressive episodes; however, most primary pharmacologic treatments may take weeks to months to provide relief from depressive symptoms. Ketamine is a demonstrated treatment for major depressive episodes, as relief from depressive symptoms can occur rapidly following treatment. OBJECTIVES: Prior meta-analyses have been conducted to analyze the effectiveness of ketamine for the treatment of major depressive episodes, but at the time of this writing, no meta-analysis had been conducted to observe ketamine treatment efficacy beyond 2 weeks. METHODS: The present meta-analysis evaluated the efficacy of ketamine for the treatment of major depressive episodes; observations of depressive episode severity were analyzed at 2, 4, and 6-weeks post-treatment. RESULTS: The present meta-analysis observed large effects at 2 weeks (g = -1.28), 4 weeks, (g = -1.28), and 6 weeks (g = -1.36) post-treatment. CONCLUSIONS: The results from the present meta-analysis indicate that ketamine can be an effective pharmacologic intervention for major depressive episodes, with treatment effects lasting up to 6 weeks post-ketamine administration, which has many positive implications for treatment.";"1432-2072
+Conley, Ashley A
+Orcid: 0000-0001-7550-501x
+Norwood, Amber E Q
+Orcid: 0000-0001-7803-5041
+Hatvany, Thomas C
+Orcid: 0000-0002-8198-1319
+Griffith, James D
+Orcid: 0000-0002-9318-5387
+Barber, Kathryn E
+Orcid: 0000-0001-6359-8845
+Journal Article
+Meta-Analysis
+Review
+Germany
+2021/04/01
+Psychopharmacology (Berl). 2021 Jul;238(7):1737-1752. doi: 10.1007/s00213-021-05825-8. Epub 2021 Mar 31.";;;;"Department of Psychology, Shippensburg University of Pennsylvania, Shippensburg, PA, 17257, USA. aac5408@gmail.com.
+Department of Psychology, Shippensburg University of Pennsylvania, Shippensburg, PA, 17257, USA.";;;;;;;NLM;eng
+7;"C. M. H. de Vos; N. L. Mason; K. P. C. Kuypers";2021;4;20;Psychedelics and Neuroplasticity: A Systematic Review Unraveling the Biological Underpinnings of Psychedelics;;Front Psychiatry;;;12;;;724606;;;;20210910;;;;Psychedelics and Neuroplasticity: A Systematic Review Unraveling the Biological Underpinnings of Psychedelics;;"1664-0640 (Print)
+1664-0640";10.3389/fpsyt.2021.724606;;;;The authors declare that the research was conducted in the absence of any commercial or financial relationships that could be construed as a potential conflict of interest.;PMC8461007;;;;;;;34566723;;;"cellular neuroplasticity
+functional neuroplasticity
+molecular neuroplasticity
+psychedelics
+structural neuroplasticity";"Clinical studies suggest the therapeutic potential of psychedelics, including ayahuasca, DMT, psilocybin, and LSD, in stress-related disorders. These substances induce cognitive, antidepressant, anxiolytic, and antiaddictive effects suggested to arise from biological changes similar to conventional antidepressants or the rapid-acting substance ketamine. The proposed route is by inducing brain neuroplasticity. This review attempts to summarize the evidence that psychedelics induce neuroplasticity by focusing on psychedelics' cellular and molecular neuroplasticity effects after single and repeated administration. When behavioral parameters are encountered in the selected studies, the biological pathways will be linked to the behavioral effects. Additionally, knowledge gaps in the underlying biology of clinical outcomes of psychedelics are highlighted. The literature searched yielded 344 results. Title and abstract screening reduced the sample to 35; eight were included from other sources, and full-text screening resulted in the final selection of 16 preclinical and four clinical studies. Studies (n = 20) show that a single administration of a psychedelic produces rapid changes in plasticity mechanisms on a molecular, neuronal, synaptic, and dendritic level. The expression of plasticity-related genes and proteins, including Brain-Derived Neurotrophic Factor (BDNF), is changed after a single administration of psychedelics, resulting in changed neuroplasticity. The latter included more dendritic complexity, which outlasted the acute effects of the psychedelic. Repeated administration of a psychedelic directly stimulated neurogenesis and increased BDNF mRNA levels up to a month after treatment. Findings from the current review demonstrate that psychedelics induce molecular and cellular adaptations related to neuroplasticity and suggest those run parallel to the clinical effects of psychedelics, potentially underlying them. Future (pre)clinical research might focus on deciphering the specific cellular mechanism activated by different psychedelics and related to long-term clinical and biological effects to increase our understanding of the therapeutic potential of these compounds.";"1664-0640
+de Vos, Cato M H
+Mason, Natasha L
+Kuypers, Kim P C
+Journal Article
+Systematic Review
+Switzerland
+2021/09/28
+Front Psychiatry. 2021 Sep 10;12:724606. doi: 10.3389/fpsyt.2021.724606. eCollection 2021.";;;;Department of Neuropsychology and Psychopharmacology, Faculty of Psychology and Neuroscience, Maastricht University, Maastricht, Netherlands.;;;;;;;NLM;eng
+8;"R. Du; R. Han; K. Niu; J. Xu; Z. Zhao; G. Lu; Y. Shang";2022;10;10;The Multivariate Effect of Ketamine on PTSD: Systematic Review and Meta-Analysis;;Front Psychiatry;;;13;;;813103;;;;20220309;;;;The Multivariate Effect of Ketamine on PTSD: Systematic Review and Meta-Analysis;;"1664-0640 (Print)
+1664-0640";10.3389/fpsyt.2022.813103;;;;The authors declare that the research was conducted in the absence of any commercial or financial relationships that could be construed as a potential conflict of interest.;PMC8959757;;;;;;;35356723;;;"Ptsd
+analgesia
+chronic PTSD
+ketamine
+meta-analysis";"BACKGROUND: Post-traumatic stress disorder (PTSD) is a serious stress-related disorder caused by traumatic experiences. However, identifying a key therapy that can be used for PTSD treatment remains difficult. Ketamine, a well-known dissociative anesthetic, is considered safe to be used in anesthesia, pain management, and antidepressant actions since 1970. At present, it is still controversial whether PTSD can be treated with ketamine. The authors performed a meta-analysis to determine whether the use of perioperative ketamine lowers the incidence of PTSD. METHODS: Cochrane Central Register of Controlled Trials, Embase, PubMed, and Web of Science were searched to examine the use of ketamine for the treatment of PTSD among soldiers with combating experience. Studies were included if they were randomized placebo-controlled, case-control, and cohort studies. The primary outcome was the incidence of PTSD in the later stage of the wounded or burn soldiers. The secondary outcome was the influence of ketamine on PTSD-scale scores for early and chronic PTSD, respectively. RESULTS: Our search yielded a total of three studies (n = 503 patients) comparing the use of ketamine (n = 349) to control (n = 154). The available evidence showed no significant difference in the incidence of PTSD between combatant soldiers on the battlefield with or without ketamine treatment (risk ratio = 0.81, 95% CI, 0.63-1.04; P = 0.10). In 65 patients from three trials, ketamine was not only ineffective in treating early PTSD but also lead to exacerbation of the disease (risk ratio = 2.45, 95% CI, 1.33-3.58; P < 0.001). However, in 91 patients from the other three trials, ketamine is effective in treating chronic PTSD (risk ratio = -3.66, 95% CI, -7.05 to -0.27; P = 0.03). CONCLUSION: Ketamine was not effective on lower the PTSD incidence for soldiers on the battlefield, nor on the PTSD-scale scores in early PTSD patients. However, it may improve the PTSD-scale scores for chronic conditions. SYSTEMATIC REVIEW REGISTRATION: https://www.crd.york.ac.uk/prospero/display_record.php?ID=CRD42021255516, PROSPERO, identifier: CRD42021255516.";"1664-0640
+Du, Rui
+Han, Ruili
+Niu, Kun
+Xu, Jiaqiao
+Zhao, Zihou
+Lu, Guofang
+Shang, Yulong
+Journal Article
+Systematic Review
+Switzerland
+2022/04/01
+Front Psychiatry. 2022 Mar 9;13:813103. doi: 10.3389/fpsyt.2022.813103. eCollection 2022.";;;;"Institute for Biomedical Sciences of Pain, Tangdu Hospital, Fourth Military Medical University, Xi'an, China.
+Department of Anaesthesiology, Tangdu Hospital, Fourth Military Medical University, Xi'an, China.
+Department of Anaesthesiology, Key Laboratory of Carcinogenesis and Translational Research (Ministry of Education/Beijing), Peking University Cancer Hospital and Institute, Beijing, China.
+Tangdu Hospital, Fourth Military Medical University, Xi'an, China.
+Department of Physiology and Pathophysiology, National Key Discipline of Cell Biology, Fourth Military Medical University, Xi'an, China.
+State Key Laboratory of Cancer Biology and National Clinical Research Center for Digestive Diseases, Xijing Hospital of Digestive Diseases, Fourth Military Medical University, Xi'an, China.";;;;;;;NLM;eng
+9;"C. L. Felsch; K. P. C. Kuypers";2022;17;30;Don't be afraid, try to meditate- potential effects on neural activity and connectivity of psilocybin-assisted mindfulness-based intervention for social anxiety disorder: A systematic review;;Neurosci Biobehav Rev;;;139;;;104724;;;;20220606;Aug;;;Don't be afraid, try to meditate- potential effects on neural activity and connectivity of psilocybin-assisted mindfulness-based intervention for social anxiety disorder: A systematic review;;0149-7634;10.1016/j.neubiorev.2022.104724;;;;;;;;;;;;35679988;;;"Fear
+Humans
+*Meditation/psychology
+*Mindfulness
+*Phobia, Social/therapy
+Psilocybin/pharmacology/therapeutic use
+Mindfulness meditation
+Psilocybin
+Social anxiety disorder";BACKGROUND: Current first-line treatment for social anxiety disorder (SAD), one of the most prevalent anxiety disorders, is limited in its efficacy. Hence, novel treatment approaches are urgently needed. The current review suggests a combination of meditation-based interventions and the administration of a psychedelic as a future alternative treatment approach. While both separate treatments show promise in the treatment of (other) clinical conditions, their combination has not yet been investigated in the treatment of psychopathologies. AIM: With a systematic literature review, we aim to identify the potential mechanisms by which combined psilocybin and mindfulness treatment could adjust anomalous neural activity underlying SAD and exert therapeutic effects. RESULTS: Thirty experimental studies investigating the neural effects of meditation or psilocybin treatment in healthy and patient samples were included. Findings suggest that psilocybin-assisted meditation interventions might change cognitive processes like biased attention to threat linked to SAD by modulating connectivity of the salience network, balancing the activity and connectivity of cortical-midline structures, and increasing frontoparietal control over amygdala reactivity. CONCLUSIONS: Future studies should investigate whether psilocybin-assisted mindfulness-based intervention can provide therapeutic benefits to SAD patients who are do not remit following conventional therapy.;"1873-7528
+Felsch, Corinna L
+Kuypers, Kim P C
+Journal Article
+Systematic Review
+United States
+2022/06/10
+Neurosci Biobehav Rev. 2022 Aug;139:104724. doi: 10.1016/j.neubiorev.2022.104724. Epub 2022 Jun 6.";;;;"Department of Neuropsychology and Psychopharmacology, Faculty of Psychology and Neuroscience, Maastricht University, PO Box 616, 6200 MD Maastricht, the Netherlands.
+Department of Neuropsychology and Psychopharmacology, Faculty of Psychology and Neuroscience, Maastricht University, PO Box 616, 6200 MD Maastricht, the Netherlands. Electronic address: k.kuypers@maastrichtuniversity.nl.";;;;;;;NLM;eng
+10;"N. L. Galvão-Coelho; W. Marx; M. Gonzalez; J. Sinclair; M. de Manincor; D. Perkins; J. Sarris";2021;12;12;Classic serotonergic psychedelics for mood and depressive symptoms: a meta-analysis of mood disorder patients and healthy participants;;Psychopharmacology (Berl);;;238;;2;341-354;;;;20210111;Feb;;;Classic serotonergic psychedelics for mood and depressive symptoms: a meta-analysis of mood disorder patients and healthy participants;;"0033-3158 (Print)
+0033-3158";10.1007/s00213-020-05719-1;;;;The authors declare that they have no conflict of interest.;PMC7826317;;;;;;;33427944;;;"Affect/drug effects
+Banisteriopsis/chemistry
+Depression
+Major Depressive Disorder/*drug therapy/metabolism/psychology
+Double-Blind Method
+Hallucinogens/*therapeutic use
+Healthy Volunteers
+Humans
+Lysergic Acid Diethylamide/therapeutic use
+Mood Disorders/*drug therapy/metabolism/psychology
+Psilocybin/therapeutic use
+Randomized Controlled Trials as Topic
+Serotonin Receptor Agonists/*therapeutic use
+Treatment Outcome
+Ayahuasca
+Lsd
+Mescaline
+Placebo
+Psilocybin";"RATIONALE: Major depressive disorder is one of the leading global causes of disability, for which the classic serotonergic psychedelics have recently reemerged as a potential therapeutic treatment option. OBJECTIVE: We present the first meta-analytic review evaluating the clinical effects of classic serotonergic psychedelics vs placebo for mood state and symptoms of depression in both healthy and clinical populations (separately). RESULTS: Our search revealed 12 eligible studies (n = 257; 124 healthy participants, and 133 patients with mood disorders), with data from randomized controlled trials involving psilocybin (n = 8), lysergic acid diethylamide ([LSD]; n = 3), and ayahuasca (n = 1). The meta-analyses of acute mood outcomes (3 h to 1 day after treatment) for healthy volunteers and patients revealed improvements with moderate significant effect sizes in favor of psychedelics, as well as for the longer-term (16 to 60 days after treatments) mood state of patients. For patients with mood disorder, significant effect sizes were detected on the acute, medium (2-7 days after treatment), and longer-term outcomes favoring psychedelics on the reduction of depressive symptoms. CONCLUSION: Despite the concerns over unblinding and expectancy, the strength of the effect sizes, fast onset, and enduring therapeutic effects of these psychotherapeutic agents encourage further double-blind, placebo-controlled clinical trials assessing them for management of negative mood and depressive symptoms.";"1432-2072
+Galvão-Coelho, Nicole L
+Orcid: 0000-0002-4887-8635
+Marx, Wolfgang
+Gonzalez, Maria
+Sinclair, Justin
+de Manincor, Michael
+Perkins, Daniel
+Sarris, Jerome
+Journal Article
+Meta-Analysis
+Review
+Germany
+2021/01/12
+Psychopharmacology (Berl). 2021 Feb;238(2):341-354. doi: 10.1007/s00213-020-05719-1. Epub 2021 Jan 11.";;;;"Laboratory of Hormone Measurement, Department of Physiology and Behavior, Federal University of Rio Grande do Norte, Natal, RN, Brazil. nicolelgalvaocoelho@gmail.com.
+Postgraduate Program in Psychobiology and Department of Physiology and Behavior, Federal University of Rio Grande do Norte, Natal, RN, Brazil. nicolelgalvaocoelho@gmail.com.
+National Institute of Science and Technology in Translational Medicine, São Paulo, Brazil. nicolelgalvaocoelho@gmail.com.
+NICM Health Research Institute, Western Sydney University, Westmead, Australia. nicolelgalvaocoelho@gmail.com.
+Departamento de Fisiologia e Comportamento, Universidade Federal do Rio Grande do Norte, Caixa Postal, 1511, CEP: 59078-970, Natal, RN, Brasil. nicolelgalvaocoelho@gmail.com.
+IMPACT Research Institute, School of Medicine, Deakin University, Geelong, Australia.
+NICM Health Research Institute, Western Sydney University, Westmead, Australia.
+School of Social and Political Science, University of Melbourne, Melbourne, Australia.
+Professorial Unit, The Melbourne Clinic, Department of Psychiatry, University of Melbourne, Melbourne, Australia.";;;;;;;NLM;eng
+11;"A. Hochschild; M. F. Grunebaum; J. J. Mann";2021;12;12;The rapid anti-suicidal ideation effect of ketamine: A systematic review;;Prev Med;;;152;;Pt 1;106524;;;;20210916;Nov;;;The rapid anti-suicidal ideation effect of ketamine: A systematic review;;0091-7435;10.1016/j.ypmed.2021.106524;;;;;;;;;;;;34538369;;;"Antidepressive Agents/therapeutic use
+*Major Depressive Disorder
+Humans
+*Ketamine/therapeutic use
+Suicidal Ideation
+Suicide, Attempted
+Bipolar
+Depression
+Depressive disorder
+Glutamate
+Ketamine";"In many countries suicide rates have been trending upwards for close to twenty years-presenting a public health crisis. Most suicide attempts and deaths are associated with psychiatric illness, usually a depressive disorder. Subanesthetic ketamine is the only FDA-approved antidepressant that works in hours not weeks-thus potentially transforming treatment of suicidal patients. We reviewed all randomized controlled trials of the effect of ketamine on suicidal ideation to determine if ketamine rapidly reduces suicidal ideation [SI] in depressed patients and how long the benefit persists after one dose and if the route of administration or dose affects the outcome. A systematic review was conducted as per PRISMA [preferred reporting items for systematic reviews and meta-analyses] criteria. PubMed search inclusive of ketamine"" and ""suicide"" yielded 358 results. Papers (N = 354) were then read by at least two authors, identifying 12 meeting eligibility requirements and eleven RCTs examining whether ketamine treatment ameliorated SI. Four of five RCTs examined racemic ketamine (0.5 mg/kg) given intravenously and found an advantage for ketamine over control for rapid reduction in SI in acutely depressed patients. Two studies examined intranasal esketamine in depressed suicidal patients and found no advantage over saline. One study examined outcome six weeks after a single intravenous dose of ketamine and found benefit for SI sustained relative to 24 h post-dose. Further research is warranted into: optimal dosing strategy, including number and frequency; and long-term efficacy and safety. Ultimately, it remains to be shown that ketamine's benefit for SI translates into prevention of suicidal behavior.""";"1096-0260
+Hochschild, Annabella
+Grunebaum, Michael F
+Mann, J John
+Journal Article
+Research Support, Non-U.S. Gov't
+Systematic Review
+United States
+2021/09/21
+Prev Med. 2021 Nov;152(Pt 1):106524. doi: 10.1016/j.ypmed.2021.106524. Epub 2021 Sep 16.";;;;"Molecular Imaging and Neuropathology Division, New York State Psychiatric Institute, Columbia University Irving Medical Center, New York, NY, United States of America.
+Molecular Imaging and Neuropathology Division, New York State Psychiatric Institute, Columbia University Irving Medical Center, New York, NY, United States of America. Electronic address: jjm@columbia.edu.";;;;;;;NLM;eng
+12;"B. J. Illingworth; D. J. Lewis; A. T. Lambarth; K. Stocking; J. M. Duffy; L. A. Jelen; J. J. Rucker";2021;4;4;A comparison of MDMA-assisted psychotherapy to non-assisted psychotherapy in treatment-resistant PTSD: A systematic review and meta-analysis;;J Psychopharmacol;;;35;;5;501-511;;;;20201220;May;;;A comparison of MDMA-assisted psychotherapy to non-assisted psychotherapy in treatment-resistant PTSD: A systematic review and meta-analysis;;0269-8811;10.1177/0269881120965915;;;;;;;;;;;;33345689;;;"Combined Modality Therapy
+Hallucinogens/administration & dosage/adverse effects
+Humans
+N-Methyl-3,4-methylenedioxyamphetamine/*administration & dosage/adverse effects
+Psychiatric Status Rating Scales
+Psychotherapy/*methods
+Randomized Controlled Trials as Topic
+Stress Disorders, Post-Traumatic/physiopathology/*therapy
+Treatment Outcome
+3,4-Methylenedioxymethamphetamine
+Mdma
+Ptsd
+novel therapies
+post-traumatic stress disorder
+psychotherapy
+treatment-resistance";"RATIONALE: Novel, evidence-based treatments are required for treatment-resistant post-traumatic stress disorder (PTSD). 3,4-Methylenedioxymethamphetamine (MDMA) has beneficially augmented psychotherapy in several small clinical trials. OBJECTIVE: To review the use of MDMA-assisted psychotherapy in treatment-resistant PTSD. METHODS: Systematic searches of four databases were conducted from inception to February 2020. A meta-analysis was performed on trials which were double-blinded, randomised, and compared MDMA-assisted psychotherapy to psychotherapy and placebo. The primary outcomes were the differences in Clinician Administered PTSD Scale (CAPS-IV) score and Beck's Depression Inventory (BDI). Secondary outcome measures included neurocognitive and physical adverse effects, at the time, and within 7 days of intervention. RESULTS: Four randomised controlled trials (RCTs) met inclusion criteria. When compared to active placebo, intervention groups taking 75 mg (MD -46.90; 95% (confidence intervals) CI -58.78, -35.02), 125 mg (MD -20.98; 95% CI -34.35, -7.61) but not 100 mg (MD -12.90; 95% CI -36.09, 10.29) of MDMA with psychotherapy, had significant decreases in CAPS-IV scores, as did the inactive placebo arm (MD -33.20; 95% CI -40.53, -25.87). A significant decrease in BDI when compared to active placebo (MD -10.80; 95% CI -20.39, -1.21) was only observed at 75 mg. Compared to placebo, participants reported significantly more episodes of low mood, nausea and jaw-clenching during sessions and lack of appetite after 7 days. CONCLUSION: These results demonstrate potential therapeutic benefit with minimal physical and neurocognitive risk for the use of MDMA-assisted psychotherapy in TR-PTSD, despite little effect on Beck's Depression Inventory. Better powered RCTs are required to investigate further. INTERNATIONAL PROSPECTIVE REGISTER OF SYSTEMATIC REVIEWS: CRD42019109132 available online at www.crd.york.ac.uk/prospero.";"1461-7285
+Illingworth, Benjamin Jg
+Orcid: 0000-0002-7990-2634
+Lewis, Declan J
+Lambarth, Andrew T
+Stocking, Kate
+Duffy, James Mn
+Jelen, Luke A
+Orcid: 0000-0001-6398-5239
+Rucker, James J
+Orcid: 0000-0003-4647-8088
+CS-2017-17-007/DH_/Department of Health/United Kingdom
+Comparative Study
+Journal Article
+Meta-Analysis
+Research Support, Non-U.S. Gov't
+Systematic Review
+United States
+2020/12/22
+J Psychopharmacol. 2021 May;35(5):501-511. doi: 10.1177/0269881120965915. Epub 2020 Dec 20.";;;;"Peterborough City Hospital, North West Anglia NHS Foundation Trust, Peterborough, UK.
+University College London Medical School, London, UK.
+North Middlesex Hospital, North Middlesex University Hospital NHS Trust, London, UK.
+Centre for Biostatistics, The University of Manchester, Manchester, UK.
+Institute for Women's Health, University College London, London, UK.
+The Fetal Medicine Research Institute, King's College Hospital NHS Foundation Trust, London, UK.
+Centre for Affective Disorders, King's College London, London, UK.";;;;;;;NLM;eng
+13;"B. Joseph; A. K. Parsaik; A. T. Ahmed; P. J. Erwin; B. Singh";2021;5;5;A Systematic Review on the Efficacy of Intravenous Racemic Ketamine for Bipolar Depression;;J Clin Psychopharmacol;;;41;;1;71-75;;;;;Jan/Feb 01;;;A Systematic Review on the Efficacy of Intravenous Racemic Ketamine for Bipolar Depression;;0271-0749;10.1097/jcp.0000000000001317;;;;;;;;;;;;33347027;;;"Adult
+Anhedonia/drug effects
+Antidepressive Agents/therapeutic use
+Bipolar Disorder/*drug therapy
+Major Depressive Disorder/drug therapy
+Humans
+Ketamine/*pharmacology/*therapeutic use
+Male
+Randomized Controlled Trials as Topic
+Suicidal Ideation";"BACKGROUND: Ketamine, a glutamate N-methyl-d-aspartate receptor antagonist, has shown rapid antidepressant effects in treatment-resistant depression. We conducted a systematic review of studies evaluating the efficacy of intravenous ketamine augmentation in treatment-resistant depression patients with bipolar disorder. METHODS: Major databases were searched for open-label and randomized controlled trials (RCT). Two independent reviewers screened and selected the studies that met the inclusion criteria. Studies were selected following the standard Cochrane methodology, and the findings are reported according to Preferred Reporting Items for Systematic Reviews and Meta-Analyses. Methodological quality of the included studies was assessed using standardized measures. RESULTS: A total of 1442 articles were screened. Five studies were included in the systematic review (3 RCTs and 2 open-label studies) enrolling 110 subjects (mean age, 45.54 ± 12.65 years; 68.18% female). All the RCTs and open-label studies showed improvement in depressions symptoms after receiving a single infusion of ketamine. Included studies also suggested improvement in suicidal ideation and anhedonia after ketamine infusion. Dissociation and transient increase in blood pressure were the most common reported adverse effects with ketamine. Ketamine infusions did not increase mania symptoms. CONCLUSIONS: Limited data show efficacy and feasibility of intravenous racemic ketamine in treatment-resistant bipolar depression. Further studies with larger sample size are required to strengthen the evidence.";"1533-712x
+Joseph, Boney
+Parsaik, Ajay K
+Ahmed, Ahmed T
+Erwin, Patricia J
+Singh, Balwinder
+Journal Article
+Systematic Review
+United States
+2020/12/22
+J Clin Psychopharmacol. 2021 Jan/Feb 01;41(1):71-75. doi: 10.1097/JCP.0000000000001317.";;;;"From the Departments of Psychiatry & Psychology.
+Mayo Medical Libraries, Mayo Clinic College of Medicine, Rochester, MN.";;;;;;;NLM;eng
+14;"S. Kisely; M. Connor; A. A. Somogyi; D. Siskind";2023;14;14;A systematic literature review and meta-analysis of the effect of psilocybin and methylenedioxymethamphetamine on mental, behavioural or developmental disorders;;Aust N Z J Psychiatry;;;57;;3;362-378;;;;20220312;Mar;;;A systematic literature review and meta-analysis of the effect of psilocybin and methylenedioxymethamphetamine on mental, behavioural or developmental disorders;;0004-8674;10.1177/00048674221083868;;;;;;;;;;;;35285280;;;"Adult
+Child
+Humans
+*Cognitive Behavioral Therapy
+*N-Methyl-3,4-methylenedioxyamphetamine
+Psilocybin
+Developmental Disabilities
+Anxiety Disorders/therapy
+3,4-Methylenedioxymethamphetamine
+anxiety
+depression
+post-traumatic stress disorder";"OBJECTIVES: There is an increasing interest in combining psilocybin or methylenedioxymethamphetamine with psychological support in treating psychiatric disorders. Although there have been several recent systematic reviews, study and participant numbers have been limited, and the field is rapidly evolving with the publication of more studies. We therefore conducted a systematic review of PubMed, MEDLINE, PsycINFO, the Cochrane Central Register of Controlled Trials, Embase, and CINAHL for randomised controlled trials of methylenedioxymethamphetamine and psilocybin with either inactive or active controls. METHODS: Outcomes were psychiatric symptoms measured by standardised, validated and internationally recognised instruments at least 2 weeks following drug administration, Quality was independently assessed using the Cochrane risk of bias assessment tool and Grading of Recommendations Assessment, Development and Evaluation framework. RESULTS: There were eight studies on methylenedioxymethamphetamine and six on psilocybin. Diagnoses included post-traumatic stress disorder, long-standing/treatment-resistant depression, obsessive-compulsive disorder, social anxiety in adults with autism, and anxiety or depression in life-threatening disease. The most information and strongest association was for the change in methylenedioxymethamphetamine scores compared to active controls in post-traumatic stress disorder (k = 4; standardised mean difference = -0.86; 95% confidence interval = [-1.23, -0.50]; p < 0.0001). There were also small benefits for social anxiety in adults with autism. Psilocybin was superior to wait-list but not niacin (active control) in life-threatening disease anxiety or depression. It was equally as effective as escitalopram in long-standing depression for the primary study outcome and superior for most of the secondary outcomes in analyses uncorrected for multiple comparisons. Both agents were well tolerated in supervised trials. Trial quality varied with only small proportions of potential participants included in the randomised phase. Overall certainty of evidence was low or very low using the Grading of Recommendations Assessment, Development and Evaluation framework. CONCLUSION: Methylenedioxymethamphetamine and psilocybin may show promise in highly selected populations when administered in closely supervised settings and with intensive support.";"1440-1614
+Kisely, Steve
+Orcid: 0000-0003-4021-2924
+Connor, Mark
+Somogyi, Andrew A
+Siskind, Dan
+Orcid: 0000-0002-2072-9216
+Journal Article
+Meta-Analysis
+Systematic Review
+England
+2022/03/15
+Aust N Z J Psychiatry. 2023 Mar;57(3):362-378. doi: 10.1177/00048674221083868. Epub 2022 Mar 12.";;;;"School of Medicine, The University of Queensland, Woolloongabba, QLD, Australia.
+Addiction and Mental Health Services, Metro South Health Service, Woolloongabba, QLD, Australia.
+Departments of Psychiatry, Community Health & Epidemiology, Dalhousie University, Halifax, Nova Scotia, Canada.
+Faculty of Medicine, Health and Human Sciences, Macquarie University, Sydney, NSW, Australia.
+Discipline of Pharmacology, Faculty of Health and Medical Sciences, University of Adelaide, Adelaide, SA, Australia.";;;;;;;NLM;eng
+15;"K. Ko; G. Knight; J. J. Rucker; A. J. Cleare";2022;12;12;Psychedelics, Mystical Experience, and Therapeutic Efficacy: A Systematic Review;;Front Psychiatry;;;13;;;917199;;;;20220712;;;;Psychedelics, Mystical Experience, and Therapeutic Efficacy: A Systematic Review;;"1664-0640 (Print)
+1664-0640";10.3389/fpsyt.2022.917199;;;;"KK is a member of Psychedelic Trials Group PTG at King's College London KCL. KCL receives grant funding from COMPASS Pathways PLC and Beckley PsyTech to undertake phase 1 and phase 2 trials with psychedelics, including psilocybin. GK is an honorary member of PTG at KCL. JR leads the PTG at KCL; COMPASS Pathways PLC has paid for JR to attend trial related meetings and conferences to present the results of research using psilocybin. JR has undertaken paid consultancy work for Beckley PsyTech, Delica Therapeutics and Clerkenwell Health. AC has recently received honoraria for presentations and/or serving on advisory boards from the following pharmaceutical companies: Janssen, Lundbeck, Allergan, and Livanova.";PMC9340494;;;;;;;35923458;;;"ayahuasca
+cancer-related distress
+depressive disorders
+ketamine
+mystical experience
+psilocybin
+psychedelic therapy
+substance use disorder (SUD)";The mystical experience is a potential psychological mechanism to influence outcome in psychedelic therapy. It includes features such as oceanic boundlessness, ego dissolution, and universal interconnectedness, which have been closely linked to both symptom reduction and improved quality of life. In this review, 12 studies of psychedelic therapy utilizing psilocybin, ayahuasca, or ketamine were analyzed for association between mystical experience and symptom reduction, in areas as diverse as cancer-related distress, substance use disorder, and depressive disorders to include treatment-resistant. Ten of the twelve established a significant association of correlation, mediation, and/or prediction. A majority of the studies are limited, however, by their small sample size and lack of diversity (gender, ethnic, racial, educational, and socioeconomic), common in this newly re-emerging field. Further, 6 out of 12 studies were open-label in design and therefore susceptible to bias. Future studies of this nature should consider a larger sample size with greater diversity and thus representation by use of randomized design. More in-depth exploration into the nature of mystical experience is needed, including predictors of intensity, in order to maximize its positive effects on treatment outcome benefits and minimize concomitant anxiety. Systematic Review Registration: PROSPERO, identifier CRD42021261752.;"1664-0640
+Ko, Kwonmok
+Knight, Gemma
+Rucker, James J
+Cleare, Anthony J
+Journal Article
+Systematic Review
+Switzerland
+2022/08/05
+Front Psychiatry. 2022 Jul 12;13:917199. doi: 10.3389/fpsyt.2022.917199. eCollection 2022.";;;;"Centre for Affective Disorders, Institute of Psychiatry, Psychology and Neuroscience, King's College London, London, United Kingdom.
+National Institute for Health Research Biomedical Research Centre, South London and Maudsley NHS Foundation Trust, King's College London, London, United Kingdom.
+South London and Maudsley NHS Foundation Trust, Bethlem Royal Hospital, Beckenham, United Kingdom.";;;;;;;NLM;eng
+16;"P. Köck; K. Froelich; M. Walter; U. Lang; K. M. Dürsteler";2022;24;24;A systematic literature review of clinical trials and therapeutic applications of ibogaine;;J Subst Abuse Treat;;;138;;;108717;;;;20211230;Jul;;;A systematic literature review of clinical trials and therapeutic applications of ibogaine;;0740-5472;10.1016/j.jsat.2021.108717;;;;;;;;;;;;35012793;;;"*Alkaloids/therapeutic use
+*Hallucinogens/adverse effects
+Humans
+*Ibogaine/adverse effects
+Observational Studies as Topic
+Randomized Controlled Trials as Topic
+Retrospective Studies
+*Substance Withdrawal Syndrome/drug therapy
+*Substance-Related Disorders/drug therapy
+Cocaine
+Hallucinogen
+Opioid
+Psychedelic
+Substance use disorder
+Treatment";BACKGROUND: Iboga and its primary alkaloids, ibogaine and noribogaine, have been of interest to researchers and practitioners, mainly due to their putative efficacy in treating substance use disorders (SUDs). For many SUDs, still no effective pharmacotherapies exist. Distinct psychoactive and somatic effects of the iboga alkaloids set them apart from classic hallucinogens like LSD, mescaline, and psilocybin. AIMS: The study team performed this systematic review focusing on clinical data and therapeutic interventions involving ibogaine and noribogaine. METHODS: The team conducted a search for all publications up to December 7, 2020, using PubMed and Embase following PRISMA guidelines. RESULTS: In total, we identified 743 records. In this review, we consider 24 studies, which included 705 individuals receiving ibogaine or noribogaine. This review includes two randomized, double-blind, controlled clinical trials, one double-blind controlled clinical trial, 17 open-label studies or case series (including observational or retrospective studies), three case reports, and one retrospective survey. The published data suggest that ibogaine is an effective therapeutic intervention within the context of SUDs, reducing withdrawal symptoms and craving. Data also point toward a beneficial impact on depressive and trauma-related psychological symptoms. However, studies have reported severe medical complications and deaths, which seem to be associated with neuro- and cardiotoxic effects of ibogaine. Two of these fatalities were described in the 24 studies included in this review. CONCLUSION: Treatment of SUDs and persisting comorbidities requires innovative treatment approaches. Rapid-onset therapies such as the application of ibogaine may offer novel treatment opportunities for specific individuals. Rigorous study designs within medical settings are necessary to warrant safe application, monitoring, and, possibly, medical intervention.;"1873-6483
+Köck, Patrick
+Froelich, Katharina
+Walter, Marc
+Lang, Undine
+Dürsteler, Kenneth M
+Case Reports
+Journal Article
+Systematic Review
+United States
+2022/01/12
+J Subst Abuse Treat. 2022 Jul;138:108717. doi: 10.1016/j.jsat.2021.108717. Epub 2021 Dec 30.";;;;"University of Basel Psychiatric Clinics, Wilhelm Klein-Strasse 27, 4002 Basel, Switzerland. Electronic address: phatrick@gmx.at.
+University of Basel Psychiatric Clinics, Wilhelm Klein-Strasse 27, 4002 Basel, Switzerland.
+University of Basel Psychiatric Clinics, Wilhelm Klein-Strasse 27, 4002 Basel, Switzerland; Department for Psychiatry, Psychotherapy and Psychosomatic, Psychiatric Hospital, University of Zurich, Zurich, Switzerland.";;;;;;;NLM;eng
+17;"R. F. Leger; E. M. Unterwald";2022;9;9;Assessing the effects of methodological differences on outcomes in the use of psychedelics in the treatment of anxiety and depressive disorders: A systematic review and meta-analysis;;J Psychopharmacol;;;36;;1;20-30;;;;20210914;Jan;;;Assessing the effects of methodological differences on outcomes in the use of psychedelics in the treatment of anxiety and depressive disorders: A systematic review and meta-analysis;;0269-8811;10.1177/02698811211044688;;;;;;;;;;;;34519567;;;"Affect/drug effects
+Anxiety Disorders/*drug therapy
+Banisteriopsis/chemistry
+Depressive Disorder/*drug therapy
+Hallucinogens/adverse effects/*pharmacology
+Humans
+Lysergic Acid Diethylamide/adverse effects/pharmacology
+Psilocybin/adverse effects/pharmacology
+Psychedelics
+anxiety
+ayahuasca
+depression
+lysergic acid diethylamide
+mood disorders
+psilocybin
+serotonergic hallucinogens";BACKGROUND: Classical psychedelics are a group of drugs which act as agonists on the serotonin-2A (5-HT2A) receptor. Evidence suggests they may have a uniquely rapid and enduring positive effect on mood. However, marked heterogeneity between methodological designs in this emerging field remains a significant concern. AIMS: To determine how differences in the type of psychedelic agent used and the number of dosing sessions administered affect subjects' depression and anxiety outcomes and adverse drug reactions (ADR). METHODS: This review collected and screened 1591 records from the MEDLINE and Web of Science databases for clinical trials reporting objective data on mood for subjects with a known anxiety or depression. RESULTS: After screening, nine clinical trials met inclusion criteria. Meta-analysis of these studies showed significant, large positive effect sizes for measures of anxiety (Cohen's d = 1.26) and depression (Cohen's d = 1.38) overall. These positive effects were also significant at acute (⩽1 week) and extended (>1 week) time points. No significant differences were observed between trials using different psychedelic agents (psilocybin, ayahuasca or lysergic acid diethylamide (LSD)), however, a significant difference was observed in favour of trials with multiple dosing sessions. No serious ADR were reported. CONCLUSION: Psilocybin, ayahuasca and LSD all appear to be effective and relatively safe agents capable of producing rapid and sustained improvements in anxiety and depression. Moreover, the findings of the present analysis suggest that they may show a greater efficacy when given to patients over multiple sessions as compared to the more common single session used in many of the existing trials.;"1461-7285
+Leger, Robert F
+Orcid: 0000-0002-2013-4685
+Unterwald, Ellen M
+Journal Article
+Meta-Analysis
+Systematic Review
+United States
+2021/09/15
+J Psychopharmacol. 2022 Jan;36(1):20-30. doi: 10.1177/02698811211044688. Epub 2021 Sep 14.";;;;"Lewis Katz School of Medicine at Temple University, Philadelphia, PA, USA.
+Center for Substance Abuse Research, Lewis Katz School of Medicine at Temple University, Philadelphia, PA, USA.";;;;;;;NLM;eng
+18;"H. Li; Y. Zhong; S. Yang; J. Wang; X. Li; J. Xu; H. Gao; G. Chen";2022;5;5;The potential role of lysergic acid diethylamide for psychological assisted therapy: A meta-analysis of randomised controlled trials in healthy volunteers;;Hum Psychopharmacol;;;37;;3;e2825;;;;20211105;May;;;The potential role of lysergic acid diethylamide for psychological assisted therapy: A meta-analysis of randomised controlled trials in healthy volunteers;;0885-6222;10.1002/hup.2825;;;;;;;;;;;;34739739;;;"Affect
+Cross-Over Studies
+*Hallucinogens/adverse effects
+Healthy Volunteers
+Humans
+*Lysergic Acid Diethylamide/adverse effects
+Randomized Controlled Trials as Topic
+efficacy
+lysergic acid diethylamide
+meta-analysis
+psychological-assisted therapy
+safety";"OBJECTIVE: In recent years, interest in using lysergic acid diethylamide (LSD) in psychiatric research and corresponding therapy has increased rapidly. In this meta-analysis, we explored the effects of LSD on healthy subjects with respect to subjective drug effects, blood pressure, heart rate, body temperature and side effects. METHOD: PubMed, Embase, and the Cochrane Library were searched from January 2010 to December 2020 for randomized controlled trials (RCTs) on the effects of LSD in healthy people. Subsequently, 5 RCTs with 132 healthy people which focused on the effects of LSD were enrolled in our study. RESULT: We found that taking 50, 100 and 200 mcg LSD doses were associated with a significant increase in the maximal difference from the baseline compared to the placebo group among the outcomes of AMRS (Adjective Mood Rating Scale) score. Significant differences existed between the LSD and placebo groups when taking 100 and 200 mcg LSD in acute adverse effects (100 mcg: SMD = .97, 95% confidence interval [CI], .50, 1.44, Z = 4.04, p < .001; 200 mcg: SMD = 1.18, 95% CI, 0.65, 1.72, Z = 4.32, p < .001). CONCLUSIONS: Meta-analysis of the subjective effects of LSD in healthy people revealed moderate significant effect sizes in favor of LSD with no significant adverse effects. A 100 mcg dose of LSD has potential for use in psychological-assisted therapy and may improve the mental fitness of patients with disease-related psychiatric distress. Additional clinical trials are necessary to explore the efficacy and safety of LSD as a psychological-assisted therapy.";"1099-1077
+Li, Hang
+Zhong, Yi
+Yang, Siyuan
+Wang, Jiahe
+Li, Xiang
+Xu, Jianguo
+Gao, Heng
+Orcid: 0000-0002-2718-1505
+Chen, Gang
+Journal Article
+Meta-Analysis
+Review
+England
+2021/11/06
+Hum Psychopharmacol. 2022 May;37(3):e2825. doi: 10.1002/hup.2825. Epub 2021 Nov 5.";;;;"Department of Clinical Medicine, The First Affiliated Hospital of Soochow University, Suzhou, Jiangsu Province, China.
+Department of Clinical Medicine, The Affiliated Jiangyin Hospital, School of Medicine, Southeast University, Jiangyin, Jiangsu Province, China.";;;;;;;NLM;eng
+19;"N. X. Li; Y. R. Hu; W. N. Chen; B. Zhang";2022;5;5;Dose effect of psilocybin on primary and secondary depression: a preliminary systematic review and meta-analysis;;J Affect Disord;;;296;;;26-34;;;;20210917;Jan 1;;;Dose effect of psilocybin on primary and secondary depression: a preliminary systematic review and meta-analysis;;0165-0327;10.1016/j.jad.2021.09.041;;;;;;;;;;;;34587546;;;"Antidepressive Agents/therapeutic use
+Depression
+*Major Depressive Disorder/drug therapy
+Humans
+*Psilocybin/pharmacology/therapeutic use
+Dose effect
+Efficacy
+Psilocybin";"BACKGROUND: Previous studies have shown that psilocybin has antidepressant effects. In the current study, we aim to explore the dose effects of psilocybin on primary (major depression patients) and secondary depression (depressed cancer patients). METHODS: Published studies concerning psilocybin for depression were retrieved. In accordance with PRISMA guidelines, 6 databases (PubMed, Embase, Web of Science, Cochrane Library, Clinicaltrials.gov 2.3 and WanFang database) were searched for research studies published or still in progress from inception to 30 November, 2020, with language restricted to English and Chinese. Hedges' g of Beck Depression Inventory (BDI) score changes was calculated as the primary outcome. RESULTS: 7 articles were finally included, with a total of 136 participants. In terms of efficacy, Hedges' g was 1.289 (95%CI=[1.020, 1.558], heterogeneity I(2)=50.995%, p<0.001). As psilocybin dose increases within a certain range, the antidepressive effect declines and then increases, with 30-35 mg/70 kg achieving the optimal therapeutic effect. Subgroup analysis suggested that the antidepressive effect of psilocybin was extremely significant at a relatively high dose (30-35mg/70kg: Hedges' g=3.059, 95%CI=[2.269, 3.849], p<0.001), long-term (>1month: Hedges' g=1.123, 95%CI=[0.861, 1.385], p<0.001) and when used in primary depression patients (Hedges' g=2.190, 95%CI=[1.423, 2.957], p<0.001). LIMITATIONS: Only a small number of studies can be identified of variable quality, thus our conclusions remain preliminary. CONCLUSIONS: Our preliminary results have shown that psilocybin exerts a rapid effect in reducing depressive symptom on primary and secondary depression. The optimal dose of psilocybin may be 30-35mg/70kg or higher; future clinical trials are warranted for further evaluation on its effect.";"1573-2517
+Li, Nan-Xi
+Hu, Yi-Ru
+Chen, Wang-Ni
+Zhang, Bin
+Journal Article
+Meta-Analysis
+Research Support, Non-U.S. Gov't
+Systematic Review
+Netherlands
+2021/09/30
+J Affect Disord. 2022 Jan 1;296:26-34. doi: 10.1016/j.jad.2021.09.041. Epub 2021 Sep 17.";;;;"PsyNI Lab, The Affiliated Brain Hospital of Guangzhou Medical University, Guangzhou, China; The Mental Health College of Guangzhou Medical University, Guangzhou, China.
+PsyNI Lab, The Affiliated Brain Hospital of Guangzhou Medical University, Guangzhou, China; The Mental Health College of Guangzhou Medical University, Guangzhou, China. Electronic address: zhang.bin845@foxmail.com.";;;;;;;NLM;eng
+20;"G. Ona; J. M. Rocha; J. C. Bouso; J. E. C. Hallak; T. Borràs; M. T. Colomina; R. G. Dos Santos";2022;10;18;The adverse events of ibogaine in humans: an updated systematic review of the literature (2015-2020);;Psychopharmacology (Berl);;;239;;6;1977-1987;;;;20210818;Jun;;;The adverse events of ibogaine in humans: an updated systematic review of the literature (2015-2020);;0033-3158;10.1007/s00213-021-05964-y;;;;;;;;;;;;34406452;;;"*Alkaloids
+Humans
+*Ibogaine/adverse effects
+Adverse events
+Drug interactions
+Ibogaine
+Noribogaine
+Safety";CONTEXT: Ibogaine is the main alkaloid of the African shrub Tabernanthe iboga. It produces hallucinogenic and psychostimulant effects, but it is currently known for the anti-addictive properties. Despite the potential therapeutic effects, several cases of fatalities and serious adverse events related to ibogaine/noribogaine use can be found in the literature. Most studies consist in case reports or were conducted under non-controlled settings, so causation cannot be clearly established. OBJECTIVES: To update (2015-2020) the literature on the adverse events and fatalities associated with ibogaine/noribogaine administration. METHODS: Systematic review following the Preferred Reporting Items for Systematic Reviews and Meta-Analyses (PRISMA). RESULTS: Eighteen studies were included in the final selection. Highly heterogeneous results were found in terms of kind of product used or the known dosages. The adverse events were classified in acute effects (< 24 h), mainly cardiac (the most common was QTc prolongation), gastrointestinal, neurological, and clinical alterations, and long-lasting effects (> 24 h), mainly persistent cardiac alterations, psychiatric, and neurological signs. CONCLUSIONS: There is a high need of phase I clinical trials that can describe the safety of different dosages of ibogaine with standardized products. Further research should perform clinical profiling of vulnerable populations, and design effective screening methods and clinical procedures.;"1432-2072
+Ona, Genís
+Rocha, Juliana Mendes
+Bouso, José Carlos
+Hallak, Jaime E C
+Borràs, Tre
+Colomina, Maria Teresa
+Dos Santos, Rafael G
+Journal Article
+Systematic Review
+Germany
+2021/08/19
+Psychopharmacology (Berl). 2022 Jun;239(6):1977-1987. doi: 10.1007/s00213-021-05964-y. Epub 2021 Aug 18.";;;;"International Center for Ethnobotanical Education, Research, and Service (ICEERS), Barcelona, Spain.
+Department of Psychology and Research Center for Behavior Assessment (CRAMC), Universitat Rovira i Virgili, Tarragona, Spain.
+Medical Anthropology Research Center (MARC), Universitat Rovira i Virgili, Tarragona, Spain.
+Department of Neuroscience and Behavior, Ribeirão Preto Medical School, University of São Paulo, Hospital das Clínicas, Terceiro Andar, Av. Bandeirantes, Ribeirão Preto, SP, 3900, Brazil.
+National Institute for Translational Medicine (INCT-TM), CNPq, Ribeirão Preto, Brazil.
+Hospital Universitari Sant Joan de Reus. Servei de Drogodependències I Salut Mental. Pla D'Accions Sobre Drogues de Reus, Reus, Spain.
+Universitat Rovira i Virgili, Research in Neurobehavior and Health (NEUROLAB), Tarragona, Spain.
+International Center for Ethnobotanical Education, Research, and Service (ICEERS), Barcelona, Spain. banisteria@gmail.com.
+Department of Neuroscience and Behavior, Ribeirão Preto Medical School, University of São Paulo, Hospital das Clínicas, Terceiro Andar, Av. Bandeirantes, Ribeirão Preto, SP, 3900, Brazil. banisteria@gmail.com.
+National Institute for Translational Medicine (INCT-TM), CNPq, Ribeirão Preto, Brazil. banisteria@gmail.com.";;;;;;;NLM;eng
+21;"D. Psiuk; E. M. Nowak; N. Dycha; U. Łopuszańska; J. Kurzepa; M. Samardakiewicz";2022;12;12;Esketamine and Psilocybin-The Comparison of Two Mind-Altering Agents in Depression Treatment: Systematic Review;;Int J Mol Sci;;;23;;19;;;;;20220928;Sep 28;;;Esketamine and Psilocybin-The Comparison of Two Mind-Altering Agents in Depression Treatment: Systematic Review;;1422-0067;10.3390/ijms231911450;;;;The authors declare no conflict of interest.;PMC9570062;;;;;;;36232748;;;"Antidepressive Agents/pharmacology/therapeutic use
+Depression/drug therapy
+*Depressive Disorder, Treatment-Resistant/drug therapy
+*Hallucinogens/pharmacology/therapeutic use
+Humans
+*Ketamine/therapeutic use
+Psilocybin/therapeutic use
+depression
+esketamine
+psilocybin
+psychedelics";This publication discusses two compounds belonging to the psychoactive substances group which are studied in the context of depression treatment-psilocybin and esketamine. The former is a naturally occurring psychedelic. The latter was invented in the laboratory exactly 60 years ago. Although the substances were controversial in the past, recent studies indicate the potential of those substances as novel antidepressant agents. The PubMed/MEDLINE database was used to identify articles for systematic review, using the following search terms: (depression) AND (psilocybin) OR (ketamine). From 617 items, only 12 articles were obtained in the final analyses. Three articles were devoted to psilocybin in depression treatment and nine to esketamine. In most studies, esketamine showed a significant reduction in both depressive symptoms and suicidal ideation shortly after intake and after a month of treatment compared to baseline and to standard-of-care antidepressant agents. Psilocybin's antidepressive effects occurred one day after intake and after 6-7 weeks of treatment and were maintained for up to 6 or 8 months of follow-up. One study indicated that psilocybin's effects are comparable with and may be superior to escitalopram treatment. Both esketamine and psilocybin demonstrated rapid and long-term effects in reducing depression symptoms and, after overcoming some limitations, may be considered as novel antidepressant agents in future.;"1422-0067
+Psiuk, Dominika
+Nowak, Emilia Magdalena
+Dycha, Natalia
+Łopuszańska, Urszula
+Orcid: 0000-0001-6517-7577
+Kurzepa, Jacek
+Samardakiewicz, Marzena
+Journal Article
+Systematic Review
+Switzerland
+2022/10/15
+Int J Mol Sci. 2022 Sep 28;23(19):11450. doi: 10.3390/ijms231911450.";;;;"Students Scientific Association at the Chair and Department of Psychology, Medical University of Lublin, 20-059 Lublin, Poland.
+Students Scientific Association at the Department of Medical Chemistry, Medical University of Lublin, 20-059 Lublin, Poland.
+Chair and Department of Psychology, Medical University of Lublin, 20-059 Lublin, Poland.
+Department of Medical Chemistry, Medical University of Lublin, 20-059 Lublin, Poland.";;;;;;;NLM;eng
+22;"A. Regan; S. Margolis; H. de Wit; S. Lyubomirsky";2021;32;32;Does ±3,4-methylenedioxymethamphetamine (ecstasy) induce subjective feelings of social connection in humans? A multilevel meta-analysis;;PLoS One;;;16;;10;e0258849;;;;20211025;;;;Does ±3,4-methylenedioxymethamphetamine (ecstasy) induce subjective feelings of social connection in humans? A multilevel meta-analysis;;1932-6203;10.1371/journal.pone.0258849;;;;The authors have declared that no competing interests exist.;PMC8544845;;;;;;;34695117;;;"Emotions/*drug effects
+Empathy/*drug effects
+Hallucinogens/*pharmacology
+Humans
+N-Methyl-3,4-methylenedioxyamphetamine/*pharmacology
+*Social Behavior";"3,4-Methylenedioxymethamphetamine (MDMA) is a psychostimulant known for producing positive subjective effects and for enhancing social functioning and social connection in both clinical and recreational settings. Over the past two decades, scientists have begun to study the psychological effects of MDMA through rigorous placebo-controlled experimental work. However, most existing studies have small Ns, and the average sizes of the reported effects are unknown, creating uncertainty about the impact of these findings. The goal of the present study was to quantify the strength of MDMA's effects on self-reported social connection by aggregating sociability-related outcomes across multiple placebo-controlled studies. To this end, we conducted a multilevel meta-analysis based on 27 studies, 54 effect sizes, and a total of 592 participants. The results revealed a moderate-to-large effect (d = 0.86; 95% CI [0.68, 1.04]; r = .39; 95% CI [.32, .46]) of MDMA on self-reported sociability-related outcomes (e.g., feeling loving, talkative, and friendly). Given the magnitude of its effect on felt sociability, we propose that MDMA may have powerful implications for a variety of social contexts and for clinical settings, in particular. Finally, we discuss potential mechanisms underlying the relationship between MDMA and sociability-related feelings, as well as future directions for experimental work in this area.";"1932-6203
+Regan, Annie
+Orcid: 0000-0002-9780-0981
+Margolis, Seth
+de Wit, Harriet
+Lyubomirsky, Sonja
+Journal Article
+Meta-Analysis
+United States
+2021/10/26
+PLoS One. 2021 Oct 25;16(10):e0258849. doi: 10.1371/journal.pone.0258849. eCollection 2021.";;;;"Department of Psychology, University of California Riverside, Riverside, CA, United States of America.
+Department of Psychiatry and Behavioral Neuroscience, The University of Chicago, Chicago, IL, United States of America.";;;;;;;NLM;eng
+23;"L. S. Rodrigues; G. N. Rossi; J. M. Rocha; L. O. F; J. C. Bouso; J. E. C. Hallak; R. G. Dos Santos";2022;4;4;Effects of ayahuasca and its alkaloids on substance use disorders: an updated (2016-2020) systematic review of preclinical and human studies;;Eur Arch Psychiatry Clin Neurosci;;;272;;4;541-556;;;;20210429;Jun;;;Effects of ayahuasca and its alkaloids on substance use disorders: an updated (2016-2020) systematic review of preclinical and human studies;;0940-1334;10.1007/s00406-021-01267-7;;;;;;;;;;;;33914164;;;"*Alkaloids/pharmacology/therapeutic use
+*Banisteriopsis
+*Hallucinogens/pharmacology/therapeutic use
+Humans
+Quality of Life
+*Substance-Related Disorders/drug therapy
+Ayahuasca
+Dimethyltryptamine
+Hallucinogens
+Harmaline
+Harmine
+Psychedelics
+Substance use disorders";Ayahuasca is a hallucinogenic/psychedelic traditionally used for ritual and therapeutic purposes. One such therapeutic use is related to Substance Use Disorders (SUDs). A previous systematic review of preclinical and human studies published until 2016 suggested that ayahuasca and its alkaloids have therapeutic effects in the treatment of SUDs. To conduct an update of this previous review. A systematic review of quantitative studies which analyzed the effects of ayahuasca and its alkaloids on drug use (primary outcome) and other measures (secondary outcomes) related to SUDs was conducted, including articles from 2016 to 2020. Nine studies (four preclinical, five observational) were included in the review. Preclinical studies in rodents reported reductions in amphetamine self-administration and anxiety, and in alcohol- and methylphenidate-induced conditioned place preference. Observational studies among healthy ritual ayahuasca users and patients with SUDs reported reductions in drug use, anxiety, and depression, and increases in quality of life and well-being. We replicated the findings of the previous review suggesting that ayahuasca and its alkaloids have therapeutic effects in the treatment of SUDs. However, translation of preclinical data to humans is limited, observational studies do not allow us to infer causality, and there is a lack of standardization on ayahuasca doses. Although promising, randomized, controlled trials are needed to better elucidate these results. The PROSPERO ID for this study is CRD42020192046.;"1433-8491
+Rodrigues, Lucas Silva
+Rossi, Giordano Novak
+Rocha, Juliana Mendes
+L Osório, Flávia
+Bouso, José Carlos
+Hallak, Jaime E Cecílio
+Dos Santos, Rafael G
+Orcid: 0000-0003-2388-4745
+Journal Article
+Systematic Review
+Germany
+2021/04/30
+Eur Arch Psychiatry Clin Neurosci. 2022 Jun;272(4):541-556. doi: 10.1007/s00406-021-01267-7. Epub 2021 Apr 29.";;;;"Department of Neurosciences and Behavior, Ribeirão Preto Medical School, University of São Paulo, Ribeirão Preto, Brazil.
+National Institute of Science and Technology, Translational Medicine, Ribeirão Preto, Brazil.
+ICEERS Foundation, International Center for Ethnobotanical Education, Research and Services, Barcelona, Spain.
+Medical Anthopology Research Center, Universitat Rovira i Virgili, Tarragona, Spain.
+Department of Neurosciences and Behavior, Ribeirão Preto Medical School, University of São Paulo, Ribeirão Preto, Brazil. banisteria@gmail.com.
+National Institute of Science and Technology, Translational Medicine, Ribeirão Preto, Brazil. banisteria@gmail.com.
+ICEERS Foundation, International Center for Ethnobotanical Education, Research and Services, Barcelona, Spain. banisteria@gmail.com.";;;;;;;NLM;eng
+24;"B. Romeo; M. Hermand; A. Pétillion; L. Karila; A. Benyamina";2021;19;19;Clinical and biological predictors of psychedelic response in the treatment of psychiatric and addictive disorders: A systematic review;;J Psychiatr Res;;;137;;;273-282;;;;20210307;May;;;Clinical and biological predictors of psychedelic response in the treatment of psychiatric and addictive disorders: A systematic review;;0022-3956;10.1016/j.jpsychires.2021.03.002;;;;;;;;;;;;33730602;;;"Anxiety
+Anxiety Disorders/drug therapy
+*Behavior, Addictive
+*Hallucinogens/pharmacology/therapeutic use
+Humans
+Psilocybin/therapeutic use
+Addictive disorders
+Ayahuasca
+Psilocybin
+Psychedelics
+Psychiatric disorders";BACKGROUND: The use of psychedelic treatments has shown very promising results in some psychiatric and addictive disorders, but not all patients achieved a response. AIM: The aim of this review is to explore the clinical and biological factors which could predict the response to psychedelics in psychiatric and addictive disorders. METHODS: A systematic research was performed on MEDLINE, PsycInfo, Web of science, and Scopus databases from January 1990 to May 2020. All studies investigating the predictive factors of response to psychedelics regardless of psychiatric or addictive disorders, were included. RESULTS: Twenty studies investigating addictive disorder, treatment-resistant depression, obsessive-compulsive disorder and depressive and anxiety symptoms in patients with life-threatening cancer were included in this review. We found that, in all indications, the main predictive factor of response to psychedelics is the intensity of the acute psychedelic experience. Indeed, we found this factor for alcohol and tobacco use disorders, treatment-resistant depression, and anxiety and depressive symptoms in patients with life-threatening cancer, but not for obsessive-compulsive disorder. CONCLUSION: The intensity of the acute psychedelic experience was the main predicting factor of response. The action mechanism of this experience was not clear, but some hypotheses could be made, such as a modulation of serotoninergic system by 5-HT2A receptors agonism, a modulation of the default mode network (DMN) with an acute modular disintegration of the DMN followed by a re-integration of this network with a normal functioning, or an anti-inflammatory effect of this treatment.;"1879-1379
+Romeo, Bruno
+Hermand, Marianne
+Pétillion, Amélie
+Karila, Laurent
+Benyamina, Amine
+Journal Article
+Systematic Review
+England
+2021/03/18
+J Psychiatr Res. 2021 May;137:273-282. doi: 10.1016/j.jpsychires.2021.03.002. Epub 2021 Mar 7.";;;;"APHP, Paul Brousse Hospital, Department of Psychiatry and Addictology, F-94800, Villejuif, France; Unité Psychiatrie-Comorbidités-Addictions- Unité de Recherche PSYCOMADD 4872 Université Paris Sud- APHP, Université Paris Saclay, Le Kremlin Bicêtre, France. Electronic address: brunoromeo@hotmail.fr.
+APHP, Paul Brousse Hospital, Department of Psychiatry and Addictology, F-94800, Villejuif, France; Unité Psychiatrie-Comorbidités-Addictions- Unité de Recherche PSYCOMADD 4872 Université Paris Sud- APHP, Université Paris Saclay, Le Kremlin Bicêtre, France.";;;;;;;NLM;eng
+25;"J. D. Rosenblat; M. I. Husain; Y. Lee; R. S. McIntyre; R. B. Mansur; D. Castle; H. Offman; S. V. Parikh; B. N. Frey; A. Schaffer; K. T. Greenway; N. Garel; S. Beaulieu; S. H. Kennedy; R. W. Lam; R. Milev; A. V. Ravindran; V. Tourjman; M. V. Ameringen; L. N. Yatham; V. Taylor";2023;8;8;The Canadian Network for Mood and Anxiety Treatments (CANMAT) Task Force Report: Serotonergic Psychedelic Treatments for Major Depressive Disorder;Studies are difficult to find (match author name and year to sources), and Grobb et al. (2011) doesn't even exist in the sources, searched for it on pubmed directly and found something, not sure if it's the right one;Can J Psychiatry;;;68;;1;5-21;;;;20220817;Jan;;;The Canadian Network for Mood and Anxiety Treatments (CANMAT) Task Force Report: Serotonergic Psychedelic Treatments for Major Depressive Disorder;;"0706-7437 (Print)
+0706-7437";10.1177/07067437221111371;;;;"The author(s) declared the following potential conflicts of interest: Joshua D. Rosenblat has received research grant support from the Canadian Institute of Health Research (CIHR), Physician Services Inc. (PSI) Foundation, Labatt Brain Health Network, Brain and Cognition Discovery Foundation (BCDF), Canadian Cancer Society, Canadian Psychiatric Association, Academic Scholars Award, American Psychiatric Association, American Society of Psychopharmacology, University of Toronto, University Health Network Centre for Mental Health, Joseph M. West Family Memorial Fund and Timeposters Fellowship and industry funding for speaker/consultation/research fees from Janssen, Allergan, Lundbeck, Sunovion and COMPASS. He is the Chief Medical and Scientific Officer of Braxia Scientific Corp and the Medical Director of Braxia Health. M. Ishrat Husain reports grants from the Brain and Behavior Research Foundation, CAMH Foundation, Canadian Institutes of Health Research, Physicians Services Incorporated Foundation and University of Toronto. Dr Husain has been a PI for a trial sponsored by COMPASS Pathways Limited and is on the advisory boards of MindSet Pharma Inc., Wake Network Inc. and PsychEd Therapeutics. He owns shares of MindSet Pharma Inc. Yena Lee was previously the Chief Research Officer of Braxia Scientific Corp. Roger McIntyre has received research grant support from Global Alliance for Chronic Diseases/Canadian Institutes of Health Research (CIHR)/National Natural Science Foundation of China's Mental Health Team Grant; speaker/consultation fees from Lundbeck, Janssen, Purdue, Pfizer, Otsuka, Takeda, Neurocrine, Sunovion, Bausch Health, Novo Nordisk, Kris, Sanofi, Eisai, Intra-Cellular, NewBridge Pharmaceuticals, Abbvie. He is the CEO of Braxia Scientific Corp. Rodrigo B. Mansur has received research grant support from the Canadian Institute of Health Research (CIHR), Physician Services Inc. (PSI) Foundation, Baszucki Brain Research Fund, and an Academic Scholars Award from the University of Toronto, Department of Psychiatry. David Castle has received grant monies for research from Eli Lilly, Janssen Cilag, Roche, Allergen, Bristol-Myers Squibb, Pfizer, Lundbeck, Astra Zeneca, Hospira; Travel Support and Honoraria for Talks and Consultancy from Eli Lilly, Bristol-Myers Squibb, Astra Zeneca, Lundbeck, Janssen Cilag, Pfizer, Organon, Sanofi-Aventis, Wyeth, Hospira, Servier, Seqirus; and is a current or past Advisory Board Member for Lu AA21004: Lundbeck; Varenicline: Pfizer; Asenapine: Lundbeck; Aripiprazole LAI: Lundbeck; Lisdexamfetamine: Shire; Lurasidone: Servier; Brexpiprazole: Lundbeck; Treatment-Resistant Depression: LivaNova; Cariprazine: Seqirus. He is a founder of the Optimal Health Program (OHP), and holds 50% of the IP for OHP; and is part owner of Clarity Healthcare. He is on the scientific advisory of The Mental Health Foundation of Australia. He does not knowingly have stocks or shares in any pharmaceutical company. Hilary Offman has received consulting fees from Braxia Scientific Corp. Sagar V. Parikh has received honoraria or research funds from Assurex, Takeda, Janssen, Mensante, Aifred, Sage. Benicio N. Frey has no disclosures. Ayal Schaffer has received funding (past 3 years) from AbbVie, GlaxoSmithKline, Janssen, Lundbeck, Otsuka, Sunovion. Kyle T. Greenway has served as an instructor for psychedelic support and an uncompensated scientific advisor for Wake Network, Inc. and grant support from the Quebec Network on Suicide, Mood Disorders and Related Disorders; the Northern Ontario Academic Medicine Association; and the Foundation for Psychocultural Research Nicolas Garel has no disclosures. Serge Beaulieu has received honoraria or research funds from CIHR, Pfizer, Otsuka, Lundbeck, Sunovion, Allergan, Abbvie, Janssen-Ortho and Takeda. Sidney H. Kennedy has received grants from Abbott, Allergan, Brain Canada, Canadian Institutes for Health Research (CIHR), Janssen, Lundbeck, Ontario Brain Institute, Ontario Research Fund(ORF), Otsuka, Pfizer, Servier, Sunovion and Xian-Janssen and consulting fees or honorarium from Abbott, Alkermes, Allergan, Boehringer Ingelheim, Brain Canada, Canadian Institutes for Health Research (CIHR), Janssen, Lundbeck, Lundbeck Institute, Ontario Brain Institute, Ontario Research and has Stock/Stock Options from Field Trip Health Raymond W. Lam has received honoraria for ad hoc speaking or advising/consulting, or received research funds, from Allergan, Asia-Pacific Economic Cooperation, BC Leading Edge Foundation, Canadian Institutes of Health Research, Canadian Network for Mood and Anxiety Treatments, Healthy Minds Canada, Janssen, Lundbeck, Lundbeck Institute, Michael Smith Foundation for Health Research, MITACS, Myriad Neuroscience, Ontario Brain Institute, Otsuka, Unity Health, Vancouver Coastal Health Research Institute, Viatris and VGH-UBCH Foundation. Roumen V. Milev has received honoraria or research funds from Ontario Brain Institute, Allergan, Janssen, Lallemand, Kye, Lundbeck, Nubiyota, Otsuka, Pfizer and Sunovion. Arun V. Ravindran has received grants from Janssen. Valerie Tourjman has no disclosures. Michael van Ameringen has received honoraria or research funds from Allergan, Almatica, Brainsway, Lundbeck, Myriad Neuroscience, Otsuka, Purdue, Janssen, Canadian Foundation for Innovation, Hamilton Academic Health Sciences Organization and Pfizer. Lakshmi N. Yatham has received honoraria or research grants from Allergan, CANMAT, Lundbeck Institute, Otsuka, DSP and Sanofi. Valerie H. Taylor has received honoraria or research funds from Optmi, DiaMentis, Janssen, Lundbeck, Otsuka, Purdue, Shire and Takeda.";PMC9720483;;;;;;;35975555;;;"Humans
+*Hallucinogens/adverse effects
+Psilocybin/pharmacology/therapeutic use
+*Major Depressive Disorder/drug therapy
+Canada
+Anxiety
+*Neoplasms/chemically induced/drug therapy
+N
+N-dimethyltryptamine
+antidepressants
+ayahuasca
+clinical practice guidelines
+lysergic acid diethylamide
+major depressive disorder
+mescaline
+psilocybin
+psychophamacology
+psychotherapy";OBJECTIVE: Serotonergic psychedelics are re-emerging as potential novel treatments for several psychiatric disorders including major depressive disorder. The Canadian Network for Mood and Anxiety Treatments (CANMAT) convened a task force to review the evidence and provide a consensus recommendation for the clinical use of psychedelic treatments for major depressive disorder. METHODS: A systematic review was conducted to identify contemporary clinical trials of serotonergic psychedelics for the treatment of major depressive disorder and cancer-related depression. Studies published between January 1990 and July 2021 were identified using combinations of search terms, inspection of bibliographies and review of other psychedelic reviews and consensus statements. The levels of evidence for efficacy were graded according to the Canadian Network for Mood and Anxiety Treatments criteria. RESULTS: Only psilocybin and ayahuasca have contemporary clinical trials evaluating antidepressant effects. Two pilot studies showed preliminary positive effects of single-dose ayahuasca for treatment-resistant depression (Level 3 evidence). Small randomized controlled trials of psilocybin combined with psychotherapy showed superiority to waitlist controls and comparable efficacy and safety to an active comparator (escitalopram with supportive psychotherapy) in major depressive disorder, with additional randomized controlled trials showing efficacy specifically in cancer-related depression (Level 3 evidence). There was only one open-label trial of psilocybin in treatment-resistant unipolar depression (Level 4 evidence). Small sample sizes and functional unblinding were major limitations in all studies. Adverse events associated with psychedelics, including psychological (e.g., psychotomimetic effects) and physical (e.g., nausea, emesis and headaches) effects, were generally transient. CONCLUSIONS: There is currently only low-level evidence to support the efficacy and safety of psychedelics for major depressive disorder. In Canada, as of 2022, psilocybin remains an experimental option that is only available through clinical trials or the special access program. As such, Canadian Network for Mood and Anxiety Treatments considers psilocybin an experimental treatment and recommends its use primarily within clinical trials, or, less commonly, through the special access program in rare, special circumstances.;"1497-0015
+Rosenblat, Joshua D
+Orcid: 0000-0002-4773-2191
+Husain, M Ishrat
+Lee, Yena
+McIntyre, Roger S
+Mansur, Rodrigo B
+Castle, David
+Orcid: 0000-0002-3075-1580
+Offman, Hilary
+Parikh, Sagar V
+Frey, Benicio N
+Schaffer, Ayal
+Greenway, Kyle T
+Garel, Nicolas
+Orcid: 0000-0002-4031-9943
+Beaulieu, Serge
+Orcid: 0000-0001-6921-3870
+Kennedy, Sidney H
+Lam, Raymond W
+Orcid: 0000-0001-7142-4669
+Milev, Roumen
+Ravindran, Arun V
+Orcid: 0000-0002-1655-2753
+Tourjman, Valerie
+Orcid: 0000-0002-2264-9586
+Ameringen, Michael Van
+Yatham, Lakshmi N
+Taylor, Valerie
+N01 AA021004/HD/NICHD NIH HHS/United States
+Journal Article
+Research Support, Non-U.S. Gov't
+Systematic Review
+United States
+2022/08/18
+Can J Psychiatry. 2023 Jan;68(1):5-21. doi: 10.1177/07067437221111371. Epub 2022 Aug 17.";;;;"Department of Psychiatry, 7938University of Toronto, Toronto, Ontario, Canada.
+7978Mood Disorders Psychopharmacology Unit, University Health Network, Toronto, Ontario, Canada.
+Centre for Addiction and Mental Health, Campbell Family Mental Health Research Institute Toronto, Ontario, Canada.
+Depression Program, Michigan Medicine, University of Michigan, Ann Arbor, USA.
+Mood Disorders Program, St. Joseph's Healthcare Hamilton, McMaster University, Psychiatry & Behavioural Neurosciences, Hamilton, Ontario, Canada.
+Department of Psychiatry, Sunnybrook Health Sciences Centre, Toronto, Ontario, Canada.
+McGill University, Psychiatry, Montreal, Quebec, Canada.
+Department of Psychiatry, University of British Columbia, Vancouver, British Columbia, Canada.
+Department of Psychiatry, Providence Care, Queen's University, Kingston, ON, Canada.
+Institut universitaire en santé mentale de Montréal, Psychiatry, Montreal, Quebec, Canada.
+McMaster University Medical Centre, Anxiety Disorders Clinic, Hamilton, Ontario, Canada.";;;;;;;NLM;eng
+26;"N. Schimmers; J. J. Breeksema; S. Y. Smith-Apeldoorn; J. Veraart; W. van den Brink; R. A. Schoevers";2022;17;33;Psychedelics for the treatment of depression, anxiety, and existential distress in patients with a terminal illness: a systematic review;33 Studies included but only 18 listed;Psychopharmacology (Berl);;;239;;1;15-33;;;;20211123;Jan;;;Psychedelics for the treatment of depression, anxiety, and existential distress in patients with a terminal illness: a systematic review;;0033-3158;10.1007/s00213-021-06027-y;;;;;;;;;;;;34812901;;;"Anxiety/drug therapy
+Depression/drug therapy
+*Hallucinogens/therapeutic use
+Humans
+Psilocybin/therapeutic use
+Quality of Life
+Anxiety
+Depression
+Existential distress
+Life-threatening disease
+Psychedelics";BACKGROUND: Terminally ill patients may experience existential distress, depression, or anxiety, limiting quality of life in the final stage. Existing psychotherapeutic or pharmacological interventions have (time) limited efficacy. Psychedelic treatment may be a safe and effective alternative treatment option. AIM: Systematically review studies on psychedelic treatment with and without psychotherapy for existential distress, depression, and anxiety in terminally ill patients. METHODS: Medline, PsycINFO, and Embase were searched for original-data studies on the treatment of depression, anxiety, and existential distress with classical or a-typical psychedelics in patients with a terminal illness, using Preferred Reporting Items for Systematic Reviews and Meta-Analyses guidelines. RESULTS: A total of 1850 records were screened, and 33 articles were included in this review: 14 studies on classical psychedelics (DPT, LSD, and psilocybin) and 19 studies on atypical psychedelics (MDMA and ketamine). Results of early pre-post studies are promising but have serious methodological flaws. Recent (controlled) trials with LSD, psilocybin, ketamine, and MDMA are of higher methodological quality and indicate positive effects on existential and spiritual well-being, quality of life, acceptance, and reduction of anxiety and depression with few adverse and no serious adverse effects. CONCLUSIONS: Both classical and a-typical psychedelics are promising treatment options in patients with terminal illness. To draw final conclusions on effectiveness and safety of psychedelics, we need larger high-quality studies for classical psychedelics and MDMA. Ketamine studies should pay more attention to existential dimensions of well-being and the psychotherapeutic context of the treatment.;"1432-2072
+Schimmers, Nina
+Orcid: 0000-0001-7534-5845
+Breeksema, Joost J
+Smith-Apeldoorn, Sanne Y
+Veraart, Jolien
+van den Brink, Wim
+Schoevers, Robert A
+Journal Article
+Systematic Review
+Germany
+2021/11/24
+Psychopharmacology (Berl). 2022 Jan;239(1):15-33. doi: 10.1007/s00213-021-06027-y. Epub 2021 Nov 23.";;;;"Department of Psychiatry, University Medical Center, 9713 GZ, Hanzeplein 1 GroningenGroningen, Netherlands. n.schimmers@umcg.nl.
+Department of Psychiatry, University Medical Center, 9713 GZ, Hanzeplein 1 GroningenGroningen, Netherlands.
+PsyQ Haaglanden, Parnassia Psychiatric Institute, Mangostraat 1, 2552 KS, The Hague, The Netherlands.
+Department of Psychiatry, Amsterdam University Medical Center, University of Amsterdam, Amsterdam, The Netherlands.";;;;;;;NLM;eng
+27;"K. W. Smith; D. J. Sicignano; A. V. Hernandez; C. M. White";2022;8;9;MDMA-Assisted Psychotherapy for Treatment of Posttraumatic Stress Disorder: A Systematic Review With Meta-Analysis;it's explicitly mentioned that 9 studies were included, however, only 8 of them were cited (maybe because one study was retracted afterwards?);J Clin Pharmacol;;;62;;4;463-471;;;;20211128;Apr;;;MDMA-Assisted Psychotherapy for Treatment of Posttraumatic Stress Disorder: A Systematic Review With Meta-Analysis;;0091-2700;10.1002/jcph.1995;;;;;;;;;;;;34708874;;;"Combined Modality Therapy
+Humans
+*N-Methyl-3,4-methylenedioxyamphetamine/adverse effects/therapeutic use
+Psychotherapy
+*Stress Disorders, Post-Traumatic/drug therapy/psychology
+Treatment Outcome
+(cph)
+clinical pharmacology
+drug abuse
+drug development
+psychiatry (PSY)
+psychopharmacology (PSP)";"This article discusses current literature on the use of 3,4-methylenedioxymethamphetamine (MDMA)-assisted psychotherapy in the treatment of posttraumatic stress disorder (PTSD). MDMA, the intended active ingredient in illicit Ecstasy or Molly products, is a psychedelic that causes an elevated mood, feeling of bonding, and increased energy. In MDMA-assisted psychotherapy, patients are subjected to 2 or 3 multihour sessions of therapy with a team of psychiatrists. The dosing of MDMA is used to allow the therapist to probe the underlying trauma without causing emotional distress. The use of MDMA-assisted psychotherapy treatment reduced patient's Clinician-Administered PTSD Scale (CAPS) scores from baseline more than control psychotherapy (-22.03; 95%CI, -38.53 to -5.52) but with high statistical heterogeneity. MDMA-assisted psychotherapy enhanced the achievement of clinically significant reductions in CAPS scores (relative risk, 3.65; 95%CI, 2.39-5.57) and CAPS score reductions sufficient to no longer meet the definition of PTSD (relative risk, 2.10; 95%CI, 1.37-3.21) with no detected statistical heterogeneity. While therapy was generally safe and well tolerated, bruxism, anxiety, jitteriness, headache, and nausea are commonly reported. While MDMA-assisted psychotherapy has been shown to be an effective therapy for patients with PTSD with a reasonable safety profile, use of unregulated MDMA or use in the absence of a strongly controlled psychotherapeutic environment has considerable risks.";"1552-4604
+Smith, Kimberly W
+Sicignano, Dakota J
+Hernandez, Adrian V
+Orcid: 0000-0002-9999-4003
+White, C Michael
+Orcid: 0000-0002-9367-4893
+Journal Article
+Meta-Analysis
+Systematic Review
+England
+2021/10/29
+J Clin Pharmacol. 2022 Apr;62(4):463-471. doi: 10.1002/jcph.1995. Epub 2021 Nov 28.";;;;"University of Connecticut School of Pharmacy, Storrs, Connecticut, USA.
+Research Administration, Hartford Hospital, Hartford, Connecticut, USA.
+Unidad de Revisiones Sistemáticas y Meta-análisis (URSIGET), Vicerrectorado de Investigación, Universidad San Ignacio de Loyola (USIL), Lima, Peru.";;;;;;;NLM;eng
+28;"B. Souza-Marques; C. Santos-Lima; L. Araújo-de-Freitas; F. Vieira; A. P. Jesus-Nunes; L. C. Quarantini; A. S. Sampaio";2021;14;14;Neurocognitive Effects of Ketamine and Esketamine for Treatment-Resistant Major Depressive Disorder: A Systematic Review;;Harv Rev Psychiatry;;;29;;5;340-350;;;;;Sep-Oct 01;;;Neurocognitive Effects of Ketamine and Esketamine for Treatment-Resistant Major Depressive Disorder: A Systematic Review;;1067-3229;10.1097/hrp.0000000000000312;;;;;;;;;;;;34366408;;;"Cognition
+*Major Depressive Disorder/drug therapy
+*Depressive Disorder, Treatment-Resistant/drug therapy
+Humans
+*Ketamine";LEARNING OBJECTIVE: After participating in this activity, learners should be better able to:• Analyze the effects of ketamine and esketamine on individuals with treatment-resistant depression. INTRODUCTION: Cognitive impairment is commonly present in individuals with treatment-resistant depression, especially in attention, memory, and executive functions. These deficits are related to symptom severity, remission rates, and functional impairments during and after the acute phase of the disorder. Ketamine, an N-methyl-D-aspartate antagonist previously used as an anesthetic, brings promising antidepressant results. This study systematically reviews the neurocognitive effects of ketamine and esketamine in patients with treatment-resistant major depressive disorder. METHODS: Systematic searches were conducted at Embase, PubMed, and PsycINFO using the terms depression, ketamine, and cognition. Title, abstract, and full-text reading were conducted independently by two of the authors (BSM and CSL). Risk of bias, study design, neuropsychological outcomes, and neuroimaging data were recorded. RESULTS: From a total of 997 hits, 14 articles were included. One study reported cognitive impairment after ketamine treatment for processing speed and verbal memory. Five studies reported improvements in processing speed, verbal memory, visual memory, working memory, or cognitive flexibility. The esketamine study suggested no changes to performance. Lower attention, slower processing speed, and higher working memory are reported as predictors of antidepressant response. Brain areas for emotional and reward processing, including the amygdala, insula, and orbitofrontal cortex, show a normalizing tendency after ketamine. CONCLUSIONS: Ketamine and esketamine do not seem to exert significant deleterious neurocognitive effects in the short or long term in individuals with treatment-resistant depression. Results suggest neuropsychological functions and brain areas commonly impaired in treatment-resistant depression may especially benefit from subanesthetic ketamine infusions. Key questions that remain unanswered are discussed.;"1465-7309
+Souza-Marques, Breno
+Santos-Lima, Cassio
+Araújo-de-Freitas, Lucas
+Vieira, Flávia
+Jesus-Nunes, Ana Paula
+Quarantini, Lucas C
+Sampaio, Aline S
+Journal Article
+Research Support, Non-U.S. Gov't
+Systematic Review
+United States
+2021/08/10
+Harv Rev Psychiatry. 2021 Sep-Oct 01;29(5):340-350. doi: 10.1097/HRP.0000000000000312.";;;;"From the Programa de Pós-graduação em Medicina e Saúde, Faculdade de Medicina da Bahia (Mr. Souza-Marques; Drs. Araújo-de-Freitas, Jesus-Nunes, Quarantini, and Sampaio; Ms. Vieira), Laboratório de Neuropsicofarmacologia, Serviço de Psiquiatria, Hospital Universitário Professor Edgard Santos (all), and Instituto de Psicologia (Mr. Santos-Lima), Universidade Federal da Bahia, Brazil.";;;;;;;NLM;eng
+29;"J. van Amsterdam; W. van den Brink";2022;11;15;The therapeutic potential of psilocybin: a systematic review;studies are extremely difficult to extract, some studies are referenced but not mentioned in the sources... some studies are missing (I only found 11/15);Expert Opin Drug Saf;;;21;;6;833-840;;;;20220302;Jun;;;The therapeutic potential of psilocybin: a systematic review;;1474-0338;10.1080/14740338.2022.2047929;;;;;;;;;;;;35225143;;;"Double-Blind Method
+*Hallucinogens/adverse effects
+Humans
+*Mental Disorders/chemically induced/drug therapy
+Psilocybin/adverse effects
+Randomized Controlled Trials as Topic
+Psilocybin
+anxiety
+depression
+psychedelic agents";INTRODUCTION: Psychedelic drugs were used quite extensively before their prohibition in 1968 which delayed research. However, since the 1990s, studies on the potential therapeutic benefits of psychedelics have rapidly increased. AREAS COVERED: This systematic review provides an overview of the clinical effects of psilocybin in the treatment of a variety of mental disorders. Only (randomized) clinical trials were selected. A total of 11 studies (15 publications) were selected, including seven randomized controlled trials (eight publications) and four single arm open-label studies (seven publications). In total, 488 patients were included in the selected studies: 333 patients treated with psilocybin and 155 patients treated with (active) placebo. In nine studies, psychotherapeutic support was provided as an integral part of the psilocybin treatment. The findings of these studies collectively show that psilocybin has a positive benefit-risk balance in the treatment of various mental disorders with an immediate and prolonged effect following 1-3 doses of psilocybin and a few (serious) adverse events. EXPERT OPINION: Psilocybin - mostly combined with psychotherapy or psychotherapeutic support - shows a promise as a treatment for various (treatment-resistant) mental disorders. Larger double-blind RCTs with objective (long-term) outcomes are needed to confirm these findings before standard clinical use of psilocybin can be considered.;"1744-764x
+van Amsterdam, Jan
+Orcid: 0000-0002-8847-4387
+van den Brink, Wim
+Journal Article
+Systematic Review
+England
+2022/03/01
+Expert Opin Drug Saf. 2022 Jun;21(6):833-840. doi: 10.1080/14740338.2022.2047929. Epub 2022 Mar 2.";;;;Department of Psychiatry, Academic Medical Center University of Amsterdam, Amsterdam, The Netherlands.;;;;;;;NLM;eng
+30;"T. Varker; L. Watson; K. Gibson; D. Forbes; M. L. O'Donnell";2021;10;10;Efficacy of Psychoactive Drugs for the Treatment of Posttraumatic Stress Disorder: A Systematic Review of MDMA, Ketamine, LSD and Psilocybin;;J Psychoactive Drugs;;;53;;1;85-95;;;;20200915;Jan-Mar;;;Efficacy of Psychoactive Drugs for the Treatment of Posttraumatic Stress Disorder: A Systematic Review of MDMA, Ketamine, LSD and Psilocybin;;0279-1072;10.1080/02791072.2020.1817639;;;;;;;;;;;;32931403;;;"Humans
+*Ketamine
+Lysergic Acid Diethylamide/therapeutic use
+*N-Methyl-3,4-methylenedioxyamphetamine/therapeutic use
+Psilocybin/therapeutic use
+Psychotherapy
+Psychotropic Drugs
+*Stress Disorders, Post-Traumatic/drug therapy
+Lsd
+Mdma
+Posttraumatic stress disorder
+ketamine
+psilocybin";"The aim of this systematic review was to examine the efficacy of MDMA, ketamine, LSD, and psilocybin for the treatment of posttraumatic stress disorder (PTSD). A search of four databases for English language, peer-reviewed literature published from inception to 18th October 2019 yielded 2,959 records, 34 of which were screened on full-text. Observational studies and RCTs which tested the efficacy of MDMA, ketamine, LSD, or psilocybin for reducing PTSD symptoms in adults, and reported changes to PTSD diagnosis or symptomatology, were included. Nine trials (five ketamine and four MDMA) met inclusion criteria. Trials were rated on a quality and bias checklist and GRADE was used to rank the evidence. The evidence for ketamine as a stand-alone treatment for comorbid PTSD and depression was ranked very low"", and the evidence for ketamine in combination with psychotherapy as a PTSD treatment was ranked ""low"". The evidence for MDMA in combination with psychotherapy as a PTSD treatment was ranked ""moderate"".""";"2159-9777
+Varker, Tracey
+Orcid: 0000-0002-7139-062x
+Watson, Loretta
+Gibson, Kari
+Forbes, David
+Orcid: 0000-0001-9145-1605
+O'Donnell, Meaghan L
+Orcid: 0000-0003-4349-0022
+Journal Article
+Research Support, U.S. Gov't, Non-P.H.S.
+Systematic Review
+United States
+2020/09/16
+J Psychoactive Drugs. 2021 Jan-Mar;53(1):85-95. doi: 10.1080/02791072.2020.1817639. Epub 2020 Sep 15.";;;;Phoenix Australia- Centre for Posttraumatic Mental Health, Department of Psychiatry, University of Melbourne, Melbourne, Australia.;;;;;;;NLM;eng
