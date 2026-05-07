@@ -7,22 +7,32 @@ from .queries import engine
 from data.queries import get_dosage_samples
 
 
-def export_classification_data(outfile: str) -> str:
+def export_classification_data(outfile: str, initial_dataset: bool = False) -> str:
     """Export classification (predictions) data to CSV including study primary key.
 
     Columns include: Study_ID (paper_id), task, label, probability, model, is_multilabel
     Returns the path to the written CSV file.
     """
     os.makedirs(os.path.dirname(outfile) or ".", exist_ok=True)
-    sql = text(
-        "SELECT paper_id AS Study_ID, task, label, probability, model, is_multilabel FROM prediction"
-    )
+
+    if initial_dataset:
+        sql = text(
+            "SELECT p.id AS Study_ID, task, label, probability, model, is_multilabel "
+            "FROM prediction pr JOIN paper p ON pr.paper_id = p.id "
+            "WHERE (p.entrez_year IS NULL) OR (p.entrez_year <= 2025)"
+        )
+    else:
+        sql = text(
+            "SELECT paper_id AS Study_ID, task, label, probability, model, is_multilabel FROM prediction"
+        )
+
+    
     df = pd.read_sql(sql, engine)
     df.to_csv(outfile, index=False)
     return outfile
 
 
-def export_dosage_data(outfile: str) -> str:
+def export_dosage_data(outfile: str, initial_dataset: bool = False) -> str:
     """Export NER tags (ner_tag) and dosage normalization (if present) to CSV.
 
     Columns include: Study_ID (paper_id), ner_tag_id, tag, start_id, end_id, text, probability, model,
@@ -30,7 +40,7 @@ def export_dosage_data(outfile: str) -> str:
     Returns the path to the written CSV file.
     """
     os.makedirs(os.path.dirname(outfile) or ".", exist_ok=True)
-    df = get_dosage_samples(dosage_types=None)
+    df = get_dosage_samples(dosage_types=None, initial_dataset=initial_dataset)
     df.to_csv(outfile, index=False)
     return outfile
 
@@ -79,3 +89,5 @@ if __name__ == "__main__":
     export_dosage_data("analysis/export/dosage_data.csv")
     export_study_data("analysis/export/study_data.csv")
     export_ner_data("analysis/export/ner_data.csv")
+    export_classification_data("analysis/export/classification_data_2025.csv", initial_dataset=True)
+    export_dosage_data("analysis/export/dosage_data_2025.csv", initial_dataset=True)
