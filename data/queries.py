@@ -733,11 +733,8 @@ def get_dosage_samples(substances: list[str] = None, dosage_types: list[str] = [
         min_mg = to_mg(min_val, unit)
         max_mg = to_mg(max_val, unit)
 
-        if min_mg is not None:
+        if min_mg is not None and max_mg is not None:
             samples.append({'Substance': label, 'Dosage_mg': min_mg,
-                           'Unit': 'mg', 'Study_ID': paper_id, 'Dose_Type': dose_type, 'Norm_Text': norm_text})
-        if max_mg is not None and max_mg != min_mg:
-            samples.append({'Substance': label, 'Dosage_mg': max_mg,
                            'Unit': 'mg', 'Study_ID': paper_id, 'Dose_Type': dose_type, 'Norm_Text': norm_text})
 
     df = pd.DataFrame(samples)
