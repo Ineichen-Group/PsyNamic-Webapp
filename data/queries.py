@@ -11,7 +11,7 @@ import os
 import logging
 from collections import OrderedDict
 import pandas as pd
-from sqlalchemy import create_engine, func, extract
+from sqlalchemy import create_engine, func, extract, or_
 from sqlalchemy.orm import sessionmaker, load_only
 from sqlalchemy.sql import select
 from sqlalchemy import and_, tuple_, case
@@ -684,7 +684,7 @@ def ner_tags_type(paper_id: int, ner_type: str = None, in_titel=False) -> list[d
         session.close()
 
 
-def get_dosage_samples(substances: list[str] = None, dosage_types: list[str] = ['absolute', 'relative_weight']) -> pd.DataFrame:
+def get_dosage_samples(substances: list[str] = None, dosage_types: list[str] = ['absolute', 'relative_weight'], initial_dataset: bool = False) -> pd.DataFrame:
     """Return a DataFrame with dosage samples per substance.
 
     The following preprocessing steps are applied:
@@ -710,6 +710,10 @@ def get_dosage_samples(substances: list[str] = None, dosage_types: list[str] = [
     query = query.join(DosageNormalization,
                        DosageNormalization.ner_tag_id == NerTag.id)
     query = query.filter(Prediction.task == 'Substances')
+
+    if initial_dataset:
+        # filter for papers that have entrez_year <= 2025 or no entrez_year
+        query = query.filter(or_(Paper.entrez_year.is_(None), Paper.entrez_year <= 2025))
 
     if dosage_types:
         query = query.filter(DosageNormalization.dose_type.in_(dosage_types))
