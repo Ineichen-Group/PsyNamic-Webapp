@@ -133,7 +133,7 @@ def create_ner_tag(session: Session, tag: str, start_id: int, end_id: int, text:
         NerTag.text == text
     ).first()
     if ner_tag:
-        logging.info(f"NER tag already exists: {ner_tag}")
+        logging.info(f"NER tag already exists: {ner_tag} for paper_id {paper_id}")
         return ner_tag
 
     return NerTag(
