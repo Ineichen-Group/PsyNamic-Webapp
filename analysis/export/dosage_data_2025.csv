@@ -1,49 +1,4 @@
 Substance,Dosage_mg,Unit,Study_ID,Dose_Type,Norm_Text
-LSD,0.005,mg,3638,absolute,"5, 10, and 20 µg"
-LSD,0.02,mg,3638,absolute,"5, 10, and 20 µg"
-LSD,0.005,mg,3638,absolute,5 µg
-LSD,0.01,mg,3638,absolute,10 µg
-LSD,0.02,mg,3638,absolute,20 µg
-LSD,0.005,mg,3638,absolute,5-20 µg
-LSD,0.02,mg,3638,absolute,5-20 µg
-Ketamine,18.2,mg,1961,relative_weight,0.26 mg/kg
-Ketamine,17.5,mg,1961,relative_weight_time,0.25 mg/kg/h
-Ketamine,35.0,mg,6361,relative_weight,0.5 mg/kg
-Psilocybin,20.0,mg,1866,relative_weight,20 mg/70 kg
-Psilocybin,30.0,mg,1866,relative_weight,30 mg/70 kg
-Psilocybin,30.0,mg,6295,absolute,30 mg
-Psilocybin,1.0,mg,6295,absolute,1 mg
-Ketamine,70.0,mg,153,relative_weight,1 mg/kg
-Ketamine,7.0,mg,1364,relative_weight,0.1-0.5 mg/kg
-Ketamine,35.0,mg,1364,relative_weight,0.1-0.5 mg/kg
-S-Ketamine,7.0,mg,1364,relative_weight,0.1-0.5 mg/kg
-S-Ketamine,35.0,mg,1364,relative_weight,0.1-0.5 mg/kg
-Ketamine,35.0,mg,1364,relative_weight,0.5–1 mg/kg
-S-Ketamine,35.0,mg,1364,relative_weight,0.5–1 mg/kg
-Psilocybin,25.0,mg,3492,absolute,25 mg
-Ibogaine,80.0,mg,2912,absolute,80 mg
-Ibogaine,10.0,mg,2912,absolute,"10, 20, 30, or 40 mg"
-Ibogaine,40.0,mg,2912,absolute,"10, 20, 30, or 40 mg"
-Ibogaine,670.0,mg,2912,absolute,670 mg
-Ibogaine,653.0,mg,2912,absolute,653 mg
-Ibogaine,640.0,mg,2912,absolute,640‐670 mg
-Ibogaine,670.0,mg,2912,absolute,640‐670 mg
-Ketamine,35.0,mg,6362,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,8836,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,2605,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,2207,relative_weight,0.5 mg/kg
-Ketamine,18.2,mg,4574,relative_weight,0.26 mg/kg
-Ketamine,45.5,mg,4574,relative_weight_time,0.65 mg/kg/h
-DMT,60.0,mg,6268,absolute,60 mg
-DMT,1.0,mg,6268,absolute,1 mg
-Ketamine,35.0,mg,5598,relative_weight,0.5-1.25 mg/kg
-Ketamine,87.5,mg,5598,relative_weight,0.5-1.25 mg/kg
-R-Ketamine,35.0,mg,5598,relative_weight,0.5-1.25 mg/kg
-R-Ketamine,87.5,mg,5598,relative_weight,0.5-1.25 mg/kg
-S-Ketamine,35.0,mg,5598,relative_weight,0.5-1.25 mg/kg
-S-Ketamine,87.5,mg,5598,relative_weight,0.5-1.25 mg/kg
-LSD,0.005,mg,2118,absolute,5-15 µg
-LSD,0.015,mg,2118,absolute,5-15 µg
 Ketamine,35.0,mg,777,relative_weight,0.5 mg/kg
 S-Ketamine,84.0,mg,1240,absolute,84 mg
 Ketamine,35.0,mg,1441,relative_weight,0.5 mg/kg
@@ -53,1132 +8,2297 @@ Ketamine,25.0,mg,3371,absolute,25 mg
 Ketamine,10.0,mg,3371,absolute,10 mg
 Ketamine,35.0,mg,3820,relative_weight,0.5 mg/kg
 Ketamine,35.0,mg,4916,relative_weight,0.5 mg/kg
-Ketamine,17.5,mg,5020,relative_weight,0.25 mg/kg
 Ketamine,35.0,mg,5020,relative_weight,0.5 mg/kg
+Ketamine,17.5,mg,5020,relative_weight,0.25 mg/kg
 S-Ketamine,84.0,mg,5968,absolute,84 mg
-MDMA,125.0,mg,6000,absolute,125 mg
 MDMA,62.5,mg,6000,absolute,62.5 mg
+MDMA,125.0,mg,6000,absolute,125 mg
 Psilocybin,30.0,mg,6044,relative_weight,30 mg/70 kg
-MDMA,80.0,mg,6103,absolute,80 mg
-MDMA,120.0,mg,6103,absolute,120 mg
-MDMA,40.0,mg,6103,absolute,40 or 60 mg
-MDMA,60.0,mg,6103,absolute,40 or 60 mg
 MDMA,80.0,mg,6103,absolute,80 mg-180
-MDMA,180.0,mg,6103,absolute,80 mg-180
+MDMA,40.0,mg,6103,absolute,40 or 60 mg
+MDMA,120.0,mg,6103,absolute,120 mg
+MDMA,80.0,mg,6103,absolute,80 mg
 Ketamine,90.0,mg,6221,absolute,90 mg
 Ketamine,70.0,mg,8606,relative_weight,1 mg/kg
-DMT,42.0,mg,8889,relative_time,0.6 mg/min
-DMT,70.0,mg,8889,relative_time,1 mg/min
-DMT,15.0,mg,8889,absolute,15 mg
-DMT,25.0,mg,8889,absolute,25 mg
 DMT,42.0,mg,8889,relative_time,0.6 or 1 mg/min
-DMT,70.0,mg,8889,relative_time,0.6 or 1 mg/min
-DMT,2.8000000000000003,mg,8320,relative_weight,0.04 and 0.4 mg/kg
-DMT,28.0,mg,8320,relative_weight,0.04 and 0.4 mg/kg
-DMT,14.0,mg,8320,relative_weight,0.2 and 0.4 mg/kg
-DMT,28.0,mg,8320,relative_weight,0.2 and 0.4 mg/kg
-DMT,3.5,mg,8320,relative_weight,0.1 and 0.05 mg/kg
-DMT,7.0,mg,8320,relative_weight,0.1 and 0.05 mg/kg
-DMT,7.0,mg,8320,relative_weight,0.1 mg/kg
-MDMA,75.0,mg,8457,relative_weight,"75, 110 and 145 mg/70 kg"
-MDMA,145.0,mg,8457,relative_weight,"75, 110 and 145 mg/70 kg"
-Psilocybin,15.0,mg,3631,absolute,"15, 25, and 30 mg"
-Psilocybin,30.0,mg,3631,absolute,"15, 25, and 30 mg"
-Ketamine,35.0,mg,2556,relative_weight,0.5 mg/kg
+DMT,25.0,mg,8889,absolute,25 mg
+DMT,15.0,mg,8889,absolute,15 mg
+DMT,70.0,mg,8889,relative_time,1 mg/min
+DMT,42.0,mg,8889,relative_time,0.6 mg/min
+Psilocybin,25.0,mg,56,absolute,25 mg
+S-Ketamine,10.0,mg,128,absolute,10 mg
+MDMA,225.0,mg,159,absolute,225 mg
+MDMA,175.0,mg,159,absolute,175 mg
+MDMA,125.0,mg,159,absolute,125 mg
+MDMA,75.0,mg,159,absolute,75 mg
+MDMA,105.0,mg,790,relative_weight,1.5 mg/kg
+MDMA,125.0,mg,790,absolute,125 mg
+MDMA,52.5,mg,790,relative_weight,0.75 mg/kg
 Psilocybin,10.0,mg,1254,relative_weight,"10, 20, 30 mg/70 kg"
-Psilocybin,30.0,mg,1254,relative_weight,"10, 20, 30 mg/70 kg"
-Ketamine,35.0,mg,7903,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,8611,relative_weight,0.5 mg/kg
-Ketamine,14.0,mg,8611,relative_weight,0.2 mg/kg
-Ketamine,70.0,mg,6591,relative_weight,1 mg/kg
-Ketamine,210.0,mg,6591,relative_weight,3 mg/kg
-MDMA,100.0,mg,5738,absolute,100 mg
-Ketamine,35.0,mg,7945,relative_weight,0.5 mg/kg
-MDMA,100.0,mg,3533,absolute,100 mg
-S-Ketamine,35.0,mg,3354,relative_weight,0.5 mg/kg
-S-Ketamine,0.7000000000000001,mg,3354,relative_weight_time,0.01 mg/kg/h
-LSD,0.013,mg,1958,absolute,13 or 26 μg
-LSD,0.026,mg,1958,absolute,13 or 26 μg
-LSD,0.013,mg,1958,absolute,13 μg
+MDMA,75.0,mg,1829,absolute,75-125 mg
 LSD,0.026,mg,1958,absolute,26 μg
-LSD,0.0,mg,3765,absolute,"0, 5, 10, and 20 µg"
-LSD,0.02,mg,3765,absolute,"0, 5, 10, and 20 µg"
-LSD,0.005,mg,3765,absolute,"5, 10, and 20 µg"
-LSD,0.02,mg,3765,absolute,"5, 10, and 20 µg"
-LSD,0.005,mg,3765,absolute,5 µg=10
-LSD,0.01,mg,3765,absolute,5 µg=10
-LSD,0.01,mg,3765,absolute,10 µg=
-LSD,0.02,mg,3765,absolute,20 µg=8
-LSD,0.008,mg,3765,absolute,20 µg=8
-LSD,0.005,mg,3765,absolute,"5, 10 and 20 µg"
-LSD,0.02,mg,3765,absolute,"5, 10 and 20 µg"
+LSD,0.013,mg,1958,absolute,13 μg
+LSD,0.013,mg,1958,absolute,13 or 26 μg
+S-Ketamine,56.0,mg,2422,absolute,56 or 84 mg
+LSD,0.02,mg,2482,absolute,20 μg
+LSD,0.01,mg,2482,absolute,10 μg
+LSD,0.005,mg,2482,absolute,5 μg
+Ketamine,35.0,mg,2556,relative_weight,0.5 mg/kg
+S-Ketamine,0.7000000000000001,mg,3354,relative_weight_time,0.01 mg/kg/h
+S-Ketamine,35.0,mg,3354,relative_weight,0.5 mg/kg
+MDMA,100.0,mg,3533,absolute,100 mg
+Psilocybin,15.0,mg,3631,absolute,"15, 25, and 30 mg"
 LSD,0.02,mg,3765,absolute,20 µg
 LSD,0.01,mg,3765,absolute,10 µg
 LSD,0.005,mg,3765,absolute,5 µg
-Ketamine,35.0,mg,9339,relative_weight,0.5 mg/kg
-Ketamine,50.0,mg,9339,absolute,50 mg
-Ketamine,7.0,mg,9339,relative_weight,0.1-0.4 mg/kg
-Ketamine,28.0,mg,9339,relative_weight,0.1-0.4 mg/kg
-Ketamine,7.0,mg,9339,relative_weight,0.1-0.5 mg/kg
-Ketamine,35.0,mg,9339,relative_weight,0.1-0.5 mg/kg
-Ketamine,10.5,mg,6954,relative_weight_time,0.15-0.3 mg/kg/h
-Ketamine,21.0,mg,6954,relative_weight_time,0.15-0.3 mg/kg/h
-Ketamine,21.0,mg,6954,relative_weight,0.3 mg/kg
-Ketamine,35.0,mg,6364,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,7554,relative_weight,0.5 mg/kg
+LSD,0.005,mg,3765,absolute,"5, 10 and 20 µg"
+LSD,0.02,mg,3765,absolute,20 µg=8
+LSD,0.01,mg,3765,absolute,10 µg=
+LSD,0.005,mg,3765,absolute,5 µg=10
+LSD,0.005,mg,3765,absolute,"5, 10, and 20 µg"
+LSD,0.0,mg,3765,absolute,"0, 5, 10, and 20 µg"
+S-Ketamine,35.0,mg,4410,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,4732,relative_weight,0.5 mg/kg
+MDMA,105.0,mg,4969,relative_weight,1.5 mg/kg
+MDMA,100.0,mg,5274,absolute,100 mg
+MDMA,100.0,mg,5738,absolute,100 mg
+Psilocybin,1.75,mg,5789,relative_weight,25 µg/kg
+Psilocybin,21.0,mg,5789,relative_weight,300 µg/kg
+Psilocybin,14.0,mg,5789,relative_weight,200 µg/kg
+Psilocybin,7.0,mg,5789,relative_weight,100 µg/kg
+Ketamine,10.0,mg,6007,absolute,10 mg
+Psilocybin,25.0,mg,6137,absolute,25 mg
+S-Ketamine,0.28,mg,6171,relative_weight_time,4 μg/kg/min
 S-Ketamine,35.0,mg,6171,relative_weight,0.5 mg/kg
 S-Ketamine,0.14,mg,6171,relative_weight_time,2 μg/kg/min
-S-Ketamine,0.28,mg,6171,relative_weight_time,4 μg/kg/min
-MDMA,75.0,mg,159,absolute,75 mg
-MDMA,125.0,mg,159,absolute,125 mg
-MDMA,175.0,mg,159,absolute,175 mg
-MDMA,225.0,mg,159,absolute,225 mg
-S-Ketamine,35.0,mg,4410,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,6449,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,6137,absolute,25 mg
-Ketamine,35.0,mg,9572,relative_weight,0.5 mg/kg
-MDMA,52.5,mg,790,relative_weight,0.75 mg/kg
-MDMA,105.0,mg,790,relative_weight,1.5 mg/kg
-MDMA,125.0,mg,790,absolute,125 mg
-MDMA,100.0,mg,5274,absolute,100 mg
-S-Ketamine,56.0,mg,2422,absolute,56 mg or 84 mg
-S-Ketamine,84.0,mg,2422,absolute,56 mg or 84 mg
-MDMA,105.0,mg,4969,relative_weight,1.5 mg/kg
+Ketamine,35.0,mg,6364,relative_weight,0.5 mg/kg
 Psilocybin,15.0,mg,6403,absolute,15 mg
-LSD,0.005,mg,2482,absolute,5 μg
-LSD,0.01,mg,2482,absolute,10 μg
-LSD,0.02,mg,2482,absolute,20 μg
-Ketamine,10.0,mg,6007,absolute,10 mg
-Psilocybin,25.0,mg,56,absolute,25 mg
-Psilocybin,7.0,mg,5789,relative_weight,100 µg/kg
-Psilocybin,14.0,mg,5789,relative_weight,200 µg/kg
-Psilocybin,21.0,mg,5789,relative_weight,300 µg/kg
-Psilocybin,1.75,mg,5789,relative_weight,25 µg/kg
-Ketamine,35.0,mg,4732,relative_weight,0.5 mg/kg
-Ketamine,21.0,mg,8706,relative_weight,0.3 mg/kg
-Ketamine,35.0,mg,4922,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6449,relative_weight,0.5 mg/kg
+Ketamine,210.0,mg,6591,relative_weight,3 mg/kg
+Ketamine,70.0,mg,6591,relative_weight,1 mg/kg
+Ketamine,21.0,mg,6954,relative_weight,0.3 mg/kg
+Ketamine,10.5,mg,6954,relative_weight_time,0.15-0.3 mg/kg/h
+Ketamine,35.0,mg,7554,relative_weight,0.5 mg/kg
 Ketamine,35.0,mg,7573,relative_weight,0.5 mg/kg
-MDMA,75.0,mg,1829,absolute,75-125 mg
-MDMA,125.0,mg,1829,absolute,75-125 mg
-S-Ketamine,10.0,mg,128,absolute,10 mg
+Ketamine,35.0,mg,7903,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,7945,relative_weight,0.5 mg/kg
+DMT,7.0,mg,8320,relative_weight,0.1 mg/kg
+DMT,3.5,mg,8320,relative_weight,0.1 and 0.05 mg/kg
+DMT,14.0,mg,8320,relative_weight,0.2 and 0.4 mg/kg
+DMT,2.8000000000000003,mg,8320,relative_weight,0.04 and 0.4 mg/kg
+MDMA,75.0,mg,8457,relative_weight,"75, 110 and 145 mg/70 kg"
+Ketamine,14.0,mg,8611,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,8611,relative_weight,0.5 mg/kg
+Ketamine,21.0,mg,8706,relative_weight,0.3 mg/kg
+Ketamine,7.0,mg,9339,relative_weight,0.1-0.5 mg/kg
+Ketamine,7.0,mg,9339,relative_weight,0.1-0.4 mg/kg
+Ketamine,50.0,mg,9339,absolute,50 mg
+Ketamine,35.0,mg,9339,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9572,relative_weight,0.5 mg/kg
 Ketamine,35.0,mg,135,relative_weight,0.5 mg/kg
-Ketamine,10.5,mg,687,relative_weight,0.15 mg/kg
 Ketamine,0.098,mg,687,relative_weight_time,1.4 µg/kg/min
-MDMA,35.0,mg,791,relative_weight,0.5 mg/kg
-MDMA,75.0,mg,1216,absolute,75 and 125 mg
-MDMA,125.0,mg,1216,absolute,75 and 125 mg
-MDMA,100.0,mg,2516,absolute,100 mg
-S-Ketamine,14.0,mg,3728,relative_weight,0.2 mg/kg
-S-Ketamine,28.0,mg,3728,relative_weight,0.4 mg/kg
-Ketamine,7.0,mg,4579,relative_weight,0.1 mg/kg
-Ketamine,35.0,mg,4579,relative_weight,0.5 mg/kg
+Ketamine,10.5,mg,687,relative_weight,0.15 mg/kg
 Ketamine,35.0,mg,5834,relative_weight,0.5 mg/kg
 Ketamine,35.0,mg,6357,relative_weight,0.5 mg/kg
-MDMA,50.0,mg,6952,absolute,50-200 mg
-MDMA,200.0,mg,6952,absolute,50-200 mg
 MDMA,100.0,mg,6952,absolute,100 mg
+MDMA,50.0,mg,6952,absolute,50-200 mg
 Ketamine,35.0,mg,7078,relative_weight,0.5 mg/kg
-MDMA,125.0,mg,6016,absolute,125 mg
-Ketamine,15.0,mg,6869,absolute,15 mg
-Ketamine,35.0,mg,9277,relative_weight,0.5 mg/kg
-MDMA,70.0,mg,4049,relative_weight,1.0 and 1.5 mg/kg
-MDMA,105.0,mg,4049,relative_weight,1.0 and 1.5 mg/kg
-Ketamine,35.0,mg,8062,relative_weight,0.5 mg/kg
-MDMA,125.0,mg,8271,absolute,125 mg
-Ketamine,18.2,mg,4578,relative_weight,0.26 mg/kg
-Psilocybin,18.2,mg,6643,relative_weight,0.26 mg/kg
-MDMA,35.0,mg,4356,relative_weight,0.5 or 1.0 mg/kg
-MDMA,70.0,mg,4356,relative_weight,0.5 or 1.0 mg/kg
-Ketamine,35.0,mg,8052,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,1488,relative_weight,0.5 mg/kg
-MDMA,0.0,mg,4641,absolute,"0, 75, and 100 mg"
-MDMA,100.0,mg,4641,absolute,"0, 75, and 100 mg"
-S-Ketamine,84.0,mg,5828,absolute,84 mg
-MDMA,120.0,mg,161,absolute,120 mg
 MDMA,40.0,mg,161,absolute,40 mg
-MDMA,75.0,mg,4652,absolute,75 mg
-Ketamine,35.0,mg,9484,relative_weight,0.5 mg/kg
-Psilocybin,15.0,mg,8795,relative_weight,15 mg/70 kg
-Psilocybin,25.0,mg,8795,relative_weight,25 mg/70 kg
-Ketamine,25.0,mg,162,absolute,25 mg
-Ketamine,50.0,mg,162,absolute,50 mg
+MDMA,120.0,mg,161,absolute,120 mg
 Ketamine,100.0,mg,162,absolute,100 mg
-Ketamine,35.0,mg,5171,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,9182,relative_weight,0.5 mg/kg
-Ketamine,16.1,mg,7186,relative_weight,0.23 mg/kg
-MDMA,100.0,mg,2227,absolute,100 mg
-Ketamine,210.0,mg,7113,relative_weight,3 mg/kg
-Ketamine,420.0,mg,7113,relative_weight,6 mg/kg
-R-Ketamine,30.0,mg,2395,absolute,30 mg
-R-Ketamine,60.0,mg,2395,absolute,60 mg
-Psilocybin,10.0,mg,6198,relative_weight,10 mg/70 kg
-Ketamine,35.0,mg,9570,relative_weight,0.5 mg/kg
-Psilocybin,15.0,mg,8907,absolute,15 or 20 mg
-Psilocybin,20.0,mg,8907,absolute,15 or 20 mg
-LSD,0.07,mg,7344,relative_weight,1 µg/kg
-LSD,0.1,mg,5873,absolute,100 μg
-Psilocybin,10.0,mg,1884,absolute,10 mg
-S-Ketamine,10.0,mg,1884,absolute,10 mg
-Psilocybin,25.0,mg,1884,absolute,25 mg
-S-Ketamine,25.0,mg,1884,absolute,25 mg
-Psilocybin,1.0,mg,1884,absolute,1 mg
-S-Ketamine,1.0,mg,1884,absolute,1 mg
-Ketamine,35.0,mg,5917,relative_weight,0.5 mg/kg
-LSD,0.2,mg,7890,absolute,200-500 µg
-LSD,0.5,mg,7890,absolute,200-500 µg
-Ketamine,35.0,mg,5919,relative_weight,0.5 mg/kg
-MDMA,30.0,mg,7822,absolute,30 mg
-MDMA,70.0,mg,7822,absolute,70 mg
-Ketamine,35.0,mg,3181,relative_weight,0.5 mg/kg
-S-Ketamine,20.0,mg,6380,relative_weight,20 mg/70 kg
-S-Ketamine,40.0,mg,6380,relative_weight,40 mg/70 kg
-Ketamine,17.5,mg,1347,relative_weight,0.25-1 mg/kg
-Ketamine,70.0,mg,1347,relative_weight,0.25-1 mg/kg
-Ketamine,20.0,mg,6683,absolute,20-360 mg
-Ketamine,360.0,mg,6683,absolute,20-360 mg
-Ketamine,140.0,mg,4558,relative_weight,2.0 mg/kg
-Ketamine,14.0,mg,4558,relative_weight,0.2 mg/kg
-Ketamine,35.0,mg,9596,relative_weight,0.5 mg/kg
-Psilocybin,21.0,mg,7484,relative_weight,0.3 mg/kg
-Ketamine,35.0,mg,7941,relative_weight,0.5 mg/kg
-MDMA,80.0,mg,6262,absolute,80‐160 mg
-MDMA,160.0,mg,6262,absolute,80‐160 mg
-S-Ketamine,56.0,mg,7011,absolute,56 or 84 mg
-S-Ketamine,84.0,mg,7011,absolute,56 or 84 mg
-MDMA,100.0,mg,2223,absolute,100 mg
-Ibogaine,60.0,mg,2995,absolute,"60, 120, or 180 mg"
-Ibogaine,180.0,mg,2995,absolute,"60, 120, or 180 mg"
-Ibogaine,60.0,mg,2995,absolute,"60, 120, and 180 mg"
-Ibogaine,180.0,mg,2995,absolute,"60, 120, and 180 mg"
-Ibogaine,120.0,mg,2995,absolute,120 mg
-LSD,0.0,mg,4633,absolute,"0, 5, 10, and 20 μg"
-LSD,0.02,mg,4633,absolute,"0, 5, 10, and 20 μg"
-LSD,0.005,mg,4633,absolute,"5, 10, and 20 μg"
-LSD,0.02,mg,4633,absolute,"5, 10, and 20 μg"
+Ketamine,50.0,mg,162,absolute,50 mg
+Ketamine,25.0,mg,162,absolute,25 mg
+Psilocybin,25.0,mg,164,absolute,25 mg
+Ketamine,35.0,mg,260,relative_weight,0.5 mg/kg
+Ketamine,70.0,mg,486,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,486,relative_weight,0.5 mg/kg
+MDMA,105.0,mg,515,relative_weight,1.5 mg/kg
+Ibogaine,1540.0,mg,1083,absolute,1540 mg
 S-Ketamine,84.0,mg,1238,absolute,84 mg
-Ketamine,14.0,mg,5071,relative_weight,0.2 mg/kg
-Ketamine,28.0,mg,5071,relative_weight,0.4 mg/kg
-DMT,40.0,mg,5628,absolute,40-75 mg
-DMT,75.0,mg,5628,absolute,40-75 mg
-Ketamine,175.0,mg,2936,relative_weight,2.5 mg./kg
-LSD,0.1,mg,6157,absolute,100 μg
-LSD,0.05,mg,6247,absolute,50 µg
-Psilocybin,25.0,mg,1264,absolute,25 mg
 Psilocybin,1.0,mg,1264,absolute,1 mg
-Ketamine,35.0,mg,8481,relative_weight,0.5 mg/kg
-Psilocybin,22.05,mg,8100,relative_weight,315 μg/kg
-Psilocybin,25.0,mg,2426,absolute,25 mg
-Ketamine,17.5,mg,9340,relative_weight,0.25 mg/kg
-Ketamine,50.0,mg,4729,absolute,50 mg
+Psilocybin,25.0,mg,1264,absolute,25 mg
+Ketamine,17.5,mg,1347,relative_weight,0.25-1 mg/kg
+Ketamine,14.0,mg,1444,relative_weight,"0.2, and 0.5 mg/kg"
+Ketamine,35.0,mg,1488,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1647,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1731,relative_weight,0.5 mg/kg
+S-Ketamine,1.0,mg,1884,absolute,1 mg
+S-Ketamine,25.0,mg,1884,absolute,25 mg
+S-Ketamine,10.0,mg,1884,absolute,10 mg
+Psilocybin,1.0,mg,1884,absolute,1 mg
+Psilocybin,25.0,mg,1884,absolute,25 mg
+Psilocybin,10.0,mg,1884,absolute,10 mg
+Ketamine,35.0,mg,2035,relative_weight,0.5 mg/kg
 LSD,0.1,mg,2099,absolute,100 μg
-MDMA,0.0,mg,7168,absolute,"0, 75, and 100 mg"
-MDMA,100.0,mg,7168,absolute,"0, 75, and 100 mg"
+LSD,0.2,mg,2106,absolute,200 μg
+LSD,0.1,mg,2106,absolute,100 μg
+MDMA,70.0,mg,2161,relative_weight,1 mg/kg
+MDMA,100.0,mg,2223,absolute,100 mg
+MDMA,100.0,mg,2227,absolute,100 mg
+R-Ketamine,60.0,mg,2395,absolute,60 mg
+R-Ketamine,30.0,mg,2395,absolute,30 mg
+S-Ketamine,84.0,mg,2398,absolute,84 mg
+Psilocybin,25.0,mg,2426,absolute,25 mg
+Ketamine,175.0,mg,2936,relative_weight,2.5 mg/kg
+Ibogaine,120.0,mg,2995,absolute,120 mg
+Ibogaine,60.0,mg,2995,absolute,"60, 120, and 180 mg"
+Ibogaine,60.0,mg,2995,absolute,"60, 120, or 180 mg"
+Ketamine,35.0,mg,3181,relative_weight,0.5 mg/kg
+LSD,0.05,mg,3442,absolute,50 µg
+LSD,0.1,mg,3442,absolute,100 µg
 Ketamine,35.0,mg,3592,relative_weight,0.5 mg/kg
 S-Ketamine,35.0,mg,3592,relative_weight,0.5 mg/kg
-Ketamine,15.0,mg,6870,absolute,15 mg
-DMT,21.0,mg,8319,relative_weight,0.3 mg/kg
-Psilocybin,21.0,mg,6058,relative_weight,0.3 mg/kg
-Psilocybin,20.0,mg,6058,relative_weight,20 mg/70 kg
-Psilocybin,31.5,mg,6058,relative_weight,0.45 mg/kg
-Psilocybin,30.0,mg,6058,relative_weight,30 mg/70 kg
-Psilocybin,42.0,mg,6058,relative_weight,0.6 mg/kg
-Psilocybin,40.0,mg,6058,relative_weight,40 mg/70 kg
-Ketamine,35.0,mg,1731,relative_weight,0.5 mg/kg
-MDMA,105.0,mg,4966,relative_weight,1.5 mg/kg
-Ketamine,16.1,mg,4581,relative_weight,0.23 mg/kg
-Ketamine,40.599999999999994,mg,4581,relative_weight,0.58 mg/kg
-Ketamine,5.67,mg,4581,relative_weight,0.081 mg/kg
-LSD,0.1,mg,2106,absolute,100 μg
-LSD,0.2,mg,2106,absolute,200 μg
-S-Ketamine,84.0,mg,2398,absolute,84 mg
+MDMA,70.0,mg,4049,relative_weight,1.0 and 1.5 mg/kg
+MDMA,35.0,mg,4356,relative_weight,0.5 or 1.0 mg/kg
 Psilocybin,11.200000000000001,mg,4508,relative_weight,0.16 mg/kg
-Ketamine,35.0,mg,5082,relative_weight,0.5 mg/kg
-MDMA,125.0,mg,9257,absolute,125 mg
-LSD,50.0,mg,9149,absolute,50
-Ketamine,14.0,mg,1444,relative_weight,"0.2, and 0.5 mg/kg"
-Ketamine,35.0,mg,1444,relative_weight,"0.2, and 0.5 mg/kg"
-Ayahuasca,70.0,mg,6261,relative_weight,"1, 2, or 3 ml sm‐001/kg"
-Ayahuasca,210.0,mg,6261,relative_weight,"1, 2, or 3 ml sm‐001/kg"
-Ketamine,35.0,mg,1647,relative_weight,0.5 mg/kg
-LSD,0.1,mg,3442,absolute,100 µg
-LSD,0.05,mg,3442,absolute,50 µg
-MDMA,70.0,mg,2161,relative_weight,1 mg/kg
-Psilocybin,21.0,mg,5249,relative_weight,0.3 mg/kg
-Ketamine,35.0,mg,2035,relative_weight,0.5 mg/kg
-MDMA,105.0,mg,515,relative_weight,1.5 mg/kg
-Psilocybin,18.2,mg,7124,relative_weight,260 μg/kg
-Ketamine,35.0,mg,8837,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,260,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,164,absolute,25 mg
-Ibogaine,1540.0,mg,1083,absolute,1540 mg
-LSD,100.0,mg,7050,absolute,100 mg
-Ketamine,35.0,mg,5048,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,4558,relative_weight,0.2 mg/kg
+Ketamine,140.0,mg,4558,relative_weight,2.0 mg/kg
+Ketamine,18.2,mg,4578,relative_weight,0.26 mg/kg
+Ketamine,5.67,mg,4581,relative_weight,0.081 mg/kg
+Ketamine,40.599999999999994,mg,4581,relative_weight,0.58 mg/kg
+Ketamine,16.1,mg,4581,relative_weight,0.23 mg/kg
+LSD,0.005,mg,4633,absolute,"5, 10, and 20 μg"
+LSD,0.0,mg,4633,absolute,"0, 5, 10, and 20 μg"
+MDMA,0.0,mg,4641,absolute,"0, 75, and 100 mg"
+MDMA,75.0,mg,4652,absolute,75 mg
+Ketamine,50.0,mg,4729,absolute,50 mg
+Ketamine,35.0,mg,4922,relative_weight,0.5 mg/kg
+MDMA,105.0,mg,4966,relative_weight,1.5 mg/kg
 Ketamine,35.0,mg,5001,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,486,relative_weight,0.5 mg/kg
-Ketamine,70.0,mg,486,relative_weight,1.0 mg/kg
-LSD,0.1,mg,4506,absolute,100 µg
-Psilocybin,25.0,mg,6292,absolute,25 mg
-MDMA,100.0,mg,8307,absolute,100 mg
-LSD,0.1,mg,698,absolute,100 µg
-S-Ketamine,84.0,mg,2053,absolute,84 mg
-Ketamine,35.0,mg,6108,relative_weight,0.5 mg/kg
-Ketamine,14.0,mg,4739,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,5048,relative_weight,0.5 mg/kg
+Ketamine,28.0,mg,5071,relative_weight,0.4 mg/kg
+Ketamine,14.0,mg,5071,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,5082,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,5171,relative_weight,0.5 mg/kg
+Psilocybin,21.0,mg,5249,relative_weight,0.3 mg/kg
+DMT,40.0,mg,5628,absolute,40-75 mg
+S-Ketamine,84.0,mg,5828,absolute,84 mg
+LSD,0.1,mg,5873,absolute,100 μg
+Ketamine,35.0,mg,5917,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,5919,relative_weight,0.5 mg/kg
+MDMA,125.0,mg,6016,absolute,125 mg
+Psilocybin,40.0,mg,6058,relative_weight,40 mg/70 kg
+Psilocybin,42.0,mg,6058,relative_weight,0.6 mg/kg
+Psilocybin,30.0,mg,6058,relative_weight,30 mg/70 kg
+Psilocybin,31.5,mg,6058,relative_weight,0.45 mg/kg
+Psilocybin,20.0,mg,6058,relative_weight,20 mg/70 kg
+Psilocybin,21.0,mg,6058,relative_weight,0.3 mg/kg
+LSD,0.1,mg,6157,absolute,100 μg
+Psilocybin,10.0,mg,6198,relative_weight,10 mg/70 kg
+LSD,0.05,mg,6247,absolute,50 µg
+MDMA,80.0,mg,6262,absolute,80‐160 mg
+S-Ketamine,40.0,mg,6380,relative_weight,40 mg/70 kg
+S-Ketamine,20.0,mg,6380,relative_weight,20 mg/70 kg
+Psilocybin,18.2,mg,6643,relative_weight,0.26 mg/kg
+Ketamine,20.0,mg,6683,absolute,20-360 mg
+Ketamine,15.0,mg,6869,absolute,15 mg
+Ketamine,15.0,mg,6870,absolute,15 mg
+S-Ketamine,56.0,mg,7011,absolute,56 or 84 mg
+LSD,100.0,mg,7050,absolute,100 mg
+Ketamine,210.0,mg,7113,relative_weight,3 mg/kg
+Ketamine,420.0,mg,7113,relative_weight,6 mg/kg
+Psilocybin,18.2,mg,7124,relative_weight,260 μg/kg
+MDMA,0.0,mg,7168,absolute,"0, 75, and 100 mg"
+Ketamine,16.1,mg,7186,relative_weight,0.23 mg/kg
+LSD,0.07,mg,7344,relative_weight,1 µg/kg
+Psilocybin,21.0,mg,7484,relative_weight,0.3 mg/kg
+MDMA,70.0,mg,7822,absolute,70 mg
+MDMA,30.0,mg,7822,absolute,30 mg
+LSD,0.2,mg,7890,absolute,200-500 µg
+Ketamine,35.0,mg,7941,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8052,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8062,relative_weight,0.5 mg/kg
+Psilocybin,22.05,mg,8100,relative_weight,315 μg/kg
+MDMA,125.0,mg,8271,absolute,125 mg
+DMT,21.0,mg,8319,relative_weight,0.3 mg/kg
+Ketamine,35.0,mg,8481,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,8795,relative_weight,25 mg/70 kg
+Psilocybin,15.0,mg,8795,relative_weight,15 mg/70 kg
+Ketamine,35.0,mg,8837,relative_weight,0.5 mg/kg
+Psilocybin,15.0,mg,8907,absolute,15 or 20 mg
+LSD,50.0,mg,9149,absolute,50
+Ketamine,35.0,mg,9182,relative_weight,0.5 mg/kg
+MDMA,125.0,mg,9257,absolute,125 mg
+Ketamine,35.0,mg,9277,relative_weight,0.5 mg/kg
+Ketamine,17.5,mg,9340,relative_weight,0.25 mg/kg
+Ketamine,35.0,mg,9484,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9570,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9596,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,75,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,75,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,120,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,127,relative_weight,"0.5, 1, and 2 mg/kg"
+Ketamine,7.0,mg,127,relative_weight,"0.1, 0.25 and 0.5 mg/kg"
+Ketamine,7.0,mg,127,relative_weight,0.1-2 mg/kg
+Psilocybin,30.0,mg,151,absolute,30 mg
 Psilocybin,25.0,mg,151,absolute,25 mg
 Psilocybin,25.0,mg,151,absolute,25 or 30 mg
-Psilocybin,30.0,mg,151,absolute,25 or 30 mg
-Psilocybin,30.0,mg,151,absolute,30 mg
-Psilocybin,10.0,mg,1255,relative_weight,"10, 20, 30 mg/70 kg"
-Psilocybin,30.0,mg,1255,relative_weight,"10, 20, 30 mg/70 kg"
-Ketamine,35.0,mg,8746,relative_weight,0.5 mg/kg
-S-Ketamine,84.0,mg,3818,absolute,84 mg
-MDMA,75.0,mg,3799,absolute,75 mg
-MDMA,125.0,mg,3799,absolute,125 mg
-MDMA,100.0,mg,3799,absolute,100 mg
-Ketamine,35.0,mg,1439,relative_weight,0.5 mg/kg
-Ketamine,14.0,mg,1439,relative_weight,0.2 mg/kg
-LSD,0.15,mg,6228,absolute,150 µg
-LSD,0.25,mg,6228,absolute,250 µg
-MDMA,35.0,mg,4353,relative_weight,0.5 or 1.0 mg/kg
-MDMA,70.0,mg,4353,relative_weight,0.5 or 1.0 mg/kg
-Ketamine,35.0,mg,9565,relative_weight,0.5 mg/kg
-Ketamine,7.0,mg,127,relative_weight,0.1-2 mg/kg
-Ketamine,140.0,mg,127,relative_weight,0.1-2 mg/kg
-Ketamine,7.0,mg,127,relative_weight,"0.1, 0.25 and 0.5 mg/kg"
-Ketamine,35.0,mg,127,relative_weight,"0.1, 0.25 and 0.5 mg/kg"
-Ketamine,35.0,mg,127,relative_weight,"0.5, 1, and 2 mg/kg"
-Ketamine,140.0,mg,127,relative_weight,"0.5, 1, and 2 mg/kg"
-Psilocybin,7.0,mg,6116,relative_weight,0.1 mg/kg
-Psilocybin,21.0,mg,6116,relative_weight,0.3 mg/kg
-Ketamine,35.0,mg,5173,relative_weight,0.5 mg/kg
-MDMA,125.0,mg,6021,absolute,125 mg
-Ketamine,42.0,mg,4841,relative_weight_time,0.6 mg/kg/h
-Ketamine,35.0,mg,4841,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,2539,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,9173,relative_weight,0.5 mg/kg
-R-Ketamine,35.0,mg,4782,relative_weight,0.5 mg/kg
-Ketamine,56.0,mg,9198,absolute,56 or 84 mg
-Ketamine,84.0,mg,9198,absolute,56 or 84 mg
-S-Ketamine,56.0,mg,9198,absolute,56 or 84 mg
-S-Ketamine,84.0,mg,9198,absolute,56 or 84 mg
-Ketamine,70.0,mg,6321,relative_weight,1.0 mg/kg
-MDMA,75.0,mg,5695,absolute,75-125 mg
-MDMA,125.0,mg,5695,absolute,75-125 mg
-MDMA,0.0,mg,5695,absolute,0-40 mg
-MDMA,40.0,mg,5695,absolute,0-40 mg
-Psilocybin,25.0,mg,166,absolute,25 mg
-MDMA,105.0,mg,4355,relative_weight,1.5 mg/kg
-MDMA,125.0,mg,4355,absolute,125 mg
-MDMA,105.0,mg,8909,relative_weight,1.5 mg/kg
+Ketamine,70.0,mg,153,relative_weight,1 mg/kg
 Psilocybin,25.0,mg,165,absolute,25 mg
-Ketamine,16.1,mg,8295,relative_weight,0.23 mg/kg
-Ketamine,44.800000000000004,mg,8295,relative_weight_time,0.64 mg/kg/h
-Ketamine,35.0,mg,2250,relative_weight,0.5 mg/kg
-Ketamine,210.0,mg,2250,relative_weight,3.0 mg/kg
-MDMA,75.0,mg,6439,absolute,75 mg
-MDMA,70.0,mg,4451,relative_weight,1.0 mg/kg
-MDMA,112.0,mg,4451,relative_weight,1.6 mg/kg
-MDMA,46.0,mg,4451,absolute,46-150 mg
-MDMA,150.0,mg,4451,absolute,46-150 mg
-Psilocybin,25.0,mg,7519,absolute,25 mg
-Ketamine,75.0,mg,2419,absolute,75 mg
-Ketamine,7.0,mg,4685,relative_weight,0.1-0.5 mg/kg
-Ketamine,35.0,mg,4685,relative_weight,0.1-0.5 mg/kg
-Ketamine,21.0,mg,4685,relative_weight,0.3 mg/kg
-Ketamine,35.0,mg,1228,relative_weight,0.5 mg/kg
-Ketamine,210.0,mg,1228,relative_weight,3.0 mg/kg
-Ketamine,0.25,mg,2998,absolute,0.25
-Ketamine,0.5,mg,2998,absolute,0.5
-Ketamine,70.0,mg,2998,relative_weight,1 mg/kg
-Ketamine,17.5,mg,2998,relative_weight,0.25 mg/kg
-Ketamine,35.0,mg,2998,relative_weight,0.5-1 mg/kg
-Ketamine,70.0,mg,2998,relative_weight,0.5-1 mg/kg
-Ketamine,35.0,mg,2957,relative_weight,0.5 mg/kg
-Ketamine,7.0,mg,8636,relative_weight,0.1‐0.2 mg/kg/dose
-Ketamine,14.0,mg,8636,relative_weight,0.1‐0.2 mg/kg/dose
-Ketamine,7.0,mg,8636,relative_weight,0.1‐0.2 mg/kg
-Ketamine,14.0,mg,8636,relative_weight,0.1‐0.2 mg/kg
-Psilocybin,25.0,mg,5597,absolute,25 mg
-Ketamine,16.1,mg,6220,relative_weight,0.23 mg/kg
-Ketamine,4.2,mg,6220,relative_weight,0.06 mg/kg
-Ketamine,8.75,mg,6220,relative_weight,0.125 mg/kg
-Ketamine,20.0,mg,6220,absolute,20 mg
-Ketamine,7.0,mg,5644,relative_weight,"0.1, 0.2, 0.3, 0.4, or 0.5 mg/kg"
-Ketamine,35.0,mg,5644,relative_weight,"0.1, 0.2, 0.3, 0.4, or 0.5 mg/kg"
-Ketamine,50.0,mg,7466,absolute,50−150 mg
-Ketamine,150.0,mg,7466,absolute,50−150 mg
-Ketamine,35.0,mg,2538,relative_weight,0.5 mg/kg
-S-Ketamine,28.0,mg,6446,relative_weight,0.4 mg/kg
-MDMA,105.0,mg,9446,relative_weight,1.5 mg/kg
-Psilocybin,15.049999999999999,mg,8923,relative_weight,0.215 mg/kg
-Psilocybin,4.0,mg,167,absolute,4 mg
+Psilocybin,25.0,mg,166,absolute,25 mg
 Psilocybin,2.0,mg,167,absolute,2 mg
-Ketamine,35.0,mg,9566,relative_weight,0.5 mg/kg
-Psilocybin,14.0,mg,2245,relative_weight,0.2 mg/kg
-Psilocybin,2.0,mg,4786,absolute,2 mg
-MDMA,75.0,mg,4650,absolute,75 mg
-Ketamine,17.5,mg,3000,relative_weight,"0.25, 0.5, 1 mg/kg"
-Ketamine,70.0,mg,3000,relative_weight,"0.25, 0.5, 1 mg/kg"
-MDMA,125.0,mg,2102,absolute,125 mg
-Ketamine,35.0,mg,2535,relative_weight,0.5 mg/kg
-MDMA,75.0,mg,4635,absolute,75 mg
-MDMA,750.0,mg,4635,absolute,750 mg
-MDMA,80.0,mg,6121,absolute,80 mg or 120 mg
-MDMA,120.0,mg,6121,absolute,80 mg or 120 mg
-MDMA,40.0,mg,6121,absolute,40 or 60 mg
-MDMA,60.0,mg,6121,absolute,40 or 60 mg
-MDMA,80.0,mg,6121,absolute,80 mg-180
-MDMA,180.0,mg,6121,absolute,80 mg-180
-Ketamine,35.0,mg,9171,relative_weight,0.5-0.54 mg/kg
-Ketamine,37.800000000000004,mg,9171,relative_weight,0.5-0.54 mg/kg
-LSD,0.1,mg,7753,absolute,100 µg
-Psilocybin,25.0,mg,8219,absolute,25 mg
-Ketamine,35.0,mg,9501,relative_weight,0.5 mg/kg
-Ketamine,14.0,mg,9501,relative_weight,0.2 mg/kg
-LSD,0.1,mg,6189,absolute,100 μg
-MDMA,100.0,mg,7041,absolute,100 mg
-LSD,0.02,mg,2418,absolute,20 µg
-MDMA,100.0,mg,1286,absolute,100 mg
-Ketamine,52.5,mg,1345,relative_weight,0.75 mg/kg
-LSD,0.2,mg,7739,absolute,200 μg
-Ketamine,44.1,mg,6470,relative_weight,0.63 mg/kg
-Ketamine,21.0,mg,6470,relative_weight,0.30 - 2.98 mg/kg
-Ketamine,208.6,mg,6470,relative_weight,0.30 - 2.98 mg/kg
-MDMA,125.0,mg,8868,absolute,125 mg
-Psilocybin,25.0,mg,4885,absolute,25 mg
-Ketamine,35.0,mg,1447,relative_weight,0.5 mg/kg
-Ketamine,14.0,mg,1447,relative_weight,0.2 mg/kg
+Psilocybin,4.0,mg,167,absolute,4 mg
+Ketamine,45.5,mg,218,relative_weight_time,0.65 mg/kg/h
+MDMA,210.0,mg,379,relative_weight,3.0 mg/kg
+Ketamine,98.69999999999999,mg,497,relative_weight,1.41 mg/kg
+Ketamine,49.699999999999996,mg,497,relative_weight,0.71 mg/kg
+MDMA,105.0,mg,518,relative_weight,1.5 mg/kg
 Ketamine,35.0,mg,558,relative_weight,0.5 mg/kg
-Psilocybin,16.1,mg,8101,relative_weight,230 μg/kg
-Ketamine,56.7,mg,9419,relative_weight,0.81 mg/kg
-MDMA,75.0,mg,4701,absolute,75 mg
-Ketamine,10.5,mg,7980,relative_weight_time,0.15 mg/kg/h
-Ketamine,42.0,mg,7980,relative_weight_time,0.6 mg/kg/h
-Ketamine,37.800000000000004,mg,7980,relative_weight_time,0.54 mg/kg/h
-Ketamine,35.0,mg,7946,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,7414,relative_weight,0.5 mg/kg
-LSD,0.1,mg,6111,absolute,100 µg
-S-Ketamine,17.5,mg,9071,relative_weight,0.25 mg/kg
-Ketamine,56.0,mg,6302,relative_weight,0.8 mg/kg
-Ketamine,5.0,mg,6496,absolute,5 mg
-S-Ketamine,14.0,mg,8051,relative_weight,0.20 mg/kg
-S-Ketamine,28.0,mg,8051,relative_weight,0.40 mg/kg
+Ayahuasca,70.0,mg,594,relative_weight,1 mg/kg
+MDMA,112.0,mg,612,relative_weight,1.6 mg/kg
+MDMA,70.0,mg,612,relative_weight,1.0 mg/kg
 Psilocybin,20.0,mg,640,relative_weight,20 mg/70 kg
-MDMA,120.0,mg,6176,absolute,120 mg
-MDMA,60.0,mg,6176,absolute,60 mg
-Psilocybin,10.01,mg,7719,relative_weight,0.143 mg/kg
-MDMA,125.0,mg,6035,absolute,125 vs. 25 mg
-MDMA,25.0,mg,6035,absolute,125 vs. 25 mg
-MDMA,62.5,mg,6035,absolute,125 and 62.5 mg
-MDMA,125.0,mg,6035,absolute,125 and 62.5 mg
-MDMA,25.0,mg,6035,absolute,25 and 125. mg
-MDMA,125.0,mg,6035,absolute,25 and 125. mg
-LSD,0.05,mg,4905,absolute,"50, 100 and 200 µg"
-LSD,0.2,mg,4905,absolute,"50, 100 and 200 µg"
-LSD,0.1,mg,4905,absolute,100 and 200 µg
-LSD,0.2,mg,4905,absolute,100 and 200 µg
-LSD,0.1,mg,4905,absolute,100 µg
-LSD,0.2,mg,4905,absolute,200 µg
-Psilocybin,15.0,mg,1871,absolute,15 mg
-Psilocybin,25.0,mg,1871,absolute,25 mg
-Ketamine,17.5,mg,9381,relative_weight,0.25 mg/kg
-Psilocybin,25.0,mg,6196,absolute,25 mg
+LSD,0.1,mg,698,absolute,100 µg
+MDMA,52.5,mg,717,relative_weight,0.75 mg/kg
+MDMA,105.0,mg,717,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,717,relative_weight,0.75 and 1.5 mg/kg
+MDMA,35.0,mg,791,relative_weight,0.5 mg/kg
+LSD,0.026,mg,793,absolute,26 μg
+LSD,0.013,mg,793,absolute,13 μg
+LSD,0.0065,mg,793,absolute,6.5 μg
+Ketamine,14.0,mg,808,relative_weight,0.2‐4.7 mg/kg
+Ketamine,5.67,mg,902,relative_weight,0.081 mg/kg
+Ketamine,18.900000000000002,mg,902,relative_weight,0.27 mg/kg
+Ketamine,1.68,mg,902,relative_weight,"0.024, 0.081 and 0.27 mg/kg"
+MDMA,75.0,mg,1216,absolute,75 and 125 mg
+Ketamine,210.0,mg,1228,relative_weight,3.0 mg/kg
+Ketamine,35.0,mg,1228,relative_weight,0.5 mg/kg
+S-Ketamine,84.0,mg,1237,absolute,84 mg
+Psilocybin,10.0,mg,1255,relative_weight,"10, 20, 30 mg/70 kg"
+LSD,0.075,mg,1272,absolute,75 µg
+MDMA,100.0,mg,1286,absolute,100 mg
+Ketamine,35.0,mg,1291,relative_weight,0.5 mg/kg
+Ketamine,28.0,mg,1316,relative_weight,0.4 mg/kg
+Ketamine,0.2,mg,1316,absolute,0.2
+Ketamine,52.5,mg,1345,relative_weight,0.75 mg/kg
+Ketamine,35.0,mg,1364,relative_weight,0.5–1 mg/kg
+Ketamine,7.0,mg,1364,relative_weight,0.1-0.5 mg/kg
+S-Ketamine,35.0,mg,1364,relative_weight,0.5–1 mg/kg
+S-Ketamine,7.0,mg,1364,relative_weight,0.1-0.5 mg/kg
 Ketamine,35.0,mg,1437,relative_weight,0.5 mg/kg
 Ketamine,14.0,mg,1437,relative_weight,0.2 mg/kg
-Ketamine,35.0,mg,8947,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,7468,absolute,25 mg
-Ketamine,21.0,mg,3451,relative_weight,0.3 mg/kg
-Ketamine,10.5,mg,3451,relative_weight_time,0.15 mg/kg/h
-S-Ketamine,84.0,mg,1237,absolute,84 mg
-LSD,0.05,mg,9151,absolute,50 μg
-Ketamine,35.0,mg,6366,relative_weight,0.5 mg/kg
-MDMA,105.0,mg,518,relative_weight,1.5 mg/kg
-Psilocybin,11.9,mg,5378,relative_weight,0.17 mg/kg
-Ketamine,21.0,mg,6558,relative_weight,0.3 mg/kg
-Psilocybin,21.0,mg,8089,relative_weight,0.3 mg/kg
-Ketamine,7.0,mg,5997,relative_weight,0.1 mg/kg
-Ketamine,35.0,mg,75,relative_weight,0.5 mg/kg
-Ketamine,14.0,mg,75,relative_weight,0.2 mg/kg
-Psilocybin,8.92,mg,6837,absolute,8.92
-Psilocybin,24.68,mg,6837,absolute,24.68
-Psilocybin,36.08,mg,6837,relative_weight,36.08 mg/70 kg
-MDMA,100.0,mg,6677,absolute,100 mg
-Ketamine,35.0,mg,8041,relative_weight,0.5 mg/kg
-S-Ketamine,35.0,mg,8041,relative_weight,0.5 mg/kg
-Ketamine,56.0,mg,8041,absolute,56 or 84 mg
-Ketamine,84.0,mg,8041,absolute,56 or 84 mg
-S-Ketamine,56.0,mg,8041,absolute,56 or 84 mg
-S-Ketamine,84.0,mg,8041,absolute,56 or 84 mg
-Psilocybin,14.0,mg,6115,relative_weight,0.200 mg/kg
-Psilocybin,15.049999999999999,mg,6115,relative_weight,0.215 mg/kg
-Psilocybin,22.05,mg,6115,relative_weight,0.315 mg/kg
-Ketamine,1.68,mg,902,relative_weight,"0.024, 0.081 and 0.27 mg/kg"
-Ketamine,18.900000000000002,mg,902,relative_weight,"0.024, 0.081 and 0.27 mg/kg"
-Ketamine,18.900000000000002,mg,902,relative_weight,0.27 mg/kg
-Ketamine,5.67,mg,902,relative_weight,0.081 mg/kg
-MDMA,119.0,mg,8910,relative_weight,1.7 mg/kg
-MDMA,119.0,mg,8902,relative_weight,1.7 mg/kg
-Psilocybin,25.0,mg,4884,absolute,25 mg
-Ketamine,0.4,mg,8987,absolute,0.4 mg kg‐1
-Ketamine,1.0,mg,8987,absolute,0.4 mg kg‐1
-MDMA,75.0,mg,4634,absolute,75 mg
-S-Ketamine,28.0,mg,8959,absolute,28 mg
-S-Ketamine,56.0,mg,8959,absolute,56 mg
-S-Ketamine,84.0,mg,8959,absolute,84 mg
-Ketamine,49.699999999999996,mg,497,relative_weight,0.71 mg/kg
-Ketamine,98.69999999999999,mg,497,relative_weight,1.41 mg/kg
-MDMA,100.0,mg,2225,absolute,100 mg
-Psilocybin,20.0,mg,2861,relative_weight,20-30 mg/70 kg
-Psilocybin,30.0,mg,2861,relative_weight,20-30 mg/70 kg
-Psilocybin,20.0,mg,2861,relative_weight,20 mg/70 kg
-Psilocybin,30.0,mg,2861,relative_weight,30 mg/70 kg
-Psilocybin,25.0,mg,2861,absolute,25 mg
-Ketamine,100.0,mg,2820,absolute,100 mg
-MDMA,120.0,mg,6250,absolute,120 mg
-MDMA,60.0,mg,6250,absolute,60 mg
-Psilocybin,40.0,mg,6244,absolute,40 mg
-Psilocybin,30.0,mg,3928,absolute,30 mg
-Psilocybin,50.0,mg,3928,absolute,50 mg
-Psilocybin,70.0,mg,3928,absolute,70 mg
-Ketamine,49.699999999999996,mg,1806,relative_weight,0.71 mg/kg
-Psilocybin,25.0,mg,3926,absolute,25 mg
-MDMA,75.0,mg,7002,absolute,75-125 mg
-MDMA,125.0,mg,7002,absolute,75-125 mg
-MDMA,0.0,mg,7002,absolute,0-40 mg
-MDMA,40.0,mg,7002,absolute,0-40 mg
-Ibogaine,20.0,mg,6085,absolute,20-400 mg
-Ibogaine,400.0,mg,6085,absolute,20-400 mg
-Ibogaine,240.0,mg,6085,absolute,"240, 320 and 400 mg"
-Ibogaine,400.0,mg,6085,absolute,"240, 320 and 400 mg"
+Ketamine,35.0,mg,1439,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1439,relative_weight,0.2 mg/kg
+Ketamine,14.0,mg,1443,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,1443,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1447,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,1447,relative_weight,0.5 mg/kg
+Ketamine,21.0,mg,1455,relative_weight,0.3 mg/kg
 Ketamine,52.5,mg,1537,relative_weight,0.75 mg/kg
-Ketamine,140.0,mg,5723,relative_weight,2 mg/kg
-MDMA,30.0,mg,5697,absolute,30 mg
-MDMA,75.0,mg,5697,absolute,75 mg
-MDMA,125.0,mg,5697,absolute,125 mg
-MDMA,100.0,mg,5697,absolute,100-125 mg
-MDMA,125.0,mg,5697,absolute,100-125 mg
-Ketamine,7.0,mg,9225,relative_weight,0.1 mg/kg
-Ketamine,1.0919999999999999,mg,9225,relative_weight_time,0.0156 mg/kg/min
-Ketamine,17.5,mg,1649,relative_weight,0.25 mg/kg
-S-Ketamine,17.5,mg,1649,relative_weight,0.25 mg/kg
 Ketamine,35.0,mg,1649,relative_weight,0.5 mg/kg
+Ketamine,17.5,mg,1649,relative_weight,0.25 mg/kg
 S-Ketamine,35.0,mg,1649,relative_weight,0.5 mg/kg
-Ketamine,100.0,mg,2822,absolute,100 mg
-LSD,0.085,mg,3635,absolute,85 and 170 μg
-LSD,0.17,mg,3635,absolute,85 and 170 μg
-Psilocybin,14.0,mg,7048,relative_weight,0.2 mg/kg
-MDMA,75.0,mg,4653,absolute,75 mg
-5-MeO-DMT,2.0,mg,7214,absolute,2
-5-MeO-DMT,6.0,mg,7214,absolute,6
-5-MeO-DMT,12.0,mg,7214,absolute,12
-5-MeO-DMT,18.0,mg,7214,absolute,18 mg
-5-MeO-DMT,2.0,mg,7214,absolute,2 mg
-5-MeO-DMT,6.0,mg,7214,absolute,"6, 12, and 18 mg"
-5-MeO-DMT,18.0,mg,7214,absolute,"6, 12, and 18 mg"
-LSD,100.0,mg,2105,absolute,100 mg
-LSD,200.0,mg,2105,absolute,200 mg
-LSD,0.1,mg,2105,absolute,100 μg and 200
-LSD,0.2,mg,2105,absolute,100 μg and 200
+S-Ketamine,17.5,mg,1649,relative_weight,0.25 mg/kg
+Ketamine,35.0,mg,1787,relative_weight,0.5 mg/kg
+Ketamine,49.699999999999996,mg,1806,relative_weight,0.71 mg/kg
+Psilocybin,30.0,mg,1866,relative_weight,30 mg/70 kg
+Psilocybin,20.0,mg,1866,relative_weight,20 mg/70 kg
+Psilocybin,25.0,mg,1871,absolute,25 mg
+Psilocybin,15.0,mg,1871,absolute,15 mg
+MDMA,50.0,mg,1918,absolute,50-150 mg
+Ketamine,17.5,mg,1961,relative_weight_time,0.25 mg/kg/h
+Ketamine,18.2,mg,1961,relative_weight,0.26 mg/kg
+S-Ketamine,35.0,mg,1981,relative_weight,0.5-1 mg/kg
+S-Ketamine,84.0,mg,2053,absolute,84 mg
+MDMA,125.0,mg,2102,absolute,125 mg
 LSD,0.2,mg,2105,absolute,200 μg
 LSD,0.1,mg,2105,absolute,100 μg
-Ketamine,45.5,mg,218,relative_weight_time,0.65 mg/kg/h
-MDMA,70.0,mg,612,relative_weight,1.0 mg/kg
-MDMA,112.0,mg,612,relative_weight,1.6 mg/kg
-Ketamine,35.0,mg,3704,relative_weight,0.5 mg/kg
-Ayahuasca,0.6,mg,7313,absolute,0.6
-Ayahuasca,0.85,mg,7313,absolute,0.85 mg
+LSD,0.1,mg,2105,absolute,100 μg and 200
+LSD,200.0,mg,2105,absolute,200 mg
+LSD,100.0,mg,2105,absolute,100 mg
+Ketamine,70.0,mg,2112,relative_weight,1 mg/kg
+LSD,0.005,mg,2118,absolute,5-15 µg
+Ketamine,35.0,mg,2207,relative_weight,0.5 mg/kg
+MDMA,100.0,mg,2225,absolute,100 mg
+Psilocybin,14.0,mg,2245,relative_weight,0.2 mg/kg
+Ketamine,210.0,mg,2250,relative_weight,3.0 mg/kg
+Ketamine,35.0,mg,2250,relative_weight,0.5 mg/kg
+Ketamine,100.0,mg,2332,absolute,100–240 mg
+Ketamine,500.0,mg,2332,absolute,500 mg/day
+Ketamine,40.0,mg,2332,absolute,40 mg/day
+Ketamine,100.0,mg,2332,absolute,100 mg/day
+Ketamine,28.0,mg,2382,absolute,"28, 56 mg og"
+S-Ketamine,28.0,mg,2382,absolute,"28, 56 mg og"
+5-MeO-DMT,12.0,mg,2396,absolute,12 mg
+5-MeO-DMT,8.0,mg,2396,absolute,8 mg
+5-MeO-DMT,0.3,mg,2396,absolute,0.3 mg
+LSD,0.02,mg,2418,absolute,20 µg
+Ketamine,75.0,mg,2419,absolute,75 mg
+Ketamine,35.0,mg,2431,relative_weight,0.5 mg/kg
+LSD,0.05,mg,2480,absolute,"50, 75, and 100 µg"
+LSD,0.075,mg,2480,absolute,75 µg
+LSD,0.05,mg,2480,absolute,50 µg
+LSD,100.0,mg,2480,absolute,100
+LSD,75.0,mg,2480,absolute,75
+LSD,50.0,mg,2480,absolute,50
+Ketamine,35.0,mg,2490,relative_weight,0.5-0.75 mg/kg
+MDMA,100.0,mg,2516,absolute,100 mg
+Ketamine,35.0,mg,2535,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2538,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2539,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2605,relative_weight,0.5 mg/kg
 MDMA,100.0,mg,2784,absolute,100 mg
-MDMA,75.0,mg,6436,absolute,75 mg
-Ketamine,42.0,mg,6427,relative_weight_time,0.6 mg/kg/h
-Psilocybin,25.0,mg,3060,absolute,25 mg
+Ketamine,100.0,mg,2820,absolute,100 mg
+Ketamine,100.0,mg,2822,absolute,100 mg
+Psilocybin,30.0,mg,2861,relative_weight,30 mg/70 kg
+Psilocybin,20.0,mg,2861,relative_weight,20 mg/70 kg
+Psilocybin,25.0,mg,2861,absolute,25 mg
+Psilocybin,20.0,mg,2861,relative_weight,20-30 mg/70 kg
+Ibogaine,640.0,mg,2912,absolute,640‐670 mg
+Ibogaine,653.0,mg,2912,absolute,653 mg
+Ibogaine,670.0,mg,2912,absolute,670 mg
+Ibogaine,80.0,mg,2912,absolute,80 mg
+Ibogaine,10.0,mg,2912,absolute,"10, 20, 30, or 40 mg"
+Ketamine,35.0,mg,2957,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2998,relative_weight,0.5-1 mg/kg
+Ketamine,17.5,mg,2998,relative_weight,0.25 mg/kg
+Ketamine,70.0,mg,2998,relative_weight,1 mg/kg
+Ketamine,0.5,mg,2998,absolute,0.5
+Ketamine,0.25,mg,2998,absolute,0.25
+Ketamine,17.5,mg,3000,relative_weight,"0.25, 0.5, 1 mg/kg"
 Psilocybin,10.0,mg,3060,absolute,10 mg
+Psilocybin,25.0,mg,3060,absolute,25 mg
 Psilocybin,1.0,mg,3060,absolute,1 mg
-MDMA,105.0,mg,4970,relative_weight,1.5 mg/kg
-Ketamine,3.5,mg,5215,relative_weight,0.05 mg/kg
-Ketamine,35.0,mg,4307,relative_weight,0.5 mg/kg
-Ketamine,70.0,mg,4307,relative_weight,1 mg/kg
-S-Ketamine,17.5,mg,4708,relative_weight,0.25 mg/kg
-Ketamine,2.8000000000000003,mg,4415,relative_weight,0.04 mg/kg
-Ketamine,35.0,mg,6898,relative_weight,0.5 mg/kg
-Psilocybin,11.9,mg,6979,relative_weight,170 µg/kg
-Ketamine,35.0,mg,1443,relative_weight,0.5 mg/kg
-Ketamine,14.0,mg,1443,relative_weight,0.2 mg/kg
-LSD,0.2,mg,4967,absolute,200 μg
-Ketamine,0.2,mg,1316,absolute,0.2
-Ketamine,28.0,mg,1316,relative_weight,0.4 mg/kg
-Ketamine,21.0,mg,1455,relative_weight,0.3 mg/kg
-Ketamine,14.0,mg,808,relative_weight,0.2‐4.7 mg/kg
-Ketamine,329.0,mg,808,relative_weight,0.2‐4.7 mg/kg
-Ketamine,560.0,mg,3452,relative_time,8 mg/h
-Ketamine,30.0,mg,3452,absolute,30 mg
+Psilocybin,14.0,mg,3189,relative_weight,0.2 mg/kg
+MDMA,80.0,mg,3277,absolute,80 mg
+MDMA,120.0,mg,3277,absolute,120 mg
+Ketamine,10.5,mg,3451,relative_weight_time,0.15 mg/kg/h
+Ketamine,21.0,mg,3451,relative_weight,0.3 mg/kg
 Ketamine,840.0,mg,3452,relative_time,12 mg/h
 Ketamine,1400.0,mg,3452,relative_time,20 mg/h
-Psilocybin,10.0,mg,7525,absolute,10 or 25 mg
-Psilocybin,25.0,mg,7525,absolute,10 or 25 mg
-Psilocybin,10.0,mg,7525,absolute,10 mg and 25 mg
-Psilocybin,25.0,mg,7525,absolute,10 mg and 25 mg
-Ketamine,35.0,mg,6903,relative_weight,0.5 mg/kg
-Psilocybin,14.0,mg,3189,relative_weight,0.2 mg/kg
-MDMA,100.0,mg,8970,absolute,100 mg
-MDMA,52.5,mg,717,relative_weight,0.75 and 1.5 mg/kg
-MDMA,105.0,mg,717,relative_weight,0.75 and 1.5 mg/kg
-MDMA,105.0,mg,717,relative_weight,1.5 mg/kg
-MDMA,52.5,mg,717,relative_weight,0.75 mg/kg
-Ketamine,35.0,mg,5515,relative_weight,0.5-0.75 mg/kg
-Ketamine,52.5,mg,5515,relative_weight,0.5-0.75 mg/kg
-S-Ketamine,35.0,mg,6374,relative_weight,0.5 mg/kg
-S-Ketamine,17.5,mg,6374,relative_weight_time,0.25 mg/kg/h
-Ketamine,42.0,mg,5684,relative_weight,0.6 mg/kg
-MDMA,100.0,mg,5736,absolute,100 mg
-Ketamine,35.0,mg,1787,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,8087,relative_weight,0.5 mg/kg
-Ketamine,70.0,mg,2112,relative_weight,1 mg/kg
+Ketamine,30.0,mg,3452,absolute,30 mg
+Ketamine,560.0,mg,3452,relative_time,8 mg/h
+Psilocybin,25.0,mg,3492,absolute,25 mg
+LSD,0.025,mg,3632,absolute,"25, 50, 100, and 200 µg"
+LSD,0.05,mg,3632,absolute,50 and 200 µg
+LSD,0.085,mg,3635,absolute,85 and 170 μg
+LSD,0.01,mg,3638,absolute,10 µg
+LSD,0.005,mg,3638,absolute,5-20 µg
+LSD,0.02,mg,3638,absolute,20 µg
+LSD,0.005,mg,3638,absolute,5 µg
+LSD,0.005,mg,3638,absolute,"5, 10, and 20 µg"
 Ketamine,37.800000000000004,mg,3662,relative_weight,0.54 mg/kg
-Ketamine,35.0,mg,2431,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,6232,absolute,25 mg
-Psilocybin,30.0,mg,6232,absolute,30 mg
-Ketamine,35.0,mg,9525,relative_weight,0.5 mg/kg
-MDMA,210.0,mg,379,relative_weight,3.0 mg/kg
-Psilocybin,25.2,mg,6195,relative_weight,0.36 mg/kg
-LSD,0.0065,mg,793,absolute,6.5 μg
-LSD,0.013,mg,793,absolute,13 μg
-LSD,0.026,mg,793,absolute,26 μg
-Ketamine,100.0,mg,2332,absolute,100 mg/day
-Ketamine,40.0,mg,2332,absolute,40 mg/day
-Ketamine,500.0,mg,2332,absolute,500 mg/day
-Ketamine,100.0,mg,2332,absolute,100–240 mg
-Ketamine,240.0,mg,2332,absolute,100–240 mg
-Ketamine,150.0,mg,4236,absolute,150 mg
-MDMA,100.0,mg,6599,absolute,100 mg
-Ketamine,56.0,mg,9007,relative_weight,0.8 mg/kg
-Psilocybin,25.0,mg,6282,absolute,25 mg
-Psilocybin,10.0,mg,6282,absolute,10 mg
-Psilocybin,1.0,mg,6282,absolute,1 mg
-Ketamine,7.0,mg,5080,relative_weight,"0.1, 0.2, 0.3, 0.4, 0.5 mg/kg"
-Ketamine,35.0,mg,5080,relative_weight,"0.1, 0.2, 0.3, 0.4, 0.5 mg/kg"
-Ketamine,35.0,mg,5047,relative_weight,0.5 mg/kg
-S-Ketamine,35.0,mg,1981,relative_weight,0.5-1 mg/kg
-S-Ketamine,70.0,mg,1981,relative_weight,0.5-1 mg/kg
-MDMA,50.0,mg,1918,absolute,50-150 mg
-MDMA,150.0,mg,1918,absolute,50-150 mg
-Ketamine,35.0,mg,5164,relative_weight,0.5 mg/kg
-LSD,0.1,mg,8292,absolute,100 μg
-Ketamine,56.0,mg,6828,absolute,56 or 84 mg
-Ketamine,84.0,mg,6828,absolute,56 or 84 mg
-Ketamine,56.0,mg,6828,absolute,56 mg
-LSD,0.075,mg,1272,absolute,75 µg
-LSD,0.1,mg,4961,absolute,0.1 and 0.2 mg
-LSD,0.2,mg,4961,absolute,0.1 and 0.2 mg
-LSD,0.1,mg,4961,absolute,0.1‐0.2 mg
-LSD,0.2,mg,4961,absolute,0.1‐0.2 mg
-Psilocybin,18.2,mg,6644,relative_weight,0.26 mg/kg
-MDMA,100.0,mg,6602,absolute,100 mg
-Ketamine,28.0,mg,2382,absolute,"28 mg, 56 mg or 84 mg"
-Ketamine,84.0,mg,2382,absolute,"28 mg, 56 mg or 84 mg"
-S-Ketamine,28.0,mg,2382,absolute,"28 mg, 56 mg or 84 mg"
-S-Ketamine,84.0,mg,2382,absolute,"28 mg, 56 mg or 84 mg"
-Ayahuasca,70.0,mg,594,relative_weight,1 mg dmt/kg
-Psychedelic mushrooms,500.0,mg,6191,absolute,0.5 g
-Psilocybin,10.0,mg,7521,absolute,10 mg
-Psilocybin,25.0,mg,7521,absolute,25 mg
-5-MeO-DMT,12.0,mg,2396,absolute,12 mg
-5-MeO-DMT,0.3,mg,2396,absolute,0.3 mg
-5-MeO-DMT,8.0,mg,2396,absolute,8 mg
-Ketamine,30.8,mg,8372,relative_weight,0.44 mg/kg
-MDMA,120.0,mg,3277,absolute,120 mg
-MDMA,80.0,mg,3277,absolute,80 mg
-Psilocybin,10.0,mg,7456,absolute,10 and 25 mg
-Psilocybin,25.0,mg,7456,absolute,10 and 25 mg
-Psilocybin,25.0,mg,7456,absolute,25 mg
-Ketamine,35.0,mg,1291,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,2490,relative_weight,0.5-0.75 mg/kg
-Ketamine,52.5,mg,2490,relative_weight,0.5-0.75 mg/kg
-LSD,0.005,mg,3766,absolute,"5, 10, and 20 µg"
-LSD,0.02,mg,3766,absolute,"5, 10, and 20 µg"
+Ketamine,35.0,mg,3704,relative_weight,0.5 mg/kg
+S-Ketamine,28.0,mg,3728,relative_weight,0.4 mg/kg
+S-Ketamine,14.0,mg,3728,relative_weight,0.2 mg/kg
 LSD,0.02,mg,3766,absolute,20 µg
 LSD,0.01,mg,3766,absolute,10 µg
-Salvinorin A,0.02625,mg,4064,relative_weight,0.375 μg/kg
+LSD,0.005,mg,3766,absolute,"5, 10, and 20 µg"
+MDMA,75.0,mg,3799,absolute,75 mg
+MDMA,100.0,mg,3799,absolute,100 mg
+MDMA,125.0,mg,3799,absolute,125 mg
+S-Ketamine,84.0,mg,3818,absolute,84 mg
+Psilocybin,25.0,mg,3926,absolute,25 mg
+Psilocybin,70.0,mg,3928,absolute,70 mg
+Psilocybin,50.0,mg,3928,absolute,50 mg
+Psilocybin,30.0,mg,3928,absolute,30 mg
 Salvinorin A,1.47,mg,4064,relative_weight,21 μg/kg
-LSD,0.025,mg,3632,absolute,"25, 50, 100, and 200 µg"
-LSD,0.2,mg,3632,absolute,"25, 50, 100, and 200 µg"
-LSD,0.05,mg,3632,absolute,50 and 200 µg
-LSD,0.2,mg,3632,absolute,50 and 200 µg
-Ketamine,0.1,mg,4688,absolute,0.1
-Ketamine,0.2,mg,4688,absolute,0.2
-Ketamine,0.3,mg,4688,absolute,0.3
-Ketamine,28.0,mg,4688,relative_weight,0.4 mg/kg
+Salvinorin A,0.02625,mg,4064,relative_weight,0.375 μg/kg
+Ketamine,150.0,mg,4236,absolute,150 mg
+Ketamine,70.0,mg,4307,relative_weight,1 mg/kg
+Ketamine,35.0,mg,4307,relative_weight,0.5 mg/kg
+MDMA,35.0,mg,4353,relative_weight,0.5 or 1.0 mg/kg
+MDMA,125.0,mg,4355,absolute,125 mg
+MDMA,105.0,mg,4355,relative_weight,1.5 mg/kg
+Ketamine,2.8000000000000003,mg,4415,relative_weight,0.04 mg/kg
+MDMA,46.0,mg,4451,absolute,46-150 mg
+MDMA,112.0,mg,4451,relative_weight,1.6 mg/kg
+MDMA,70.0,mg,4451,relative_weight,1.0 mg/kg
+LSD,0.1,mg,4506,absolute,100 µg
+Ketamine,45.5,mg,4574,relative_weight_time,0.65 mg/kg/h
+Ketamine,18.2,mg,4574,relative_weight,0.26 mg/kg
+Ketamine,35.0,mg,4579,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,4579,relative_weight,0.1 mg/kg
+MDMA,75.0,mg,4634,absolute,75 mg
+MDMA,750.0,mg,4635,absolute,750 mg
+MDMA,75.0,mg,4635,absolute,75 mg
+MDMA,75.0,mg,4650,absolute,75 mg
+MDMA,75.0,mg,4653,absolute,75 mg
+Ketamine,21.0,mg,4685,relative_weight,0.3 mg/kg
+Ketamine,7.0,mg,4685,relative_weight,0.1-0.5 mg/kg
 Ketamine,7.0,mg,4688,relative_weight,0.1 mg/kg
-Ketamine,35.0,mg,120,relative_weight,0.5 mg/kg
+Ketamine,28.0,mg,4688,relative_weight,0.4 mg/kg
+Ketamine,0.3,mg,4688,absolute,0.3
+Ketamine,0.2,mg,4688,absolute,0.2
+Ketamine,0.1,mg,4688,absolute,0.1
+MDMA,75.0,mg,4701,absolute,75 mg
+S-Ketamine,17.5,mg,4708,relative_weight,0.25 mg/kg
+Ketamine,14.0,mg,4739,relative_weight,0.2 mg/kg
+R-Ketamine,35.0,mg,4782,relative_weight,0.5 mg/kg
+Psilocybin,2.0,mg,4786,absolute,2 mg
+Ketamine,35.0,mg,4841,relative_weight,0.5 mg/kg
+Ketamine,42.0,mg,4841,relative_weight_time,0.6 mg/kg/h
+Psilocybin,25.0,mg,4884,absolute,25 mg
+Psilocybin,25.0,mg,4885,absolute,25 mg
+LSD,0.1,mg,4905,absolute,100 µg
+LSD,0.2,mg,4905,absolute,200 µg
+LSD,0.1,mg,4905,absolute,100 and 200 µg
+LSD,0.05,mg,4905,absolute,"50, 100 and 200 µg"
+LSD,0.1,mg,4961,absolute,0.1‐0.2 mg
+LSD,0.1,mg,4961,absolute,0.1 and 0.2 mg
+LSD,0.2,mg,4967,absolute,200 μg
+MDMA,105.0,mg,4970,relative_weight,1.5 mg/kg
+Ketamine,35.0,mg,5047,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,5080,relative_weight,"0.1, 0.2, 0.3, 0.4, 0.5 mg/kg"
+Ketamine,35.0,mg,5164,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,5173,relative_weight,0.5 mg/kg
+Ketamine,3.5,mg,5215,relative_weight,0.05 mg/kg
+Psilocybin,11.9,mg,5378,relative_weight,0.17 mg/kg
+Ketamine,35.0,mg,5515,relative_weight,0.5-0.75 mg/kg
+Psilocybin,25.0,mg,5597,absolute,25 mg
+Ketamine,35.0,mg,5598,relative_weight,0.5-1.25 mg/kg
+S-Ketamine,35.0,mg,5598,relative_weight,0.5-1.25 mg/kg
+R-Ketamine,35.0,mg,5598,relative_weight,0.5-1.25 mg/kg
+Ketamine,7.0,mg,5644,relative_weight,"0.1, 0.2, 0.3, 0.4, or 0.5 mg/kg"
+Ketamine,42.0,mg,5684,relative_weight,0.6 mg/kg
+MDMA,0.0,mg,5695,absolute,0-40 mg
+MDMA,75.0,mg,5695,absolute,75-125 mg
+MDMA,125.0,mg,5697,absolute,125 mg
+MDMA,75.0,mg,5697,absolute,75 mg
+MDMA,30.0,mg,5697,absolute,30 mg
+MDMA,100.0,mg,5697,absolute,100-125 mg
+Ketamine,140.0,mg,5723,relative_weight,2 mg/kg
+MDMA,100.0,mg,5736,absolute,100 mg
+Ketamine,7.0,mg,5997,relative_weight,0.1 mg/kg
+MDMA,125.0,mg,6021,absolute,125 mg
+MDMA,25.0,mg,6035,absolute,25 and 125. mg
+MDMA,62.5,mg,6035,absolute,125 and 62.5 mg
+Ibogaine,240.0,mg,6085,absolute,"240, 320 and 400 mg"
+Ibogaine,20.0,mg,6085,absolute,20-400 mg
+Ketamine,35.0,mg,6108,relative_weight,0.5 mg/kg
+LSD,0.1,mg,6111,absolute,100 µg
+Psilocybin,22.05,mg,6115,relative_weight,0.315 mg/kg
+Psilocybin,15.049999999999999,mg,6115,relative_weight,0.215 mg/kg
+Psilocybin,14.0,mg,6115,relative_weight,0.200 mg/kg
+Psilocybin,21.0,mg,6116,relative_weight,0.3 mg/kg
+Psilocybin,7.0,mg,6116,relative_weight,0.1 mg/kg
+MDMA,80.0,mg,6121,absolute,80 mg-180
+MDMA,40.0,mg,6121,absolute,40 or 60 mg
+MDMA,80.0,mg,6121,absolute,80 or 120 mg
+MDMA,60.0,mg,6176,absolute,60 mg
+MDMA,120.0,mg,6176,absolute,120 mg
+LSD,0.1,mg,6189,absolute,100 μg
+Psychedelic mushrooms,500.0,mg,6191,absolute,0.5 g
+Psilocybin,25.2,mg,6195,relative_weight,0.36 mg/kg
+Psilocybin,25.0,mg,6196,absolute,25 mg
+Ketamine,20.0,mg,6220,absolute,20 mg
+Ketamine,16.1,mg,6220,relative_weight,0.23 mg/kg
+Ketamine,8.75,mg,6220,relative_weight,0.125 mg/kg
+Ketamine,4.2,mg,6220,relative_weight,0.06 mg/kg
+LSD,0.25,mg,6228,absolute,250 µg
+LSD,0.15,mg,6228,absolute,150 µg
+Psilocybin,30.0,mg,6232,absolute,30 mg
+Psilocybin,25.0,mg,6232,absolute,25 mg
+Psilocybin,40.0,mg,6244,absolute,40 mg
+MDMA,120.0,mg,6250,absolute,120 mg
+MDMA,60.0,mg,6250,absolute,60 mg
+DMT,1.0,mg,6268,absolute,1 mg
+DMT,60.0,mg,6268,absolute,60 mg
+Psilocybin,1.0,mg,6282,absolute,1 mg
+Psilocybin,10.0,mg,6282,absolute,10 mg
+Psilocybin,25.0,mg,6282,absolute,25 mg
+Psilocybin,25.0,mg,6292,absolute,25 mg
+Psilocybin,30.0,mg,6295,absolute,30 mg
+Psilocybin,1.0,mg,6295,absolute,1 mg
+Ketamine,56.0,mg,6302,relative_weight,0.8 mg/kg
+Ketamine,70.0,mg,6321,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,6361,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6362,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6366,relative_weight,0.5 mg/kg
+S-Ketamine,17.5,mg,6374,relative_weight_time,0.25 mg/kg/h
+S-Ketamine,35.0,mg,6374,relative_weight,0.5 mg/kg
+Ketamine,42.0,mg,6427,relative_weight_time,0.6 mg/kg/h
+MDMA,75.0,mg,6436,absolute,75 mg
+MDMA,75.0,mg,6439,absolute,75 mg
+S-Ketamine,28.0,mg,6446,relative_weight,0.4 mg/kg
+Ketamine,21.0,mg,6470,relative_weight,0.30 - 2.98 mg/kg
+Ketamine,44.1,mg,6470,relative_weight,0.63 mg/kg
+Ketamine,5.0,mg,6496,absolute,5 mg
+Ketamine,21.0,mg,6558,relative_weight,0.3 mg/kg
+MDMA,100.0,mg,6599,absolute,100 mg
+MDMA,100.0,mg,6602,absolute,100 mg
+Psilocybin,18.2,mg,6644,relative_weight,0.26 mg/kg
+MDMA,100.0,mg,6677,absolute,100 mg
+Ketamine,56.0,mg,6828,absolute,56 mg
+Ketamine,56.0,mg,6828,absolute,56 or 84 mg
+Psilocybin,36.08,mg,6837,relative_weight,36.08 mg/70 kg
+Psilocybin,24.68,mg,6837,absolute,24.68
+Psilocybin,8.92,mg,6837,absolute,8.92
+Ketamine,35.0,mg,6898,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6903,relative_weight,0.5 mg/kg
+Psilocybin,11.9,mg,6979,relative_weight,170 µg/kg
+MDMA,0.0,mg,7002,absolute,0-40 mg
+MDMA,75.0,mg,7002,absolute,75-125 mg
+MDMA,100.0,mg,7041,absolute,100 mg
+Psilocybin,14.0,mg,7048,relative_weight,0.2 mg/kg
 Psilocybin,14.0,mg,7055,relative_weight,0.2 mg/kg
-LSD,0.05,mg,2480,absolute,"50, 75, and 100 µg"
-LSD,0.1,mg,2480,absolute,"50, 75, and 100 µg"
-LSD,50.0,mg,2480,absolute,50
-LSD,75.0,mg,2480,absolute,75
-LSD,100.0,mg,2480,absolute,100
-LSD,0.05,mg,2480,absolute,50 µg
-LSD,0.075,mg,2480,absolute,75 µg
-Ketamine,35.0,mg,38179107,relative_weight,0.5 mg/kg
-Ketamine,21.0,mg,38179107,relative_weight_time,0.3 mg/kg/h
-Psilocybin,14.0,mg,38185235,relative_weight,0.2 mg/kg
-Ketamine,35.0,mg,38188539,relative_weight,0.5 mg/kg
-S-Ketamine,35.0,mg,38194244,relative_weight,0.5 mg/kg
-S-Ketamine,14.0,mg,38200438,relative_weight,0.2 mg/kg
-Psilocybin,10.0,mg,38235248,relative_weight,10 mg/70 kg
-Psilocybin,9.8,mg,38238974,relative_weight,0.14 mg/kg
-Psilocybin,25.0,mg,38244804,absolute,25 mg
-S-Ketamine,25.0,mg,38244804,absolute,25 mg
-Psilocybin,56.0,mg,38244804,absolute,56 mg
-S-Ketamine,56.0,mg,38244804,absolute,56 mg
-Psilocybin,84.0,mg,38244804,absolute,84 mg
-S-Ketamine,84.0,mg,38244804,absolute,84 mg
-Psilocybin,25.0,mg,38264632,absolute,25 mg
-Psilocybin,25.0,mg,38264632,absolute,25 or 30 mg
-Psilocybin,30.0,mg,38264632,absolute,25 or 30 mg
-5-MeO-DMT,100.0,mg,38264636,absolute,100 mg
-Ayahuasca,100.0,mg,38264636,absolute,100 mg
-DMT,100.0,mg,38264636,absolute,100 mg
-Ketamine,52.5,mg,38266928,relative_weight,0.75-1 mg/kg
-Ketamine,70.0,mg,38266928,relative_weight,0.75-1 mg/kg
-5-MeO-DMT,9.0,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
-5-MeO-DMT,21.5,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
-DMT,9.0,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
-DMT,21.5,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
-Psilocybin,9.0,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
-Psilocybin,21.5,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
-5-MeO-DMT,21.5,mg,38274414,absolute,21.5 mg
-DMT,21.5,mg,38274414,absolute,21.5 mg
-Psilocybin,21.5,mg,38274414,absolute,21.5 mg
-5-MeO-DMT,6.0,mg,38274414,absolute,6 mg/5 min
-DMT,6.0,mg,38274414,absolute,6 mg/5 min
-Psilocybin,6.0,mg,38274414,absolute,6 mg/5 min
-5-MeO-DMT,15.5,mg,38274414,absolute,15.5 mg/5 min
-DMT,15.5,mg,38274414,absolute,15.5 mg/5 min
-Psilocybin,15.5,mg,38274414,absolute,15.5 mg/5 min
-Psilocybin,30.0,mg,38279085,absolute,30 mg
-Psilocybin,5.0,mg,38279085,absolute,5 mg
-MDMA,52.5,mg,38279662,relative_weight,0.75 mg/kg
-MDMA,105.0,mg,38279662,relative_weight,1.5 mg/kg
-LSD,0.013,mg,38287172,absolute,13 and 26 µg
-LSD,0.026,mg,38287172,absolute,13 and 26 µg
-Ketamine,35.0,mg,38293803,relative_weight,0.5 and 1 mg/kg
-Ketamine,70.0,mg,38293803,relative_weight,0.5 and 1 mg/kg
-Psilocybin,1.0,mg,38316896,absolute,"1, 10 or 25 mg"
-Psilocybin,25.0,mg,38316896,absolute,"1, 10 or 25 mg"
-LSD,0.01,mg,38317077,absolute,10 µg
-DMT,20.0,mg,38326357,absolute,20 mg
-Psilocybin,20.0,mg,38326357,absolute,20 mg
-Psilocybin,25.0,mg,38326432,absolute,25 mg
-LSD,0.004,mg,38347582,absolute,4-20 µg
-LSD,0.02,mg,38347582,absolute,4-20 µg
-Psilocybin,25.0,mg,38359838,absolute,25 mg
-Ketamine,35.0,mg,38378088,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,38378088,relative_weight,0.5-0.9 mg/kg
-Ketamine,63.0,mg,38378088,relative_weight,0.5-0.9 mg/kg
-Ketamine,35.0,mg,38402253,relative_weight,0.5 mg/kg
-S-Ketamine,35.0,mg,38402253,relative_weight,0.5 mg/kg
-Psilocybin,5.0,mg,38423367,absolute,5 mg
-Psilocybin,25.0,mg,38423367,absolute,25 mg
-Psilocybin,1.0,mg,38423367,absolute,1 mg
-S-Ketamine,17.5,mg,38446480,relative_weight,0.25 mg/kg
-S-Ketamine,50.0,mg,38446480,absolute,50 mg
-Psilocybin,20.0,mg,38483940,relative_weight,20 mg/70 kg
-Psilocybin,30.0,mg,38483940,relative_weight,30 mg/70 kg
-S-Ketamine,49.0,mg,38497863,relative_weight,0.7 mg/kg
-LSD,0.1,mg,38518267,absolute,100 μg
-S-Ketamine,14.0,mg,38522144,relative_weight,0.2 mg/kg
-S-Ketamine,35.0,mg,38522144,relative_weight,0.5 mg/kg
-Ketamine,160.0,mg,38522166,absolute,160 mg/day
-Ketamine,240.0,mg,38522166,absolute,240 mg/
-S-Ketamine,30.0,mg,38523183,absolute,30 mg
-S-Ketamine,35.0,mg,38523183,relative_weight,0.5-3.0 mg/kg
-S-Ketamine,210.0,mg,38523183,relative_weight,0.5-3.0 mg/kg
-Ketamine,56.0,mg,38537759,absolute,56-84 mg
-Ketamine,84.0,mg,38537759,absolute,56-84 mg
-S-Ketamine,56.0,mg,38537759,absolute,56-84 mg
-S-Ketamine,84.0,mg,38537759,absolute,56-84 mg
-Ketamine,28.0,mg,38537759,absolute,28 mg
-S-Ketamine,28.0,mg,38537759,absolute,28 mg
-Ketamine,14.0,mg,38537759,relative_weight,0.2 mg/kg
-S-Ketamine,14.0,mg,38537759,relative_weight,0.2 mg/kg
-Ketamine,35.0,mg,38537759,relative_weight,0.5 mg/kg
-S-Ketamine,35.0,mg,38537759,relative_weight,0.5 mg/kg
-Ketamine,70.0,mg,38537759,relative_weight,1 mg/kg
-S-Ketamine,70.0,mg,38537759,relative_weight,1 mg/kg
-Ketamine,56.0,mg,38537759,absolute,56 and 84 mg
-Ketamine,84.0,mg,38537759,absolute,56 and 84 mg
-S-Ketamine,56.0,mg,38537759,absolute,56 and 84 mg
-S-Ketamine,84.0,mg,38537759,absolute,56 and 84 mg
-Psilocybin,10.0,mg,38581739,relative_weight,10 mg/70 kg
-Psilocybin,25.0,mg,38605658,absolute,25 mg
-Psilocybin,1.0,mg,38605658,absolute,1 mg
-5-MeO-DMT,1.0,mg,38616411,absolute,1-12 mg
-5-MeO-DMT,12.0,mg,38616411,absolute,1-12 mg
-Ibogaine,1.0,mg,38616411,absolute,1-12 mg
-Ibogaine,12.0,mg,38616411,absolute,1-12 mg
-5-MeO-DMT,12.0,mg,38616411,absolute,12 mg
-Ibogaine,12.0,mg,38616411,absolute,12 mg
-5-MeO-DMT,10.0,mg,38616411,absolute,10 and 12 mg
-5-MeO-DMT,12.0,mg,38616411,absolute,10 and 12 mg
-Ibogaine,10.0,mg,38616411,absolute,10 and 12 mg
-Ibogaine,12.0,mg,38616411,absolute,10 and 12 mg
-LSD,0.01,mg,38622150,absolute,10 µg
-Ketamine,16.1,mg,38629811,relative_weight,0.23 mg/kg
-Ketamine,40.599999999999994,mg,38629811,relative_weight_time,0.58 mg/kg/h
-Psilocybin,21.0,mg,38632313,relative_weight,0.3 mg/kg
-Psilocybin,2.0,mg,38658877,absolute,2 mg and
-Psilocybin,5.0,mg,38658877,absolute,5 mg
-S-Ketamine,14.0,mg,38658886,relative_weight,0.2 mg/kg
-Ketamine,35.0,mg,38688118,relative_weight,0.5 mg/kg
-R-Ketamine,50.0,mg,38696221,absolute,50 mg
-S-Ketamine,50.0,mg,38696221,absolute,50 mg
-Ketamine,35.0,mg,38710325,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,38714931,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,38755245,relative_weight,0.5 mg/kg
-MDMA,120.0,mg,38773523,absolute,120 mg
-Psilocybin,120.0,mg,38773523,absolute,120 mg
-MDMA,60.0,mg,38773523,absolute,60 mg
-Psilocybin,60.0,mg,38773523,absolute,60 mg
-S-Ketamine,14.0,mg,38808490,relative_weight,0.2 mg/kg
-Ketamine,35.0,mg,38834540,relative_weight,0.5 mg/kg
-Psilocybin,14.0,mg,38862674,relative_weight,0.2 mg/kg
-Ketamine,115.0,mg,38863284,absolute,115.
-S-Ketamine,115.0,mg,38863284,absolute,115.
-Psilocybin,20.0,mg,38883812,absolute,20 mg
-Ketamine,120.0,mg,38914860,absolute,120 mg
-S-Ketamine,120.0,mg,38914860,absolute,120 mg
-Ketamine,30.0,mg,38914860,absolute,"30, 60, 120 or 180 mg"
-Ketamine,180.0,mg,38914860,absolute,"30, 60, 120 or 180 mg"
-S-Ketamine,30.0,mg,38914860,absolute,"30, 60, 120 or 180 mg"
-S-Ketamine,180.0,mg,38914860,absolute,"30, 60, 120 or 180 mg"
-Ketamine,180.0,mg,38914860,absolute,180 mg
-S-Ketamine,180.0,mg,38914860,absolute,180 mg
-Psilocybin,25.0,mg,38956594,absolute,25 mg
-Ketamine,35.0,mg,38969374,relative_weight,0.5 mg/kg
-Ketamine,50.0,mg,38969374,absolute,50 mg
-Ketamine,35.0,mg,38982828,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,38988455,absolute,25 mg
-LSD,0.015,mg,39009578,absolute,15 µg
-Psilocybin,25.0,mg,39020167,absolute,25 mg
-Ketamine,35.0,mg,39028544,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,39054328,relative_weight,0.5 mg/kg
-Ketamine,150.0,mg,39068714,absolute,150 mg
-Ketamine,35.0,mg,39068714,relative_weight,0.5 mg/kg
-LSD,0.2,mg,39078038,absolute,200 μg
-S-Ketamine,0.0,mg,39160473,relative_weight,0. 25 mg/kg
-LSD,0.004,mg,39182140,absolute,4-20 μg
-LSD,0.02,mg,39182140,absolute,4-20 μg
-Ketamine,35.0,mg,39210712,relative_weight,0.5 mg/kg
-Ketamine,50.0,mg,39214377,absolute,50 mg
-S-Ketamine,50.0,mg,39214377,absolute,50 mg
-Ketamine,0.5,mg,39222174,absolute,0.5
-Ketamine,70.0,mg,39222174,relative_weight,1.0 mg/kg
-Ketamine,35.0,mg,39222174,relative_weight,0.5 mg/kg
-LSD,0.025,mg,39231959,absolute,25-200 µg
-LSD,0.2,mg,39231959,absolute,25-200 µg
-LSD,0.01,mg,39235512,absolute,10 µg
-Ketamine,35.0,mg,39318021,relative_weight,0.5 mg/kg
-S-Ketamine,28.0,mg,39326589,relative_weight,0.4 mg/kg
-S-Ketamine,35.0,mg,39342105,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,39343309,absolute,25 mg
-Psilocybin,3.15,mg,39354706,relative_weight,45 μg/kg
-Psilocybin,30.0,mg,39354706,relative_weight,30 mg/70 kg
-Ketamine,7.0,mg,39365203,relative_weight,0.1 mg/kg-
-Ketamine,70.0,mg,39365203,relative_weight,1 mg/kg
-Psilocybin,25.0,mg,39372842,absolute,25 mg
-MDMA,25.0,mg,39381877,absolute,25-40 mg
-MDMA,40.0,mg,39381877,absolute,25-40 mg
-Psilocybin,25.0,mg,39427449,absolute,25 mg
-Psilocybin,10.0,mg,39427449,absolute,10 mg
-Psilocybin,1.0,mg,39427449,absolute,1 mg
-Ketamine,35.0,mg,39468512,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,39499526,absolute,25 mg
-S-Ketamine,28.0,mg,39522447,absolute,28-84 mg
-S-Ketamine,84.0,mg,39522447,absolute,28-84 mg
-S-Ketamine,84.0,mg,39522447,absolute,84 mg
-MDMA,100.0,mg,39546312,absolute,100 or 125 mg
-MDMA,125.0,mg,39546312,absolute,100 or 125 mg
-MDMA,100.0,mg,39546312,absolute,100 mg
-MDMA,125.0,mg,39546312,absolute,125 mg
-Ketamine,0.5,mg,39556562,absolute,0.5
-S-Ketamine,0.5,mg,39556562,absolute,0.5
-Ketamine,79.1,mg,39576028,relative_weight,1.13 mg/kg
-Ketamine,35.0,mg,39581291,relative_weight,0.5 mg/kg
-MDMA,120.0,mg,39592887,absolute,120 and 180 mg
-MDMA,180.0,mg,39592887,absolute,120 and 180 mg
-Ketamine,35.0,mg,39609659,relative_weight,0.5 mg/kg
-Ketamine,70.0,mg,39609659,relative_weight,1.0 mg/kg
-Ayahuasca,3.0,mg,39614620,absolute,3
-Ayahuasca,170.64,mg,39614620,absolute,170.64 mg
-S-Ketamine,17.5,mg,39631703,relative_weight,0.25 mg/kg
-Psilocybin,25.0,mg,39636638,absolute,25 mg
-Ketamine,35.0,mg,39642450,relative_weight,0.5-0.75 mg/kg
-Ketamine,52.5,mg,39642450,relative_weight,0.5-0.75 mg/kg
-Psilocybin,5.0,mg,39669539,absolute,5 and 20 mg
-Psilocybin,20.0,mg,39669539,absolute,5 and 20 mg
-Psilocybin,15050.0,mg,39695323,relative_weight,0215 mg/kg
-DMT,0.6,mg,39702577,absolute,0.6
-DMT,1.2,mg,39702577,absolute,1.2
-DMT,1.8,mg,39702577,absolute,1.8
-DMT,168.0,mg,39702577,relative_time,2.4 mg/min
-DMT,126.0,mg,39702577,relative_time,1.8 mg/min
-Psilocybin,25.0,mg,39706482,absolute,25
-Psilocybin,1.0,mg,39706482,absolute,"10, or 1 mg"
-Psilocybin,10.0,mg,39706482,absolute,"10, or 1 mg"
-Psilocybin,25.0,mg,39706482,absolute,25 mg
-Psilocybin,25.0,mg,39741440,absolute,25 mg
-Psilocybin,25.0,mg,39754904,absolute,25 mg
-Psilocybin,15.049999999999999,mg,39754904,relative_weight,0.215 mg/kg
-Psilocybin,10.0,mg,39754904,absolute,10 mg
-Ketamine,35.0,mg,39763417,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,39763417,relative_weight,0.5-0.9 mg/kg
-Ketamine,63.0,mg,39763417,relative_weight,0.5-0.9 mg/kg
-Psilocybin,25.0,mg,39764567,absolute,25 mg
-Ketamine,220.0,mg,39773202,absolute,220 mg
-Ketamine,100.0,mg,39773202,absolute,100-400 mg
-Ketamine,400.0,mg,39773202,absolute,100-400 mg
-5-MeO-DMT,100.0,mg,39774840,absolute,100
-Ayahuasca,100.0,mg,39774840,absolute,100
-DMT,100.0,mg,39774840,absolute,100
-5-MeO-DMT,10.0,mg,39774840,absolute,10
-Ayahuasca,10.0,mg,39774840,absolute,10
-DMT,10.0,mg,39774840,absolute,10
-Psilocybin,25.0,mg,39802794,absolute,25 mg
-Psilocybin,25.0,mg,39823496,absolute,25 mg
-Ketamine,35.0,mg,39834135,relative_weight,0.5 mg/kg
-S-Ketamine,35.0,mg,39853300,relative_weight,0.5 or 1.0 mg/kg
-S-Ketamine,70.0,mg,39853300,relative_weight,0.5 or 1.0 mg/kg
-S-Ketamine,210.0,mg,39853300,relative_weight,3.0 mg/kg
-Ketamine,35.0,mg,39878430,relative_weight,0.5 mg/kg
-Ketamine,70.0,mg,39878430,relative_weight,1 mg/kg
-Ketamine,0.5,mg,39878430,absolute,0.5 and
-Psilocybin,10.0,mg,39882198,absolute,10 mg
-Psilocybin,1.0,mg,39882198,absolute,1 mg
-Ketamine,35.0,mg,39889566,relative_weight,0.5 mg/kg
-MDMA,100.0,mg,39895858,absolute,100 mg
-Ketamine,35.0,mg,39899368,relative_weight,0.5 mg/kg
-Ketamine,0.5,mg,39915701,absolute,0.5 mg
-S-Ketamine,0.5,mg,39915701,absolute,0.5 mg
-5-MeO-DMT,0.0,mg,39923404,absolute,0-120 mg
-5-MeO-DMT,120.0,mg,39923404,absolute,0-120 mg
-Ayahuasca,0.0,mg,39923404,absolute,0-120 mg
-Ayahuasca,120.0,mg,39923404,absolute,0-120 mg
-DMT,0.0,mg,39923404,absolute,0-120 mg
-DMT,120.0,mg,39923404,absolute,0-120 mg
-5-MeO-DMT,0.0,mg,39923404,absolute,0
-Ayahuasca,0.0,mg,39923404,absolute,0
-DMT,0.0,mg,39923404,absolute,0
-Ketamine,52.5,mg,39929500,relative_weight,0.75 mg/kg
-Ketamine,63.0,mg,39929500,relative_weight,0.9 mg/kg
-Ketamine,35.0,mg,39940002,relative_weight,0.5 mg/kg
-S-Ketamine,17.5,mg,39946130,relative_weight,0.25 mg/kg
-MDMA,50.0,mg,39979849,absolute,50-125 mg
-MDMA,125.0,mg,39979849,absolute,50-125 mg
-MDMA,25.0,mg,39979849,absolute,25-40 mg
-MDMA,40.0,mg,39979849,absolute,25-40 mg
-Ketamine,35.0,mg,40012166,relative_weight,0.5 mg/kg
-Ketamine,210.0,mg,40015180,relative_weight,3 mg/kg
-Ketamine,180.0,mg,40015180,absolute,180 mg
-Psilocybin,25.0,mg,40018886,absolute,25 mg
-LSD,0.1,mg,40022427,absolute,100 μg
-Psilocybin,10.0,mg,40046861,absolute,10 and
-Psilocybin,25.0,mg,40046861,absolute,25 mg
-Psilocybin,10.0,mg,40047545,absolute,10 mg
-Psilocybin,1.0,mg,40047545,absolute,1 mg
-Psilocybin,25.0,mg,40047545,absolute,25 mg
-LSD,0.026,mg,40051483,absolute,26 µg
-Ketamine,56.0,mg,40058488,absolute,56 and 84 mg
-Ketamine,84.0,mg,40058488,absolute,56 and 84 mg
-S-Ketamine,56.0,mg,40058488,absolute,56 and 84 mg
-S-Ketamine,84.0,mg,40058488,absolute,56 and 84 mg
-Ketamine,84.0,mg,40058488,absolute,84 mg
-S-Ketamine,84.0,mg,40058488,absolute,84 mg
-Ketamine,28.0,mg,40058488,absolute,"28, 56, and 84 mg"
-Ketamine,84.0,mg,40058488,absolute,"28, 56, and 84 mg"
-S-Ketamine,28.0,mg,40058488,absolute,"28, 56, and 84 mg"
-S-Ketamine,84.0,mg,40058488,absolute,"28, 56, and 84 mg"
-Ketamine,28.0,mg,40058488,absolute,"28, 56, or 84 mg"
-Ketamine,84.0,mg,40058488,absolute,"28, 56, or 84 mg"
-S-Ketamine,28.0,mg,40058488,absolute,"28, 56, or 84 mg"
-S-Ketamine,84.0,mg,40058488,absolute,"28, 56, or 84 mg"
-LSD,0.02,mg,40105807,absolute,20 μg
-Ketamine,35.0,mg,40129096,relative_weight,0.5 mg/kg
-Ketamine,14.0,mg,40129096,relative_weight,0.2 mg/kg
-Psilocybin,25.0,mg,40129307,absolute,25 mg
-Psilocybin,25.0,mg,40144690,absolute,25 mg
-Ketamine,3.5,mg,40170626,relative_weight,0.05 mg/kg
-Psilocybin,15.0,mg,40171515,absolute,15 mg
-Psilocybin,25.0,mg,40171515,absolute,25 mg
-Ketamine,35.0,mg,40188855,relative_weight,0.5 mg/kg
-Psilocybin,10.0,mg,40205013,absolute,10 mg
-MDMA,100.0,mg,40209095,absolute,100 mg
-Ketamine,35.0,mg,40215385,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,40233965,absolute,25 mg
-Psilocybin,25.0,mg,40245934,absolute,25 mg
-Psilocybin,20.0,mg,40245969,relative_weight,20-40 mg/70 kg
-Psilocybin,40.0,mg,40245969,relative_weight,20-40 mg/70 kg
+5-MeO-DMT,6.0,mg,7214,absolute,"6, 12, and 18 mg"
+5-MeO-DMT,2.0,mg,7214,absolute,2 mg
+5-MeO-DMT,18.0,mg,7214,absolute,18 mg
+5-MeO-DMT,12.0,mg,7214,absolute,12
+5-MeO-DMT,6.0,mg,7214,absolute,6
+5-MeO-DMT,2.0,mg,7214,absolute,2
+Ayahuasca,0.85,mg,7313,absolute,0.85 mg
+Ayahuasca,0.6,mg,7313,absolute,0.6
+Ketamine,35.0,mg,7414,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,7456,absolute,25 mg
+Psilocybin,10.0,mg,7456,absolute,10 and 25 mg
+Ketamine,50.0,mg,7466,absolute,50−150 mg
+Psilocybin,25.0,mg,7468,absolute,25 mg
+Psilocybin,25.0,mg,7519,absolute,25 mg
+Psilocybin,25.0,mg,7521,absolute,25 mg
+Psilocybin,10.0,mg,7521,absolute,10 mg
+Psilocybin,10.0,mg,7525,absolute,10 and 25 mg
+Psilocybin,10.0,mg,7525,absolute,10 or 25 mg
+Psilocybin,10.01,mg,7719,relative_weight,0.143 mg/kg
+LSD,0.2,mg,7739,absolute,200 μg
+LSD,0.1,mg,7753,absolute,100 µg
+Ketamine,35.0,mg,7946,relative_weight,0.5 mg/kg
+Ketamine,37.800000000000004,mg,7980,relative_weight_time,0.54 mg/kg/h
+Ketamine,42.0,mg,7980,relative_weight_time,0.6 mg/kg/h
+Ketamine,10.5,mg,7980,relative_weight_time,0.15 mg/kg/h
+Ketamine,56.0,mg,8041,absolute,56 or 84 mg
+Ketamine,35.0,mg,8041,relative_weight,0.5 mg/kg
+S-Ketamine,56.0,mg,8041,absolute,56 or 84 mg
+S-Ketamine,35.0,mg,8041,relative_weight,0.5 mg/kg
+S-Ketamine,28.0,mg,8051,relative_weight,0.40 mg/kg
+S-Ketamine,14.0,mg,8051,relative_weight,0.20 mg/kg
+Ketamine,35.0,mg,8087,relative_weight,0.5 mg/kg
+Psilocybin,21.0,mg,8089,relative_weight,0.3 mg/kg
+Psilocybin,16.1,mg,8101,relative_weight,230 μg/kg
+Psilocybin,25.0,mg,8219,absolute,25 mg
+LSD,0.1,mg,8292,absolute,100 μg
+Ketamine,44.800000000000004,mg,8295,relative_weight_time,0.64 mg/kg/h
+Ketamine,16.1,mg,8295,relative_weight,0.23 mg/kg
+MDMA,100.0,mg,8307,absolute,100 mg
+Ketamine,30.8,mg,8372,relative_weight,0.44 mg/kg
+Ketamine,7.0,mg,8636,relative_weight,0.1‐0.2 mg/kg
+Ketamine,7.0,mg,8636,relative_weight,0.1‐0.2 mg/kg/dose
+Ketamine,35.0,mg,8746,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8836,relative_weight,0.5 mg/kg
+MDMA,125.0,mg,8868,absolute,125 mg
+MDMA,119.0,mg,8902,relative_weight,1.7 mg/kg
+MDMA,105.0,mg,8909,relative_weight,1.5 mg/kg
+MDMA,119.0,mg,8910,relative_weight,1.7 mg/kg
+Psilocybin,15.049999999999999,mg,8923,relative_weight,0.215 mg/kg
+Ketamine,35.0,mg,8947,relative_weight,0.5 mg/kg
+S-Ketamine,84.0,mg,8959,absolute,84 mg
+S-Ketamine,56.0,mg,8959,absolute,56 mg
+S-Ketamine,28.0,mg,8959,absolute,28 mg
+MDMA,100.0,mg,8970,absolute,100 mg
+Ketamine,0.4,mg,8987,absolute,0.4 mg kg‐1
+Ketamine,56.0,mg,9007,relative_weight,0.8 mg/kg
+S-Ketamine,17.5,mg,9071,relative_weight,0.25 mg/kg
+LSD,0.05,mg,9151,absolute,50 μg
+Ketamine,35.0,mg,9171,relative_weight,0.5-0.54 mg/kg
+Ketamine,35.0,mg,9173,relative_weight,0.5 mg/kg
+Ketamine,56.0,mg,9198,absolute,56 or 84 mg
+S-Ketamine,56.0,mg,9198,absolute,56 or 84 mg
+Ketamine,1.0919999999999999,mg,9225,relative_weight_time,0.0156 mg/kg/min
+Ketamine,7.0,mg,9225,relative_weight,0.1 mg/kg
+Ketamine,17.5,mg,9381,relative_weight,0.25 mg/kg
+Ketamine,56.7,mg,9419,relative_weight,0.81 mg/kg
+MDMA,105.0,mg,9446,relative_weight,1.5 mg/kg
+Ketamine,14.0,mg,9501,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,9501,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9525,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9565,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9566,relative_weight,0.5 mg/kg
+LSD,0.01,mg,5899,absolute,10 μg
+LSD,0.013,mg,800,absolute,13 μg
+MDMA,750.0,mg,4631,absolute,750 mg
+MDMA,75.0,mg,4631,absolute,75 mg
+LSD,0.0,mg,4847,absolute,0
+MDMA,120.0,mg,1099,absolute,120 mg
+MDMA,200.0,mg,5063,absolute,200 mg
+MDMA,50.0,mg,5063,absolute,50 mg
+MDMA,100.0,mg,5063,absolute,100 mg
+MDMA,50.0,mg,5063,absolute,"50, 100, 150 and 200 mg"
+MDMA,125.0,mg,8877,absolute,125 mg
+MDMA,100.0,mg,8321,absolute,100 mg
+LSD,100.0,mg,8321,absolute,100 mg
+LSD,200.0,mg,7738,absolute,200 mg
+LSD,0.1,mg,3639,absolute,100 µg
+LSD,0.2,mg,3639,absolute,200 µg
+LSD,0.025,mg,3639,absolute,25-200 µg
+LSD,100.0,mg,3639,absolute,100
+LSD,0.025,mg,3639,absolute,25 µg
+LSD,0.025,mg,3639,absolute,"25, 50, 100, and 200 µg"
+LSD,100.0,mg,2107,absolute,100
+LSD,0.1,mg,2107,absolute,100 and 200 µg
+LSD,0.025,mg,3633,absolute,"25, 50, 100, and 200 µg"
+LSD,0.05,mg,3633,absolute,50 and 200 µg
+LSD,0.1,mg,3634,absolute,100 μg
+LSD,0.1,mg,4956,absolute,100 μg
+LSD,0.2,mg,4956,absolute,200 μg
+LSD,0.1,mg,4956,absolute,100 and 200 μg
+LSD,0.2,mg,3630,absolute,200 µg
+LSD,0.025,mg,3630,absolute,"25, 50, 100, and 200 µg"
+LSD,0.2,mg,8312,absolute,200 μg
+LSD,0.026,mg,5737,absolute,26 µg
+LSD,0.013,mg,801,absolute,13 μg
+LSD,0.0065,mg,801,absolute,"6.5, 13, and 26 μg"
+LSD,0.0065,mg,801,absolute,"6.5, 13, or 26 μg"
+LSD,0.0,mg,801,absolute,0
+LSD,0.0,mg,801,absolute,0-26 μg
+LSD,0.1,mg,801,absolute,100-200 μg
+LSD,0.1,mg,2101,absolute,100 μg
+LSD,0.2,mg,7743,absolute,200 μg
+LSD,0.025,mg,6131,absolute,25 µg
+LSD,0.2,mg,6131,absolute,200 µg
+LSD,0.1,mg,6131,absolute,100 µg
+LSD,0.1,mg,5853,absolute,100 μg
+MDMA,100.0,mg,7740,absolute,100-175 mg
+MDMA,0.1,mg,7740,absolute,100-200 µg
+LSD,100.0,mg,7740,absolute,100-175 mg
+LSD,0.1,mg,7740,absolute,100-200 µg
+LSD,0.026,mg,1959,absolute,26 μg
+LSD,0.013,mg,1959,absolute,13 μg
+LSD,0.013,mg,1959,absolute,13 or 26 μg
+LSD,0.026,mg,5735,absolute,26 μg
+LSD,0.013,mg,5735,absolute,13 μg
+LSD,0.02,mg,7165,absolute,20 µg
+LSD,0.005,mg,7165,absolute,"5, 10 and 20 µg"
+LSD,0.013,mg,794,absolute,13 μg
+LSD,0.02,mg,2481,absolute,20 μg
+LSD,0.01,mg,2481,absolute,10 μg
+LSD,0.005,mg,2481,absolute,5 μg
+LSD,0.01,mg,2481,absolute,"10, or 20 μg"
+LSD,0.025,mg,6278,absolute,25 µg
+LSD,0.2,mg,6278,absolute,200 µg
+LSD,0.1,mg,6278,absolute,100 µg
+LSD,0.2,mg,2886,absolute,200 μg
+LSD,0.02,mg,2886,absolute,20 μg
+LSD,0.026,mg,5905,absolute,26 μg
+LSD,0.013,mg,5905,absolute,13 μg
+LSD,0.2,mg,3636,absolute,200 μg
+LSD,0.02,mg,6013,absolute,200 or 20 µg
+LSD,0.2,mg,6013,absolute,200 µg
+LSD,0.02,mg,6013,absolute,20 µg
+LSD,0.075,mg,6281,absolute,75 µg
+LSD,0.05,mg,6281,absolute,50 µg
+LSD,0.05,mg,6281,absolute,"50, 75, or 100 µg"
+LSD,0.1,mg,6281,absolute,100 µg
+LSD,200.0,mg,2104,absolute,200 mg
+LSD,100.0,mg,2104,absolute,100 mg
+LSD,0.1,mg,7054,absolute,100 µg
+LSD,0.1,mg,7057,absolute,100 μg
+LSD,0.2,mg,2103,absolute,200 μg
+MDMA,75.0,mg,8869,absolute,75 mg
+MDMA,75.0,mg,8869,absolute,75
+LSD,0.01,mg,9369,absolute,10 μg
+LSD,0.005,mg,9369,absolute,"5, 10, and 20 μg"
+LSD,0.01,mg,9370,absolute,10 μg
+LSD,0.005,mg,9370,absolute,"5, 10, and 20 μg"
+LSD,0.02,mg,3770,absolute,20 µg
+LSD,0.005,mg,3770,absolute,5 µg
+LSD,0.01,mg,3770,absolute,"10, 20 µg"
+LSD,0.005,mg,3770,absolute,"5, 10, and 20 µg"
+MDMA,94.5,mg,4957,relative_weight,1.35-1.8 mg/kg
+MDMA,70.0,mg,4957,absolute,70-150 mg
+LSD,0.026,mg,2988,absolute,26 μg
+LSD,0.013,mg,2988,absolute,13 μg
+MDMA,100.0,mg,2508,absolute,100 mg
+LSD,0.005,mg,3771,absolute,5 and 20 μg
+LSD,0.005,mg,3771,absolute,5 μg
+LSD,0.005,mg,3771,absolute,"5, 10, and 20 μg"
+MDMA,100.0,mg,6809,absolute,100 mg
+MDMA,50.0,mg,6809,absolute,50 mg
+LSD,0.1,mg,6225,absolute,0.1 mg
+MDMA,75.0,mg,5366,absolute,75 mg
+MDMA,125.0,mg,5366,absolute,125 mg
+MDMA,105.0,mg,3389,relative_weight,1.5 mg/kg
+MDMA,35.0,mg,3389,relative_weight,0.5 mg/kg
+MDMA,105.0,mg,8455,relative_weight,1.5 mg/kg
+MDMA,100.0,mg,2507,absolute,100 mg
+MDMA,100.0,mg,4358,absolute,100 mg
+MDMA,105.0,mg,4954,relative_weight,1.5 mg/kg
+MDMA,150.0,mg,1917,absolute,150 mg
+MDMA,100.0,mg,1917,absolute,100
+MDMA,50.0,mg,1917,absolute,50
+MDMA,70.0,mg,799,relative_weight,1.0 mg/kg
+MDMA,35.0,mg,799,relative_weight,0.5 mg/kg
+MDMA,105.0,mg,4359,relative_weight,1.5 mg/kg
+MDMA,0.75,mg,4359,absolute,0.75
+MDMA,62.5,mg,6494,absolute,62.5 mg
+MDMA,125.0,mg,6494,absolute,125 mg
+MDMA,25.0,mg,6494,absolute,25 mg
+MDMA,30.0,mg,6023,absolute,30 or 75 mg
+MDMA,125.0,mg,6023,absolute,125 mg
+MDMA,30.0,mg,6023,absolute,"30, 75 or 125 mg"
+MDMA,30.0,mg,6023,absolute,30 mg
+MDMA,75.0,mg,6023,absolute,75 mg
+MDMA,105.0,mg,716,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,716,relative_weight,0.75 mg/kg
+MDMA,52.5,mg,716,relative_weight,"0.75, 1.5 mg/kg"
+MDMA,40.0,mg,6581,absolute,40 mg
+MDMA,100.0,mg,6581,absolute,100 mg
+MDMA,125.0,mg,6581,absolute,125 mg
+MDMA,100.0,mg,6581,absolute,100 and 125 mg
+MDMA,62.5,mg,131,absolute,62.5 mg
+MDMA,125.0,mg,131,absolute,125 mg
+MDMA,125.0,mg,6043,absolute,125 mg
+MDMA,100.0,mg,6043,absolute,100 mg
+MDMA,75.0,mg,6043,absolute,75 mg
+MDMA,75.0,mg,4023,absolute,75-125 mg
+Psilocybin,22.0,mg,3172,relative_weight,22 or 30 mg/70 kg
+Psilocybin,1.0,mg,3172,relative_weight,1 or 3 mg/70 kg
+Psilocybin,14.0,mg,3172,relative_weight,14 mg/70 kg
+Psilocybin,25.0,mg,6057,relative_weight,25 mg/70 kg
+Psilocybin,40.0,mg,6057,relative_weight,40 mg/70 kg
+Psilocybin,30.0,mg,6057,relative_weight,30 mg/70 kg
+Psilocybin,3.15,mg,8344,relative_weight,45-315 µg/kg
+Psilocybin,25.0,mg,7463,absolute,25 mg
+Psilocybin,25.0,mg,6134,absolute,25 mg
+Psilocybin,27.1,mg,6344,absolute,27.1-54.0 mg
+Psilocybin,18.8,mg,6344,absolute,18.8-36.6 mg
+Psilocybin,42.0,mg,6344,relative_weight,0.6 mg/kg
+Psilocybin,31.5,mg,6344,relative_weight,0.45 mg/kg
+Psilocybin,21.0,mg,6344,relative_weight,0.3 mg/kg
+MDMA,100.0,mg,956,absolute,100 mg
+Psilocybin,22.0,mg,3176,relative_weight,22 or 30 mg/70 kg
+Psilocybin,1.0,mg,3176,relative_weight,1 or 3 mg/70 kg
+Psilocybin,30.0,mg,3179,relative_weight,30 mg/70 kg
+Psilocybin,5.0,mg,6241,absolute,5 mg
+Psilocybin,2.5,mg,6241,absolute,2.5 mg
+Psilocybin,1.0,mg,6241,absolute,1 mg
+Psilocybin,0.0,mg,6241,absolute,0 mg
+Psilocybin,30.0,mg,3180,relative_weight,30 mg/70 kg
+Psilocybin,30.0,mg,3174,relative_weight,30 mg/70 kg
+Psilocybin,25.0,mg,697,absolute,25 mg
+Psilocybin,25.0,mg,6475,relative_weight,25 mg/70 kg
+Psilocybin,10.0,mg,1267,absolute,10 mg
+MDMA,105.0,mg,6120,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,6120,relative_weight,0.75 mg/kg
+Psilocybin,25.0,mg,6011,absolute,25 mg
+LSD,0.012,mg,163,absolute,12 µg
+LSD,0.004,mg,163,absolute,4 µg
+LSD,0.008,mg,163,absolute,8 µg
+Psilocybin,11.200000000000001,mg,4509,relative_weight,0.16 mg/kg
+Psilocybin,50.0,mg,917,absolute,50-100 mg
+Psilocybin,25.0,mg,917,relative_weight,25-40 mg/70 kg
+Psilocybin,25.0,mg,917,relative_weight,25 mg/70 kg
+Psilocybin,10.01,mg,7726,relative_weight,0.143 mg/kg
+Psilocybin,1.0,mg,6296,absolute,1 mg
+Psilocybin,25.0,mg,6296,absolute,25 mg
+MDMA,62.5,mg,143,absolute,62.5 mg
+MDMA,125.0,mg,143,absolute,125 mg
+Psilocybin,10.0,mg,1266,absolute,10 and 25 mg
+Psilocybin,10.0,mg,3059,absolute,10 mg
+Psilocybin,25.0,mg,3059,absolute,25 mg
+Psilocybin,1.0,mg,3059,absolute,1 mg
+Psilocybin,25.0,mg,1263,absolute,25 mg
+Psilocybin,10.0,mg,1263,absolute,10 mg
+Psilocybin,25.0,mg,146,absolute,25 mg
+Psilocybin,25.0,mg,5595,absolute,25 mg
+Psilocybin,5.0,mg,5595,absolute,5 mg
+Psilocybin,25.0,mg,6163,absolute,25 mg
+Psilocybin,25.0,mg,5593,absolute,25 mg
+Psilocybin,5.0,mg,5593,absolute,5 mg
+Psilocybin,25.0,mg,3061,absolute,25 mg
+Ketamine,20.0,mg,6229,absolute,20 mg
+Psilocybin,20.0,mg,6229,absolute,20 mg
+Psilocybin,10.01,mg,7727,relative_weight,0.143 mg/kg
+Psilocybin,20.0,mg,3177,relative_weight,20 and 30 mg/70 kg
+Psilocybin,1.0,mg,3177,relative_weight,1 mg/70 kg
+Psilocybin,10.01,mg,7720,relative_weight,0.143 mg/kg
+Psilocybin,14.0,mg,3195,relative_weight,0.2 mg/kg
+Psilocybin,1.0,mg,6243,absolute,"1, 2, 5, 8 and 10 mg"
+Psilocybin,0.2,mg,6243,absolute,0.2‐1%
+Psilocybin,25.0,mg,6288,absolute,25 mg
+Psilocybin,25.0,mg,6288,absolute,25‐mg
+Psilocybin,15.049999999999999,mg,6114,relative_weight,0.215 mg/kg
+DMT,7.0,mg,1771,relative_weight,0.1 and 0.3 mg/kg
+DMT,21.0,mg,1771,relative_weight,0.3 mg/kg
+DMT,7.0,mg,1771,relative_weight,0.1 mg/kg
+Psilocybin,25.0,mg,6144,absolute,25 mg
+Ketamine,35.0,mg,145,relative_weight,0.5 mg/kg
+Ketamine,63.0,mg,145,relative_weight,0.9 mg/kg
+Ketamine,42.0,mg,145,relative_weight,0.6 mg/kg
+Psilocybin,25.0,mg,636,relative_weight,25 mg/70 kg
+S-Ketamine,84.0,mg,1819,absolute,84 mg
+S-Ketamine,56.0,mg,1819,absolute,56 mg
+S-Ketamine,28.0,mg,1819,absolute,28 mg
+Psilocybin,30.0,mg,634,relative_weight,30 mg/70 kg
+Psilocybin,20.0,mg,634,relative_weight,20 mg/70 kg
+Psilocybin,1.0,mg,6285,absolute,1 mg
+Psilocybin,5.0,mg,2393,absolute,5 mg
+Psilocybin,25.0,mg,2393,absolute,25 mg
+Psilocybin,25.0,mg,638,relative_weight,25 mg/70 kg
+Psilocybin,17.5,mg,6101,relative_weight,0.25 mg/kg
+Ketamine,35.0,mg,2256,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2257,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9486,relative_weight,0.5 mg/kg
+S-Ketamine,14.0,mg,2421,relative_weight,0.20 mg/kg
+Ketamine,70.0,mg,2525,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,2525,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,2525,relative_weight,0.1 mg/kg
+Ketamine,70.0,mg,2525,relative_weight,1 mg/kg
+Ketamine,14.0,mg,2525,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,477,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2916,relative_weight,0.5 mg/kg
+Ketamine,28.0,mg,2916,relative_weight,0.4 mg/kg
+Ketamine,21.0,mg,2916,relative_weight,0.3 mg/kg
+Ketamine,14.0,mg,2916,relative_weight,0.2 mg/kg
+Ketamine,7.0,mg,2916,relative_weight,0.1 mg/kg
+Ketamine,0.4,mg,2916,absolute,0.4
+Ketamine,0.3,mg,2916,absolute,0.3
+Ketamine,0.1,mg,2916,absolute,"0.1, 0.2"
+Ketamine,28.0,mg,2384,absolute,"28, 56 mg, g"
+S-Ketamine,28.0,mg,2384,absolute,"28, 56 mg, g"
+Ketamine,35.0,mg,2043,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,152,relative_weight,0.5 mg/kg
+Ketamine,21.0,mg,152,relative_weight,0.3 mg/kg
+Ketamine,35.0,mg,53,relative_weight,0.5 mg/kg
+S-Ketamine,84.0,mg,2387,absolute,84 mg
+Ketamine,35.0,mg,8153,relative_weight,0.5 mg/kg
+Ketamine,56.0,mg,2427,absolute,56 or 84 mg
+S-Ketamine,56.0,mg,2427,absolute,56 or 84 mg
+Ketamine,35.0,mg,4976,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6080,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,5920,relative_weight,0.5 mg/kg
+Ketamine,50.0,mg,4730,absolute,50 mg
+Ketamine,35.0,mg,7940,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2255,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6067,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2536,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2650,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9571,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,3791,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,4949,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8351,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,4948,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,7130,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8154,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,58,relative_weight,0.5 mg/kg
+S-Ketamine,17.5,mg,9588,relative_weight,0.25 mg/kg
+Ketamine,84.0,mg,3819,absolute,84 mg
+S-Ketamine,84.0,mg,3819,absolute,84 mg
+Ketamine,52.5,mg,3822,relative_weight,0.75 mg/kg
+Ketamine,35.0,mg,3822,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2939,relative_weight,0.5 mg/kg
+Ketamine,17.5,mg,4025,relative_weight,0.25 mg/kg
+Ketamine,35.0,mg,4025,relative_weight,0.5 mg/kg
+S-Ketamine,17.5,mg,4025,relative_weight,0.25 mg/kg
+S-Ketamine,35.0,mg,4025,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6524,relative_weight,0.5 mg/kg/
+Ketamine,84.0,mg,2763,absolute,84 mg
+S-Ketamine,84.0,mg,2763,absolute,84 mg
+Ketamine,35.0,mg,1913,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2044,relative_weight,0.5 mg/kg
+Ketamine,84.0,mg,1239,absolute,84 mg
+S-Ketamine,84.0,mg,1239,absolute,84 mg
+Ketamine,35.0,mg,9232,relative_weight,0.5 mg/kg
+S-Ketamine,35.0,mg,9232,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6212,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,3903,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,4308,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,530,relative_weight,0.5 mg/kg
+Ketamine,40.0,mg,2113,absolute,40 mg
+Ketamine,35.0,mg,816,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,7598,relative_weight,0.1 mg/kg
+Ketamine,35.0,mg,7598,relative_weight,0.5 mg/kg
+Ketamine,70.0,mg,7598,relative_weight,1.0 mg/kg
+Ketamine,0.5,mg,7598,absolute,0.5
+Ketamine,0.1,mg,7598,absolute,0.1
+Ketamine,35.0,mg,1453,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1453,relative_weight,0.2 mg/kg
+Ketamine,52.5,mg,1755,relative_weight,0.75 mg/kg
+Ketamine,35.0,mg,1755,relative_weight,0.5 mg/kg
+Ketamine,150.0,mg,3959,absolute,150 mg
+Ketamine,70.0,mg,3001,relative_weight,1 mg/kg
+Ketamine,35.0,mg,5513,relative_weight,0.5-0.75 mg/kg
+Ketamine,56.0,mg,3112,relative_weight,0.8 mg/kg
+Ketamine,35.0,mg,9592,relative_weight,0.5 mg·/kg
+Ketamine,35.0,mg,1484,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,352,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,7898,relative_weight,0.5 mg/kg
+Psilocybin,20.0,mg,3173,relative_weight,20 and 30 mg/70 kg
+Ketamine,35.0,mg,2299,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,338,relative_weight,0.5 mg/kg of
+Ketamine,35.0,mg,6082,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,77,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,77,relative_weight,0.2 mg/kg
+Ketamine,56.0,mg,5446,relative_weight,0.8 mg/kg
+Ketamine,35.0,mg,3792,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2805,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,5079,relative_weight,0.5–0.9 mg/kg
+Ketamine,35.0,mg,5079,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9575,relative_weight,0.5 mg/kg
+DMT,147.0,mg,3925,relative_weight,2.1 mg/kg
+DMT,8.4,mg,3925,relative_weight,0.12 mg/kg
+Ketamine,35.0,mg,3817,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1671,relative_weight,0.5 mg/kg
+Ketamine,17.5,mg,1497,relative_weight,0.25 mg/kg
+S-Ketamine,17.5,mg,1497,relative_weight,0.25 mg/kg
+Ketamine,7.0,mg,6031,relative_weight,0.1‐0.5 mg/kg
+Ketamine,25.0,mg,234,absolute,25 mg
+Ketamine,50.0,mg,234,absolute,50 mg
+Ketamine,21.0,mg,1456,relative_weight,0.3 mg/kg
+Ketamine,70.0,mg,6078,relative_weight,1.0 mg/kg
+Ketamine,70.0,mg,6078,relative_weight,1 mg/kg
+Ketamine,35.0,mg,7403,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8417,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1737,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8982,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,3148,relative_weight,0.5 mg/kg
+Psilocybin,30.0,mg,6236,relative_weight,30 mg/70 kg
+Psilocybin,20.0,mg,6236,absolute,20 mg/70
+Ketamine,35.0,mg,4179,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1807,relative_weight,0.5 mg/kg
+Psilocybin,1.0,mg,3063,absolute,1 mg
+Psilocybin,25.0,mg,3063,absolute,25 mg
+Ketamine,0.0,mg,6789,relative_weight,"0,5 mg/kg"
+Ketamine,0.0,mg,1196,absolute,0
+Ketamine,35.0,mg,1196,relative_weight,0.5 mg/kg
+S-Ketamine,0.0,mg,1196,absolute,0
+S-Ketamine,35.0,mg,1196,relative_weight,0.5 mg/kg
+Ketamine,70.0,mg,9416,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,7200,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2813,relative_weight,0.5 mg/kg
+Ketamine,50.0,mg,7402,absolute,50 mg
+Ketamine,35.0,mg,1446,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1446,relative_weight,0.2 mg/kg
+Psilocybin,6.0,mg,8713,absolute,6-40 mg
+S-Ketamine,35.0,mg,6204,relative_weight,0.5 mg/kg
+Psilocybin,10.0,mg,3057,absolute,10
+Psilocybin,25.0,mg,3057,absolute,25 mg
+Psilocybin,1.0,mg,3057,absolute,1 mg
+Psilocybin,10.0,mg,3057,absolute,10 mg
+Ketamine,28.0,mg,5838,relative_weight,0.4 mg/kg
+Ketamine,240.0,mg,2999,absolute,240 mg
+Ketamine,60.0,mg,2999,absolute,"60, 120, or 240 mg"
+Ketamine,35.0,mg,3214,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,7401,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2601,relative_weight,0.5 mg/kg
+Ketamine,84.0,mg,2049,absolute,84 mg
+S-Ketamine,84.0,mg,2049,absolute,84 mg
+Ketamine,35.0,mg,9594,relative_weight,0.5 mg/kg
+Psilocybin,17.5,mg,1510,relative_weight,0.25 mg/kg
+Ketamine,84.0,mg,5967,absolute,84‐mg
+S-Ketamine,84.0,mg,5967,absolute,84‐mg
+Psilocybin,25.0,mg,3757,absolute,25 mg
+Psilocybin,20.0,mg,4057,relative_weight,20 and 30 mg/70 kg
+Ketamine,70.0,mg,7465,relative_weight,1-2 mg/kg
+Ketamine,35.0,mg,7465,relative_weight,0.5-7.0 mg/kg
+Ketamine,75.0,mg,6447,absolute,75 mg
+Ketamine,84.0,mg,2542,absolute,84 mg
+Ketamine,56.0,mg,2542,absolute,56 or 84 mg
+S-Ketamine,84.0,mg,2542,absolute,84 mg
+S-Ketamine,56.0,mg,2542,absolute,56 or 84 mg
+Ketamine,14.0,mg,2114,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,5405,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2794,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,7253,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,7253,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,3894,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9238,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9595,relative_weight,0.5 mg/kg
+Ketamine,37.800000000000004,mg,1098,relative_weight,0.54 mg/kg
+Ketamine,35.0,mg,5915,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1430,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1430,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,7351,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2753,relative_weight,0.5 mg/kg
+Ketamine,21.0,mg,2753,relative_weight_time,0.3 mg/kg/h
+Ketamine,1400.0,mg,211,relative_time,20 mg/h
+Ketamine,15.0,mg,211,absolute,15 mg
+Ketamine,37.800000000000004,mg,8177,relative_weight,0.54 mg/kg
+Ketamine,35.0,mg,6037,relative_weight,0.5 mg/kg
+Ketamine,56.0,mg,5739,relative_weight,0.8 mg/kg
+Ketamine,35.0,mg,9603,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,4815,relative_weight,0.1 mg/kg
+Ketamine,7.0,mg,4815,relative_weight,0.1-0.4 mg/kg
+Ketamine,84.0,mg,1236,absolute,84 mg
+S-Ketamine,84.0,mg,1236,absolute,84 mg
+Ketamine,37.800000000000004,mg,8180,relative_weight,0.54 mg/kg
+Ketamine,56.0,mg,7012,absolute,56 or 84 mg
+S-Ketamine,56.0,mg,7012,absolute,56 or 84 mg
+Ketamine,14.0,mg,809,relative_weight,0.2‐4.7 mg/kg
+Ketamine,35.0,mg,6106,relative_weight,0.5 mg/kg
+Ketamine,84.0,mg,2762,absolute,84‐mg
+S-Ketamine,84.0,mg,2762,absolute,84‐mg
+Ketamine,35.0,mg,9179,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8533,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1129,relative_weight,0.2 mg/kg
+Ketamine,0.14,mg,8352,relative_weight_time,2 µg/kg/min
+Ketamine,56.0,mg,5802,relative_weight,0.8 mg/kg
+Ketamine,0.4,mg,5802,absolute,0.4
+Psilocybin,20.0,mg,4058,relative_weight,20 and 30 mg/70 kg
+Psilocybin,25.0,mg,5898,absolute,25 mg
+Ketamine,500.0,mg,734,absolute,500 mg
+Ketamine,84.0,mg,4117,relative_weight_time,1.2 mg/kg/h
+Ketamine,35.0,mg,9307,relative_weight,0.5 mg/kg
+Ketamine,70.0,mg,2719,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,2719,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,2719,relative_weight,0.2 mg/kg
+Ketamine,7.0,mg,2719,relative_weight,0.1 mg/kg
+Ketamine,35.0,mg,884,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,72,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9195,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,6739,relative_weight,0.2 mg/kg
+Ketamine,28.0,mg,6739,relative_weight,0.4 mg/kg
+S-Ketamine,35.0,mg,6421,relative_weight,0.5 mg/kg
+Ketamine,50.0,mg,1522,absolute,50 mg
+Ketamine,30.0,mg,1522,absolute,30 mg
+Ketamine,10.0,mg,1522,absolute,10 mg
+Ketamine,35.0,mg,9495,relative_weight,0.5 mg/kg
+Ketamine,56.0,mg,1820,absolute,56 or 84 mg
+S-Ketamine,56.0,mg,1820,absolute,56 or 84 mg
+Ketamine,35.0,mg,4220,relative_weight,0.5 mg/kg
+Ketamine,37.800000000000004,mg,8179,relative_weight,0.54 mg/kg
+Ketamine,35.0,mg,73,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,5121,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9567,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9574,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,5081,relative_weight,0.1 mg/kg
+Ketamine,35.0,mg,5081,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6180,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8497,relative_weight,0.5 mg/kg
+Ketamine,21.0,mg,9629,relative_weight,0.3 mg/kg
+Ketamine,35.0,mg,1429,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1429,relative_weight,0.2 mg/kg
+Ketamine,0.5,mg,1429,absolute,0.5 mg/
+Ketamine,35.0,mg,1429,relative_weight,0.5 mg/kg ketamine
+Ketamine,35.0,mg,9532,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,7223,relative_weight,0.5 mg/kg
+Ketamine,1000.0,mg,1433,absolute,1000 mg
+Ketamine,750.0,mg,1433,absolute,750 mg
+Ketamine,500.0,mg,1433,absolute,500 mg
+Ketamine,250.0,mg,1433,absolute,250 mg
+S-Ketamine,17.5,mg,8990,relative_weight,0.25 mg/kg
+S-Ketamine,35.0,mg,8990,relative_weight,0.5 mg/kg
+Ketamine,0.0,mg,1729,absolute,0
+Ketamine,35.0,mg,8350,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,8350,relative_weight,0.2 mg/kg
+S-Ketamine,35.0,mg,8350,relative_weight,0.5 mg/kg
+S-Ketamine,14.0,mg,8350,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,9577,relative_weight,0.5 mg/kg
+Ketamine,56.0,mg,9577,relative_weight,0.8 mg/kg
+Ketamine,70.0,mg,1314,relative_weight,1-2 mg/kg
+Ketamine,7.0,mg,4754,relative_weight_time,0.1 mg/kg/h
+Ketamine,0.0,mg,3850,relative_weight,0 or 5 mg/kg
+Ketamine,0.0,mg,3850,absolute,0 or 5 mg
+Ketamine,0.0,mg,3850,absolute,0
+S-Ketamine,14.0,mg,9590,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,3715,relative_weight,0.5 mg/kg
+Ketamine,1750.0,mg,7807,relative_time,25 mg/h
+Ketamine,24.5,mg,7807,relative_weight_time,0.35 mg/kg/h
+Ketamine,35.0,mg,7594,relative_weight,0.5 mg/kg
+Ketamine,56.0,mg,9563,relative_weight,0.8 mg/kg
+Ketamine,100.0,mg,6061,absolute,100 mg/
+Ketamine,50.0,mg,6061,absolute,50 mg/
+Ketamine,25.0,mg,6061,absolute,25 mg
+Ketamine,14.0,mg,1445,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,1445,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1445,relative_weight,0.5 or 0.2 mg/kg
+Ketamine,35.0,mg,259,relative_weight,0.5 mg/kg
+Ketamine,22.2,mg,7990,relative_weight_time,22.2+/-2.0 mg/h/70 kg
+Ketamine,20.299999999999997,mg,4006,relative_weight_time,0.29 mg/kg/h
+Ketamine,40.599999999999994,mg,4006,relative_weight_time,0.58 mg/kg/h
+Ketamine,16.1,mg,4006,relative_weight,0.23 mg/kg
+Ketamine,45.5,mg,337,relative_weight,0.65 mg/kg
+Ketamine,18.2,mg,337,relative_weight,0.26 mg/kg
+Ketamine,35.0,mg,5099,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,4792,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1730,relative_weight,0.5 mg/kg
+Ketamine,1.0,mg,3837,absolute,1
+Ketamine,21.0,mg,3825,relative_weight,0.3 mg/kg
+Psilocybin,30.0,mg,4914,relative_weight,30-35 mg/70 kg
+Psilocybin,25.0,mg,8218,absolute,25 mg
+Psilocybin,21.0,mg,8077,relative_weight,0.3 mg/kg
+Ketamine,35.0,mg,1450,relative_weight,0.5 mg/kg
+Ketamine,420.0,mg,1657,relative_weight,6 mg/kg
+Ketamine,70.0,mg,4592,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,3876,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,7574,relative_weight,0.5 mg/kg
+Ketamine,1.0,mg,6062,absolute,1 mg
+Ketamine,7.0,mg,6062,relative_weight,0.1 mg/kg
+Ketamine,0.5,mg,6274,absolute,0.5 mg
+Ketamine,0.2,mg,6274,absolute,0.2‐0.5 mg kg‐1
+Ketamine,35.0,mg,7295,relative_weight,0.5 mg/kg
+MDMA,0.0,mg,3071,absolute,0-40 mg of
+MDMA,75.0,mg,3071,absolute,75-125 mg of
+S-Ketamine,70.0,mg,578,relative_weight,1 mg/kg
+S-Ketamine,35.0,mg,578,relative_weight,0.5 mg/kg
+R-Ketamine,70.0,mg,578,relative_weight,1 mg/kg
+R-Ketamine,35.0,mg,578,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,7405,relative_weight,0.5 mg/kg
+LSD,0.01,mg,154,absolute,10 µg
+Ketamine,7.0,mg,7597,relative_weight,"0.1, 0.2, 0.5, 1.0 mg/kg"
+Ketamine,35.0,mg,8349,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,8349,relative_weight,0.2 mg/kg
+MDMA,187.5,mg,7861,absolute,187.5 mg
+MDMA,0.015,mg,6402,absolute,15 µg
+LSD,0.015,mg,6402,absolute,15 µg
+Psilocybin,0.015,mg,6402,absolute,15 µg
+Ayahuasca,0.015,mg,6402,absolute,15 µg
+Psilocybin,25.0,mg,6800,absolute,25 mg
+Psilocybin,10.0,mg,2359,absolute,10 and 25 mg
+S-Ketamine,75.0,mg,8936,absolute,75 mg
+S-Ketamine,50.0,mg,8936,absolute,50 mg
+Ketamine,35.0,mg,7875,relative_weight,"0.5, and 1 mg/kg"
+Ketamine,0.25,mg,7875,absolute,0.25
+Ketamine,35.0,mg,1436,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1436,relative_weight,0.2 mg/kg
+Psilocybin,25.0,mg,6132,absolute,25 mg
+Psilocybin,11.9,mg,5381,relative_weight,0.17 mg/kg
+Ketamine,70.0,mg,2720,relative_weight,1.0 mg/kg
+Ketamine,0.2,mg,2720,absolute,0.2
+Ketamine,0.1,mg,2720,absolute,0.1
+Ketamine,35.0,mg,482,relative_weight,0.5 mg/kg
+LSD,0.02,mg,2765,absolute,20-800 µg
+Ketamine,35.0,mg,6367,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6894,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1452,relative_weight,0.5 and 0.2 mg/kg
+Psilocybin,25.0,mg,2168,absolute,25 mg
+Psilocybin,30.0,mg,4056,relative_weight,30 mg/70 kg
+Psilocybin,20.0,mg,4056,relative_weight,20 mg/70 kg
+Ketamine,35.0,mg,7603,relative_weight,0.50 mg/kg
+Ketamine,14.0,mg,7603,relative_weight,0.20 or 0.40 mg/kg
+S-Ketamine,35.0,mg,7603,relative_weight,0.50 mg/kg
+S-Ketamine,14.0,mg,7603,relative_weight,0.20 or 0.40 mg/kg
+Psilocybin,21.0,mg,347,relative_weight,0.3-0.36 mg/kg
+Ketamine,21.0,mg,6074,relative_weight,0.3 mg/kg
+Ketamine,35.0,mg,6448,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1442,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,1442,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,7415,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,5954,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1736,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8496,relative_weight,0.5 mg/kg
+Ketamine,37.800000000000004,mg,8176,relative_weight,0.54 mg/kg
+Ketamine,35.0,mg,9442,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,4977,relative_weight,0.5 mg/kg
+Ketamine,17.5,mg,4977,relative_weight,0.25 mg/kg
+Ketamine,7.0,mg,4977,relative_weight,0.1 mg/kg
+Ketamine,35.0,mg,78,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1670,relative_weight,0.5 mg/kg
+Ketamine,40.599999999999994,mg,9420,relative_weight,0.58 mg/kg
+Ketamine,16.1,mg,9420,relative_weight,0.23 mg/kg
+Ketamine,56.7,mg,9420,relative_weight,0.81 mg/kg
+Ketamine,35.0,mg,660,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8747,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1438,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,1438,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,5564,relative_weight,0.5 mg/kg
+S-Ketamine,35.0,mg,5564,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,5910,relative_weight,0.5 mg/kg
+Psilocybin,21.0,mg,6098,relative_weight,300 µg/kg
+Psilocybin,7.0,mg,6098,relative_weight,100 µg/kg
+Ketamine,35.0,mg,1139,relative_weight,0.5 mg/kg
+Ketamine,30.8,mg,8370,relative_weight,0.44 mg/kg
+LSD,0.005,mg,6445,absolute,"5, 10, 20 µg"
+Ketamine,35.0,mg,76,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,76,relative_weight,0.2 mg/kg
+Ketamine,2.1,mg,6068,relative_weight,0.03 mg/kg
+Ketamine,35.0,mg,6068,relative_weight,0.50 mg/kg
+Ketamine,35.0,mg,6038,relative_weight,0.5 mg/kg
+Ketamine,0.3,mg,6038,absolute,0.3
+Ketamine,0.2,mg,6038,absolute,0.2
+Ketamine,0.1,mg,6038,absolute,0.1
+Ketamine,0.0,mg,6038,absolute,0.
+Ketamine,7.0,mg,1530,relative_weight,0.1 mg/kg
+Ketamine,0.1,mg,1530,absolute,0.1 mg h−1
+Ketamine,35.0,mg,1462,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,4816,relative_weight,0.1-0.4 mg/kg
+Ketamine,14.0,mg,4999,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,4999,relative_weight,0.5 mg/kg
+Ketamine,0.25,mg,6375,absolute,0.25 mg·kg·h
+Ketamine,35.0,mg,6375,relative_weight,0.5 mg/kg
+S-Ketamine,0.25,mg,6375,absolute,0.25 mg·kg·h
+S-Ketamine,35.0,mg,6375,relative_weight,0.5 mg/kg
+Ketamine,21.0,mg,4731,relative_weight,0.3 mg/kg
+Ketamine,35.0,mg,2955,relative_weight,0.5 mg/kg
+Psilocybin,20.0,mg,635,relative_weight,20-30 mg/70 kg
+Psilocybin,10.0,mg,635,relative_weight,"10, 20, and 30 mg/70 kg"
+S-Ketamine,35.0,mg,4783,relative_weight,0.5 mg/kg
+R-Ketamine,35.0,mg,4783,relative_weight,0.5 mg/kg
+Ketamine,20.299999999999997,mg,4005,relative_weight_time,0.29 mg/kg/h
+Ketamine,40.599999999999994,mg,4005,relative_weight_time,0.58 mg/kg/h
+Ketamine,16.1,mg,4005,relative_weight,0.23 mg/kg
+Psilocybin,20.0,mg,637,relative_weight,20-30 mg/70 kg
+Psilocybin,10.0,mg,637,relative_weight,"10, 20, and 30 mg/70 kg"
+Ketamine,105.0,mg,5995,relative_weight,1.5 mg/kg
+Psilocybin,25.0,mg,6224,absolute,25 mg
+5-MeO-DMT,12.0,mg,7216,absolute,12 and 18 mg
+5-MeO-DMT,12.0,mg,7216,absolute,12 mg
+5-MeO-DMT,18.0,mg,7216,absolute,18 mg
+5-MeO-DMT,6.0,mg,7216,absolute,6 mg
+Ibogaine,12.0,mg,7216,absolute,12 and 18 mg
+Ibogaine,12.0,mg,7216,absolute,12 mg
+Ibogaine,18.0,mg,7216,absolute,18 mg
+Ibogaine,6.0,mg,7216,absolute,6 mg
+Ketamine,70.0,mg,5375,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,5375,relative_weight,0.5 mg/kg
+Ketamine,28.0,mg,3995,relative_weight,0.4 mg/kg
+S-Ketamine,28.0,mg,3995,relative_weight,0.4 mg/kg
+Ketamine,35.0,mg,3821,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9591,relative_weight,0.5 mg/kg
+Psilocybin,14.0,mg,7049,relative_weight,0.2 mg/kg
+Ketamine,14.0,mg,1432,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,1432,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8048,relative_weight,0.5 mg/kg
+Ketamine,28.7,mg,1803,relative_weight,0.41 mg/kg
+Ketamine,49.699999999999996,mg,1803,relative_weight,0.71 mg/kg
+Psilocybin,1.0,mg,5987,absolute,1 mg
+Psilocybin,25.0,mg,5987,absolute,25 mg
+Ketamine,35.0,mg,4683,relative_weight,0.5 mg/kg
+Ketamine,21.0,mg,4683,relative_weight,0.3 mg/kg
+Ketamine,0.1,mg,4683,absolute,0.1
+MDMA,80.0,mg,9542,absolute,80 mg
+MDMA,120.0,mg,9542,absolute,120 mg
+S-Ketamine,70.0,mg,9379,relative_weight,1 /kgr 2 mg/kg
+S-Ketamine,17.5,mg,9379,relative_weight,0.25 mg/kg
+S-Ketamine,2.0,mg,9379,absolute,2 mg kg
+S-Ketamine,1.0,mg,9379,absolute,1 mg kg
+S-Ketamine,0.25,mg,9379,absolute,0.25 mg kg
+S-Ketamine,70.0,mg,9379,relative_weight,1 mg/kg
+S-Ketamine,140.0,mg,9379,relative_weight,2 mg/kg
+Ketamine,45.5,mg,4573,relative_weight,0.65 mg/kg
+Ketamine,18.2,mg,4573,relative_weight,0.26 mg/kg
+MDMA,75.0,mg,7105,absolute,75 mg
+Ketamine,35.0,mg,4582,relative_weight,0.5 mg/kg
+Ketamine,16.1,mg,4582,relative_weight,0.23 mg/kg
+Ketamine,49.699999999999996,mg,1805,relative_weight,0.71 mg/kg
+Ketamine,28.7,mg,1805,relative_weight,0.41 mg/kg
+Psilocybin,14.0,mg,7056,relative_weight,0.2 mg/kg
+MDMA,29.4,mg,6714,relative_weight,0.42 mg/kg
+MDMA,100.0,mg,6714,absolute,100 mg
+MDMA,70.0,mg,6665,relative_weight,1 mg/kg
+MDMA,70.0,mg,6665,relative_weight,1-2 mg/kg
+MDMA,210.0,mg,6665,relative_weight,3 mg/kg
+MDMA,0.7000000000000001,mg,6665,relative_weight,0.01-10 mg/kg
+5-MeO-DMT,12.0,mg,7520,absolute,12 mg
+5-MeO-DMT,1.0,mg,7520,absolute,1 mg
+5-MeO-DMT,1.0,mg,7520,absolute,1 mg-
+Ibogaine,12.0,mg,7520,absolute,12 mg
+Ibogaine,1.0,mg,7520,absolute,1 mg
+Ibogaine,1.0,mg,7520,absolute,1 mg-
+MDMA,70.0,mg,6664,relative_weight,1 mg/kg
+MDMA,70.0,mg,6664,relative_weight,1–2 mg/kg
+MDMA,210.0,mg,6664,relative_weight,3 mg/kg
+MDMA,0.7000000000000001,mg,6664,relative_weight,0.01-10 mg/kg
+Ketamine,35.0,mg,5600,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1434,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8748,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,3866,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,3866,relative_weight,0.5 mg/kg
+Ketamine,105.0,mg,3866,relative_weight,1.5 mg/kg
+Ketamine,35.0,mg,276,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1824,relative_weight,0.5-0.75 mg/kg
+Ketamine,35.0,mg,5743,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9332,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1659,relative_weight,0.5 mg/kg
+Ketamine,280.0,mg,1659,relative_weight,4-5 mg/kg
+Ketamine,70.0,mg,1659,relative_weight,1-2 mg/kg
+Ketamine,7.0,mg,1659,relative_weight,0.1-0.3 mg/kg
+Ketamine,56.0,mg,7591,relative_weight,0.8 mg/kg
+Ketamine,350.0,mg,5797,relative_weight,5.0 mg/kg
+Ketamine,175.0,mg,5797,relative_weight,2.5 mg/kg
+Ketamine,35.0,mg,6360,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,141,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,9467,relative_weight,0.5 mg/kg
+S-Ketamine,1400.0,mg,1796,relative_time,20 mg/h
+S-Ketamine,350.0,mg,1796,relative_time,5 mg/h
+S-Ketamine,14.0,mg,9006,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,6271,relative_weight,0.5 mg/kg
+Ketamine,21.0,mg,2124,relative_weight,0.3 mg/kg
+Ketamine,14.0,mg,5000,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,5000,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6183,relative_weight,0.50 mg/kg
+Psilocybin,15.049999999999999,mg,7061,relative_weight,0.215 mg/kg
+Psilocybin,14.0,mg,5483,relative_weight,0.2-0.3 mg/kg
+Psilocybin,25.0,mg,7767,absolute,25 mg
+Ketamine,35.0,mg,1597,relative_weight,0.5 mg/kg
+LSD,0.01,mg,5900,absolute,10 μg
+Psilocybin,15.049999999999999,mg,7338,relative_weight,0.215 mg/kg
+Psilocybin,14.0,mg,7338,relative_weight,0.2 mg/kg
+Psilocybin,11.200000000000001,mg,7338,relative_weight,0.16 mg/kg
+Ketamine,8.4,mg,3603,relative_weight,0.12 mg/kg
+Ketamine,7.7,mg,3603,relative_weight,0.11 mg/kg
+S-Ketamine,8.4,mg,3603,relative_weight,0.12 mg/kg
+S-Ketamine,7.7,mg,3603,relative_weight,0.11 mg/kg
+Ketamine,70.0,mg,7761,relative_weight,1 mg/kg
+MDMA,75.0,mg,6438,absolute,75 mg
+Ketamine,37.800000000000004,mg,8178,relative_weight,0.54 mg/kg
+Ketamine,35.0,mg,2229,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,85,relative_weight,0.5 mg/kg
+Ketamine,16.1,mg,85,relative_weight,0.23 mg/kg
+Psilocybin,22.05,mg,8102,relative_weight,315 μg/kg
+Psilocybin,14.0,mg,7047,relative_weight,0.2 mg/kg
+Ayahuasca,0.75,mg,2143,absolute,0.75 mg
+Ketamine,45.5,mg,2761,relative_weight,0.65 mg/kg
+Ketamine,16.1,mg,2761,relative_weight,0.23 mg/kg
+MDMA,75.0,mg,4651,absolute,75 mg
+MDMA,119.0,mg,7746,relative_weight,1.7 mg/kg
+MDMA,56.0,mg,7746,relative_weight,0.8‐2.7 mg/kg
+Ketamine,200000.0,mg,4899,absolute,0.2 kg/mg
+Ketamine,500000.0,mg,4899,absolute,0.5 kg/mg
+Ketamine,100.0,mg,7961,absolute,100 mg
+Ketamine,65.0,mg,7961,absolute,65 mg and
+Ketamine,65.0,mg,7961,absolute,65 and 100 mg
+Ketamine,65.0,mg,7961,absolute,"65, 100 and 150 mg"
+Psilocybin,1.0,mg,9509,absolute,1 mg
+Psilocybin,25.0,mg,9509,absolute,25 mg
+Psilocybin,11.200000000000001,mg,3183,relative_weight,0.16 mg/kg
+MDMA,75.0,mg,2547,absolute,75-125 mg
+Psilocybin,25.0,mg,7964,absolute,25 mg
+Psilocybin,10.0,mg,7964,absolute,10 mg
+Ketamine,28.0,mg,2307,relative_weight,0.4 mg/kg
+LSD,0.1,mg,2209,absolute,100 µg
+Psilocybin,25.0,mg,8963,absolute,25 mg
+Psilocybin,10.0,mg,8963,absolute,10 mg
+LSD,0.1,mg,5870,absolute,100 μg
+Ketamine,600.0,mg,3328,absolute,600 mg
+Ketamine,17.5,mg,3328,relative_weight,0.25 mg/kg
+Ketamine,18.2,mg,3328,relative_weight,0.26 mg/kg
+MDMA,105.0,mg,6105,relative_weight,1.5 mg/kg
+MDMA,125.0,mg,5871,absolute,125 mg
+LSD,125.0,mg,5871,absolute,125 mg
+Ketamine,35.0,mg,4911,relative_weight,0.5 mg/kg
+Psilocybin,15.05,mg,4459,relative_weight,215 μg/kg
+Ketamine,1.09375,mg,5923,relative_weight_time,0.015625 mg/kg/min
+Ketamine,7.0,mg,5923,relative_weight,0.1 mg/kg
+S-Ketamine,1.09375,mg,5923,relative_weight_time,0.015625 mg/kg/min
+S-Ketamine,7.0,mg,5923,relative_weight,0.1 mg/kg
+Ayahuasca,1.0,mg,7311,absolute,1.0 mg
+Ayahuasca,0.5,mg,7311,absolute,0.5
+Psilocybin,11.9,mg,6443,relative_weight,0.17 mg/kg
+Psilocybin,25.0,mg,4422,absolute,25 mg
+Psilocybin,10.0,mg,4422,absolute,10 mg
+Psilocybin,14.0,mg,8259,relative_weight,0.2-0.3 mg/kg
+MDMA,52.5,mg,9032,relative_weight,"0.75, 1.5 mg/kg"
+LSD,21.0,mg,8257,relative_weight,0.3 mg/kg
+Psilocybin,21.0,mg,8257,relative_weight,0.3 mg/kg
+Ketamine,0.7,mg,5070,relative_weight_time,10 µg/kg/min
+Ketamine,35.0,mg,5070,relative_weight,0.5 mg/kg
+Ketamine,0.5,mg,8483,absolute,0.5 mg kg⁻¹
+Psilocybin,17.5,mg,9235,relative_weight,250 µg/kg
+Psilocybin,8.05,mg,9235,relative_weight,115 µg/kg
+MDMA,112.0,mg,3427,relative_weight,1.6 mg/kg
+Psilocybin,42.0,mg,1081,relative_weight,0.6 mg/kg
+Psilocybin,21.0,mg,1081,relative_weight,0.3 mg/kg
+Psilocybin,25.0,mg,1081,absolute,25 mg
+Psilocybin,31.5,mg,1081,relative_weight,"0.45, and 0.6 mg/kg"
+Psilocybin,0.3,mg,1081,absolute,0.3
+MDMA,75.0,mg,3302,absolute,75 mg
+Ketamine,45.5,mg,4576,relative_weight,0.65 mg/kg
+Ketamine,18.2,mg,4576,relative_weight,0.26 mg/kg
+Ketamine,35.0,mg,6877,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,6877,relative_weight,0.1 mg/kg
+Psilocybin,10.0,mg,8429,absolute,10 mg
+Psilocybin,1.0,mg,8429,absolute,1 mg
+Psilocybin,3000.0,mg,8429,absolute,3 g
+Psilocybin,1000.0,mg,8429,absolute,1 g
+Psilocybin,500.0,mg,8429,absolute,0.5 g
+Ayahuasca,42.0,mg,7305,relative_weight,0.6 and 0.85 mg/kg
+DMT,14.0,mg,8318,relative_weight,0.2 mg/kg
+DMT,7.0,mg,8318,relative_weight,"0.1, 0.2, and 0.4 mg/kg"
+DMT,0.05,mg,8318,absolute,0.05
+Psilocybin,15.049999999999999,mg,7060,relative_weight,0.215 mg/kg
+Ayahuasca,1.0,mg,7312,absolute,1.0 mg
+Psilocybin,15.049999999999999,mg,7062,relative_weight,0.215 mg/kg
+MDMA,112.0,mg,6693,relative_weight,1.6 mg/kg
+MDMA,70.0,mg,6693,relative_weight,1.0 mg/kg
+Psilocybin,15.4,mg,1135,relative_weight,0.22 mg/kg
+MDMA,25.0,mg,975,absolute,"25, 50, and 100 mg"
+MDMA,75.0,mg,7742,absolute,75 mg
+MDMA,50.0,mg,4644,absolute,75 and 50 mg
+MDMA,75.0,mg,4638,absolute,75 mg
+Ketamine,56.0,mg,5803,relative_weight,0.8 mg/kg
+Ketamine,0.4,mg,5803,absolute,0.4
+MDMA,75.0,mg,4656,absolute,75 or 125 mg
+MDMA,75.0,mg,4636,absolute,75 mg
+LSD,0.075,mg,8196,absolute,75 μg
+Ketamine,35.0,mg,5704,relative_weight,0.5 mg/kg
+Psilocybin,30.0,mg,8325,relative_weight,30 mg/70 kg
+LSD,0.05,mg,3511,absolute,50-100 µg
+DMT,0.7000000000000001,mg,6264,relative_weight_time,0.01 mg/kg/min
+DMT,14.0,mg,6264,relative_weight_time,0.2 mg/kg/min
+5-MeO-DMT,0.7000000000000001,mg,6264,relative_weight_time,0.01 mg/kg/min
+5-MeO-DMT,14.0,mg,6264,relative_weight_time,0.2 mg/kg/min
+Ketamine,7.0,mg,3840,relative_weight,0.1 mg/kg
+Ketamine,0.1,mg,3840,absolute,0.1
+MDMA,52.5,mg,9034,relative_weight,0.75 and 1.5 mg/kg
+MDMA,0.0,mg,9034,absolute,0
+Ketamine,35.0,mg,2954,relative_weight,0.5 mg/kg
+Ketamine,2.0,mg,6008,absolute,2 mg
+Ketamine,35.0,mg,4470,relative_weight,0.5 mg/kg
+Ayahuasca,52.5,mg,8696,relative_weight,0.75 mg/kg
+S-Ketamine,70.0,mg,6891,relative_weight,1.0 mg/kg
+S-Ketamine,17.5,mg,6891,relative_weight,0.25 mg/kg
+S-Ketamine,35.0,mg,6891,relative_weight,0.5 mg/kg
+R-Ketamine,70.0,mg,6891,relative_weight,1.0 mg/kg
+R-Ketamine,17.5,mg,6891,relative_weight,0.25 mg/kg
+R-Ketamine,35.0,mg,6891,relative_weight,0.5 mg/kg
+Ketamine,28.0,mg,3835,relative_weight,0.4 mg/kg
+Ketamine,7.0,mg,3835,relative_weight,0.1 mg/kg
+Ketamine,0.0,mg,3835,absolute,0
+Psilocybin,500.0,mg,1360,absolute,0.5 g
+Ketamine,0.0,mg,3839,absolute,0
+Psilocybin,0.5,mg,7643,absolute,0.5
+MDMA,105.0,mg,4854,relative_weight,1.5 mg/kg
+MDMA,35.0,mg,4854,relative_weight,0.5 and 1.5 mg/kg
+MDMA,52.5,mg,207,relative_weight,"0.75, 1.5 mg/kg"
+Psilocybin,25.0,mg,1309,absolute,25 mg
+Psilocybin,10.0,mg,1309,absolute,10 mg
+LSD,0.065,mg,229,absolute,65 µg
+S-Ketamine,1.05,mg,960,relative_weight_time,0.015 mg/kg/h
+S-Ketamine,8.75,mg,960,relative_weight,0.125 mg/kg
+S-Ketamine,17.5,mg,960,relative_weight,0.25 mg/kg
+Ketamine,35.0,mg,3775,relative_weight,0.5 mg/kg
+Salvinorin A,1.47,mg,5189,relative_weight,21 μg/kg
+Salvinorin A,0.375,mg,5189,absolute,0.375
+DMT,9.0,mg,3054,absolute,9-21.5 mg
+Ketamine,7.0,mg,2938,relative_weight,0.1 mg/kg
+Ketamine,35.0,mg,7593,relative_weight,0.5 mg/kg
+Ayahuasca,0.85,mg,7304,absolute,0.85 mg
+Ketamine,0.5,mg,7575,absolute,0.5 mg kg
+Ketamine,0.0001,mg,7575,absolute,0.1 μg
+Ketamine,35.0,mg,7575,relative_weight,0.5 mg/kg
+Ketamine,0.007,mg,7575,relative_weight,0.1 μg/kg min
+Ayahuasca,1.0,mg,2155,absolute,1.0 mg
+Ketamine,8.4,mg,6090,relative_weight_time,0.12 mg/kg/h
+Ketamine,14.0,mg,6090,relative_weight,0.2 mg/kg
+MDMA,100.0,mg,469,absolute,100 mg
+Ketamine,35.0,mg,64,relative_weight,0.5 mg/kg
+Ketamine,6.0,mg,64,absolute,6 mg
+LSD,0.1,mg,6977,absolute,100 µg
+Ketamine,35.0,mg,1448,relative_weight,0.5 mg/kg
+Psilocybin,14.0,mg,5206,relative_weight,0.2-0.3 mg/kg
+Ketamine,10.5,mg,139,relative_weight_time,0.15 mg/kg/h
+Ketamine,21.0,mg,139,relative_weight,0.3 mg/kg
+MDMA,119.0,mg,2729,relative_weight,1.7 mg/kg
+Ketamine,0.014,mg,5712,relative_weight,0.2 μg/kg
+S-Ketamine,300.0,mg,6821,absolute,300 mg
+S-Ketamine,210.0,mg,6821,relative_weight,3 mg/kg
+Ketamine,35.0,mg,3720,relative_weight,0.5 mg/kg
+DMT,1.0,mg,2278,absolute,"1, 4, 7, 14, and 20 mg"
+MDMA,119.0,mg,2828,relative_weight,1.7 mg/kg
+Psilocybin,2.0,mg,1276,absolute,2 mg
+Psilocybin,11.9,mg,5377,relative_weight,0.17 mg/kg
+Ketamine,7.0,mg,1165,relative_weight_time,0.1 mg/kg/h
+Psilocybin,15.05,mg,1319,relative_weight,215 µg/kg
+Ketamine,70.0,mg,5733,relative_weight,1 mg/kg
+Ketamine,35.0,mg,5733,relative_weight,0.5 mg/kg
+MDMA,100.0,mg,2222,absolute,100 mg
+Ketamine,210.0,mg,9607,relative_weight,3 mg/kg
+Ketamine,20.0,mg,4298,relative_weight_time,20 & 40 mg/70 kg/h
+Ketamine,30.8,mg,8371,relative_weight,0.44 mg/kg
+MDMA,105.0,mg,802,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,802,relative_weight,0.75 mg/kg
+MDMA,0.0,mg,802,absolute,0
+MDMA,75.0,mg,1941,absolute,75 mg
+Ketamine,35.0,mg,69,relative_weight,0.5 mg/kg
+Ketamine,6.0,mg,69,absolute,6 mg
+LSD,0.1,mg,710,absolute,100 μg
+Psilocybin,15.049999999999999,mg,4887,relative_weight,0.215 mg/kg
+Psilocybin,11.200000000000001,mg,4887,relative_weight,0.160 mg/kg
+DMT,17.5,mg,831,relative_weight,250 µg/kg
+Salvinorin A,0.1,mg,183,absolute,100 μg
+Ketamine,35.0,mg,4491,relative_weight,0.5 mg/kg
+Psilocybin,1.0,mg,6284,absolute,1 mg
+Psilocybin,25.0,mg,6284,absolute,25 mg
+MDMA,75.0,mg,7170,absolute,75 mg
+Ketamine,0.42,mg,3160,relative_weight_time,0.006 mg/kg/min
+S-Ketamine,0.42,mg,3160,relative_weight_time,0.006 mg/kg/min
+MDMA,75.0,mg,7172,absolute,75 mg
+Psilocybin,20.0,mg,650,relative_weight,20 mg/70 kg
+Psilocybin,30.0,mg,650,relative_weight,30 mg/70 kg
+Psilocybin,50.0,mg,650,absolute,50 mg
+5-MeO-DMT,20.0,mg,650,relative_weight,20 mg/70 kg
+5-MeO-DMT,30.0,mg,650,relative_weight,30 mg/70 kg
+5-MeO-DMT,50.0,mg,650,absolute,50 mg
+Psilocybin,18.2,mg,8843,relative_weight,0.26 mg/kg
+Ketamine,35.0,mg,2501,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,2502,relative_weight,0.5 mg/kg
+S-Ketamine,35.0,mg,2502,relative_weight,0.5 mg/kg
+Ketamine,0.42,mg,7354,relative_weight,0.006 mg/kg
+S-Ketamine,0.42,mg,7354,relative_weight,0.006 mg/kg
+Ketamine,5.67,mg,903,relative_weight,0.081 mg/kg
+Ketamine,18.900000000000002,mg,903,relative_weight,0.27 mg/kg
+Ketamine,1.68,mg,903,relative_weight,"0.024, 0.081 and 0.27 mg/kg"
+MDMA,75.0,mg,4643,absolute,75 mg
+Ketamine,45.5,mg,187,relative_weight_time,0.65 mg/kg/h
+Ketamine,8.4,mg,187,relative_weight,0.12 mg/kg
+MDMA,125.0,mg,3782,absolute,125 mg
+LSD,14.0,mg,5845,relative_weight,0.2 mg/kg
+Psilocybin,14.0,mg,5845,relative_weight,0.2 mg/kg
+MDMA,70.0,mg,2160,relative_weight,1 mg/kg
+MDMA,70.0,mg,6087,relative_weight,1 mg/kg
+Psilocybin,15050.0,mg,8911,relative_weight,215 mg/kg
+MDMA,100.0,mg,1751,absolute,100 mg
+Ketamine,1400.0,mg,5657,relative_time,20 mg/h
+Ketamine,35.0,mg,8042,relative_weight,0.5 mg/kg
+MDMA,125.0,mg,3780,absolute,125 mg
+MDMA,105.0,mg,4357,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,4357,relative_weight,0.75 and 1.5 mg/kg
+Ketamine,100.0,mg,3648,absolute,100
+Ketamine,10.0,mg,2187,absolute,10 mg
+Ketamine,40.0,mg,2187,absolute,40 mg
+Ketamine,20.0,mg,2187,absolute,20 mg
+Ketamine,17.5,mg,1102,relative_weight_time,0.25 mg/kg/h
+Ketamine,18.900000000000002,mg,1102,relative_weight,0.27 mg/kg bolus
+MDMA,75.0,mg,4403,absolute,75 mg
+Ketamine,30.0,mg,9211,absolute,30 and 50 mg
+Ketamine,35.0,mg,1789,relative_weight,0.5 mg/kg
+Ketamine,0.0,mg,690,absolute,0.
+Ketamine,35.0,mg,690,relative_weight,0.5 mg/kg
+S-Ketamine,0.0,mg,690,absolute,0.
+S-Ketamine,35.0,mg,690,relative_weight,0.5 mg/kg
+MDMA,52.5,mg,798,relative_weight,0.75 or 1.5 mg/kg
+Ketamine,90.0,mg,7515,absolute,90 mg
+Ketamine,35.0,mg,7515,absolute,35 mg
+S-Ketamine,14.0,mg,9523,relative_weight,0.2 mg/kg
+S-Ketamine,21.0,mg,9523,relative_weight,0.3 mg/kg
+MDMA,98.0,mg,6690,relative_weight,1.4 mg/kg
+MDMA,75.0,mg,6690,absolute,75-100 mg
+Psilocybin,14.0,mg,5207,relative_weight,0.2-0.3 mg/kg
+Ibogaine,3.0,mg,2996,absolute,3-60 mg
+Ibogaine,3.0,mg,2996,absolute,3 and 60 mg
+Ibogaine,3.0,mg,2996,absolute,"3, 10, 30, or 60 mg"
+Salvinorin A,1.05,mg,2157,relative_weight,15 μg/kg
+MDMA,100.0,mg,6600,absolute,100 mg
+S-Ketamine,70.0,mg,173,relative_weight,1 mg/kg
+S-Ketamine,140.0,mg,173,relative_weight,2 mg/kg
+MDMA,50.0,mg,986,absolute,50 and 75 mg
+LSD,0.1,mg,4507,absolute,100 µg
+LSD,0.075,mg,4177,absolute,75 μg
+DMT,40.0,mg,5627,absolute,40-75 mg
+Ketamine,35.0,mg,3832,relative_weight,0.5 mg/kg
+Salvinorin A,1.26,mg,4063,relative_weight,18 µg/kg
+Salvinorin A,1.47,mg,4063,relative_weight,21 µg/kg
+MDMA,0.0,mg,5782,absolute,0
+Psilocybin,19.6,mg,8901,relative_weight,0.28 mg/kg
+Ketamine,17.5,mg,2940,relative_weight,0.25 and 0.5 mg/kg
+Psilocybin,11.9,mg,5379,relative_weight,0.17 mg/kg
+MDMA,105.0,mg,4959,relative_weight,1.5 mg/kg
+Psilocybin,8.05,mg,8900,relative_weight,"115, 215, and 315 µg/kg"
+Ayahuasca,0.85,mg,7309,absolute,0.85 mg
+Ayahuasca,0.6,mg,7309,absolute,0.6 mg
+Salvinorin A,12.0,mg,7192,absolute,12 mg
+Salvinorin A,8.0,mg,7192,absolute,8 mg
+Salvinorin A,0.0,mg,7192,absolute,0 mg
+LSD,0.075,mg,4142,absolute,75 µg
+LSD,0.01,mg,2459,absolute,10 µg
+Ketamine,28.0,mg,5890,relative_weight_time,"0.40, and 0.60 mg/kg/h"
+Ketamine,0.1,mg,5890,absolute,0.10
+Psilocybin,18.2,mg,1028,relative_weight,0.26 mg/kg
+MDMA,0.0,mg,974,absolute,"0, 25, 50, and 100 mg"
+Psilocybin,0.0,mg,4065,relative_weight,"0, 5, 10, 20, and 30 mg/70 kg"
+Ketamine,20.299999999999997,mg,3253,relative_weight,0.29 mg/kg
+Ketamine,40.599999999999994,mg,3253,relative_weight,0.58 mg/kg
+Ketamine,16.1,mg,3253,relative_weight,0.23 mg/kg
+Ketamine,35.0,mg,485,relative_weight,0.5 or 1 mg/kg
+Ketamine,35.0,mg,4119,relative_weight_time,0.5 mg/kg/h
+LSD,0.075,mg,7644,absolute,75 μg
+S-Ketamine,17.5,mg,5039,relative_weight,0.25 mg/kg
+Psilocybin,25.0,mg,6294,absolute,25 mg
+Ketamine,14.7,mg,1684,relative_weight_time,0.21 mg/kg/h
+Ketamine,28.0,mg,1684,relative_weight,0.40 mg/kg
+LSD,0.05,mg,9147,absolute,50 μg
+Ketamine,35.0,mg,3918,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,317,absolute,25 mg
+Ketamine,28.0,mg,4251,relative_weight_time,0.4 mg/kg/h
+Ketamine,14.0,mg,4251,relative_weight,0.2 mg/kg
+Ketamine,17.5,mg,4251,relative_weight,0.25 mg/kg
+Psilocybin,15.05,mg,4460,relative_weight,215 μg/kg
+LSD,1.0,mg,3904,absolute,1.0-1.5
+LSD,57.0,mg,3904,absolute,57
+Psilocybin,1.0,mg,3904,absolute,1.0-1.5
+Psilocybin,57.0,mg,3904,absolute,57
+Psilocybin,25.0,mg,6290,absolute,25 mg
+Ketamine,35.0,mg,8198,relative_weight,0.50 mg/kg
+MDMA,105.0,mg,513,relative_weight,1.5 mg/kg
+Ketamine,35.0,mg,1440,relative_weight,0.5 mg/kg
+MDMA,100.0,mg,6086,absolute,100 mg
+Ketamine,35.0,mg,7131,relative_weight,0.5 mg/kg
+MDMA,100.0,mg,2511,absolute,100 mg
+Ketamine,35.0,mg,4583,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,4583,relative_weight,0.1 mg/kg
+MDMA,100.0,mg,6607,absolute,100 mg
+Psilocybin,2.0,mg,1287,absolute,2 mg
+MDMA,75.0,mg,7613,absolute,75 mg
+LSD,75.0,mg,7613,absolute,75 mg
+Psilocybin,75.0,mg,7613,absolute,75 mg
+MDMA,75.0,mg,7169,absolute,75 mg
+MDMA,75.0,mg,7169,absolute,75
+MDMA,105.0,mg,713,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,713,relative_weight,0.75 mg/kg
+MDMA,52.5,mg,713,relative_weight,0.75 and 1.5 mg/kg
+LSD,0.04,mg,1273,absolute,40-80 μg
+Ketamine,35.0,mg,4584,relative_weight,0.5 mg/kg
+Ketamine,7.0,mg,4584,relative_weight,0.1 mg/kg
+Ketamine,0.15,mg,3450,absolute,0.15 mg h−1
+Ketamine,21.0,mg,3450,relative_weight,0.3 mg/kg
+Ketamine,17.5,mg,7678,relative_weight_time,0.25 mg/kg/h
+Ketamine,8.4,mg,7678,relative_weight,0.12 mg/kg
+S-Ketamine,17.5,mg,7678,relative_weight_time,0.25 mg/kg/h
+S-Ketamine,8.4,mg,7678,relative_weight,0.12 mg/kg
+MDMA,100.0,mg,5314,absolute,100 mg
+MDMA,52.5,mg,2758,relative_weight,0.75 or 1.5 mg/kg
+Ketamine,56.0,mg,7239,absolute,56 or 84 mg
+S-Ketamine,56.0,mg,7239,absolute,56 or 84 mg
+Ketamine,10.0,mg,6217,absolute,10 mg
+Ketamine,14.0,mg,6217,relative_weight,0.2 mg/kg
+Ketamine,21.0,mg,6556,relative_weight,0.3 mg/kg
+Ketamine,100.0,mg,4188,absolute,100 mg
+Ketamine,1000.0,mg,4188,absolute,1000 mg
+S-Ketamine,4.0,mg,5888,absolute,4 mg
+S-Ketamine,750.0,mg,5888,absolute,750 mg
+Ketamine,12.5,mg,3908,absolute,12.5 mg
+Ketamine,2.1,mg,3908,relative_weight,0.03 mg/kg
+Ketamine,25.0,mg,3908,absolute,25 mg
+MDMA,105.0,mg,792,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,792,relative_weight,0.75 mg/kg
+Ketamine,21.0,mg,6557,relative_weight,0.3 mg/kg
+Psilocybin,25.0,mg,5159,absolute,25 mg
+Psilocybin,10.0,mg,5159,absolute,10 mg
+Ketamine,35.0,mg,5826,relative_weight,0.5 mg/kg
+Ketamine,50.0,mg,7141,absolute,50
+MDMA,112.0,mg,4452,relative_weight,1.6 mg/kg
+MDMA,70.0,mg,4452,relative_weight,1.0 mg/kg
+MDMA,140.0,mg,7785,relative_weight,2 mg/kg
+Psilocybin,140.0,mg,7785,relative_weight,2 mg/kg
+LSD,0.025,mg,2076,absolute,25 μg
+LSD,0.05,mg,9148,absolute,50 μg
+Ketamine,210.0,mg,272,relative_weight,3-5 mg/kg
+Ketamine,35.0,mg,272,relative_weight,0.5 mg/kg
+Ketamine,70.0,mg,272,relative_weight,1-2 mg/kg
+MDMA,100.0,mg,470,absolute,100 mg
+MDMA,100.0,mg,6260,absolute,100 mg
+Psilocybin,8.75,mg,4457,relative_weight,125 and 250 μg/kg
+Ibogaine,700.0,mg,4419,relative_weight,10 mg/kg
+Salvinorin A,0.5,mg,5275,absolute,"0.50, and 1 mg"
+Salvinorin A,0.25,mg,5275,absolute,0.25
+S-Ketamine,28.0,mg,30,absolute,28 mg
+S-Ketamine,56.0,mg,30,absolute,56 mg
+S-Ketamine,84.0,mg,30,absolute,84 mg
+MDMA,100.0,mg,2224,absolute,100 mg
+MDMA,70.0,mg,3399,relative_weight,1.0 mg/kg
+MDMA,112.0,mg,3399,relative_weight,1.6 mg/kg
+MDMA,70.0,mg,3399,relative_weight,1.0 and 1.6 mg/kg
+MDMA,100.0,mg,8812,absolute,100 mg
+Ketamine,35.0,mg,7489,relative_weight,0.5 mg/kg
+Ayahuasca,35.0,mg,7489,relative_weight,0.5 mg/kg
+Ketamine,700.0,mg,5707,relative_weight,10 mg/kg
+Ketamine,35.0,mg,5707,relative_weight,0.5 mg/kg
+S-Ketamine,700.0,mg,5707,relative_weight,10 mg/kg
+S-Ketamine,35.0,mg,5707,relative_weight,0.5 mg/kg
+Psilocybin,21.0,mg,9507,relative_weight,21−25.2 mg/70 kg
+Psilocybin,1.0,mg,9507,relative_weight,1 mg/70 kg
+Ketamine,35.0,mg,4569,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,6192,absolute,25‐30 mg
+Ketamine,1000.0,mg,6429,absolute,1000 mg
+Ketamine,35.0,mg,6429,relative_weight,0.5 mg/kg
+MDMA,98.0,mg,517,relative_weight,1.4 mg/kg
+Ketamine,10.0,mg,5552,absolute,"10, 40, and 160 mg"
+MDMA,100.0,mg,6603,absolute,100 mg
+MDMA,75.0,mg,6603,absolute,75 mg
+MDMA,112.0,mg,3787,relative_weight,1.6 mg/kg
+Psilocybin,15.049999999999999,mg,6978,relative_weight,0.215 mg/kg
+Ketamine,35.0,mg,9487,relative_weight,0.5 mg/kg
+Psilocybin,3.0,mg,5204,absolute,3-30 mg
+LSD,100.0,mg,6777,absolute,100
+Psilocybin,25.0,mg,7948,absolute,25 mg
+MDMA,100.0,mg,6179,absolute,100 mg
+MDMA,100.0,mg,872,absolute,100-200 mg
+MDMA,100.0,mg,872,absolute,100 mg
+MDMA,200.0,mg,872,absolute,200 mg
+MDMA,50.0,mg,872,absolute,50‐200 mg
+MDMA,112.0,mg,6017,relative_weight,1.6 mg/kg
+MDMA,100.0,mg,4724,absolute,100 mg
+MDMA,75.0,mg,7039,absolute,75-100 mg
+MDMA,100.0,mg,7039,absolute,100-300 mg
+MDMA,75.0,mg,4695,absolute,75 mg
+MDMA,100.0,mg,4695,absolute,100 mg
+Ketamine,210.0,mg,4030,relative_weight,3 mg/kg
+Ketamine,0.002,mg,4030,absolute,2 μg
+Ketamine,350.0,mg,4030,relative_weight,5 mg/kg
+Ketamine,0.001,mg,4030,absolute,1 μg.kg
+Ketamine,1.0,mg,4030,absolute,1
+MDMA,25.0,mg,8722,absolute,"25, 50, and 100 mg"
+Ketamine,70.0,mg,4865,relative_weight,1 mg/kg
+Ketamine,140.0,mg,4865,relative_weight,2 mg/kg
+Ketamine,150.0,mg,901,absolute,150 mg
+Ketamine,35.0,mg,901,relative_weight,0.5 mg/kg
+Ketamine,75.0,mg,901,absolute,75 and 150 mg
+Ketamine,35.0,mg,3721,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,1596,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,6569,relative_weight,0.5 mg/kg
+Ketamine,210.0,mg,2040,relative_weight,3 mg/kg
+Ketamine,28.0,mg,5881,absolute,28 and 84 mg
+S-Ketamine,28.0,mg,5881,absolute,28 and 84 mg
+MDMA,75.0,mg,9444,absolute,75 mg
+MDMA,700.0,mg,7274,relative_weight,10 mg/kg
+Ketamine,21.0,mg,3609,relative_weight,0.3 mg/kg
+Ketamine,35.0,mg,8282,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,8549,relative_weight,0.5 mg/kg
+Psilocybin,30.0,mg,6293,absolute,30 mg
+Psilocybin,1.0,mg,6293,absolute,1 mg
+Psilocybin,25.0,mg,1798,absolute,25 mg
+Psilocybin,21.0,mg,1798,relative_weight,0.3-0.6 mg/kg
+Ketamine,70.0,mg,505,relative_weight,1 mg/kg
+Ketamine,17.5,mg,505,relative_weight,0.25 mg/kg
+Ayahuasca,1.0,mg,7308,absolute,1.0 mg
+Psilocybin,3.0,mg,5205,absolute,3–30 mg
+LSD,200.0,mg,2264,absolute,200 or 300 mg
+LSD,100.0,mg,2264,absolute,100 mg
+Ketamine,120.0,mg,2394,absolute,120 mg
+Psilocybin,17.5,mg,1322,relative_weight,250 µg/kg
+Psilocybin,8.05,mg,1322,relative_weight,115 µg/kg
+Ketamine,18.2,mg,4562,relative_weight,0.26 mg/kg
+Ketamine,35.0,mg,4559,relative_weight,0.5 mg/kg
+MDMA,98.0,mg,519,relative_weight,98 mg/70 kg
+MDMA,112.0,mg,96,relative_weight,1.6 mg/kg
+MDMA,70.0,mg,96,relative_weight,1.0 mg/kg
+LSD,100.0,mg,6166,absolute,100 mg
+Psilocybin,100.0,mg,6166,absolute,100 mg
+Mescaline,100.0,mg,6166,absolute,100 mg
+MDMA,75.0,mg,6866,absolute,75 mg
+S-Ketamine,500.0,mg,4316,absolute,500 mg/
+S-Ketamine,500.0,mg,4316,absolute,500 mg
+S-Ketamine,50.0,mg,4316,absolute,50 mg
+MDMA,40.0,mg,2478,absolute,40 mg
+MDMA,100.0,mg,8305,absolute,100 mg
+Psilocybin,15.05,mg,1320,relative_weight,215 µg/kg
+MDMA,140.0,mg,7185,relative_weight,2 mg/kg
+MDMA,140.0,mg,2718,relative_weight,2 mg/kg
+LSD,0.1,mg,3210,absolute,100 μg
+MDMA,100.0,mg,8787,absolute,100 mg
+LSD,0.025,mg,6226,absolute,25 μg
+MDMA,40.0,mg,2666,absolute,40 mg
+MDMA,112.0,mg,7799,relative_weight,1.6 mg/kg
+Ketamine,70.0,mg,2736,relative_weight,1 mg/kg
+Ketamine,140.0,mg,2736,relative_weight,2 mg/kg
+Ketamine,100.0,mg,7888,absolute,100 mg
+Ketamine,0.5950000000000001,mg,1643,relative_weight_time,0.0085 mg/kg/min
+Ketamine,29.4,mg,1643,relative_weight,0.42 mg/kg
+Ketamine,2.0,mg,1643,absolute,2 mg
+MDMA,125.0,mg,8873,absolute,125 mg
+Ketamine,35.0,mg,1431,relative_weight,0.5 mg/kg
+Psilocybin,20.0,mg,7044,absolute,20 mg
+Psilocybin,30.0,mg,8327,relative_weight,30 mg/70 kg
+Psilocybin,20.0,mg,8327,relative_weight,20-30 mg/70 kg
+MDMA,75100.0,mg,9445,absolute,75100 mg
+MDMA,105.0,mg,9445,relative_weight,1.5 mg/kg
+S-Ketamine,35.0,mg,9004,relative_weight,0.5 mg/kg
+LSD,0.5,mg,1137,absolute,0.5
+DMT,25.0,mg,7307,absolute,25 mg
+MDMA,50.0,mg,7038,absolute,50-200 mg
+MDMA,50.0,mg,7038,absolute,50 mg
+MDMA,50.0,mg,7038,absolute,"50, 100, 150 and 200 mg"
+MDMA,100.0,mg,2220,absolute,100
+LSD,0.075,mg,6315,absolute,75-100 μg
+LSD,0.0,mg,1335,absolute,0
+LSD,100000.0,mg,1335,absolute,100000
+MDMA,100.0,mg,2175,absolute,100 mg
+MDMA,105.0,mg,3500,relative_weight,1.5 mg/kg
+Ketamine,180.0,mg,1641,absolute,180 mg
+Ketamine,50.0,mg,1641,absolute,50 mg
+Ketamine,0.0,mg,1641,absolute,0 mg
+MDMA,105.0,mg,6478,relative_weight,1.5 mg/kg
+Ketamine,80.0,mg,4186,absolute,80 or 320 mg/
+Salvinorin A,0.25,mg,6020,absolute,"250, 500, 1000, 2000 and 4000 µg"
+Salvinorin A,0.0,mg,6020,absolute,0 and 100 µg
+Salvinorin A,0.0,mg,6020,absolute,0‐4000 µg
+Salvinorin A,0.1,mg,6020,absolute,100-4000 µg
+Ketamine,35.0,mg,5913,relative_weight,0.5 mg/kg
+Salvinorin A,4.0,mg,5570,absolute,4 mg
+MDMA,75.0,mg,5352,absolute,75 and a 100 mg
+Ketamine,140.0,mg,6826,relative_weight_time,2 mg/kg/h
+MDMA,125.0,mg,1002,absolute,125 mg
+MDMA,112.0,mg,611,relative_weight,1.6 mg/kg
+MDMA,70.0,mg,611,relative_weight,1.0 mg/kg
+Ayahuasca,2.0,mg,1200,absolute,2
+DMT,2.0,mg,1200,absolute,2
+MDMA,125.0,mg,3781,absolute,125 mg
+Psilocybin,10.0,mg,642,relative_weight,10 mg/70 kg
+Ketamine,35.0,mg,4114,relative_weight,0.5 mg/kg
+DMT,70.0,mg,5125,relative_time,1 mg/min
+MDMA,100.0,mg,6953,absolute,100 mg
+MDMA,125.0,mg,8014,absolute,125 mg
+Ketamine,105.0,mg,8064,relative_weight_time,1.5-6 mg/kg/h
+Ketamine,70.0,mg,8064,relative_weight_time,1 mg/kg/h
+Ketamine,35.0,mg,8785,relative_weight,0.5 mg/kg
+S-Ketamine,14.0,mg,3296,relative_weight,0.2 mg/kg
+MDMA,125.0,mg,7829,absolute,125 mg
+MDMA,125.0,mg,8270,absolute,125 mg
+S-Ketamine,50.0,mg,1895,absolute,50 mg
+S-Ketamine,150.0,mg,1895,absolute,150 mg
+S-Ketamine,500.0,mg,1895,absolute,500 mg
+S-Ketamine,0.35000000000000003,mg,1895,relative_weight,0.005 mg/kg
+MDMA,0.03,mg,6939,absolute,"30, 300, and 3000 μg"
+Ketamine,70.0,mg,9255,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,9255,relative_weight,0.5 mg/kg
+Psilocybin,11.2,mg,6663,relative_weight,160 μg/kg
+MDMA,10.0,mg,2534,absolute,"10, 20, and 25 mg"
+Ketamine,35.0,mg,5505,relative_weight,0.5 mg/kg
+LSD,10.0,mg,2488,absolute,10
+MDMA,100.0,mg,7827,absolute,100 mg
+MDMA,125.0,mg,3778,absolute,125 mg
+LSD,0.05,mg,9150,absolute,50 μg
+Ibogaine,80.0,mg,4418,absolute,80 mg
+Ketamine,35.0,mg,74,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,3856,relative_weight,0.2 mg/kg
+Ketamine,0.0,mg,3856,absolute,0
+Ketamine,7.0,mg,3856,relative_weight,0.1 mg/kg
+Psilocybin,25.0,mg,5262,absolute,25 mg
+MDMA,112.0,mg,7798,relative_weight,1.6 mg/kg
+Ketamine,140.0,mg,6803,relative_weight,2 mg/kg
+Ketamine,1.0,mg,2348,absolute,1
+LSD,450.0,mg,3470,absolute,450 mg
+LSD,10.0,mg,3470,absolute,10-15 mg
+Psilocybin,450.0,mg,3470,absolute,450 mg
+Psilocybin,10.0,mg,3470,absolute,10-15 mg
+Mescaline,450.0,mg,3470,absolute,450 mg
+Mescaline,10.0,mg,3470,absolute,10-15 mg
+Ketamine,35.0,mg,9529,relative_weight,0.5 mg/kg
+DMT,17.5,mg,832,relative_weight,250 µg/kg
+5-MeO-DMT,18.0,mg,6265,absolute,18 mg
+5-MeO-DMT,12.0,mg,6265,absolute,12 mg
+5-MeO-DMT,6.0,mg,6265,absolute,6 mg
+Psilocybin,25.0,mg,6289,absolute,25 mg
+MDMA,6.0,mg,4849,absolute,6 mg
+LSD,6.0,mg,4849,absolute,6 mg
+MDMA,100.0,mg,6908,absolute,100 mg
+Psilocybin,25.0,mg,4444,absolute,25 mg
+Ketamine,140.0,mg,4560,relative_weight,2‐.5 mg/kg
+Ketamine,70.0,mg,5131,relative_weight,1 mg/kg
+MDMA,100.0,mg,5983,absolute,100 mg
+MDMA,35.0,mg,4354,relative_weight,0.5 mg/kg
+MDMA,70.0,mg,4354,relative_weight,1.0 mg/kg
+MDMA,0.0,mg,4354,absolute,0
+Psilocybin,1.0,mg,6223,absolute,1 mg
+Psilocybin,25.0,mg,6223,absolute,25 mg
+Ketamine,70.0,mg,4335,relative_weight,1 mg/kg
+Ketamine,1.0,mg,89,absolute,1/mgkg
+Ketamine,0.35,mg,6127,relative_weight_time,5 µg/kg/min
+Ketamine,70.0,mg,6127,relative_weight,1 mg/kg
+MDMA,3.0,mg,9378,absolute,3
+MDMA,10.0,mg,9378,absolute,10
+MDMA,100.0,mg,1095,absolute,100-140 mg
+MDMA,125.0,mg,8871,absolute,125 mg
+MDMA,140.0,mg,1094,absolute,140 mg
+MDMA,70.0,mg,1114,absolute,70 mg
+MDMA,105.0,mg,1551,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,1551,relative_weight,0.75 mg/kg
+MDMA,105.0,mg,2696,relative_weight,1.5 mg/kg
+Ketamine,7.0,mg,487,relative_weight,0.1 mg/kg
+Ketamine,7.0,mg,9077,relative_weight,0.1 mg/kg
+LSD,90.0,mg,5060,absolute,90-150 mg
+LSD,0.105,mg,3619,relative_weight,1.5 and 2 µg/kg
+LSD,0.14,mg,3619,relative_weight,2 µg/kg
+LSD,0.2,mg,318,absolute,200 μg
+LSD,0.1,mg,318,absolute,100 μg
+Psilocybin,0.2,mg,5004,absolute,0.2 mg
+Ketamine,35.0,mg,1762,absolute,35 mg
+LSD,0.0,mg,8940,absolute,0
+LSD,0.05,mg,8940,absolute,50 μg
+MDMA,0.001,mg,670,absolute,1 µg
+MDMA,0.006,mg,670,absolute,6 µg
+MDMA,0.001,mg,670,absolute,1-250 µg/l
+MDMA,6.0,mg,670,absolute,6
+LSD,50.0,mg,1797,absolute,50-100 mg
+LSD,0.0065,mg,41314362,absolute,6.5-20 µg
+LSD,100.0,mg,41314362,absolute,0.1-0.5 g
 LSD,0.01,mg,40251818,absolute,10 µg
-Ayahuasca,15.0,mg,40258990,absolute,15 mg
-DMT,15.0,mg,40258990,absolute,15 mg
-Psilocybin,15.0,mg,40258990,absolute,15 mg
-Ayahuasca,60.0,mg,40258990,absolute,60 mg
-DMT,60.0,mg,40258990,absolute,60 mg
-Psilocybin,60.0,mg,40258990,absolute,60 mg
-Psilocybin,21.0,mg,40279353,relative_weight,0.3 mg/kg
-S-Ketamine,35.0,mg,40285334,relative_weight,0.5-3 mg/kg
-S-Ketamine,210.0,mg,40285334,relative_weight,0.5-3 mg/kg
-Ketamine,0.0,mg,40305000,relative_weight,"0,5 mg/kg"
-Ketamine,350.0,mg,40305000,relative_weight,"0,5 mg/kg"
-Ketamine,140.0,mg,40305000,relative_weight,2.0 or 2.5 mg/kg
-Ketamine,175.0,mg,40305000,relative_weight,2.0 or 2.5 mg/kg
-MDMA,120.0,mg,40305021,absolute,120 mg
-Ketamine,7.7,mg,40320049,relative_weight,0.11 mg/kg
-Ketamine,140.0,mg,40320049,relative_weight,2.0 mg/kg
-S-Ketamine,17.5,mg,40320348,relative_weight_time,0.25 mg/kg/h
-S-Ketamine,35.0,mg,40324271,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,40329640,absolute,25 mg
-Psilocybin,1.0,mg,40329640,absolute,1 mg
-DMT,15.0,mg,40337754,absolute,15 mg
-DMT,60.0,mg,40337754,absolute,60 mg
-DMT,1.5,mg,40356576,absolute,1.5 mg
-S-Ketamine,56.0,mg,40411824,absolute,56 mg
-LSD,0.08,mg,40418105,absolute,80 μg
-Psilocybin,10.0,mg,40440674,absolute,10 and 25 mg
-Psilocybin,25.0,mg,40440674,absolute,10 and 25 mg
-Ketamine,240.0,mg,40446631,absolute,240 mg
-Psilocybin,25.0,mg,40458078,absolute,25 mg
-MDMA,100.0,mg,40459963,absolute,100 mg
-LSD,0.1,mg,40482648,absolute,100 μg
-LSD,0.2,mg,40482648,absolute,200 μg
-LSD,0.025,mg,40482648,absolute,25 μg
-Psilocybin,25.0,mg,40499827,absolute,25 mg
-Psilocybin,25.0,mg,40518804,absolute,25 mg
-Psilocybin,18.2,mg,40522607,relative_weight,0.26 mg/kg
-S-Ketamine,21.0,mg,40523785,relative_weight,0.3 mg/kg
-S-Ketamine,10.5,mg,40523785,relative_weight_time,0.15 mg/kg/h
-5-MeO-DMT,2.0,mg,40528856,absolute,"2, 6, 12, 18 mg"
-5-MeO-DMT,18.0,mg,40528856,absolute,"2, 6, 12, 18 mg"
-DMT,60.0,mg,40532423,absolute,60 mg
-DMT,0.6,mg,40532423,absolute,0.6 mg
-S-Ketamine,56.0,mg,40601310,absolute,56 mg
-S-Ketamine,84.0,mg,40601310,absolute,84 mg
-S-Ketamine,17.5,mg,40607793,relative_weight,0.25 mg/kg
-Psilocybin,10.0,mg,40618640,absolute,10 mg
-Psilocybin,1.0,mg,40618640,absolute,1 mg
-Ketamine,0.35,mg,40619168,absolute,0.35 mg
-Ketamine,24.5,mg,40619168,relative_weight,0.35 mg/kg
-Ketamine,17.5,mg,40619168,relative_weight,0.25 mg/kg
-Ketamine,23.8,mg,40619168,relative_weight,0.34 mg/kg
-5-MeO-DMT,0.0,mg,40639043,absolute,0-120 mg
-5-MeO-DMT,120.0,mg,40639043,absolute,0-120 mg
-DMT,0.0,mg,40639043,absolute,0-120 mg
-DMT,120.0,mg,40639043,absolute,0-120 mg
-Psilocybin,25.0,mg,40654586,absolute,25 mg
-Psilocybin,1.0,mg,40654586,absolute,1 mg
-Psilocybin,15.0,mg,40656108,absolute,15 mg
-Psilocybin,20.0,mg,40656108,absolute,20 mg
-Psilocybin,25.0,mg,40656108,absolute,25 mg
-Psilocybin,30.0,mg,40656108,absolute,30 mg
-Psilocybin,25.0,mg,40656108,absolute,25 and 30 mg
-Psilocybin,30.0,mg,40656108,absolute,25 and 30 mg
-Psilocybin,15.0,mg,40656108,absolute,"15, 20, 25, and 30 mg"
-Psilocybin,30.0,mg,40656108,absolute,"15, 20, 25, and 30 mg"
-5-MeO-DMT,6.0,mg,40659913,absolute,6 mg
-5-MeO-DMT,9.0,mg,40659913,absolute,9 mg
-5-MeO-DMT,12.0,mg,40659913,absolute,12 mg
-Ketamine,35.0,mg,40662502,relative_weight,0.5 mg/kg
+MDMA,120.0,mg,39592887,absolute,120 and 180 mg
+Ketamine,35.0,mg,41475562,relative_weight,0.5 mg/kg
+S-Ketamine,35.0,mg,41475562,relative_weight,0.5 mg/kg
+Psilocybin,10.0,mg,41459830,absolute,10 mg
+Ketamine,75.0,mg,41456567,absolute,75 mg
+Ketamine,0.21,mg,41417647,relative_weight_time,3 μg/kg/min
+Psilocybin,25.0,mg,41392767,absolute,25 mg
+5-MeO-DMT,10.0,mg,41368982,absolute,10 mg
+Ibogaine,10.0,mg,41368982,absolute,10 mg
+Ayahuasca,1.0,mg,41342247,absolute,1
+Ketamine,35.0,mg,41326978,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,41326978,relative_weight,0.2 mg/kg
+Psilocybin,0.0065,mg,41314362,absolute,6.5-20 µg
+Psilocybin,100.0,mg,41314362,absolute,0.1-0.5 g
+Ketamine,35.0,mg,41309552,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,41308888,relative_weight,0.5 mg/kg
+LSD,0.075,mg,41305961,absolute,75 μg
+S-Ketamine,87.5,mg,41265303,relative_weight,1.25 mg/kg
+S-Ketamine,17.5,mg,41265303,relative_weight,0.25 mg/kg
+Ketamine,35.0,mg,41262415,relative_weight,0.5 mg/kg
+Psilocybin,1.0,mg,41257994,absolute,1 mg
+Psilocybin,25.0,mg,41257994,absolute,25 mg
+Ketamine,75.0,mg,41255293,absolute,75 mg
+LSD,0.006,mg,41202873,absolute,6-20 μg
+LSD,0.008,mg,41202873,absolute,8 μg
+Psilocybin,25.0,mg,41186141,absolute,25 mg
+Psilocybin,15.0,mg,41186141,absolute,15 mg
+Ketamine,37.5,mg,41186022,absolute,37.5-75 mg
+Psilocybin,25.0,mg,41184102,absolute,25 mg
+Ketamine,35.0,mg,41173838,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,41123905,relative_weight,0.5 mg/kg
+Ketamine,70.0,mg,41101490,relative_weight,1 mg/kg
+Psilocybin,10.0,mg,41099491,absolute,10-15 mg
+Psilocybin,20.0,mg,41099491,absolute,20 mg
+DMT,10.0,mg,41099491,absolute,10-15 mg
+DMT,20.0,mg,41099491,absolute,20 mg
+Ketamine,35.0,mg,41089629,relative_weight,0.5 mg/kg
+Ketamine,45.0,mg,41082834,absolute,45-145 mg
+Ketamine,35.0,mg,41082834,relative_weight,0.5-1.5 mg/kg
+Salvinorin A,7.0,mg,41073402,relative_weight,0.1-10 mg/kg
+MDMA,100.0,mg,41051544,absolute,100 mg
+MDMA,20.0,mg,41051544,absolute,20 mg
+Psilocybin,25.0,mg,41050149,absolute,25 mg
+Ketamine,50.0,mg,41036801,absolute,50 mg
+Ketamine,25.0,mg,41036801,absolute,25 mg
+Psilocybin,120.0,mg,41035622,absolute,120 mg
+Ayahuasca,120.0,mg,41035622,absolute,120 mg
+DMT,120.0,mg,41035622,absolute,120 mg
+5-MeO-DMT,120.0,mg,41035622,absolute,120 mg
+Psilocybin,25.0,mg,40974259,absolute,25 mg
+Psilocybin,25.0,mg,40972137,absolute,25 mg
+MDMA,20.0,mg,40958371,absolute,20 mg
+MDMA,100.0,mg,40958371,absolute,100 mg
+LSD,0.015,mg,40917239,absolute,15 µg
+LSD,0.015,mg,40917239,absolute,15 μg
+Ayahuasca,98.0,mg,40896210,relative_weight,1.4 mg/kg
+Ayahuasca,70.0,mg,40896210,relative_weight,1 mg/kg
+DMT,98.0,mg,40896210,relative_weight,1.4 mg/kg
+DMT,70.0,mg,40896210,relative_weight,1 mg/kg
+Psilocybin,25.0,mg,40894333,absolute,25 mg
+MDMA,25.0,mg,40894046,absolute,25 mg
+MDMA,1.0,mg,40894046,absolute,1 mg
+Psilocybin,25.0,mg,40894046,absolute,25 mg
+Psilocybin,1.0,mg,40894046,absolute,1 mg
+Psilocybin,25.0,mg,40883964,absolute,25 mg
+Ketamine,35.0,mg,40882850,relative_weight,0.5 mg/kg
+Ketamine,140.0,mg,40879542,relative_weight,2.0 or 2.5 mg/kg
+Ketamine,35.0,mg,40879542,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,40850924,relative_weight,0.50-0.75 mg/kg
+Psilocybin,25.0,mg,40858059,absolute,25 mg
+Ketamine,35.0,mg,40844815,relative_weight,0.5 mg/kg
+Psilocybin,1500.0,mg,40842948,absolute,1.5 -3.5 g
+S-Ketamine,28.0,mg,40831094,relative_weight,0.4 mg/kg
+LSD,0.075,mg,40800760,absolute,75 µg
+MDMA,105.0,mg,40800376,relative_weight,1.5 mg/kg
+Ketamine,35.0,mg,40795937,relative_weight,0.5 mg/kg
+Ketamine,56.0,mg,40767785,absolute,56 or 84 mg
+Ketamine,35.0,mg,40767785,relative_weight,0.5 mg/kg
+S-Ketamine,56.0,mg,40767785,absolute,56 or 84 mg
+S-Ketamine,35.0,mg,40767785,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,40767760,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,40707608,relative_weight,0.5 mg/kg
 Psilocybin,25.0,mg,40702912,absolute,25 mg
 Psilocybin,1.0,mg,40702912,absolute,1 mg
 Psilocybin,25.0,mg,40702912,absolute,25
-Ketamine,35.0,mg,40707608,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,40767760,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,40767785,relative_weight,0.5 mg/kg
-S-Ketamine,35.0,mg,40767785,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,40795937,relative_weight,0.5 mg/kg
-MDMA,105.0,mg,40800376,relative_weight,1.5 mg/kg
-LSD,0.075,mg,40800760,absolute,75 µg
-S-Ketamine,28.0,mg,40831094,relative_weight,0.4 mg/kg
-Psilocybin,1500.0,mg,40842948,absolute,1.5 g-3.5 g
-Psilocybin,3500.0,mg,40842948,absolute,1.5 g-3.5 g
-Ketamine,35.0,mg,40844815,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,40850924,relative_weight,0.50-0.75 mg/kg
-Ketamine,52.5,mg,40850924,relative_weight,0.50-0.75 mg/kg
-Psilocybin,25.0,mg,40858059,absolute,25 mg
-Ketamine,35.0,mg,40879542,relative_weight,0.5 mg/kg
-Ketamine,140.0,mg,40879542,relative_weight,2.0/2.5 mg/kg
-Ketamine,35.0,mg,40882850,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,40883964,absolute,25 mg
-MDMA,25.0,mg,40894046,absolute,25 mg
-Psilocybin,25.0,mg,40894046,absolute,25 mg
-MDMA,1.0,mg,40894046,absolute,1 mg
-Psilocybin,1.0,mg,40894046,absolute,1 mg
-Psilocybin,25.0,mg,40894333,absolute,25 mg
-Ayahuasca,70.0,mg,40896210,relative_weight,1 mg/kg
-DMT,70.0,mg,40896210,relative_weight,1 mg/kg
-Ayahuasca,98.0,mg,40896210,relative_weight,1.4 mg/kg
-DMT,98.0,mg,40896210,relative_weight,1.4 mg/kg
-LSD,0.015,mg,40917239,absolute,15 μg
-LSD,0.015,mg,40917239,absolute,15 µg
-MDMA,100.0,mg,40958371,absolute,100 mg
-MDMA,20.0,mg,40958371,absolute,20 mg
-Psilocybin,25.0,mg,40972137,absolute,25 mg
-Psilocybin,25.0,mg,40974259,absolute,25 mg
-5-MeO-DMT,120.0,mg,41035622,absolute,120 mg
-Ayahuasca,120.0,mg,41035622,absolute,120 mg
-DMT,120.0,mg,41035622,absolute,120 mg
-Psilocybin,120.0,mg,41035622,absolute,120 mg
-Ketamine,25.0,mg,41036801,absolute,25 mg
-Ketamine,50.0,mg,41036801,absolute,50 mg
-Psilocybin,25.0,mg,41050149,absolute,25 mg
-MDMA,20.0,mg,41051544,absolute,20 mg
-MDMA,100.0,mg,41051544,absolute,100 mg
-Salvinorin A,7.0,mg,41073402,relative_weight,0.1-10 mg/kg
-Salvinorin A,700.0,mg,41073402,relative_weight,0.1-10 mg/kg
-Ketamine,35.0,mg,41082834,relative_weight,0.5-1.5 mg/kg
-Ketamine,105.0,mg,41082834,relative_weight,0.5-1.5 mg/kg
-Ketamine,45.0,mg,41082834,absolute,45-145 mg
-Ketamine,145.0,mg,41082834,absolute,45-145 mg
-Ketamine,35.0,mg,41089629,relative_weight,0.5 mg/kg
-DMT,20.0,mg,41099491,absolute,20 mg
-Psilocybin,20.0,mg,41099491,absolute,20 mg
-DMT,10.0,mg,41099491,absolute,10-15 mg
-DMT,15.0,mg,41099491,absolute,10-15 mg
-Psilocybin,10.0,mg,41099491,absolute,10-15 mg
-Psilocybin,15.0,mg,41099491,absolute,10-15 mg
-Ketamine,70.0,mg,41101490,relative_weight,1 mg/kg
-Ketamine,35.0,mg,41123905,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,41173838,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,41184102,absolute,25 mg
-Ketamine,37.5,mg,41186022,absolute,37.5-75 mg
-Ketamine,75.0,mg,41186022,absolute,37.5-75 mg
-Psilocybin,15.0,mg,41186141,absolute,15 mg
-Psilocybin,25.0,mg,41186141,absolute,25 mg
-LSD,0.008,mg,41202873,absolute,8 μg
-LSD,0.006,mg,41202873,absolute,6-20 μg
-LSD,0.02,mg,41202873,absolute,6-20 μg
-Ketamine,75.0,mg,41255293,absolute,75 mg
-Psilocybin,25.0,mg,41257994,absolute,25 mg
-Psilocybin,1.0,mg,41257994,absolute,1 mg
-Ketamine,35.0,mg,41262415,relative_weight,0.5 mg/kg
-S-Ketamine,17.5,mg,41265303,relative_weight,0.25 mg/kg
-S-Ketamine,87.5,mg,41265303,relative_weight,1.25 mg/kg
-LSD,0.075,mg,41305961,absolute,75 μg
-Ketamine,35.0,mg,41308888,relative_weight,0.5 mg/kg
-Ketamine,35.0,mg,41309552,relative_weight,0.5 mg/kg
-LSD,100.0,mg,41314362,absolute,0.1-0.5 g
-LSD,500.0,mg,41314362,absolute,0.1-0.5 g
-Psilocybin,100.0,mg,41314362,absolute,0.1-0.5 g
-Psilocybin,500.0,mg,41314362,absolute,0.1-0.5 g
-LSD,0.0065,mg,41314362,absolute,6.5-20 µg
-LSD,0.02,mg,41314362,absolute,6.5-20 µg
-Psilocybin,0.0065,mg,41314362,absolute,6.5-20 µg
-Psilocybin,0.02,mg,41314362,absolute,6.5-20 µg
-Ketamine,14.0,mg,41326978,relative_weight,0.2 mg/kg
-Ketamine,35.0,mg,41326978,relative_weight,0.5 mg/kg
-Ayahuasca,1.0,mg,41342247,absolute,1
-5-MeO-DMT,10.0,mg,41368982,absolute,10 mg
-Ibogaine,10.0,mg,41368982,absolute,10 mg
-Psilocybin,25.0,mg,41392767,absolute,25 mg
-Ketamine,0.21,mg,41417647,relative_weight_time,3 μg/kg/min
-Ketamine,75.0,mg,41456567,absolute,75 mg
-Psilocybin,10.0,mg,41459830,absolute,10 mg
-Ketamine,35.0,mg,41475562,relative_weight,0.5 mg/kg
-S-Ketamine,35.0,mg,41475562,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,40662502,relative_weight,0.5 mg/kg
+5-MeO-DMT,12.0,mg,40659913,absolute,12 mg
+5-MeO-DMT,9.0,mg,40659913,absolute,9 mg
+5-MeO-DMT,6.0,mg,40659913,absolute,6 mg
+Psilocybin,25.0,mg,40654586,absolute,25 mg
+Psilocybin,1.0,mg,40654586,absolute,1 mg
+DMT,0.0,mg,40639043,absolute,0-120 mg
+5-MeO-DMT,0.0,mg,40639043,absolute,0-120 mg
+Ketamine,23.8,mg,40619168,relative_weight,0.34 mg/kg
+Ketamine,17.5,mg,40619168,relative_weight,0.25 mg/kg
+Ketamine,24.5,mg,40619168,relative_weight,0.35 mg/kg
+Ketamine,0.35,mg,40619168,absolute,0.35 mg
+Psilocybin,10.0,mg,40618640,absolute,10 mg
+Psilocybin,1.0,mg,40618640,absolute,1 mg
+S-Ketamine,17.5,mg,40607793,relative_weight,0.25 mg/kg
+S-Ketamine,84.0,mg,40601310,absolute,84 mg
+S-Ketamine,56.0,mg,40601310,absolute,56 mg
+DMT,0.6,mg,40532423,absolute,0.6 mg
+DMT,60.0,mg,40532423,absolute,60 mg
+5-MeO-DMT,2.0,mg,40528856,absolute,"2, 6, 12, 18 mg"
+S-Ketamine,10.5,mg,40523785,relative_weight_time,0.15 mg/kg/h
+S-Ketamine,21.0,mg,40523785,relative_weight,0.3 mg/kg
+Psilocybin,18.2,mg,40522607,relative_weight,0.26 mg/kg
+Psilocybin,25.0,mg,40518804,absolute,25 mg
+Psilocybin,25.0,mg,40499827,absolute,25 mg
+LSD,0.025,mg,40482648,absolute,25 μg
+LSD,0.2,mg,40482648,absolute,200 μg
+LSD,0.1,mg,40482648,absolute,100 μg
+MDMA,100.0,mg,40459963,absolute,100 mg
+Psilocybin,25.0,mg,40458078,absolute,25 mg
+Ketamine,240.0,mg,40446631,absolute,240 mg
+Psilocybin,10.0,mg,40440674,absolute,10 and 25 mg
+LSD,0.08,mg,40418105,absolute,80 μg
+S-Ketamine,56.0,mg,40411824,absolute,56 mg
+DMT,1.5,mg,40356576,absolute,1.5 mg
+DMT,60.0,mg,40337754,absolute,60 mg
+DMT,15.0,mg,40337754,absolute,15 mg
+Psilocybin,1.0,mg,40329640,absolute,1 mg
+Psilocybin,25.0,mg,40329640,absolute,25 mg
+S-Ketamine,35.0,mg,40324271,relative_weight,0.5 mg/kg
+S-Ketamine,17.5,mg,40320348,relative_weight_time,0.25 mg/kg/h
+Ketamine,140.0,mg,40320049,relative_weight,2.0 mg/kg
+Ketamine,7.7,mg,40320049,relative_weight,0.11 mg/kg
+MDMA,120.0,mg,40305021,absolute,120 mg
+Ketamine,140.0,mg,40305000,relative_weight,2.0 or 2.5 mg/kg
+Ketamine,0.0,mg,40305000,relative_weight,"0,5 mg/kg"
+S-Ketamine,35.0,mg,40285334,relative_weight,0.5-3 mg/kg
+Psilocybin,21.0,mg,40279353,relative_weight,0.3 mg/kg
+Psilocybin,60.0,mg,40258990,absolute,60 mg
+Psilocybin,15.0,mg,40258990,absolute,15 mg
+Ayahuasca,60.0,mg,40258990,absolute,60 mg
+Ayahuasca,15.0,mg,40258990,absolute,15 mg
+DMT,60.0,mg,40258990,absolute,60 mg
+DMT,15.0,mg,40258990,absolute,15 mg
+Psilocybin,20.0,mg,40245969,relative_weight,20-40 mg/70 kg
+Psilocybin,25.0,mg,40245934,absolute,25 mg
+Psilocybin,25.0,mg,40233965,absolute,25 mg
+Ketamine,35.0,mg,40215385,relative_weight,0.5 mg/kg
+MDMA,100.0,mg,40209095,absolute,100 mg
+Psilocybin,10.0,mg,40205013,absolute,10 mg
+Ketamine,35.0,mg,40188855,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,40171515,absolute,25 mg
+Psilocybin,15.0,mg,40171515,absolute,15 mg
+Ketamine,3.5,mg,40170626,relative_weight,0.05 mg/kg
+Psilocybin,25.0,mg,40144690,absolute,25 mg
+Psilocybin,25.0,mg,40129307,absolute,25 mg
+Ketamine,14.0,mg,40129096,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,40129096,relative_weight,0.5 mg/kg
+LSD,0.02,mg,40105807,absolute,20 μg
+Ketamine,56.0,mg,40058488,absolute,56 and 84 mg
+Ketamine,28.0,mg,40058488,absolute,"28, 56, or 84 mg"
+Ketamine,28.0,mg,40058488,absolute,"28, 56, and 84 mg"
+Ketamine,84.0,mg,40058488,absolute,84 mg
+S-Ketamine,56.0,mg,40058488,absolute,56 and 84 mg
+S-Ketamine,28.0,mg,40058488,absolute,"28, 56, or 84 mg"
+S-Ketamine,28.0,mg,40058488,absolute,"28, 56, and 84 mg"
+S-Ketamine,84.0,mg,40058488,absolute,84 mg
+LSD,0.026,mg,40051483,absolute,26 µg
+Psilocybin,10.0,mg,40047545,absolute,10 mg
+Psilocybin,1.0,mg,40047545,absolute,1 mg
+Psilocybin,25.0,mg,40047545,absolute,25 mg
+LSD,0.1,mg,40022427,absolute,100 μg
+Psilocybin,25.0,mg,40018886,absolute,25 mg
+Ketamine,180.0,mg,40015180,absolute,180 mg
+Ketamine,210.0,mg,40015180,relative_weight,3 mg/kg
+Ketamine,35.0,mg,40012166,relative_weight,0.5 mg/kg
+MDMA,25.0,mg,39979849,absolute,25-40 mg
+MDMA,50.0,mg,39979849,absolute,50-125 mg
+S-Ketamine,17.5,mg,39946130,relative_weight,0.25 mg/kg
+Ketamine,35.0,mg,39940002,relative_weight,0.5 mg/kg
+Ketamine,63.0,mg,39929500,relative_weight,0.9 mg/kg
+Ketamine,52.5,mg,39929500,relative_weight,0.75 mg/kg
+Ayahuasca,0.0,mg,39923404,absolute,0
+Ayahuasca,0.0,mg,39923404,absolute,0-120 mg
+DMT,0.0,mg,39923404,absolute,0
+DMT,0.0,mg,39923404,absolute,0-120 mg
+5-MeO-DMT,0.0,mg,39923404,absolute,0
+5-MeO-DMT,0.0,mg,39923404,absolute,0-120 mg
+Ketamine,0.5,mg,39915701,absolute,0.5 mg
+S-Ketamine,0.5,mg,39915701,absolute,0.5 mg
+Ketamine,35.0,mg,39899368,relative_weight,0.5 mg/kg
+MDMA,100.0,mg,39895858,absolute,100 mg
+Ketamine,35.0,mg,39889566,relative_weight,0.5 mg/kg
+Psilocybin,10.0,mg,39882198,absolute,10 mg
+Psilocybin,1.0,mg,39882198,absolute,1 mg
+Ketamine,70.0,mg,39878430,relative_weight,1 mg/kg
+Ketamine,35.0,mg,39878430,relative_weight,0.5 mg/kg
+S-Ketamine,210.0,mg,39853300,relative_weight,3.0 mg/kg
+S-Ketamine,35.0,mg,39853300,relative_weight,0.5 or 1.0 mg/kg
+Ketamine,35.0,mg,39834135,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,39823496,absolute,25 mg
+Psilocybin,25.0,mg,39802794,absolute,25 mg
+Ayahuasca,10.0,mg,39774840,absolute,10
+Ayahuasca,100.0,mg,39774840,absolute,100
+DMT,10.0,mg,39774840,absolute,10
+DMT,100.0,mg,39774840,absolute,100
+5-MeO-DMT,10.0,mg,39774840,absolute,10
+5-MeO-DMT,100.0,mg,39774840,absolute,100
+Ketamine,100.0,mg,39773202,absolute,100-400 mg
+Ketamine,220.0,mg,39773202,absolute,220 mg
+Psilocybin,25.0,mg,39764567,absolute,25 mg
+Ketamine,35.0,mg,39763417,relative_weight,0.5-0.9 mg/kg
+Ketamine,35.0,mg,39763417,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,39754904,absolute,25 mg
+Psilocybin,10.0,mg,39754904,absolute,10 mg
+Psilocybin,15.049999999999999,mg,39754904,relative_weight,0.215 mg/kg
+Psilocybin,25.0,mg,39741440,absolute,25 mg
+Psilocybin,25.0,mg,39706482,absolute,25 mg
+Psilocybin,1.0,mg,39706482,absolute,"10, or 1 mg"
+Psilocybin,25.0,mg,39706482,absolute,25
+DMT,126.0,mg,39702577,relative_time,1.8 mg/min
+DMT,168.0,mg,39702577,relative_time,2.4 mg/min
+DMT,1.8,mg,39702577,absolute,1.8
+DMT,1.2,mg,39702577,absolute,1.2
+DMT,0.6,mg,39702577,absolute,0.6
+Psilocybin,15050.0,mg,39695323,relative_weight,0215 mg/kg
+Psilocybin,5.0,mg,39669539,absolute,5 and 20 mg
+Ketamine,35.0,mg,39642450,relative_weight,0.5-0.75 mg/kg
+Psilocybin,25.0,mg,39636638,absolute,25 mg
+S-Ketamine,17.5,mg,39631703,relative_weight,0.25 mg/kg
+Ayahuasca,170.64,mg,39614620,absolute,170.64 mg
+Ayahuasca,3.0,mg,39614620,absolute,3
+Ketamine,70.0,mg,39609659,relative_weight,1.0 mg/kg
+Ketamine,35.0,mg,39609659,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,39581291,relative_weight,0.5 mg/kg
+Ketamine,79.1,mg,39576028,relative_weight,1.13 mg/kg
+Ketamine,0.5,mg,39556562,absolute,0.5
+S-Ketamine,0.5,mg,39556562,absolute,0.5
+MDMA,125.0,mg,39546312,absolute,125 mg
+MDMA,100.0,mg,39546312,absolute,100 mg
+MDMA,100.0,mg,39546312,absolute,100 or 125 mg
+S-Ketamine,84.0,mg,39522447,absolute,84 mg
+S-Ketamine,28.0,mg,39522447,absolute,28-84 mg
+S-Ketamine,28.0,mg,39514643,absolute,"28, 56, or 84 mg"
+S-Ketamine,56.0,mg,39514643,absolute,56 or 84 mg
+Psilocybin,25.0,mg,39499526,absolute,25 mg
+Ketamine,35.0,mg,39468512,relative_weight,0.5 mg/kg
+Psilocybin,1.0,mg,39427449,absolute,1 mg
+Psilocybin,10.0,mg,39427449,absolute,10 mg
+Psilocybin,25.0,mg,39427449,absolute,25 mg
+MDMA,25.0,mg,39381877,absolute,25-40 mg
+Psilocybin,25.0,mg,39372842,absolute,25 mg
+Ketamine,70.0,mg,39365203,relative_weight,1 mg/kg
+Ketamine,7.0,mg,39365203,relative_weight,0.1 mg/kg-
+Psilocybin,30.0,mg,39354706,relative_weight,30 mg/70 kg
+Psilocybin,3.15,mg,39354706,relative_weight,45 μg/kg
+Psilocybin,25.0,mg,39343309,absolute,25 mg
+S-Ketamine,35.0,mg,39342105,relative_weight,0.5 mg/kg
+S-Ketamine,28.0,mg,39326589,relative_weight,0.4 mg/kg
+Ketamine,35.0,mg,39318021,relative_weight,0.5 mg/kg
+LSD,0.01,mg,39235512,absolute,10 µg
+LSD,0.025,mg,39231959,absolute,25-200 µg
+Ketamine,35.0,mg,39222174,relative_weight,0.5 mg/kg
+Ketamine,70.0,mg,39222174,relative_weight,1.0 mg/kg
+Ketamine,0.5,mg,39222174,absolute,0.5
+Ketamine,50.0,mg,39214377,absolute,50 mg
+S-Ketamine,50.0,mg,39214377,absolute,50 mg
+Ketamine,35.0,mg,39210712,relative_weight,0.5 mg/kg
+LSD,0.004,mg,39182140,absolute,4-20 μg
+S-Ketamine,0.0,mg,39160473,relative_weight,0. 25 mg/kg
+LSD,0.2,mg,39078038,absolute,200 μg
+Ketamine,35.0,mg,39068714,relative_weight,0.5 mg/kg
+Ketamine,150.0,mg,39068714,absolute,150 mg
+Ketamine,35.0,mg,39054328,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,39028544,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,39020167,absolute,25 mg
+LSD,0.015,mg,39009578,absolute,15 µg
+Psilocybin,25.0,mg,38988455,absolute,25 mg
+Ketamine,35.0,mg,38982828,relative_weight,0.5 mg/kg
+Ketamine,50.0,mg,38969374,absolute,50 mg
+Ketamine,35.0,mg,38969374,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,38956594,absolute,25 mg
+Ketamine,180.0,mg,38914860,absolute,180 mg
+Ketamine,30.0,mg,38914860,absolute,"30, 60, 120 or 180 mg"
+Ketamine,120.0,mg,38914860,absolute,120 mg
+S-Ketamine,180.0,mg,38914860,absolute,180 mg
+S-Ketamine,30.0,mg,38914860,absolute,"30, 60, 120 or 180 mg"
+S-Ketamine,120.0,mg,38914860,absolute,120 mg
+Psilocybin,20.0,mg,38883812,absolute,20 mg
+Ketamine,115.0,mg,38863284,absolute,115.
+S-Ketamine,115.0,mg,38863284,absolute,115.
+Psilocybin,14.0,mg,38862674,relative_weight,0.2 mg/kg
+Ketamine,35.0,mg,38834540,relative_weight,0.5 mg/kg
+S-Ketamine,14.0,mg,38808490,relative_weight,0.2 mg/kg
+MDMA,60.0,mg,38773523,absolute,60 mg
+MDMA,120.0,mg,38773523,absolute,120 mg
+Psilocybin,60.0,mg,38773523,absolute,60 mg
+Psilocybin,120.0,mg,38773523,absolute,120 mg
+Ketamine,35.0,mg,38755245,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,38714931,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,38710325,relative_weight,0.5 mg/kg
+S-Ketamine,50.0,mg,38696221,absolute,50 mg
+R-Ketamine,50.0,mg,38696221,absolute,50 mg
+Ketamine,35.0,mg,38688118,relative_weight,0.5 mg/kg
+S-Ketamine,14.0,mg,38658886,relative_weight,0.2 mg/kg
+Psilocybin,5.0,mg,38658877,absolute,5 mg
+Psilocybin,2.0,mg,38658877,absolute,2 mg and
+Psilocybin,21.0,mg,38632313,relative_weight,0.3 mg/kg
+Ketamine,40.599999999999994,mg,38629811,relative_weight_time,0.58 mg/kg/h
+Ketamine,16.1,mg,38629811,relative_weight,0.23 mg/kg
+LSD,0.01,mg,38622150,absolute,10 µg
+5-MeO-DMT,10.0,mg,38616411,absolute,10 and 12 mg
+5-MeO-DMT,12.0,mg,38616411,absolute,12 mg
+5-MeO-DMT,1.0,mg,38616411,absolute,1-12 mg
+Ibogaine,10.0,mg,38616411,absolute,10 and 12 mg
+Ibogaine,12.0,mg,38616411,absolute,12 mg
+Ibogaine,1.0,mg,38616411,absolute,1-12 mg
+Psilocybin,1.0,mg,38605658,absolute,1 mg
+Psilocybin,25.0,mg,38605658,absolute,25 mg
+Psilocybin,10.0,mg,38581739,relative_weight,10 mg/70 kg
+Ketamine,56.0,mg,38537759,absolute,56 and 84 mg
+Ketamine,28.0,mg,38537759,absolute,28 mg
+Ketamine,70.0,mg,38537759,relative_weight,1 mg/kg
+Ketamine,35.0,mg,38537759,relative_weight,0.5 mg/kg
+Ketamine,14.0,mg,38537759,relative_weight,0.2 mg/kg
+Ketamine,56.0,mg,38537759,absolute,56-84 mg
+S-Ketamine,56.0,mg,38537759,absolute,56 and 84 mg
+S-Ketamine,28.0,mg,38537759,absolute,28 mg
+S-Ketamine,70.0,mg,38537759,relative_weight,1 mg/kg
+S-Ketamine,35.0,mg,38537759,relative_weight,0.5 mg/kg
+S-Ketamine,14.0,mg,38537759,relative_weight,0.2 mg/kg
+S-Ketamine,56.0,mg,38537759,absolute,56-84 mg
+S-Ketamine,35.0,mg,38523183,relative_weight,0.5-3.0 mg/kg
+S-Ketamine,30.0,mg,38523183,absolute,30 mg
+Ketamine,240.0,mg,38522166,absolute,240 mg/
+Ketamine,160.0,mg,38522166,absolute,160 mg/day
+S-Ketamine,35.0,mg,38522144,relative_weight,0.5 mg/kg
+S-Ketamine,14.0,mg,38522144,relative_weight,0.2 mg/kg
+LSD,0.1,mg,38518267,absolute,100 μg
+S-Ketamine,49.0,mg,38497863,relative_weight,0.7 mg/kg
+Psilocybin,15.0,mg,40656108,absolute,"15, 20, 25, and 30 mg"
+Psilocybin,25.0,mg,40656108,absolute,25 and 30 mg
+Psilocybin,30.0,mg,40656108,absolute,30 mg
+Psilocybin,25.0,mg,40656108,absolute,25 mg
+Psilocybin,20.0,mg,40656108,absolute,20 mg
+Psilocybin,15.0,mg,40656108,absolute,15 mg
+Psilocybin,30.0,mg,38483940,relative_weight,30 mg/70 kg
+Psilocybin,20.0,mg,38483940,relative_weight,20 mg/70 kg
+S-Ketamine,50.0,mg,38446480,absolute,50 mg
+S-Ketamine,17.5,mg,38446480,relative_weight,0.25 mg/kg
+Psilocybin,1.0,mg,38423367,absolute,1 mg
+Psilocybin,25.0,mg,38423367,absolute,25 mg
+Psilocybin,5.0,mg,38423367,absolute,5 mg
+Ketamine,35.0,mg,38402253,relative_weight,0.5 mg/kg
+S-Ketamine,35.0,mg,38402253,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,38378088,relative_weight,0.5-0.9 mg/kg
+Ketamine,35.0,mg,38378088,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,38359838,absolute,25 mg
+LSD,0.004,mg,38347582,absolute,4-20 µg
+Psilocybin,25.0,mg,38326432,absolute,25 mg
+Psilocybin,20.0,mg,38326357,absolute,20 mg
+DMT,20.0,mg,38326357,absolute,20 mg
+LSD,0.01,mg,38317077,absolute,10 µg
+Psilocybin,1.0,mg,38316896,absolute,"1, 10 or 25 mg"
+Ketamine,35.0,mg,38293803,relative_weight,0.5 and 1 mg/kg
+LSD,0.013,mg,38287172,absolute,13 and 26 µg
+MDMA,105.0,mg,38279662,relative_weight,1.5 mg/kg
+MDMA,52.5,mg,38279662,relative_weight,0.75 mg/kg
+Psilocybin,5.0,mg,38279085,absolute,5 mg
+Psilocybin,30.0,mg,38279085,absolute,30 mg
+Psilocybin,15.5,mg,38274414,absolute,15.5 mg/5 min
+Psilocybin,6.0,mg,38274414,absolute,6 mg/5 min
+Psilocybin,21.5,mg,38274414,absolute,21.5 mg
+Psilocybin,9.0,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
+DMT,15.5,mg,38274414,absolute,15.5 mg/5 min
+DMT,6.0,mg,38274414,absolute,6 mg/5 min
+DMT,21.5,mg,38274414,absolute,21.5 mg
+DMT,9.0,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
+5-MeO-DMT,15.5,mg,38274414,absolute,15.5 mg/5 min
+5-MeO-DMT,6.0,mg,38274414,absolute,6 mg/5 min
+5-MeO-DMT,21.5,mg,38274414,absolute,21.5 mg
+5-MeO-DMT,9.0,mg,38274414,absolute,"9, 12, 17 and 21.5 mg"
+Ketamine,52.5,mg,38266928,relative_weight,0.75-1 mg/kg
+Ayahuasca,100.0,mg,38264636,absolute,100 mg
+DMT,100.0,mg,38264636,absolute,100 mg
+5-MeO-DMT,100.0,mg,38264636,absolute,100 mg
+Psilocybin,25.0,mg,38264632,absolute,25 or 30 mg
+Psilocybin,25.0,mg,38264632,absolute,25 mg
+S-Ketamine,84.0,mg,38244804,absolute,84 mg
+S-Ketamine,56.0,mg,38244804,absolute,56 mg
+S-Ketamine,25.0,mg,38244804,absolute,25 mg
+Psilocybin,84.0,mg,38244804,absolute,84 mg
+Psilocybin,56.0,mg,38244804,absolute,56 mg
+Psilocybin,25.0,mg,38244804,absolute,25 mg
+Psilocybin,9.8,mg,38238974,relative_weight,0.14 mg/kg
+S-Ketamine,14.0,mg,38200438,relative_weight,0.2 mg/kg
+S-Ketamine,35.0,mg,38194244,relative_weight,0.5 mg/kg
+Ketamine,35.0,mg,38188539,relative_weight,0.5 mg/kg
+Psilocybin,14.0,mg,38185235,relative_weight,0.2 mg/kg
+Ketamine,21.0,mg,38179107,relative_weight_time,0.3 mg/kg/h
+Ketamine,35.0,mg,38179107,relative_weight,0.5 mg/kg
+Psilocybin,25.0,mg,40046861,absolute,25 mg
+Psilocybin,10.0,mg,38235248,relative_weight,10 mg/70 kg
