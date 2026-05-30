@@ -135,7 +135,7 @@ class SimpleDataset(Dataset):
             }
 
 
-def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceClassification], test_dataset: SimpleDataset, threshold: float = 0.5) -> pd.DataFrame:
+def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceClassification], test_dataset: SimpleDataset, threshold: float = 0.5, batch_size: int = 1) -> pd.DataFrame:
     """
     Predicts the labels for the test dataset and saves predictions to a CSV.
     Works for classification and token-level NER using a SimpleDataset.
@@ -155,31 +155,41 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
 
         total_chunks = len(test_dataset)
         report_interval = max(1, total_chunks // 100)
-        # Run inference per chunk
-        for i in range(len(test_dataset)):
-            sample = test_dataset[i]
 
-            input_ids = torch.tensor(
-                [test_dataset.tokenizer.convert_tokens_to_ids(
-                    sample["tokens"])],
-                device=device
-            )
+        pad_id = test_dataset.tokenizer.pad_token_id
+        if pad_id is None:
+            pad_id = test_dataset.tokenizer.eos_token_id or 0
 
-            attention_mask = torch.ones_like(input_ids, device=device)
+        # Run inference in batches of chunks
+        for start in range(0, total_chunks, batch_size):
+            end = min(start + batch_size, total_chunks)
+            batch_samples = [test_dataset[i] for i in range(start, end)]
+
+            # Convert token lists to ids and pad to same length
+            id_seqs = [test_dataset.tokenizer.convert_tokens_to_ids(s["tokens"]) for s in batch_samples]
+            lengths = [len(seq) for seq in id_seqs]
+            max_len = max(lengths)
+
+            padded = [seq + [pad_id] * (max_len - len(seq)) for seq in id_seqs]
+            input_ids = torch.tensor(padded, device=device)
+            attention_mask = (input_ids != pad_id).long().to(device)
 
             with torch.no_grad():
-                outputs = model(input_ids=input_ids,
-                                attention_mask=attention_mask)
-                logits = outputs.logits.squeeze(0)  # (seq_len, num_labels)
-                probs = torch.softmax(logits, dim=-1)
+                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                logits_batch = outputs.logits  # (batch, seq_len, num_labels)
+                probs_batch = torch.softmax(logits_batch, dim=-1)
 
-            all_logits.append(logits.cpu().numpy())
-            all_probs.append(probs.cpu().numpy())
+            # Split batch outputs back per chunk, trimming padding
+            for i_in_batch, seq_len in enumerate(lengths):
+                logits = logits_batch[i_in_batch][:seq_len]
+                probs = probs_batch[i_in_batch][:seq_len]
+                all_logits.append(logits.cpu().numpy())
+                all_probs.append(probs.cpu().numpy())
 
             # Progress logging at ~10% intervals
-            if (i + 1) % report_interval == 0 or i == total_chunks - 1:
+            if (end) % report_interval == 0 or end == total_chunks:
                 logging.info(
-                    f"\tNER progress: {i+1}/{total_chunks} ({int((i+1)/total_chunks*100)}%)")
+                    f"\tNER progress: {end}/{total_chunks} ({int(end/total_chunks*100)}%)")
 
         # Convert to numpy arrays
         pred_labels_idx = [np.argmax(p, axis=-1) for p in all_probs]
@@ -246,6 +256,7 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                 "probabilities": merged_probs
             })
 
+
     # ---------- CLASSIFICATION PREDICTION ----------
     else:
         probs = []
@@ -254,44 +265,51 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
         total_samples = len(test_dataset)
         report_interval = max(1, total_samples // 100)
 
-        for i in range(len(test_dataset)):
-            sample = test_dataset[i]
+        # Process in batches of texts
+        for start in range(0, total_samples, batch_size):
+            end = min(start + batch_size, total_samples)
+            batch_texts = [test_dataset[i]["text"] for i in range(start, end)]
 
             encoding = test_dataset.tokenizer(
-                sample["text"],
+                batch_texts,
                 return_tensors="pt",
                 truncation=True,
                 max_length=test_dataset.max_len,
-                padding="max_length"
+                padding=True
             )
 
             input_ids = encoding["input_ids"].to(device)
             attention_mask = encoding["attention_mask"].to(device)
 
             with torch.no_grad():
-                outputs = model(input_ids=input_ids,
-                                attention_mask=attention_mask)
-                logits = outputs.logits.squeeze(0)
+                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+                logits_batch = outputs.logits  # (batch, num_labels) or (batch, seq_len, num_labels)
+
+            # If sequence classification returns seq_len dim, squeeze
+            if logits_batch.dim() == 3:
+                logits_batch = logits_batch.squeeze(1)
+
+            for i_in_batch in range(logits_batch.shape[0]):
+                logits = logits_batch[i_in_batch]
+
+                if test_dataset.is_multilabel:
+                    probs_tensor = torch.sigmoid(logits)
+                    pred_indices = (probs_tensor >= threshold).nonzero(as_tuple=False).squeeze().tolist()
+                    if not isinstance(pred_indices, list):
+                        pred_indices = [pred_indices]
+                    pred_probs = [probs_tensor[i].item() for i in pred_indices]
+                    probs.append(pred_probs)
+                    preds.append(pred_indices)
+                else:
+                    prob = torch.softmax(logits, dim=-1)
+                    pred = int(torch.argmax(prob).item())
+                    probs.append(prob.tolist())
+                    preds.append(pred)
 
             # Progress logging at ~10% intervals
-            if (i + 1) % report_interval == 0 or i == total_samples - 1:
+            if (end) % report_interval == 0 or end == total_samples:
                 logging.info(
-                    f"\tClassification progress: {i+1}/{total_samples} ({int((i+1)/total_samples*100)}%)")
-
-            if test_dataset.is_multilabel:
-                probs_tensor = torch.sigmoid(logits)
-                pred_indices = (probs_tensor >= threshold).nonzero(
-                    as_tuple=False).squeeze().tolist()
-                if not isinstance(pred_indices, list):
-                    pred_indices = [pred_indices]
-                pred_probs = [probs_tensor[i].item() for i in pred_indices]
-                probs.append(pred_probs)
-                preds.append(pred_indices)
-            else:
-                prob = torch.softmax(logits, dim=-1)
-                pred = int(torch.argmax(prob).item())
-                probs.append(prob.tolist())
-                preds.append(pred)
+                    f"\tClassification progress: {end}/{total_samples} ({int(end/total_samples*100)}%)")
 
         for i in range(len(test_dataset)):
             sample = test_dataset[i]
@@ -398,6 +416,12 @@ def main():
         action='store_true',
         help='Skip relevance prediction step.'
     )
+    parser.add_argument(
+        '--batch-size',
+        type=int,
+        default=1,
+        help='Batch size for model inference (default: 1)'
+    )
     log_dir = os.path.join(SCRIPT_DIR, 'log')
     os.makedirs(log_dir, exist_ok=True)
 
@@ -484,7 +508,7 @@ def main():
             data = SimpleDataset(relevant_df, tokenizer,
                                  multilabel=False, is_ner=False)
             relevant_predictions_df = predict(
-                model, data, threshold=relevant_model['prediction_threshold'])
+                model, data, threshold=relevant_model['prediction_threshold'], batch_size=args.batch_size)
             logging.info('Completed predictions of relevance model.')
 
             # Drop the 'text' column from original_df to avoid suffixes after merge
@@ -526,7 +550,7 @@ def main():
                 data = SimpleDataset(relevant_df, tokenizer,
                                      multilabel=m['is_multilabel'], is_ner=is_ner)
                 predictions_df = predict(
-                    model, data, threshold=m['prediction_threshold'])
+                    model, data, threshold=m['prediction_threshold'], batch_size=args.batch_size)
                 logging.info(
                     f'Completed predictions for model: {m["model_path"]}')
                 processed_data = []
@@ -580,7 +604,7 @@ def main():
             logging.info(f'Loaded NER model: {ner_model["model_path"]}')
             data = SimpleDataset(relevant_df, tokenizer,
                                  multilabel=False, is_ner=True)
-            ner_predictions_df = predict(model, data)
+            ner_predictions_df = predict(model, data, batch_size=args.batch_size)
             logging.info('Completed predictions for NER model.')
             processed_data = []
             model_name = os.path.basename(
