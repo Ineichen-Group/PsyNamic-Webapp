@@ -9,6 +9,7 @@ import json
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 from datetime import datetime
+import re
 from data.helper import check_if_pred_exist, cleanup_old_logs, format_timedelta_hms
 import argparse
 
@@ -328,15 +329,44 @@ def load_model(model_path: str, task: str):
 
 
 def get_latest_data(data_dir: str) -> str:
-    """Get lastest csv from data directory, taken the date in filename, e.g. pubmed_results_20250813_00:00:08"""
+    """Get latest csv from data directory by finding the newest YYYYMMDD
+    date token in filenames (e.g. pubmed_results_19000101_20260530_00-03-43.csv).
+    Falls back to file modification time if no date token is found.
+    """
+
     csv_files = [f for f in os.listdir(data_dir) if f.endswith('.csv')]
     if not csv_files:
-        raise FileNotFoundError(
-            "No CSV files found in the specified directory.")
+        raise FileNotFoundError("No CSV files found in the specified directory.")
 
-    # Extract date from filenames and find the latest
-    latest_file = max(csv_files, key=lambda x: datetime.strptime(
-        x.split('_')[2], "%Y%m%d"))
+    date_re = re.compile(r"(\d{8})")
+
+    def file_latest_date(fname: str):
+        # find all 8-digit date-like tokens and parse them
+        matches = date_re.findall(fname)
+
+        # Prefer the second token when available (filename is from_date_to_date)
+        preferred_idx = 1 if len(matches) >= 2 else 0
+
+        if matches:
+            # Try preferred index first
+            try:
+                return datetime.strptime(matches[preferred_idx], "%Y%m%d")
+            except Exception:
+                # Fall back to any other parsable token (reverse order to prefer later dates)
+                for tok in reversed(matches):
+                    try:
+                        return datetime.strptime(tok, "%Y%m%d")
+                    except Exception:
+                        continue
+
+        # fallback: use file modification time
+        try:
+            mtime = os.path.getmtime(os.path.join(data_dir, fname))
+            return datetime.fromtimestamp(mtime)
+        except Exception:
+            return datetime.min
+
+    latest_file = max(csv_files, key=file_latest_date)
     return os.path.join(data_dir, latest_file)
 
 
@@ -351,11 +381,6 @@ def extract_retrieval_date_from_filename(filename: str) -> str:
 
 
 def main():
-
-    # add argument parser, if input file is given, use that instead of latest file
-    # -i or --input_file
-    # add output directory argument
-    # -o or --output_dir
 
     parser = argparse.ArgumentParser(description="Run prediction pipeline")
     parser.add_argument(
