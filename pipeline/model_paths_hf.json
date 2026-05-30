@@ -1,0 +1,290 @@
+[
+    {
+        "task": "Study Type",
+        "model_path": "vera-bernhard/biolinkbert-study-type-20251005",
+        "prediction_threshold": "0.5",
+        "id2label": {
+            "0": "Randomized-controlled trial (RCT)",
+            "1": "Cohort study",
+            "2": "Real-world study",
+            "3": "Study protocol",
+            "4": "Systematic review/meta-analysis",
+            "5": "Qualitative Study",
+            "6": "Case report",
+            "7": "Case series",
+            "8": "Other"
+        },
+        "is_multilabel": false
+    },
+    {
+        "task": "Study Purpose",
+        "model_path": "vera-bernhard/biobert-study-purpose-20250221",
+        "prediction_threshold": "0.31",
+        "id2label": {
+            "0": "Efficacy endpoints",
+            "1": "Safety endpoints",
+            "2": "Pharmacokinetics",
+            "3": "Mechanism of action",
+            "4": "Disease model study",
+            "5": "Demographic study"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Study Control",
+        "model_path": "vera-bernhard/pubmedbert-study-control-20250221",
+        "prediction_threshold": "0.12",
+        "id2label": {
+            "0": "Placebo",
+            "1": "Active control",
+            "2": "Pre-post",
+            "3": "Other control",
+            "4": "Non-controlled",
+            "5": "Not applicable"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Data Type",
+        "model_path": "vera-bernhard/biobert-data-type-20250221",
+        "prediction_threshold": "0.5",
+        "id2label": {
+            "0": "Cross-sectional",
+            "1": "Longitudinal long",
+            "2": "Longitudinal short",
+            "3": "Not applicable",
+            "4": "Unknown"
+        },
+        "is_multilabel": false
+    },
+    {
+        "task": "Data Collection",
+        "model_path": "vera-bernhard/biobert-data-collection-20250221",
+        "prediction_threshold": "0.5",
+        "id2label": {
+            "0": "Not applicable",
+            "1": "Prospective",
+            "2": "Retrospective",
+            "3": "Unknown"
+        },
+        "is_multilabel": false
+    },
+    {
+        "task": "Number of Participants",
+        "model_path": "vera-bernhard/biolinkbert-number-of-participants-20250221",
+        "prediction_threshold": "0.5",
+        "id2label": {
+            "0": "1-20",
+            "1": "100-199",
+            "10": "\u22651000",
+            "2": "200-499",
+            "3": "21-40",
+            "4": "41-60",
+            "5": "500-999",
+            "6": "61-80",
+            "7": "81-100",
+            "8": "Not applicable",
+            "9": "Unknown"
+        },
+        "is_multilabel": false
+    },
+    {
+        "task": "Sex of Participants",
+        "model_path": "vera-bernhard/biobert-sex-of-participants-20250221",
+        "prediction_threshold": "0.5",
+        "id2label": {
+            "0": "Both sexes",
+            "1": "Female",
+            "2": "Male",
+            "3": "Not applicable",
+            "4": "Unknown"
+        },
+        "is_multilabel": false
+    },
+    {
+        "task": "Age of Participants",
+        "model_path": "vera-bernhard/pubmedbert-age-of-participants-20250221",
+        "prediction_threshold": "0.12",
+        "id2label": {
+            "0": "Pediatric (< 18 years old)",
+            "1": "Adult (\u226518 years)",
+            "2": "Unknown",
+            "3": "Not applicable"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Substances",
+        "model_path": "vera-bernhard/biolinkbert-substances-20250228",
+        "prediction_threshold": "0.16",
+        "id2label": {
+            "0": "Ketamine",
+            "1": "S-Ketamine",
+            "10": "Mescaline",
+            "11": "Ibogaine",
+            "12": "Salvinorin A",
+            "13": "Combination Therapy",
+            "14": "Analogue",
+            "15": "Unknown",
+            "2": "R-Ketamine",
+            "3": "MDMA",
+            "4": "LSD",
+            "5": "Psilocybin",
+            "6": "Psychedelic mushrooms",
+            "7": "Ayahuasca",
+            "8": "DMT",
+            "9": "5-MeO-DMT"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Application Form",
+        "model_path": "vera-bernhard/scibert-application-form-20250221",
+        "prediction_threshold": "0.10",
+        "id2label": {
+            "0": "Oral",
+            "1": "Nasal",
+            "2": "Intravenous",
+            "3": "Smoking",
+            "4": "Subcutaneous",
+            "5": "Other",
+            "6": "Unknown",
+            "7": "Not applicable"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Regimen",
+        "model_path": "vera-bernhard/pubmedbert-regimen-20250221",
+        "prediction_threshold": "0.43",
+        "id2label": {
+            "0": "Microdosing",
+            "1": "Multiple Applications",
+            "2": "Single Dose",
+            "3": "Unknown"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Setting",
+        "model_path": "vera-bernhard/pubmedbert-setting-20250221",
+        "prediction_threshold": "0.10",
+        "id2label": {
+            "0": "Clinical",
+            "1": "Naturalistic",
+            "2": "Party setting",
+            "3": "Other setting",
+            "4": "Unknown",
+            "5": "Not applicable",
+            "6": "Palliative Setting"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Substance Naivety",
+        "model_path": "vera-bernhard/biomedbert-abstract-substance-naivety-20250221",
+        "prediction_threshold": "0.16",
+        "id2label": {
+            "0": "Substance-Na\u00efve Participants",
+            "1": "Substance-non-na\u00efve participants",
+            "2": "Unknown",
+            "3": "Not applicable"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Condition",
+        "model_path": "vera-bernhard/pubmedbert-condition-20250221",
+        "prediction_threshold": "0.22",
+        "id2label": {
+            "0": "Psychiatric condition",
+            "1": "Depression",
+            "10": "(Chronic) Pain",
+            "11": "Palliative Setting",
+            "12": "Recreational Drug Use",
+            "13": "Healthy Participants",
+            "2": "Anxiety",
+            "3": "Post-traumatic stress disorder (PTSD)",
+            "4": "Alcoholism",
+            "5": "Other addictions (e.g. smoking)",
+            "6": "Anorexia",
+            "7": "Alzheimer\u2019s disease",
+            "8": "Non-Alzheimer dementia",
+            "9": "Substance abuse"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Outcomes",
+        "model_path": "vera-bernhard/scibert-outcomes-20250221",
+        "prediction_threshold": "0.18",
+        "id2label": {
+            "0": "The ability to drive a car",
+            "1": "Suicide",
+            "10": "Surveys",
+            "11": "Interviews",
+            "12": "Neurotoxicity",
+            "13": "Emergency department visits",
+            "2": "Functional MRI",
+            "3": "MRI",
+            "4": "PET, SPECT",
+            "5": "Physiological Functions",
+            "6": "Electroencephalography (EEG)",
+            "7": "Mental Functions",
+            "8": "Psychedelic experience",
+            "9": "Soluble biomarker"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Clinical Trial Phase",
+        "model_path": "vera-bernhard/clinicalbert-clinical-trial-phase-20250221",
+        "prediction_threshold": "0.12",
+        "id2label": {
+            "0": "Phase 1",
+            "1": "Phase 2",
+            "2": "Phase 3",
+            "3": "Phase 4",
+            "4": "Unknown",
+            "5": "Not Applicable"
+        },
+        "is_multilabel": true
+    },
+    {
+        "task": "Study Conclusion",
+        "model_path": "vera-bernhard/scibert-study-conclusion-20251005",
+        "prediction_threshold": "0.5",
+        "id2label": {
+            "0": "Positive",
+            "1": "Negative",
+            "2": "Neutral",
+            "3": "Mixed",
+            "4": "Unknown",
+            "5": "Not Applicable"
+        },
+        "is_multilabel": false
+    },
+    {
+        "task": "Relevant",
+        "model_path": "vera-bernhard/biobert-relevant-20250306",
+        "prediction_threshold": "0.5",
+        "id2label": {
+            "0": "irrelevant",
+            "1": "relevant"
+        },
+        "is_multilabel": false
+    },
+    {
+        "task": "NER",
+        "model_path": "vera-bernhard/biomedbert-abstract-ner-bio-20250221",
+        "prediction_threshold": "",
+        "id2label": {
+            "0": "O",
+            "1": "I-Dosage",
+            "2": "I-Application area",
+            "3": "B-Dosage",
+            "4": "B-Application area"
+        },
+        "is_multilabel": false
+    }
+]
