@@ -12,6 +12,7 @@ from datetime import datetime
 import re
 from data.helper import check_if_pred_exist, cleanup_old_logs, format_timedelta_hms
 import argparse
+import sys
 
 # Assuming Trainer, DataSplit, DataSplitBIO are defined elsewhere in your project
 from typing import Union
@@ -422,6 +423,11 @@ def main():
         default=1,
         help='Batch size for model inference (default: 1)'
     )
+    parser.add_argument(
+        '--log-to-stdout',
+        action='store_true',
+        help='Redirect logs to stdout instead of a logfile.'
+    )
     log_dir = os.path.join(SCRIPT_DIR, 'log')
     os.makedirs(log_dir, exist_ok=True)
 
@@ -442,12 +448,22 @@ def main():
     os.makedirs(log_dir, exist_ok=True)
     cleanup_old_logs(log_dir)
 
-    logging.basicConfig(
-        filename=args.log_file,
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(message)s',
-        force=True
-    )
+    # Configure logging: either to stdout (useful in container/stdout-first setups)
+    # or to the logfile path provided by `--log-file`.
+    if getattr(args, 'log_to_stdout', False):
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s %(message)s',
+            handlers=[logging.StreamHandler(sys.stdout)],
+            force=True,
+        )
+    else:
+        logging.basicConfig(
+            filename=args.log_file,
+            level=logging.INFO,
+            format='%(asctime)s %(levelname)s %(message)s',
+            force=True
+        )
 
     logging.info('Prediction process started.')
     PUBMED_DATA_DIR = 'data/pubmed_fetch_results'
