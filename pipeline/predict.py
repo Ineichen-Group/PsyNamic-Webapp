@@ -333,6 +333,7 @@ def load_model(model_path: str, task: str):
     Load a fine-tuned BERT model and tokenizer from a save directory.
     Returns the model and tokenizer. Trainer is optional for inference.
     """
+
     # Allow either a local path (relative to the script dir) or a HF Hub id.
     local_path = os.path.join(SCRIPT_DIR, model_path)
     use_path = local_path if os.path.exists(local_path) else model_path
