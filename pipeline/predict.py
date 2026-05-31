@@ -17,6 +17,7 @@ import sys
 # Assuming Trainer, DataSplit, DataSplitBIO are defined elsewhere in your project
 from typing import Union
 from transformers import Trainer, AutoModelForTokenClassification, AutoModelForSequenceClassification, AutoTokenizer
+import transformers
 
 import pytz
 import pandas as pd
@@ -136,7 +137,7 @@ class SimpleDataset(Dataset):
             }
 
 
-def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceClassification], test_dataset: SimpleDataset, threshold: float = 0.5, batch_size: int = 1) -> pd.DataFrame:
+def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceClassification], test_dataset: SimpleDataset, threshold: float = 0.5, batch_size: int = 1, device: torch.device = None) -> pd.DataFrame:
     """
     Predicts the labels for the test dataset and saves predictions to a CSV.
     Works for classification and token-level NER using a SimpleDataset.
@@ -146,7 +147,9 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
     threshold = float(threshold) if threshold else None
     pred_data = []
 
-    device = next(model.parameters()).device
+    # Prefer explicit device argument from caller (returned by load_model).
+    if device is None:
+        device = next(model.parameters()).device
     model.eval()
 
     # ---------- NER PREDICTION ----------
@@ -330,21 +333,26 @@ def load_model(model_path: str, task: str):
     Load a fine-tuned BERT model and tokenizer from a save directory.
     Returns the model and tokenizer. Trainer is optional for inference.
     """
-    model_path = os.path.join(SCRIPT_DIR, model_path)
-    # For prediction on a laptop, CPU is usually safest
-    device = torch.device("cpu")
+    # Allow either a local path (relative to the script dir) or a HF Hub id.
+    local_path = os.path.join(SCRIPT_DIR, model_path)
+    use_path = local_path if os.path.exists(local_path) else model_path
 
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    # Choose device: prefer CUDA if available
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    tokenizer = AutoTokenizer.from_pretrained(use_path)
 
     if "ner" in task.lower():
-        model = AutoModelForTokenClassification.from_pretrained(model_path)
+        model = AutoModelForTokenClassification.from_pretrained(use_path)
     else:
-        model = AutoModelForSequenceClassification.from_pretrained(model_path)
+        model = AutoModelForSequenceClassification.from_pretrained(use_path)
 
     model.to(device)
     model.eval()
 
-    return model, tokenizer
+    logging.info(f'Loaded model from {use_path} onto device {device}')
+
+    return model, tokenizer, device
 
 
 def get_latest_data(data_dir: str) -> str:
@@ -465,6 +473,20 @@ def main():
             force=True
         )
 
+    # Startup environment / version info to help debug slow runs on clusters
+    try:
+        logging.info(f"torch {torch.__version__}, cuda_available={torch.cuda.is_available()}, cuda_version={getattr(torch.version, 'cuda', 'n/a')}")
+    except Exception:
+        logging.info('torch version info unavailable')
+    try:
+        logging.info(f"transformers {transformers.__version__}")
+    except Exception:
+        logging.info('transformers version info unavailable')
+
+    logging.info(f"CUDA_VISIBLE_DEVICES={os.environ.get('CUDA_VISIBLE_DEVICES')}")
+    logging.info(f"TRANSFORMERS_CACHE={os.environ.get('TRANSFORMERS_CACHE', os.path.expanduser('~/.cache/huggingface'))}")
+    logging.info(f"OMP_NUM_THREADS={os.environ.get('OMP_NUM_THREADS')} MKL_NUM_THREADS={os.environ.get('MKL_NUM_THREADS')} TOKENIZERS_PARALLELISM={os.environ.get('TOKENIZERS_PARALLELISM')}")
+
     logging.info('Prediction process started.')
     PUBMED_DATA_DIR = 'data/pubmed_fetch_results'
     MODEL_INFO = 'pipeline/model_paths.json'
@@ -505,7 +527,7 @@ def main():
             # Predict relevance first
             relevant_model = next(
                 (m for m in model_info if m['task'].lower() == 'relevant'), None)
-            model, tokenizer = load_model(
+            model, tokenizer, device = load_model(
                 relevant_model['model_path'], relevant_model['task'])
             logging.info(
                 f'Loaded relevance model: {relevant_model["model_path"]}')
@@ -524,7 +546,7 @@ def main():
             data = SimpleDataset(relevant_df, tokenizer,
                                  multilabel=False, is_ner=False)
             relevant_predictions_df = predict(
-                model, data, threshold=relevant_model['prediction_threshold'], batch_size=args.batch_size)
+                model, data, threshold=relevant_model['prediction_threshold'], batch_size=args.batch_size, device=device)
             logging.info('Completed predictions of relevance model.')
 
             # Drop the 'text' column from original_df to avoid suffixes after merge
@@ -559,14 +581,14 @@ def main():
             for m in model_info:
                 if m['task'].lower() == 'relevant' or m['task'] == 'NER':
                     continue  # already processed
-                model, tokenizer = load_model(m['model_path'], m['task'])
+                model, tokenizer, device = load_model(m['model_path'], m['task'])
                 logging.info(
                     f'Loaded model: {m["model_path"]} for task: {m["task"]}')
                 is_ner = 'ner' in m['task'].lower()
                 data = SimpleDataset(relevant_df, tokenizer,
                                      multilabel=m['is_multilabel'], is_ner=is_ner)
                 predictions_df = predict(
-                    model, data, threshold=m['prediction_threshold'], batch_size=args.batch_size)
+                    model, data, threshold=m['prediction_threshold'], batch_size=args.batch_size, device=device)
                 logging.info(
                     f'Completed predictions for model: {m["model_path"]}')
                 processed_data = []
@@ -614,13 +636,13 @@ def main():
             start = datetime.now(zurich)
             ner_model = next(
                 (m for m in model_info if m['task'].lower() == 'ner'), None)
-            model, tokenizer = load_model(
+            model, tokenizer, device = load_model(
                 ner_model['model_path'], ner_model['task'])
             id2label = {int(k): v for k, v in ner_model['id2label'].items()}
             logging.info(f'Loaded NER model: {ner_model["model_path"]}')
             data = SimpleDataset(relevant_df, tokenizer,
                                  multilabel=False, is_ner=True)
-            ner_predictions_df = predict(model, data, batch_size=args.batch_size)
+            ner_predictions_df = predict(model, data, batch_size=args.batch_size, device=device)
             logging.info('Completed predictions for NER model.')
             processed_data = []
             model_name = os.path.basename(
