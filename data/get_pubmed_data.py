@@ -342,6 +342,94 @@ def extract_abstract_text(article: ET.Element, debug_dir: str = None, pmid: str 
     return abstract
 
 
+def get_pubmed_id_from_title(title: str) -> Optional[str]:
+    """Search PubMed for a title and return the first matching PMID using the
+    global `session` and `PUBMED_API_URL`.
+
+    Returns `None` when no match is found or on error.
+    """
+    # defensive checks: handle NaN / non-string titles
+    if pd.isna(title):
+        return None
+    title_str = str(title).strip()
+    if not title_str:
+        return None
+
+    params = {
+        "db": "pubmed",
+        "term": title_str,
+        "retmode": "xml",
+        "retmax": 1,
+    }
+
+    try:
+        resp = session.get(PUBMED_API_URL, params=params, timeout=20)
+        resp.raise_for_status()
+    except Exception:
+        return None
+
+    try:
+        root = ET.fromstring(resp.content)
+    except Exception:
+        return None
+
+    # Check for explicit "no items" message
+    msg = root.find('.//OutputMessage')
+    if msg is not None and (msg.text or '').strip() == 'No items found.':
+        return None
+
+    ids = root.xpath('//IdList/Id')
+    if not ids:
+        return None
+
+    pmid = ids[0].text
+    if not pmid:
+        return None
+
+    # verify the title matches (use fetch_title_from_pubmed_id which uses efetch)
+    fetched_title = fetch_title_from_pubmed_id(pmid)
+    if fetched_title and title_str.lower() == fetched_title.strip().lower():
+        return pmid
+    elif fetched_title and title_str.lower().startswith(fetched_title.strip().lower()):
+        return pmid
+    elif fetched_title and fetched_title.strip().lower().startswith(title_str.lower()):
+        return pmid
+    #selse:
+        # print(f"Title mismatch for PMID {pmid}: \nsearched '{title_str}' \nbut fetched '{fetched_title}'"   )
+    return None
+
+
+def fetch_title_from_pubmed_id(pmid: str) -> Optional[str]:
+    """Fetch the article title for a PMID using the efetch (abstracts) endpoint
+    via the script's global helpers (`get_pubmed_abstracts` + `extract_title`).
+
+    Returns `None` on failure or if title not found.
+    """
+    xml = get_pubmed_abstracts([pmid])
+    if not xml:
+        return None
+
+    # Try the higher-level parser first
+    try:
+        articles = extract_pubmed_articles(xml)
+        if articles:
+            return extract_title(articles[0])
+    except Exception:
+        # fall back to raw parsing below
+        pass
+
+    # Fallback: raw XML parse for ArticleTitle
+    try:
+        root = ET.fromstring(xml)
+        title_elem = root.find('.//ArticleTitle')
+        if title_elem is not None:
+            return ''.join(title_elem.itertext()).strip()
+    except Exception:
+        return None
+
+    return None
+    
+
 def main():
     """Command-line entrypoint: fetch PubMed records since last fetch and save CSV."""
     dir_path = os.path.dirname(os.path.realpath(__file__))
