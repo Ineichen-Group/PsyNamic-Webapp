@@ -12,6 +12,7 @@ import logging
 import argparse
 import pytz
 from data.helper import cleanup_old_logs, format_timedelta_hms
+from analysis.analysis import is_same_title
 from typing import Optional, List, Sequence
 
 PUBMED_API_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
@@ -386,13 +387,8 @@ def get_pubmed_id_from_title(title: str) -> Optional[str]:
     if not pmid:
         return None
 
-    # verify the title matches (use fetch_title_from_pubmed_id which uses efetch)
     fetched_title = fetch_title_from_pubmed_id(pmid)
-    if fetched_title and title_str.lower() == fetched_title.strip().lower():
-        return pmid
-    elif fetched_title and title_str.lower().startswith(fetched_title.strip().lower()):
-        return pmid
-    elif fetched_title and fetched_title.strip().lower().startswith(title_str.lower()):
+    if fetched_title and is_same_title(title_str, fetched_title):
         return pmid
     #selse:
         # print(f"Title mismatch for PMID {pmid}: \nsearched '{title_str}' \nbut fetched '{fetched_title}'"   )
