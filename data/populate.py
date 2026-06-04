@@ -74,7 +74,7 @@ def create_paper(
         abstract: str,
         prediction_input: str,
         key_terms: str,
-        doi: str, 
+        doi: str,
         date: int,
         entrez_year: Optional[int],
         authors: str,
@@ -93,12 +93,13 @@ def create_paper(
         try:
             date = datetime.strptime(str(date), '%Y-%m-%d')
         except ValueError:
-            logging.warning(f"Date '{date}' is not in expected format 'yyyy-mm-dd'. Setting date to None.")
+            logging.warning(
+                f"Date '{date}' is not in expected format 'yyyy-mm-dd'. Setting date to None.")
             date = None
 
     return Paper(
         id=ID,
-        pubmed_id=int(pubmed_id) if pubmed_id  else None,
+        pubmed_id=int(pubmed_id) if pubmed_id else None,
         title=title,
         abstract=abstract,
         prediction_input=prediction_input,
@@ -135,7 +136,8 @@ def create_ner_tag(session: Session, tag: str, start_id: int, end_id: int, text:
         NerTag.text == text
     ).first()
     if ner_tag:
-        logging.info(f"NER tag already exists: {ner_tag} for paper_id {paper_id}")
+        logging.info(
+            f"NER tag already exists: {ner_tag} for paper_id {paper_id}")
         return ner_tag
 
     return NerTag(
@@ -203,17 +205,18 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
         nr_studies = len(studies_data)
         # Keep relevant studies only
         studies_data = studies_data[studies_data['prediction'] == 1]
-        logging.info(f"Loading only relevant studies from {file}: {len(studies_data)} out of {nr_studies} total studies")
-    
+        logging.info(
+            f"Loading only relevant studies from {file}: {len(studies_data)} out of {nr_studies} total studies")
+
     nr_studies = len(studies_data)
     # Try to reuse an existing BatchRetrieval for this source file if present
     source_file = os.path.basename(file)
     batch = session.query(BatchRetrieval).filter(
         BatchRetrieval.source_file == source_file
     ).first()
-    # If we've already processed this source file, skip populating again
     if batch:
-        logging.info(f"BatchRetrieval for {source_file} already exists (id={batch.id}); skipping populate_studies.")
+        logging.info(
+            f"BatchRetrieval for {source_file} already exists (id={batch.id}); skipping populate_studies.")
         return
     else:
         batch = create_batch_retrieval(file, nr_studies)
@@ -233,9 +236,6 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
         title = row['title']
         prediction_input = title + '.^\n' + abstract
         paper_id = row[studies_id_column]
-        # TODO: check if this is actually needed
-        if pd.isna(paper_id):
-            paper_id = get_unused_id(session)
 
         if 'pub_date' in row and row['pub_date'] != '':
             date = row['pub_date']
@@ -254,7 +254,7 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
                 'nov': '11',
                 'dec': '12'
             }
-                        
+
             date_comp = row['date'].split()
             # Case 1: date has both month and day (e.g. "Mar 15")
             if len(date_comp) == 2:
@@ -262,7 +262,8 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
                 day = date_comp[1]
                 # Check if month is valid and day is a digit
                 if month not in month2number or not day.isdigit():
-                    logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                    logging.warning(
+                        f"Unexpected date format in 'date' field: '{row['date']}'")
                     date = f"{row['year']}-01-01"
                 else:
                     month = month2number[month]
@@ -276,17 +277,21 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
                     month = month2number[month]
                     date = f"{row['year']}-{month}-01"
                 else:
-                    logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                    logging.warning(
+                        f"Unexpected date format in 'date' field: '{row['date']}'")
                     date = f"{row['year']}-01-01"
             # Case 3: something weird in date field
             else:
-                logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                logging.warning(
+                    f"Unexpected date format in 'date' field: '{row['date']}'")
                 date = f"{row['year']}-01-01"
 
         elif 'year' in row and row['year'] != '':
-            date = str(int(row['year'])) + '-01-01'  # set to first day of the year
+            # set to first day of the year
+            date = str(int(row['year'])) + '-01-01'
         else:
-            logging.warning(f"No valid date found for paper: {row[studies_id_column]}")
+            logging.warning(
+                f"No valid date found for paper: {row[studies_id_column]}")
             date = None
         paper = create_paper(
             ID=int(paper_id),
@@ -297,7 +302,8 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             key_terms=row['keywords'],
             doi=row['doi'],
             date=date,
-            entrez_year=int(row['entrez_year']) if 'entrez_year' in row and pd.notna(row['entrez_year']) else None,
+            entrez_year=int(row['entrez_year']) if 'entrez_year' in row and pd.notna(
+                row['entrez_year']) else None,
             authors='',
             link_to_fulltext='',
             link_to_pubmed=row['pubmed_url'],
@@ -310,44 +316,71 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
 
 def populate_class_predictions(session: Session, file: str):
     pred_data = pd.read_csv(file, encoding='utf-8')
-    for i, row in pred_data.iterrows():
+
+    for _, row in pred_data.iterrows():
         paper_id = int(row['id'])
+
         paper = session.query(Paper).filter(Paper.id == paper_id).first()
         if not paper:
-            # check if there is a paper with the same pubmed_id as paper_id
-            paper = session.query(Paper).filter(Paper.pubmed_id == paper_id).first()
+            paper = session.query(Paper).filter(
+                Paper.pubmed_id == paper_id).first()
             if not paper:
-                logging.warning(f"No paper found with paper_id: {paper_id}")
+                logging.warning(
+                    f"No paper found with paper_id/pubmed_id: {paper_id}")
+                continue
+
+        incoming_is_manual = row.get("model") == "manual_annotation"
+
+        # Check if manual annotation already exists for this paper+task
+        existing_manual = session.query(Prediction).filter(
+            Prediction.paper_id == paper.id,
+            Prediction.task == row['task'],
+            Prediction.model == "manual_annotation"
+        ).first()
+
+        if existing_manual and not incoming_is_manual:
+            logging.warning(
+                f"Skipping import: manual annotations already exist for "
+                f"paper_id={paper.id}, task={row['task']}"
+            )
             continue
 
-        # Check for duplicate prediction (same paper_id, task, label, model)
-        existing_pred = session.query(Prediction).filter(
-            Prediction.paper_id == paper_id,
+        existing_prediction = session.query(Prediction).filter(
+            Prediction.paper_id == paper.id,
             Prediction.task == row['task'],
             Prediction.label == row['label'],
             Prediction.model == row['model']
         ).first()
-        if existing_pred:
+
+        if existing_prediction:
             logging.info(
-                f"Prediction already exists for paper_id {paper_id}, task {row['task']}, label {row['label']}, model {row['model']}")
+                f"Skipping duplicate prediction for paper_id={paper.id}, "
+                f"task={row['task']}, label={row['label']}, model={row['model']}"
+            )
             continue
 
+        # Create prediction
         pred = create_predictions(
-            paper_id=paper_id,
+            paper_id=paper.id,
             task=row['task'],
             label=row['label'],
             probability=row['probability'],
             model=row['model'],
             is_multilabel=row['is_multilabel']
         )
+
         session.add(pred)
+
         try:
             session.flush()
         except IntegrityError:
             session.rollback()
-            logging.info(
-                f"Skipped duplicate prediction for paper_id {paper_id}, task {row['task']}, label {row['label']}, model {row['model']}")
+            logging.warning(
+                f"Integrity error skipped for paper_id={paper.id}, "
+                f"task={row['task']}, label={row['label']}, model={row['model']}"
+            )
             continue
+
     session.commit()
 
 
@@ -454,15 +487,29 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
     elif file.endswith('.jsonl'):
         with open(file, 'r', encoding='utf-8') as f:
             data = [json.loads(line) for line in f.readlines()]
+    else:
+        raise ValueError("Unsupported file format. Use CSV or JSONL.")
 
     for row in data:
         paper_id = int(row['id'])
         paper = session.query(Paper).filter(Paper.id == paper_id).first()
         if not paper:
             # check if there is a paper with the same pubmed_id as paper_id
-            paper = session.query(Paper).filter(Paper.pubmed_id == paper_id).first()
+            paper = session.query(Paper).filter(
+                Paper.pubmed_id == paper_id).first()
             if not paper:
                 logging.warning(f"No paper found with paper_id: {paper_id}")
+            continue
+
+        existing_manual_ner = session.query(NerTag).filter(
+            NerTag.paper_id == paper.id,
+            NerTag.model == "manual_annotation"
+        ).first()
+
+        if existing_manual_ner and not manual:
+            logging.warning(
+                f"Skipping NER import: manual annotations already exist for paper_id={paper.id}"
+            )
             continue
 
         pred_text = paper.prediction_input
@@ -478,7 +525,7 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
         entity_probs = []
 
         if manual:
-            model = "manual"
+            model = "manual_annotation"
             # Assign a default probability of 1.0 for manual annotations
             probs = [1.0] * len(tokens)
 
@@ -514,7 +561,8 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                     except Exception as e:
                         logging.exception(f"Error occurred: {e}")
                     # calculate mean probability for the entity (was missing here)
-                    probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
+                    probability = sum(entity_probs) / \
+                        len(entity_probs) if entity_probs else 0.0
                     ner_tag = create_ner_tag(
                         session=session, tag=current_tag, start_id=start_id, end_id=end_id,
                         text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
@@ -525,7 +573,8 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                         session.flush()
                     except IntegrityError:
                         session.rollback()
-                        logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
+                        logging.info(
+                            f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
                         # continue processing (don't count as added)
                         nr_tags += 0
                     else:
@@ -583,7 +632,8 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                         session.flush()
                     except IntegrityError:
                         session.rollback()
-                        logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
+                        logging.info(
+                            f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
                     else:
                         nr_tags += 1
 
@@ -631,14 +681,14 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                 session.flush()
             except IntegrityError:
                 session.rollback()
-                logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
+                logging.info(
+                    f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
             else:
                 nr_tags += 1
 
             # If it's a Dosage tag, normalize it
             if current_tag == 'Dosage':
                 try:
-                    # make sure to replace existing normalization if it exists, since this is the last entity and we might have found a better match for the text
                     create_dosage_norm(
                         session, ner_tag, pred_text[start_id:end_id])
                 except (ValueError, IndexError) as e:
@@ -649,33 +699,45 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
 
 
 def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
-    pubmed_id = row.get('pubmed_id')
-    title = row.get('title')
+    pubmed_id = row.get("pubmed_id")
+
+    # Primary duplicate check: PubMed ID
+    if pd.notna(pubmed_id) and pubmed_id != "":
+        paper = (
+            session.query(Paper)
+            .filter(Paper.pubmed_id == pubmed_id)
+            .first()
+        )
+
+        if paper:
+            logging.info(f"Paper already exists (pubmed_id match): {pubmed_id}")
+            return True
+
+    # Secondary check: title + year (warning only)
+    title = row.get("title")
 
     year = None
-    if 'pub_date' in row:
-        date = row['pub_date']
-        year = date.split('-')[0] if pd.notna(date) else None
-    elif 'year' in row:
-        year = row['year']
+    if "pub_date" in row and pd.notna(row["pub_date"]):
+        year = str(row["pub_date"]).split("-")[0]
+    elif "year" in row and pd.notna(row["year"]):
+        year = str(row["year"])
 
-    if not (pubmed_id and title and year):
-        return False
-
-    paper = session.query(Paper).filter(
-        Paper.pubmed_id == pubmed_id,
-        Paper.title == title,
-        extract('year', Paper.date) == year
-    ).first()
-
-    if paper:
-        logging.info(
-            f"Paper already exists: pubmed_id={pubmed_id}, title={title}, year={year}"
+    if title and year:
+        paper = (
+            session.query(Paper)
+            .filter(
+                Paper.title == title,
+                extract("year", Paper.date) == year
+            )
+            .first()
         )
-        return True
+
+        if paper:
+            logging.warning(
+                f"Potential duplicate detected (title + year match): title={title}, year={year}"
+            )
 
     return False
-
 
 def get_unused_id(session: Session):
     # get all ids from papers, sort from lowest to highest
@@ -698,7 +760,7 @@ def init_args_parser():
                             help='Path to the predictions file', required=False)
     arg_parser.add_argument('-s', '--studies_file', type=str,
                             help='Path to the studies file', required=False)
-    ## add an --all flag
+    # add an --all flag
     arg_parser.add_argument('--all', action='store_true')
     arg_parser.add_argument('--studies_id_column', type=str, default='id',)
     arg_parser.add_argument('-l', '--log-file', type=str, default=None,
@@ -735,7 +797,8 @@ if __name__ == '__main__':
         # get the latest file in the directory
         latest = max(
             [f for f in os.listdir(STUDIES_DIR) if f.endswith('.csv')],
-            key=lambda f: f.split('_')[1:]  # crude but works if format consistent
+            # crude but works if format consistent
+            key=lambda f: f.split('_')[1:]
         )
         args.studies_file = os.path.join(STUDIES_DIR, latest)
         # get prediction file with the same date as studies file
@@ -770,18 +833,22 @@ if __name__ == '__main__':
         for file in os.listdir(STUDIES_DIR):
             if file.endswith('.csv'):
                 logging.info(f"Processing studies file: {file}")
-                populate_db(prediction_file=None, studies_file=os.path.join(STUDIES_DIR, file), studies_id_column=args.studies_id_column)
+                populate_db(prediction_file=None, studies_file=os.path.join(
+                    STUDIES_DIR, file), studies_id_column=args.studies_id_column)
 
         for file in os.listdir(PREDICTIONS_DIR):
             if file.endswith('.csv') or file.endswith('.jsonl'):
                 logging.info(f"Processing predictions file: {file}")
                 if 'ner' in file:
                     if 'predictions' in file:
-                        populate_db(prediction_file=os.path.join(PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
+                        populate_db(prediction_file=os.path.join(
+                            PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
                     else:
-                        populate_db(prediction_file=os.path.join(PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
+                        populate_db(prediction_file=os.path.join(
+                            PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
                 else:
-                    populate_db(prediction_file=os.path.join(PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
+                    populate_db(prediction_file=os.path.join(
+                        PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
 
     else:
         logging.info(
