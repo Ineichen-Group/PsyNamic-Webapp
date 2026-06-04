@@ -3,7 +3,8 @@ import pandas as pd
 import sys
 sys.path.append(os.path.abspath(".."))
 from pandas.api.types import is_string_dtype
-
+import seaborn as sns
+sns.set_style("whitegrid")
 
 def get_df_from_dir(file_dir: str):
     files = [f for f in os.listdir(file_dir) if os.path.isfile(os.path.join(file_dir, f))]
@@ -14,8 +15,6 @@ def get_df_from_dir(file_dir: str):
         df_list.append(df)
     return pd.concat(df_list, ignore_index=True)
 
-import seaborn as sns
-sns.set_style("whitegrid")
 
 def compare_dfs(
     df_1: pd.DataFrame,
@@ -68,7 +67,20 @@ def compare_dfs(
         suffixes=("_df1", "_df2"),
     )
 
-    return len(matches), matches
+    matches["_join_key"] = matches[left_keys].astype(str).agg("|".join, axis=1)
+    n_unique = matches["_join_key"].nunique()
+
+    # Disclaimer: n_unique may be less than the number of rows in matches if there are duplicate rows in either DataFrame based on the specified columns.
+    return n_unique, matches
 
 
- 
+def is_same_title(title1: str, title2: str) -> bool:
+    title1 = title1.strip().lower()
+    title2 = title2.strip().lower()
+
+    if title1 == title2:
+        return True
+    elif title1.startswith(title2) or title2.startswith(title1):
+        return True
+    else:
+        return False
