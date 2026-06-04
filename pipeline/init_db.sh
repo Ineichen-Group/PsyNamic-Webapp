@@ -8,14 +8,14 @@ echo "Populating database with manual seed data..."
 
 # All manually defined as relevant
 python -m data.populate \
-  -s data/manual/studies_relevant_with_info_20240101_00-00-00.csv
+  -s data/manual/as_review_studies_relevant_with_info_20240101_00-00-00.csv
 
 # Train, test, dev splits from manual dataset
 python -m data.populate \
-  -p data/manual/predictions_manual_20250127_00-00-00.csv
+  -p data/manual/class_predictions_manual_20250127_00-00-00.csv
 
 python -m data.populate \
-  -p data/manual/ner_bio_966.jsonl
+  -p data/manual/ner_bio_966_manual.jsonl
 
 # Predictions on rest of manually defined as relevant
 python -m data.populate \
