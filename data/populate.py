@@ -318,54 +318,48 @@ def populate_class_predictions(session: Session, file: str):
     pred_data = pd.read_csv(file, encoding='utf-8')
 
     for _, row in pred_data.iterrows():
-        paper_id = int(row['id'])
+        paper_id_raw = int(row['id'])
 
-        paper = session.query(Paper).filter(Paper.id == paper_id).first()
+        paper = session.query(Paper).filter(Paper.id == paper_id_raw).first()
         if not paper:
-            paper = session.query(Paper).filter(
-                Paper.pubmed_id == paper_id).first()
-            if not paper:
-                logging.warning(
-                    f"No paper found with paper_id/pubmed_id: {paper_id}")
-                continue
+            paper = session.query(Paper).filter(Paper.pubmed_id == paper_id_raw).first()
 
-        incoming_is_manual = row.get("model") == "manual_annotation"
-
-        # Check if manual annotation already exists for this paper+task
-        existing_manual = session.query(Prediction).filter(
-            Prediction.paper_id == paper.id,
-            Prediction.task == row['task'],
-            Prediction.model == "manual_annotation"
-        ).first()
-
-        if existing_manual and not incoming_is_manual:
-            logging.warning(
-                f"Skipping import: manual annotations already exist for "
-                f"paper_id={paper.id}, task={row['task']}"
-            )
+        if not paper:
+            logging.warning(f"No paper found: {paper_id_raw}")
             continue
 
-        existing_prediction = session.query(Prediction).filter(
-            Prediction.paper_id == paper.id,
-            Prediction.task == row['task'],
-            Prediction.label == row['label'],
-            Prediction.model == row['model']
-        ).first()
+        paper_id = paper.id
 
-        if existing_prediction:
+        task = row['task']
+        label = row['label']
+        model = row['model']
+
+        if prediction_exists(session, paper_id, task, label, model):
             logging.info(
                 f"Skipping duplicate prediction for paper_id={paper.id}, "
-                f"task={row['task']}, label={row['label']}, model={row['model']}"
+                f"task={row['task']}, label={row['label']}"
             )
             continue
 
-        # Create prediction
+        incoming_is_manual = (model == "manual_annotation")
+
+        # Prevent overwriting manual labels
+        if incoming_is_manual is False:
+            existing_manual = session.query(Prediction).filter(
+                Prediction.paper_id == paper_id,
+                Prediction.task == task,
+                Prediction.model == "manual_annotation"
+            ).first()
+
+            if existing_manual:
+                continue
+
         pred = create_predictions(
-            paper_id=paper.id,
-            task=row['task'],
-            label=row['label'],
+            paper_id=paper_id,
+            task=task,
+            label=label,
             probability=row['probability'],
-            model=row['model'],
+            model=model,
             is_multilabel=row['is_multilabel']
         )
 
@@ -375,11 +369,7 @@ def populate_class_predictions(session: Session, file: str):
             session.flush()
         except IntegrityError:
             session.rollback()
-            logging.warning(
-                f"Integrity error skipped for paper_id={paper.id}, "
-                f"task={row['task']}, label={row['label']}, model={row['model']}"
-            )
-            continue
+            logging.warning(f"Duplicate blocked by DB constraint: {paper_id}, {task}, {label}, {model}")
 
     session.commit()
 
@@ -738,6 +728,13 @@ def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
             )
 
     return False
+
+def prediction_exists(session, paper_id, task, label, model):
+    return session.query(Prediction).filter(
+        Prediction.paper_id == paper_id,
+        Prediction.task == task,
+        Prediction.label == label,
+    ).first() is not None
 
 def get_unused_id(session: Session):
     # get all ids from papers, sort from lowest to highest
