@@ -2269,7 +2269,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 2268,74,Application area,93,104,depression ,0.8254910707473755,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2269,74,Application area,313,339,major depressive disorder ,0.9523293177286783,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2270,74,Application area,340,343,MDD,0.9431928396224976,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-6592,21572370,Dosage,565,569,6 mg,0.9732739627361298,vera-bernhard,6 mg,6.0,6.0,mg,,,,absolute
+6596,21944846,Dosage,1595,1598,3.6,0.6068090597788492,vera-bernhard,3.6,3.6,3.6,,,,,absolute
 2271,74,Dosage,814,823,0.5 mg/kg,0.98536084095637,biomedbert-abstract_ner_bio_20250221,0.5 mg/kg,0.5,0.5,mg,kg,1.0,,relative_weight
 2272,76,Dosage,1736,1745,0.2 mg/kg,0.9556666513284048,biomedbert-abstract_ner_bio_20250221,0.2 mg/kg,0.2,0.2,mg,kg,1.0,,relative_weight
 2273,76,Dosage,1773,1782,0.5 mg/kg,0.9612915217876434,biomedbert-abstract_ner_bio_20250221,0.5 mg/kg,0.5,0.5,mg,kg,1.0,,relative_weight
@@ -2335,7 +2335,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 2333,204,Application area,51,58,Cancer ,0.8309887647628784,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2334,204,Application area,62,90,Major Depression Disorder.^ ,0.8534494161605835,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2335,207,Dosage,820,835,"0.75, 1.5 mg/kg",0.9288788497447967,biomedbert-abstract_ner_bio_20250221,"0.75, 1.5 mg/kg",0.75,1.5,mg,kg,1.0,,relative_weight
-6593,21572370,Dosage,735,740,6 mg ,0.9650805592536926,vera-bernhard,6 mg,6.0,6.0,mg,,,,absolute
+6970,33298225,Application area,343,346,TRD,0.9717426300048828,vera-bernhard,,,,,,,,
 2336,211,Application area,66,80,severe pain.^ ,0.7732435166835785,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2337,211,Dosage,491,497,15 mg ,0.9724475145339966,biomedbert-abstract_ner_bio_20250221,15 mg,15.0,15.0,mg,,,,absolute
 2338,211,Dosage,574,582,20 mg/h ,0.9662290215492249,biomedbert-abstract_ner_bio_20250221,20 mg/h,20.0,20.0,mg,,,h,relative_time
@@ -2397,7 +2397,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 2394,337,Dosage,1013,1024,0.26 mg/kg ,0.9848573803901672,biomedbert-abstract_ner_bio_20250221,0.26 mg/kg,0.26,0.26,mg,kg,1.0,,relative_weight
 2395,337,Dosage,1049,1060,0.65 mg/kg ,0.9688378075758616,biomedbert-abstract_ner_bio_20250221,0.65 mg/kg,0.65,0.65,mg,kg,1.0,,relative_weight
 2396,338,Application area,187,223,treatment-resistant major depression,0.7935266733169556,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-6594,21572370,Dosage,741,753,0.086 mg/kg ,0.8287150661150614,vera-bernhard,0.086 mg/kg,0.086,0.086,mg,kg,1.0,,relative_weight
+7118,35393455,Application area,139,142,OUD,0.9100150465965271,vera-bernhard,,,,,,,,
 2397,338,Dosage,700,723,0.5 mg per kilogram of ,0.8816314509936741,biomedbert-abstract_ner_bio_20250221,0.5 mg/kg of,0.5,0.5,mg,kg,1.0,,relative_weight
 2398,347,Application area,38,50,demoralized ,0.5081532001495361,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2399,347,Application area,444,459,demoralization ,0.5167134404182434,biomedbert-abstract_ner_bio_20250221,,,,,,,,
@@ -2459,7 +2459,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 2455,496,Application area,314,318,CRPS,0.7933414578437805,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2456,496,Application area,629,633,CRPS,0.5947301983833313,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2457,505,Dosage,373,384,0.25 mg/kg ,0.9763288597265879,biomedbert-abstract_ner_bio_20250221,0.25 mg/kg,0.25,0.25,mg,kg,1.0,,relative_weight
-6595,21572370,Dosage,770,772,0.,0.6448079645633698,vera-bernhard,0.,0.0,0.0,,,,,absolute
+7119,35393455,Application area,460,463,OUD,0.8033565878868103,vera-bernhard,,,,,,,,
 2458,505,Dosage,430,438,1 mg/kg ,0.9717722088098526,biomedbert-abstract_ner_bio_20250221,1 mg/kg,1.0,1.0,mg,kg,1.0,,relative_weight
 2459,513,Dosage,569,579,1.5 mg/kg ,0.9771486719449362,biomedbert-abstract_ner_bio_20250221,1.5 mg/kg,1.5,1.5,mg,kg,1.0,,relative_weight
 2460,517,Dosage,566,576,1.4 mg/kg ,0.8755003213882446,biomedbert-abstract_ner_bio_20250221,1.4 mg/kg,1.4,1.4,mg,kg,1.0,,relative_weight
@@ -2585,7 +2585,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 2580,792,Dosage,1422,1431,1.5 mg/kg,0.8457348048686981,biomedbert-abstract_ner_bio_20250221,1.5 mg/kg,1.5,1.5,mg,kg,1.0,,relative_weight
 2581,794,Dosage,728,732,13μg,0.9486614465713501,biomedbert-abstract_ner_bio_20250221,13 μg,13.0,13.0,μg,,,,absolute
 2582,794,Dosage,906,911,13μg ,0.9484041333198547,biomedbert-abstract_ner_bio_20250221,13 μg,13.0,13.0,μg,,,,absolute
-6596,21944846,Dosage,1595,1598,3.6,0.6068090597788492,vera-bernhard,3.6,3.6,3.6,,,,,absolute
+7120,35393455,Application area,585,588,OUD,0.6874194741249084,vera-bernhard,,,,,,,,
 2583,794,Dosage,1702,1706,13μg,0.9255356192588806,biomedbert-abstract_ner_bio_20250221,13 μg,13.0,13.0,μg,,,,absolute
 2584,798,Dosage,844,861,0.75 or 1.5 mg/kg,0.9719609677791595,biomedbert-abstract_ner_bio_20250221,0.75 or 1.5 mg/kg,0.75,1.5,mg,kg,1.0,,relative_weight
 2585,799,Dosage,807,817,0.5 mg/kg ,0.9830809930960337,biomedbert-abstract_ner_bio_20250221,0.5 mg/kg,0.5,0.5,mg,kg,1.0,,relative_weight
@@ -2837,7 +2837,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 2831,1434,Application area,100,130,treatment-resistant depression,0.9639669358730316,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2832,1434,Application area,406,437,treatment-resistant depression ,0.9600166380405426,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2833,1434,Application area,438,441,TRD,0.9779406785964966,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-6970,33298225,Application area,343,346,TRD,0.9717426300048828,vera-bernhard,,,,,,,,
+7194,36160713,Application area,236,239,TRD,0.9809790849685669,vera-bernhard,,,,,,,,
 2834,1434,Dosage,554,564,0.5 mg/kg ,0.980255534251531,biomedbert-abstract_ner_bio_20250221,0.5 mg/kg,0.5,0.5,mg,kg,1.0,,relative_weight
 2835,1436,Application area,93,123,treatment-resistant depression,0.9709050506353378,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 2836,1436,Application area,264,295,treatment-resistant depression ,0.9662442803382874,biomedbert-abstract_ner_bio_20250221,,,,,,,,
@@ -3024,7 +3024,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 3017,1703,Application area,288,291,MDD,0.946658194065094,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 3018,1703,Application area,425,436,depression ,0.8858633041381836,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 3019,1703,Application area,596,606,depression,0.9027338027954102,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-7118,35393455,Application area,139,142,OUD,0.9100150465965271,vera-bernhard,,,,,,,,
+7493,38140979,Application area,254,257,OUD,0.9634981751441956,vera-bernhard,,,,,,,,
 3020,1722,Application area,103,116,depression.^ ,0.7992492516835531,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 3021,1722,Application area,629,640,depression ,0.7148239612579346,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 3022,1729,Application area,64,95,resistance unipolar depression ,0.9613452355066935,biomedbert-abstract_ner_bio_20250221,,,,,,,,
@@ -3461,7 +3461,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 3452,2720,Application area,77,110,treatment resistant depression.^ ,0.9670800805091858,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 3453,2720,Application area,171,202,treatment resistant depression ,0.958411693572998,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 3454,2720,Application area,203,206,TRD,0.9779940247535706,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-7119,35393455,Application area,460,463,OUD,0.8033565878868103,vera-bernhard,,,,,,,,
+7494,38140979,Application area,293,300,suicide,0.8104528188705444,vera-bernhard,,,,,,,,
 3456,2720,Dosage,818,823,"0.1, ",0.8837001770734787,biomedbert-abstract_ner_bio_20250221,0.1,0.1,0.1,,,,,absolute
 3457,2720,Dosage,823,828,"0.2, ",0.8826448023319244,biomedbert-abstract_ner_bio_20250221,0.2,0.2,0.2,,,,,absolute
 3458,2720,Dosage,828,837,"0.5, and ",0.8372093677520752,biomedbert-abstract_ner_bio_20250221,,,,,,,,
@@ -3775,7 +3775,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 3766,3633,Dosage,2156,2179,"25, 50, 100, and 200 µg",0.8223847614394294,biomedbert-abstract_ner_bio_20250221,"25, 50, 100, and 200 µg",25.0,200.0,µg,,,,absolute
 3767,3633,Dosage,2259,2282,"25, 50, 100, and 200 µg",0.8086630503336588,biomedbert-abstract_ner_bio_20250221,"25, 50, 100, and 200 µg",25.0,200.0,µg,,,,absolute
 3768,3633,Dosage,2441,2464,"25, 50, 100, and 200 µg",0.8281568818622165,biomedbert-abstract_ner_bio_20250221,"25, 50, 100, and 200 µg",25.0,200.0,µg,,,,absolute
-7120,35393455,Application area,585,588,OUD,0.6874194741249084,vera-bernhard,,,,,,,,
+7495,38140979,Application area,453,457,MDD ,0.9649063348770142,vera-bernhard,,,,,,,,
 3769,3633,Dosage,2687,2710,"25, 50, 100, and 200 µg",0.8482307394345602,biomedbert-abstract_ner_bio_20250221,"25, 50, 100, and 200 µg",25.0,200.0,µg,,,,absolute
 3770,3633,Dosage,2807,2821,50 and 200 µg ,0.8548691123723984,biomedbert-abstract_ner_bio_20250221,50 and 200 µg,50.0,200.0,µg,,,,absolute
 3771,3633,Dosage,2910,2933,"25, 50, 100, and 200 µg",0.8627845644950867,biomedbert-abstract_ner_bio_20250221,"25, 50, 100, and 200 µg",25.0,200.0,µg,,,,absolute
@@ -4029,7 +4029,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 4019,4058,Dosage,724,742,20 and 30 mg/70 kg,0.8598624638148716,biomedbert-abstract_ner_bio_20250221,20 and 30 mg/70 kg,20.0,30.0,mg,kg,70.0,,relative_weight
 4020,4063,Dosage,559,568,21 mcg/kg,0.9607863277196884,biomedbert-abstract_ner_bio_20250221,21 µg/kg,21.0,21.0,µg,kg,1.0,,relative_weight
 4021,4063,Dosage,577,586,18 mcg/kg,0.9629783779382706,biomedbert-abstract_ner_bio_20250221,18 µg/kg,18.0,18.0,µg,kg,1.0,,relative_weight
-7194,36160713,Application area,236,239,TRD,0.9809790849685669,vera-bernhard,,,,,,,,
+7496,38140979,Application area,461,464,OUD,0.9414685368537903,vera-bernhard,,,,,,,,
 4022,4065,Application area,416,424,cluster ,0.5733560919761658,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 4023,4065,Dosage,583,612,"0, 5, 10, 20, and 30 mg/70 kg",0.9019152734960828,biomedbert-abstract_ner_bio_20250221,"0, 5, 10, 20, and 30 mg/70 kg",0.0,30.0,mg,kg,70.0,,relative_weight
 4024,4067,Application area,24,51,body dysmorphic disorder.^ ,0.8736393094062805,biomedbert-abstract_ner_bio_20250221,,,,,,,,
@@ -4219,7 +4219,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 4208,4631,Dosage,1006,1011,75 mg,0.9639176428318024,biomedbert-abstract_ner_bio_20250221,75 mg,75.0,75.0,mg,,,,absolute
 4209,4631,Dosage,1030,1036,750 mg,0.6240849494934082,biomedbert-abstract_ner_bio_20250221,750 mg,750.0,750.0,mg,,,,absolute
 4210,4636,Dosage,395,400,75 mg,0.96473428606987,biomedbert-abstract_ner_bio_20250221,75 mg,75.0,75.0,mg,,,,absolute
-7493,38140979,Application area,254,257,OUD,0.9634981751441956,vera-bernhard,,,,,,,,
+7572,38238974,Application area,310,314,CCH ,0.8767086863517761,vera-bernhard,,,,,,,,
 4211,4636,Dosage,1174,1179,75 mg,0.9497179388999939,biomedbert-abstract_ner_bio_20250221,75 mg,75.0,75.0,mg,,,,absolute
 4212,4638,Dosage,703,708,75mg ,0.5884658098220825,biomedbert-abstract_ner_bio_20250221,75 mg,75.0,75.0,mg,,,,absolute
 4213,4643,Dosage,553,558,75 mg,0.9589113593101501,biomedbert-abstract_ner_bio_20250221,75 mg,75.0,75.0,mg,,,,absolute
@@ -4468,7 +4468,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 4456,5159,Dosage,865,871,10 mg ,0.9764028787612915,biomedbert-abstract_ner_bio_20250221,10 mg,10.0,10.0,mg,,,,absolute
 4457,5159,Dosage,875,880,25 mg,0.9741372466087341,biomedbert-abstract_ner_bio_20250221,25 mg,25.0,25.0,mg,,,,absolute
 4458,5189,Dosage,602,608,0.375-,0.9692430794239044,biomedbert-abstract_ner_bio_20250221,0.375,0.375,0.375,,,,,absolute
-7494,38140979,Application area,293,300,suicide,0.8104528188705444,vera-bernhard,,,,,,,,
+7573,38238974,Dosage,737,747,0.14 mg/kg,0.9854181706905365,vera-bernhard,0.14 mg/kg,0.14,0.14,mg,kg,1.0,,relative_weight
 4459,5189,Dosage,608,616,21 μg/kg,0.8971569240093231,biomedbert-abstract_ner_bio_20250221,21 μg/kg,21.0,21.0,μg,kg,1.0,,relative_weight
 4460,5204,Dosage,795,802,3-30 mg,0.9430013597011566,biomedbert-abstract_ner_bio_20250221,3-30 mg,3.0,30.0,mg,,,,absolute
 4461,5205,Dosage,1641,1648,3–30 mg,0.86646568775177,biomedbert-abstract_ner_bio_20250221,3–30 mg,3.0,30.0,mg,,,,absolute
@@ -4590,7 +4590,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 4577,5555,Application area,550,556,major ,0.6791566014289856,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 4578,5555,Application area,577,580,MDD,0.7980373501777649,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 4579,5564,Application area,87,117,treatment-resistant depression,0.9490028768777847,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-7495,38140979,Application area,453,457,MDD ,0.9649063348770142,vera-bernhard,,,,,,,,
+7723,38423367,Dosage,673,678,25 mg,0.9656379222869873,vera-bernhard,25 mg,25.0,25.0,mg,,,,absolute
 4580,5564,Application area,293,303,depression,0.8126498460769653,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 4581,5564,Application area,449,480,treatment-resistant depression ,0.9230478256940842,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 4582,5564,Application area,481,484,TRD,0.9746497869491577,biomedbert-abstract_ner_bio_20250221,,,,,,,,
@@ -5162,7 +5162,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 5148,6331,Application area,159,169,emergence ,0.5468198657035828,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5149,6331,Application area,347,357,emergence ,0.5149617195129395,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5150,6337,Application area,271,301,treatment-resistant depression,0.9214791655540466,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-7496,38140979,Application area,461,464,OUD,0.9414685368537903,vera-bernhard,,,,,,,,
+6592,21572370,Dosage,565,569,6 mg,0.9732739627361298,vera-bernhard,6 mg,6.0,6.0,mg,,,,absolute
 5151,6344,Dosage,369,378,0.3 mg/kg,0.9842133621374766,biomedbert-abstract_ner_bio_20250221,0.3 mg/kg,0.3,0.3,mg,kg,1.0,,relative_weight
 5152,6344,Dosage,380,390,0.45 mg/kg,0.9864265521367391,biomedbert-abstract_ner_bio_20250221,0.45 mg/kg,0.45,0.45,mg,kg,1.0,,relative_weight
 5153,6344,Dosage,392,401,0.6 mg/kg,0.9846982459227244,biomedbert-abstract_ner_bio_20250221,0.6 mg/kg,0.6,0.6,mg,kg,1.0,,relative_weight
@@ -5478,7 +5478,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 5463,7230,Application area,147,155,Anxiety ,0.9270491003990173,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5464,7230,Application area,159,170,depression ,0.8654374480247498,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5465,7239,Application area,151,181,treatment resistant depression,0.7886095841725668,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-7572,38238974,Application area,310,314,CCH ,0.8767086863517761,vera-bernhard,,,,,,,,
+6593,21572370,Dosage,735,740,6 mg ,0.9650805592536926,vera-bernhard,6 mg,6.0,6.0,mg,,,,absolute
 5466,7239,Application area,264,295,Treatment resistant depression ,0.7640631000200907,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5467,7239,Application area,296,299,TRD,0.7180559635162354,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5468,7239,Application area,348,374,major depressive disorder ,0.7371342579523722,biomedbert-abstract_ner_bio_20250221,,,,,,,,
@@ -5972,7 +5972,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 5956,8218,Application area,653,670,anorexia nervosa ,0.8154676258563995,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5957,8218,Dosage,1205,1211,up to ,0.5317160040140152,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5958,8218,Dosage,1211,1216,25 mg,0.9756476581096649,biomedbert-abstract_ner_bio_20250221,25 mg,25.0,25.0,mg,,,,absolute
-7573,38238974,Dosage,737,747,0.14 mg/kg,0.9854181706905365,vera-bernhard,0.14 mg/kg,0.14,0.14,mg,kg,1.0,,relative_weight
+6594,21572370,Dosage,741,753,0.086 mg/kg ,0.8287150661150614,vera-bernhard,0.086 mg/kg,0.086,0.086,mg,kg,1.0,,relative_weight
 5959,8220,Application area,96,114,eating disorder.^ ,0.9596563279628754,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5960,8220,Application area,302,319,eating disorders ,0.9528219699859619,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 5961,8220,Application area,320,323,EDs,0.9598998427391052,biomedbert-abstract_ner_bio_20250221,,,,,,,,
@@ -6281,7 +6281,7 @@ ner_tag_id,study_id,tag,start_id,end_id,text,probability,model,norm_text,min,max
 6264,9239,Application area,774,776,BP,0.8943753838539124,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 6265,9242,Application area,59,89,Treatment-Resistant Depression,0.9640530645847321,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 6266,9242,Application area,209,240,treatment-resistant depression ,0.9650756865739822,biomedbert-abstract_ner_bio_20250221,,,,,,,,
-7723,38423367,Dosage,673,678,25 mg,0.9656379222869873,vera-bernhard,25 mg,25.0,25.0,mg,,,,absolute
+6595,21572370,Dosage,770,772,0.,0.6448079645633698,vera-bernhard,0.,0.0,0.0,,,,,absolute
 6267,9242,Application area,241,244,TRD,0.9661309719085693,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 6268,9242,Application area,478,482,TRD ,0.9313546419143677,biomedbert-abstract_ner_bio_20250221,,,,,,,,
 6269,9242,Application area,498,504,Major ,0.6245248913764954,biomedbert-abstract_ner_bio_20250221,,,,,,,,

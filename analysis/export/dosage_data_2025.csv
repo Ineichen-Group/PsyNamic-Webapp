@@ -617,7 +617,7 @@ Ketamine,6.0,mg,69,absolute,6 mg
 Ketamine,35.0,mg,69,relative_weight,0.5 mg/kg
 Ketamine,35.0,mg,72,relative_weight,0.5 mg/kg
 Ketamine,35.0,mg,73,relative_weight,0.5 mg/kg
-MDMA,6.0,mg,21572370,absolute,6 mg
+MDMA,3.6,mg,21944846,absolute,3.6
 Ketamine,35.0,mg,74,relative_weight,0.5 mg/kg
 Ketamine,14.0,mg,76,relative_weight,0.2 mg/kg
 Ketamine,35.0,mg,76,relative_weight,0.5 mg/kg
@@ -667,7 +667,6 @@ LSD,0.1,mg,318,absolute,100 μg
 LSD,0.2,mg,318,absolute,200 μg
 Ketamine,18.2,mg,337,relative_weight,0.26 mg/kg
 Ketamine,45.5,mg,337,relative_weight,0.65 mg/kg
-MDMA,6.02,mg,21572370,relative_weight,0.086 mg/kg
 Ketamine,35.0,mg,338,relative_weight,0.5 mg/kg of
 Psilocybin,21.0,mg,347,relative_weight,0.3-0.36 mg/kg
 Ketamine,35.0,mg,352,relative_weight,0.5 mg/kg
@@ -678,7 +677,6 @@ Ketamine,35.0,mg,482,relative_weight,0.5 mg/kg
 Ketamine,35.0,mg,485,relative_weight,0.5 or 1 mg/kg
 Ketamine,7.0,mg,487,relative_weight,0.1 mg/kg
 Ketamine,17.5,mg,505,relative_weight,0.25 mg/kg
-MDMA,0.0,mg,21572370,absolute,0.
 Ketamine,70.0,mg,505,relative_weight,1 mg/kg
 MDMA,105.0,mg,513,relative_weight,1.5 mg/kg
 MDMA,98.0,mg,517,relative_weight,1.4 mg/kg
@@ -726,7 +724,6 @@ Ketamine,500.0,mg,734,absolute,500 mg
 MDMA,52.5,mg,792,relative_weight,0.75 mg/kg
 MDMA,105.0,mg,792,relative_weight,1.5 mg/kg
 LSD,0.013,mg,794,absolute,13 μg
-MDMA,3.6,mg,21944846,absolute,3.6
 MDMA,52.5,mg,798,relative_weight,0.75 or 1.5 mg/kg
 MDMA,35.0,mg,799,relative_weight,0.5 mg/kg
 MDMA,70.0,mg,799,relative_weight,1.0 mg/kg
@@ -1322,6 +1319,7 @@ Ketamine,70.0,mg,5131,relative_weight,1 mg/kg
 Psilocybin,10.0,mg,5159,absolute,10 mg
 Psilocybin,25.0,mg,5159,absolute,25 mg
 Salvinorin A,0.375,mg,5189,absolute,0.375
+Psilocybin,9.8,mg,38238974,relative_weight,0.14 mg/kg
 Salvinorin A,1.47,mg,5189,relative_weight,21 μg/kg
 Psilocybin,3.0,mg,5204,absolute,3-30 mg
 Psilocybin,3.0,mg,5205,absolute,3–30 mg
@@ -1345,6 +1343,7 @@ Psilocybin,14.0,mg,5483,relative_weight,0.2-0.3 mg/kg
 Ketamine,35.0,mg,5505,relative_weight,0.5 mg/kg
 Ketamine,35.0,mg,5513,relative_weight,0.5-0.75 mg/kg
 Ketamine,10.0,mg,5552,absolute,"10, 40, and 160 mg"
+Psilocybin,25.0,mg,38423367,absolute,25 mg
 Ketamine,35.0,mg,5564,relative_weight,0.5 mg/kg
 S-Ketamine,35.0,mg,5564,relative_weight,0.5 mg/kg
 Salvinorin A,4.0,mg,5570,absolute,4 mg
@@ -1528,6 +1527,7 @@ Psilocybin,25.0,mg,6294,absolute,25 mg
 Psilocybin,25.0,mg,6296,absolute,25 mg
 Psilocybin,1.0,mg,6296,absolute,1 mg
 LSD,0.075,mg,6315,absolute,75-100 μg
+MDMA,6.0,mg,21572370,absolute,6 mg
 Psilocybin,21.0,mg,6344,relative_weight,0.3 mg/kg
 Psilocybin,31.5,mg,6344,relative_weight,0.45 mg/kg
 Psilocybin,42.0,mg,6344,relative_weight,0.6 mg/kg
@@ -1768,7 +1768,7 @@ Ketamine,37.800000000000004,mg,8180,relative_weight,0.54 mg/kg
 LSD,0.075,mg,8196,absolute,75 μg
 Ketamine,35.0,mg,8198,relative_weight,0.50 mg/kg
 Psilocybin,25.0,mg,8218,absolute,25 mg
-Psilocybin,9.8,mg,38238974,relative_weight,0.14 mg/kg
+MDMA,6.02,mg,21572370,relative_weight,0.086 mg/kg
 LSD,21.0,mg,8257,relative_weight,0.3 mg/kg
 Psilocybin,21.0,mg,8257,relative_weight,0.3 mg/kg
 Psilocybin,14.0,mg,8259,relative_weight,0.2-0.3 mg/kg
@@ -1850,7 +1850,7 @@ S-Ketamine,35.0,mg,9232,relative_weight,0.5 mg/kg
 Psilocybin,8.05,mg,9235,relative_weight,115 µg/kg
 Psilocybin,17.5,mg,9235,relative_weight,250 µg/kg
 Ketamine,35.0,mg,9238,relative_weight,0.5 mg/kg
-Psilocybin,25.0,mg,38423367,absolute,25 mg
+MDMA,0.0,mg,21572370,absolute,0.
 Ketamine,35.0,mg,9255,relative_weight,0.5 mg/kg
 Ketamine,70.0,mg,9255,relative_weight,1.0 mg/kg
 Ketamine,35.0,mg,9307,relative_weight,0.5 mg/kg

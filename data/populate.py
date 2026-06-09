@@ -322,7 +322,8 @@ def populate_class_predictions(session: Session, file: str):
 
         paper = session.query(Paper).filter(Paper.id == paper_id_raw).first()
         if not paper:
-            paper = session.query(Paper).filter(Paper.pubmed_id == paper_id_raw).first()
+            paper = session.query(Paper).filter(
+                Paper.pubmed_id == paper_id_raw).first()
 
         if not paper:
             logging.warning(f"No paper found: {paper_id_raw}")
@@ -334,25 +335,20 @@ def populate_class_predictions(session: Session, file: str):
         label = row['label']
         model = row['model']
 
-        if prediction_exists(session, paper_id, task, label, model):
+        # prevent duplicates
+        if class_pred_exists(session, paper_id, task, label):
             logging.info(
                 f"Skipping duplicate prediction for paper_id={paper.id}, "
                 f"task={row['task']}, label={row['label']}"
             )
             continue
 
-        incoming_is_manual = (model == "manual_annotation")
-
-        # Prevent overwriting manual labels
-        if incoming_is_manual is False:
-            existing_manual = session.query(Prediction).filter(
-                Prediction.paper_id == paper_id,
-                Prediction.task == task,
-                Prediction.model == "manual_annotation"
-            ).first()
-
-            if existing_manual:
-                continue
+        # Prevent overwriting manual annotation or previous prediction
+        if class_pred_from_other_model_exists(session, paper_id, task, model):
+            logging.info(
+                f"Skipping prediction for paper_id={paper.id}, task={row['task']} from model {model} because a prediction from another model already exists"
+            )
+            continue
 
         pred = create_predictions(
             paper_id=paper_id,
@@ -369,7 +365,8 @@ def populate_class_predictions(session: Session, file: str):
             session.flush()
         except IntegrityError:
             session.rollback()
-            logging.warning(f"Duplicate blocked by DB constraint: {paper_id}, {task}, {label}, {model}")
+            logging.warning(
+                f"Duplicate blocked by DB constraint: {paper_id}, {task}, {label}, {model}")
 
     session.commit()
 
@@ -491,14 +488,10 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
                 logging.warning(f"No paper found with paper_id: {paper_id}")
             continue
 
-        existing_manual_ner = session.query(NerTag).filter(
-            NerTag.paper_id == paper.id,
-            NerTag.model == "manual_annotation"
-        ).first()
-
-        if existing_manual_ner and not manual:
+        # Prevent overwriting manual annotation with model prediction or vice versa
+        if ner_tag_from_other_model_exists(session, paper.id, model="manual_annotation" if manual else row.get('model', None)):
             logging.warning(
-                f"Skipping NER import: manual annotations already exist for paper_id={paper.id}"
+                f"Skipping NER import: NER tags from another model already exist for paper_id={paper.id}"
             )
             continue
 
@@ -700,7 +693,8 @@ def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
         )
 
         if paper:
-            logging.info(f"Paper already exists (pubmed_id match): {pubmed_id}")
+            logging.info(
+                f"Paper already exists (pubmed_id match): {pubmed_id}")
             return True
 
     # Secondary check: title + year (warning only)
@@ -729,12 +723,29 @@ def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
 
     return False
 
-def prediction_exists(session, paper_id, task, label, model):
+
+def class_pred_exists(session, paper_id, task, label):
     return session.query(Prediction).filter(
         Prediction.paper_id == paper_id,
         Prediction.task == task,
         Prediction.label == label,
     ).first() is not None
+
+
+def class_pred_from_other_model_exists(session, paper_id, task, model):
+    return session.query(Prediction).filter(
+        Prediction.paper_id == paper_id,
+        Prediction.task == task,
+        Prediction.model != model
+    ).first() is not None
+
+
+def ner_tag_from_other_model_exists(session, paper_id, model):
+    return session.query(NerTag).filter(
+        NerTag.paper_id == paper_id,
+        NerTag.model != model
+    ).first() is not None
+
 
 def get_unused_id(session: Session):
     # get all ids from papers, sort from lowest to highest
