@@ -608,8 +608,25 @@ def main():
             logging.info('Completed predictions of relevance model.')
 
             # Drop the 'text' column from original_df to avoid suffixes after merge
-            relevant_predictions_df = relevant_predictions_df.merge(relevant_df.drop(
-                columns=['text']), left_on='id', right_on='pubmed_id', how='left')
+            if 'pubmed_id' in relevant_df.columns:
+                merge_col = 'pubmed_id'
+            elif 'id' in relevant_df.columns:
+                merge_col = 'id'
+            else:
+                raise ValueError(
+                    f"No identifier column found. Expected 'pubmed_id' or 'id'. "
+                    f"Found: {list(relevant_df.columns)}"
+                )
+
+            # Drop text to avoid duplicate columns after merge
+            cols_to_drop = ['text'] if 'text' in relevant_df.columns else []
+
+            relevant_predictions_df = relevant_predictions_df.merge(
+                relevant_df.drop(columns=cols_to_drop),
+                left_on='id',
+                right_on=merge_col,
+                how='left'
+            )
 
             end = datetime.now(zurich)
             time_passed = end - start
