@@ -567,14 +567,40 @@ def main():
             # Drop samples with missing abstract or title and log the number of dropped samples
             relevant_df = pd.read_csv(csv_file)
             initial_count = len(relevant_df)
-            # replace all nana with empty string
+
+            # Replace NaN with empty strings
             relevant_df.fillna('', inplace=True)
-            relevant_df = relevant_df[relevant_df['abstract'] != '']
+
+            has_title = 'title' in relevant_df.columns
+            has_abstract = 'abstract' in relevant_df.columns
+
+            if has_title and has_abstract:
+                # Keep rows where either title OR abstract is present
+                relevant_df = relevant_df[
+                    (relevant_df['title'].str.strip() != '') |
+                    (relevant_df['abstract'].str.strip() != '')
+                ]
+            elif has_title:
+                relevant_df = relevant_df[
+                    relevant_df['title'].str.strip() != ''
+                ]
+            elif has_abstract:
+                relevant_df = relevant_df[
+                    relevant_df['abstract'].str.strip() != ''
+                ]
+            else:
+                logging.warning(
+                    "Neither 'title' nor 'abstract' column found. Skipping filtering."
+                )
+
             dropped_count = initial_count - len(relevant_df)
+
             if dropped_count > 0:
                 logging.warning(
-                    f'Dropped {dropped_count} samples due to missing abstract or title. Remaining samples: {len(relevant_df)}')
-            
+                    f"Dropped {dropped_count} samples due to missing title/abstract. "
+                    f"Remaining samples: {len(relevant_df)}"
+                )
+                        
             data = SimpleDataset(relevant_df, tokenizer,
                                  multilabel=False, is_ner=False)
             relevant_predictions_df = predict(
