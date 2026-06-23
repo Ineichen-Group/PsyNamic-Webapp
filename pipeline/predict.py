@@ -440,7 +440,6 @@ def extract_retrieval_date_from_filename(filename: str) -> str:
 
 
 def main():
-
     parser = argparse.ArgumentParser(description="Run prediction pipeline")
     parser.add_argument(
         '-i', '--input_file',
@@ -449,13 +448,21 @@ def main():
     )
     parser.add_argument(
         '-o', '--output_dir',
-        type=str, default='data/predictions',
+        type=str,
+        default='data/predictions',
         help='Directory to save prediction outputs. Default is data/predictions.'
     )
     parser.add_argument(
         '--skip_relevance',
         action='store_true',
         help='Skip relevance prediction step.'
+    )
+    parser.add_argument(
+        '--prediction-mode',
+        choices=['all', 'classification', 'ner'],
+        default='all',
+        help="Choose which predictions to run: 'all' default, 'classification', or 'ner'. "
+             "For classification/ner, relevance prediction is skipped."
     )
     parser.add_argument(
         '--batch-size',
@@ -468,6 +475,7 @@ def main():
         action='store_true',
         help='Redirect logs to stdout instead of a logfile.'
     )
+
     log_dir = os.path.join(SCRIPT_DIR, 'log')
     os.makedirs(log_dir, exist_ok=True)
 
@@ -484,12 +492,8 @@ def main():
 
     args = parser.parse_args()
 
-    log_dir = os.path.join(SCRIPT_DIR, 'log')
-    os.makedirs(log_dir, exist_ok=True)
     cleanup_old_logs(log_dir)
 
-    # Configure logging: either to stdout (useful in container/stdout-first setups)
-    # or to the logfile path provided by `--log-file`.
     if getattr(args, 'log_to_stdout', False):
         logging.basicConfig(
             level=logging.INFO,
@@ -505,28 +509,38 @@ def main():
             force=True
         )
 
-    # Startup environment / version info to help debug slow runs on clusters
     try:
-        logging.info(f"torch {torch.__version__}, cuda_available={torch.cuda.is_available()}, cuda_version={getattr(torch.version, 'cuda', 'n/a')}")
+        logging.info(
+            f"torch {torch.__version__}, "
+            f"cuda_available={torch.cuda.is_available()}, "
+            f"cuda_version={getattr(torch.version, 'cuda', 'n/a')}"
+        )
     except Exception:
         logging.info('torch version info unavailable')
+
     try:
         logging.info(f"transformers {transformers.__version__}")
     except Exception:
         logging.info('transformers version info unavailable')
 
     logging.info(f"CUDA_VISIBLE_DEVICES={os.environ.get('CUDA_VISIBLE_DEVICES')}")
-    logging.info(f"TRANSFORMERS_CACHE={os.environ.get('TRANSFORMERS_CACHE', os.path.expanduser('~/.cache/huggingface'))}")
-    logging.info(f"OMP_NUM_THREADS={os.environ.get('OMP_NUM_THREADS')} MKL_NUM_THREADS={os.environ.get('MKL_NUM_THREADS')} TOKENIZERS_PARALLELISM={os.environ.get('TOKENIZERS_PARALLELISM')}")
+    logging.info(
+        f"TRANSFORMERS_CACHE={os.environ.get('TRANSFORMERS_CACHE', os.path.expanduser('~/.cache/huggingface'))}"
+    )
+    logging.info(
+        f"OMP_NUM_THREADS={os.environ.get('OMP_NUM_THREADS')} "
+        f"MKL_NUM_THREADS={os.environ.get('MKL_NUM_THREADS')} "
+        f"TOKENIZERS_PARALLELISM={os.environ.get('TOKENIZERS_PARALLELISM')}"
+    )
 
     logging.info('Prediction process started.')
+
     PUBMED_DATA_DIR = 'data/pubmed_fetch_results'
     MODEL_INFO = 'pipeline/model_paths.json'
     FINAL_PRED = args.output_dir
     RELEVANT_STUDIES = 'data/relevant_studies'
 
     try:
-        # Get latest pubmed data file
         if args.input_file:
             csv_file = args.input_file
             logging.info(f'Using provided input file: {csv_file}')
@@ -540,209 +554,332 @@ def main():
             model_info = json.load(file)
         logging.info(f'Loaded models info from {MODEL_INFO}')
 
-        rel_pred = check_if_pred_exist(RELEVANT_STUDIES, retrieval_date)
-        # Case 1: No relevance prediction needed (all relevant)
-        if args.skip_relevance:
-            logging.info(
-                'Skipping relevance prediction as per argument. Assuming all studies are relevant.')
-            relevant_df = pd.read_csv(csv_file)
-        # Case 2: Relevance predictions already exist, load them (keep only relevant ones)
-        elif rel_pred:
-            logging.info(
-                f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.')
-            relevant_df = pd.read_csv(rel_pred)
-            relevant_df = relevant_df[relevant_df['prediction'] == 1]
-            logging.info(f'Loaded existing relevant studies from {rel_pred}')
-        # Case 3: Need to run relevance prediction
-        else:
-            start = datetime.now(zurich)
-            # Predict relevance first
-            relevant_model = next(
-                (m for m in model_info if m['task'].lower() == 'relevant'), None)
-            model, tokenizer, device = load_model(
-                relevant_model['model_path'], relevant_model['task'])
-            logging.info(
-                f'Loaded relevance model: {relevant_model["model_path"]}')
-            
-            # Drop samples with missing abstract or title and log the number of dropped samples
-            relevant_df = pd.read_csv(csv_file)
-            initial_count = len(relevant_df)
+        os.makedirs(FINAL_PRED, exist_ok=True)
 
-            # Replace NaN with empty strings
+        # ------------------------------------------------------------
+        # Prepare relevant_df
+        # ------------------------------------------------------------
+        # If prediction-mode is classification or ner, skip relevance prediction.
+        # Input is treated as already relevant.
+        if args.prediction_mode in ['classification', 'ner']:
+            logging.info(
+                f"prediction_mode='{args.prediction_mode}': skipping relevance prediction. "
+                "Input file is treated as already relevant."
+            )
+            relevant_df = pd.read_csv(csv_file)
             relevant_df.fillna('', inplace=True)
 
-            has_title = 'title' in relevant_df.columns
-            has_abstract = 'abstract' in relevant_df.columns
+        else:
+            # Default/current behavior: run or reuse relevance prediction unless --skip_relevance is set.
+            rel_pred = check_if_pred_exist(RELEVANT_STUDIES, retrieval_date)
 
-            if has_title and has_abstract:
-                # Keep rows where either title OR abstract is present
-                relevant_df = relevant_df[
-                    (relevant_df['title'].str.strip() != '') |
-                    (relevant_df['abstract'].str.strip() != '')
-                ]
-            elif has_title:
-                relevant_df = relevant_df[
-                    relevant_df['title'].str.strip() != ''
-                ]
-            elif has_abstract:
-                relevant_df = relevant_df[
-                    relevant_df['abstract'].str.strip() != ''
-                ]
+            if args.skip_relevance:
+                logging.info(
+                    'Skipping relevance prediction as per argument. Assuming all studies are relevant.'
+                )
+                relevant_df = pd.read_csv(csv_file)
+                relevant_df.fillna('', inplace=True)
+
+            elif rel_pred:
+                logging.info(
+                    f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.'
+                )
+                relevant_df = pd.read_csv(rel_pred)
+                relevant_df = relevant_df[relevant_df['prediction'] == 1]
+                logging.info(f'Loaded existing relevant studies from {rel_pred}')
+
             else:
-                logging.warning(
-                    "Neither 'title' nor 'abstract' column found. Skipping filtering."
+                start = datetime.now(zurich)
+
+                relevant_model = next(
+                    (m for m in model_info if m['task'].lower() == 'relevant'),
+                    None
+                )
+                if relevant_model is None:
+                    raise ValueError("No relevance model found in model_paths.json")
+
+                model, tokenizer, device = load_model(
+                    relevant_model['model_path'],
+                    relevant_model['task']
+                )
+                logging.info(
+                    f'Loaded relevance model: {relevant_model["model_path"]}'
                 )
 
-            dropped_count = initial_count - len(relevant_df)
+                relevant_df = pd.read_csv(csv_file)
+                initial_count = len(relevant_df)
+                relevant_df.fillna('', inplace=True)
 
-            if dropped_count > 0:
-                logging.warning(
-                    f"Dropped {dropped_count} samples due to missing title/abstract. "
-                    f"Remaining samples: {len(relevant_df)}"
+                text_filter_cols = [
+                    c for c in ['title', 'abstract', 'text']
+                    if c in relevant_df.columns
+                ]
+
+                if text_filter_cols:
+                    mask = pd.Series(False, index=relevant_df.index)
+                    for col in text_filter_cols:
+                        mask = mask | (relevant_df[col].astype(str).str.strip() != '')
+                    relevant_df = relevant_df[mask]
+                else:
+                    logging.warning(
+                        "No text-bearing columns found among title, abstract, text. "
+                        "Skipping missing-text filtering."
+                    )
+
+                dropped_count = initial_count - len(relevant_df)
+                if dropped_count > 0:
+                    logging.warning(
+                        f"Dropped {dropped_count} samples due to missing text. "
+                        f"Remaining samples: {len(relevant_df)}"
+                    )
+
+                data = SimpleDataset(
+                    relevant_df,
+                    tokenizer,
+                    multilabel=False,
+                    is_ner=False
                 )
-                        
-            data = SimpleDataset(relevant_df, tokenizer,
-                                 multilabel=False, is_ner=False)
-            relevant_predictions_df = predict(
-                model, data, threshold=relevant_model['prediction_threshold'], batch_size=args.batch_size, device=device)
-            logging.info('Completed predictions of relevance model.')
+                relevant_predictions_df = predict(
+                    model,
+                    data,
+                    threshold=relevant_model['prediction_threshold'],
+                    batch_size=args.batch_size,
+                    device=device
+                )
+                logging.info('Completed predictions of relevance model.')
 
-            # Drop the 'text' column from original_df to avoid suffixes after merge
-            if 'pubmed_id' in relevant_df.columns:
-                merge_col = 'pubmed_id'
-            elif 'id' in relevant_df.columns:
-                merge_col = 'id'
-            else:
-                raise ValueError(
-                    f"No identifier column found. Expected 'pubmed_id' or 'id'. "
-                    f"Found: {list(relevant_df.columns)}"
+                if 'pubmed_id' in relevant_df.columns:
+                    merge_col = 'pubmed_id'
+                elif 'id' in relevant_df.columns:
+                    merge_col = 'id'
+                else:
+                    raise ValueError(
+                        f"No identifier column found. Expected 'pubmed_id' or 'id'. "
+                        f"Found: {list(relevant_df.columns)}"
+                    )
+
+                relevant_predictions_df = relevant_predictions_df.merge(
+                    relevant_df.drop(columns=['text'], errors='ignore'),
+                    left_on='id',
+                    right_on=merge_col,
+                    how='left'
                 )
 
-            # Drop text to avoid duplicate columns after merge
-            cols_to_drop = ['text'] if 'text' in relevant_df.columns else []
+                end = datetime.now(zurich)
+                time_passed = end - start
 
-            relevant_predictions_df = relevant_predictions_df.merge(
-                relevant_df.drop(columns=cols_to_drop),
-                left_on='id',
-                right_on=merge_col,
-                how='left'
+                relevant_output_file = (
+                    f'studies_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
+                )
+                os.makedirs(RELEVANT_STUDIES, exist_ok=True)
+                relevant_predictions_df.to_csv(
+                    os.path.join(RELEVANT_STUDIES, relevant_output_file),
+                    index=False
+                )
+
+                nr_relevant = relevant_predictions_df['prediction'].sum()
+                nr_irrelevant = len(relevant_predictions_df) - nr_relevant
+
+                logging.info(
+                    f'Saved relevance predictions ({nr_relevant} relevant, '
+                    f'{nr_irrelevant} irrelevant) to '
+                    f'{os.path.join(RELEVANT_STUDIES, relevant_output_file)}'
+                )
+
+                relevant_df = relevant_predictions_df[
+                    relevant_predictions_df['prediction'] == 1
+                ]
+
+        # ------------------------------------------------------------
+        # Classification prediction
+        # ------------------------------------------------------------
+        if args.prediction_mode in ['all', 'classification']:
+
+            class_pred = check_if_pred_exist(
+                FINAL_PRED,
+                retrieval_date,
+                str_contain='class'
             )
 
-            end = datetime.now(zurich)
-            time_passed = end - start
+            if class_pred:
+                logging.info(
+                    f'Classification {retrieval_date} already exists. Skipping prediction.'
+                )
 
-            relevant_output_file = f'studies_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
-            os.makedirs(RELEVANT_STUDIES, exist_ok=True)
-            relevant_predictions_df.to_csv(os.path.join(
-                RELEVANT_STUDIES, relevant_output_file), index=False)
-            nr_relevant = relevant_predictions_df['prediction'].sum()
-            nr_irrelevant = len(relevant_predictions_df) - nr_relevant
-            logging.info(
-                f'Saved relevance predictions ({nr_relevant} relevant, {nr_irrelevant} irrelevant) to {os.path.join(RELEVANT_STUDIES, relevant_output_file)}')
-            relevant_df = relevant_predictions_df[relevant_predictions_df['prediction'] == 1]
+            else:
+                logging.info(
+                    f'Running classification of {len(relevant_df)} studies.'
+                )
+                start = datetime.now(zurich)
+                dfs = []
 
-        # Now predict classification
-        class_pred = check_if_pred_exist(
-            FINAL_PRED, retrieval_date, str_contain='class')
+                for m in model_info:
+                    if m['task'].lower() == 'relevant' or m['task'].lower() == 'ner':
+                        continue
 
-        if class_pred:
-            logging.info(
-                f'Classification {retrieval_date} already exist. Skipping prediction.')
+                    model, tokenizer, device = load_model(
+                        m['model_path'],
+                        m['task']
+                    )
+                    logging.info(
+                        f'Loaded model: {m["model_path"]} for task: {m["task"]}'
+                    )
+
+                    data = SimpleDataset(
+                        relevant_df,
+                        tokenizer,
+                        multilabel=m['is_multilabel'],
+                        is_ner=False
+                    )
+
+                    predictions_df = predict(
+                        model,
+                        data,
+                        threshold=m['prediction_threshold'],
+                        batch_size=args.batch_size,
+                        device=device
+                    )
+                    logging.info(
+                        f'Completed predictions for model: {m["model_path"]}'
+                    )
+
+                    processed_data = []
+                    model_name = os.path.basename(os.path.dirname(m['model_path']))
+                    id2label = {int(k): v for k, v in m['id2label'].items()}
+
+                    for _, row in predictions_df.iterrows():
+                        if not data.is_multilabel:
+                            predictions = [row['prediction']]
+                        else:
+                            predictions = row['prediction']
+
+                        for i, pred in enumerate(predictions):
+                            pred_dict = {
+                                'id': row['id'],
+                                'task': m['task'],
+                                'label': id2label[pred],
+                                'probability': row['probability'][i],
+                                'is_multilabel': m['is_multilabel'],
+                                'model': model_name
+                            }
+                            processed_data.append(pred_dict)
+
+                    dfs.append(pd.DataFrame(processed_data))
+
+                if dfs:
+                    final_df = pd.concat(dfs, ignore_index=True)
+                else:
+                    final_df = pd.DataFrame()
+
+                time_passed = datetime.now(zurich) - start
+                pred_filename = (
+                    f'class_predictions_{retrieval_date}_'
+                    f'{format_timedelta_hms(time_passed)}.csv'
+                )
+
+                final_df.to_csv(
+                    os.path.join(FINAL_PRED, pred_filename),
+                    index=False
+                )
+                logging.info(
+                    f'Saved class predictions to '
+                    f'{os.path.join(FINAL_PRED, pred_filename)}'
+                )
 
         else:
-            logging.info(f'Running classification of {len(relevant_df)} relevant studies.')
-            start = datetime.now(zurich)
-            dfs = []
-            for m in model_info:
-                if m['task'].lower() == 'relevant' or m['task'] == 'NER':
-                    continue  # already processed
-                model, tokenizer, device = load_model(m['model_path'], m['task'])
-                logging.info(
-                    f'Loaded model: {m["model_path"]} for task: {m["task"]}')
-                is_ner = 'ner' in m['task'].lower()
-                data = SimpleDataset(relevant_df, tokenizer,
-                                     multilabel=m['is_multilabel'], is_ner=is_ner)
-                predictions_df = predict(
-                    model, data, threshold=m['prediction_threshold'], batch_size=args.batch_size, device=device)
-                logging.info(
-                    f'Completed predictions for model: {m["model_path"]}')
-                processed_data = []
-                model_name = os.path.basename(os.path.dirname(m['model_path']))
-                id2label = {int(k): v for k, v in m['id2label'].items()}
-
-                for _, row in predictions_df.iterrows():
-                    # TODO: Check if it is one-hot encoded
-                    # multilabel: prediction: list[int] (one-hot encoded), probability: list[float]
-                    # single label: prediction: int, probability: list[float]
-
-                    if not data.is_multilabel:
-                        predictions = list([row['prediction']])
-
-                    else:
-                        predictions = row['prediction']
-
-                    for i, pred in enumerate(predictions):
-                        pred_dict = {
-                            'id': row['id'],
-                            'task': m['task'],
-                            'label': id2label[pred],
-                            'probability': row['probability'][i],
-                            'is_multilabel': m['is_multilabel'],
-                            'model': model_name
-                        }
-                        processed_data.append(pred_dict)
-
-                dfs.append(pd.DataFrame(processed_data))
-
-            final_df = pd.concat(dfs, ignore_index=True)
-            time_passed = datetime.now(zurich) - start
-            pred_filename = f'class_predictions_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
-            final_df.to_csv(os.path.join(
-                FINAL_PRED, pred_filename), index=False)
             logging.info(
-                f'Saved class predictions to {os.path.join(FINAL_PRED, pred_filename)}')
+                f"Skipping classification because prediction_mode='{args.prediction_mode}'."
+            )
 
-        ner_pred = check_if_pred_exist(
-            FINAL_PRED, retrieval_date, str_contain='ner')
-        if ner_pred:
-            logging.info(
-                f'NER predictions for date {retrieval_date} already exist. Skipping prediction.')
-        else:
-            start = datetime.now(zurich)
-            ner_model = next(
-                (m for m in model_info if m['task'].lower() == 'ner'), None)
-            model, tokenizer, device = load_model(
-                ner_model['model_path'], ner_model['task'])
-            id2label = {int(k): v for k, v in ner_model['id2label'].items()}
-            logging.info(f'Loaded NER model: {ner_model["model_path"]}')
-            data = SimpleDataset(relevant_df, tokenizer,
-                                 multilabel=False, is_ner=True)
-            ner_predictions_df = predict(model, data, batch_size=args.batch_size, device=device)
-            logging.info('Completed predictions for NER model.')
-            processed_data = []
-            model_name = os.path.basename(
-                os.path.dirname(ner_model['model_path']))
-            id2label = {int(k): v for k, v in id2label.items()}
+        # ------------------------------------------------------------
+        # NER prediction
+        # ------------------------------------------------------------
+        if args.prediction_mode in ['all', 'ner']:
 
-            for _, row in ner_predictions_df.iterrows():
-                pred_dict = {
-                    'id': row['id'],
-                    'text': row['text'],
-                    'tokens': row['tokens'],
-                    'offsets': row['offsets'],
-                    'ner_tags': [id2label[i] for i in row['pred_labels']],
-                    'probabilities': row['probabilities'],
-                    'model': model_name
+            ner_pred = check_if_pred_exist(
+                FINAL_PRED,
+                retrieval_date,
+                str_contain='ner'
+            )
+
+            if ner_pred:
+                logging.info(
+                    f'NER predictions for date {retrieval_date} already exist. Skipping prediction.'
+                )
+
+            else:
+                start = datetime.now(zurich)
+
+                ner_model = next(
+                    (m for m in model_info if m['task'].lower() == 'ner'),
+                    None
+                )
+                if ner_model is None:
+                    raise ValueError("No NER model found in model_paths.json")
+
+                model, tokenizer, device = load_model(
+                    ner_model['model_path'],
+                    ner_model['task']
+                )
+                id2label = {
+                    int(k): v for k, v in ner_model['id2label'].items()
                 }
 
-                processed_data.append(pred_dict)
-            end = datetime.now(zurich)
-            time_passed = end - start
-            ner_output_file = f'ner_predictions_{retrieval_date}_{format_timedelta_hms(time_passed)}.csv'
-            pd.DataFrame(processed_data).to_csv(
-                os.path.join(FINAL_PRED, ner_output_file), index=False)
+                logging.info(f'Loaded NER model: {ner_model["model_path"]}')
+
+                data = SimpleDataset(
+                    relevant_df,
+                    tokenizer,
+                    multilabel=False,
+                    is_ner=True
+                )
+
+                ner_predictions_df = predict(
+                    model,
+                    data,
+                    batch_size=args.batch_size,
+                    device=device
+                )
+                logging.info('Completed predictions for NER model.')
+
+                processed_data = []
+                model_name = os.path.basename(
+                    os.path.dirname(ner_model['model_path'])
+                )
+
+                for _, row in ner_predictions_df.iterrows():
+                    pred_dict = {
+                        'id': row['id'],
+                        'text': row['text'],
+                        'tokens': row['tokens'],
+                        'offsets': row['offsets'],
+                        'ner_tags': [id2label[i] for i in row['pred_labels']],
+                        'probabilities': row['probabilities'],
+                        'model': model_name
+                    }
+                    processed_data.append(pred_dict)
+
+                end = datetime.now(zurich)
+                time_passed = end - start
+
+                ner_output_file = (
+                    f'ner_predictions_{retrieval_date}_'
+                    f'{format_timedelta_hms(time_passed)}.csv'
+                )
+
+                pd.DataFrame(processed_data).to_csv(
+                    os.path.join(FINAL_PRED, ner_output_file),
+                    index=False
+                )
+                logging.info(
+                    f'Saved NER predictions to '
+                    f'{os.path.join(FINAL_PRED, ner_output_file)}'
+                )
+
+        else:
             logging.info(
-                f'Saved NER predictions to {os.path.join(FINAL_PRED, ner_output_file)}')
+                f"Skipping NER because prediction_mode='{args.prediction_mode}'."
+            )
 
         logging.info('Prediction process completed successfully.')
 
