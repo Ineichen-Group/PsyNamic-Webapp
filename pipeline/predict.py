@@ -13,6 +13,7 @@ import re
 from data.helper import check_if_pred_exist, cleanup_old_logs, format_timedelta_hms
 import argparse
 import sys
+import ast
 
 # Assuming Trainer, DataSplit, DataSplitBIO are defined elsewhere in your project
 from typing import Union
@@ -69,31 +70,49 @@ class SimpleDataset(Dataset):
                 truncation=False
             )
 
-            tokens = self.tokenizer.convert_ids_to_tokens(
-                encoding["input_ids"])
+            tokens = self.tokenizer.convert_ids_to_tokens(encoding["input_ids"])
             word_ids = encoding.word_ids()
+            offsets = encoding["offset_mapping"]
 
-            # Chunking
             if len(tokens) <= self.max_len:
                 chunked_rows.append({
                     self.ID_COL: id_,
                     self.TEXT_COL: text,
-                    'tokens': tokens,
-                    'word_ids': word_ids,
-                    'chunk_idx': 0
+                    "tokens": tokens,
+                    "word_ids": word_ids,
+                    "offsets": offsets,
+                    "chunk_idx": 0
                 })
             else:
-                num_chunks = math.ceil(len(tokens) / self.max_len)
-                for i in range(num_chunks):
-                    start = i * self.max_len
-                    end = start + self.max_len
+                start = 0
+                chunk_idx = 0
+
+                while start < len(tokens):
+                    end = min(start + self.max_len, len(tokens))
+
+                    # Move end backwards if it splits a word
+                    while (
+                        end < len(tokens)
+                        and end > start
+                        and word_ids[end] is not None
+                        and word_ids[end] == word_ids[end - 1]
+                    ):
+                        end -= 1
+
+                    if end == start:
+                        end = min(start + self.max_len, len(tokens))
+
                     chunked_rows.append({
                         self.ID_COL: id_,
                         self.TEXT_COL: text,
-                        'tokens': tokens[start:end],
-                        'word_ids': word_ids[start:end],
-                        'chunk_idx': i
+                        "tokens": tokens[start:end],
+                        "word_ids": word_ids[start:end],
+                        "offsets": offsets[start:end],
+                        "chunk_idx": chunk_idx
                     })
+
+                    start = end
+                    chunk_idx += 1
 
         return pd.DataFrame(chunked_rows)
 
@@ -114,7 +133,8 @@ class SimpleDataset(Dataset):
                 'tokens': tokens,
                 'labels': dummy_label,
                 'chunk_idx': row['chunk_idx'],
-                'word_ids': row['word_ids']
+                'word_ids': row['word_ids'],
+                'offsets': row["offsets"],
             }
 
         else:
@@ -206,10 +226,12 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
             merged_tokens = []
             merged_labels = []
             merged_probs = []
+            merged_offsets = []
 
             for chunk_row_idx in group.index:
                 tokens = test_dataset.chunks.loc[chunk_row_idx, "tokens"]
                 word_ids = test_dataset.chunks.loc[chunk_row_idx, "word_ids"]
+                offsets = test_dataset.chunks.loc[chunk_row_idx, "offsets"]
 
                 preds_chunk = pred_labels_idx[chunk_row_idx]
                 probs_chunk = all_probs[chunk_row_idx]
@@ -218,6 +240,9 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                 current_word_label = None
                 current_word_prob = None
                 current_word_id = None
+                current_word_start = None
+                current_word_end = None
+
 
                 for j, (token, word_id) in enumerate(zip(tokens, word_ids)):
 
@@ -233,6 +258,7 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                             merged_tokens.append(word)
                             merged_labels.append(current_word_label)
                             merged_probs.append(current_word_prob)
+                            merged_offsets.append([current_word_start, current_word_end])
 
                         # Start new word
                         current_word_tokens = [token]
@@ -240,9 +266,12 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                         current_word_label = int(preds_chunk[j])
                         current_word_prob = float(probs_chunk[j].max())
                         current_word_id = word_id
+                        current_word_start = offsets[j][0]
+                        current_word_end = offsets[j][1]
 
                     else:
                         current_word_tokens.append(token)
+                        current_word_end = offsets[j][1]
 
                 # Save last word
                 if current_word_tokens:
@@ -251,13 +280,15 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                     merged_tokens.append(word)
                     merged_labels.append(current_word_label)
                     merged_probs.append(current_word_prob)
+                    merged_offsets.append([current_word_start, current_word_end])
 
             pred_data.append({
                 "id": sample_id,
                 "text": group.iloc[0][test_dataset.TEXT_COL],
                 "tokens": merged_tokens,
                 "pred_labels": merged_labels,
-                "probabilities": merged_probs
+                "probabilities": merged_probs,
+                "offsets": merged_offsets,
             })
 
 
@@ -655,6 +686,7 @@ def main():
                     'id': row['id'],
                     'text': row['text'],
                     'tokens': row['tokens'],
+                    'offsets': row['offsets'],
                     'ner_tags': [id2label[i] for i in row['pred_labels']],
                     'probabilities': row['probabilities'],
                     'model': model_name
@@ -673,6 +705,57 @@ def main():
 
     except Exception as e:
         logging.error(f'Error during prediction process: {e}', exc_info=True)
+
+
+def add_offsets_to_existing_ner_predictions(
+    prediction_file: str,
+    output_file: str,
+    tokenizer_path: str,
+):
+    df = pd.read_csv(prediction_file)
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+
+    all_offsets = []
+
+    for _, row in df.iterrows():
+        text = row["text"]
+        existing_tokens = ast.literal_eval(row["tokens"])
+
+        encoding = tokenizer(
+            text,
+            return_offsets_mapping=True,
+            return_attention_mask=False,
+            return_token_type_ids=False,
+            truncation=False,
+        )
+
+        subtokens = tokenizer.convert_ids_to_tokens(encoding["input_ids"])
+        offsets = encoding["offset_mapping"]
+
+        # Subtoken-level tokens/offsets, excluding special tokens like [CLS]/[SEP]
+        subtoken_pairs = [
+            (tok, list(offset))
+            for tok, offset in zip(subtokens, offsets)
+            if list(offset) != [0, 0]
+        ]
+
+        subtoken_tokens = [tok for tok, _ in subtoken_pairs]
+        subtoken_offsets = [offset for _, offset in subtoken_pairs]
+
+        if len(existing_tokens) == len(subtoken_offsets):
+            all_offsets.append(subtoken_offsets)
+            continue
+
+        raise ValueError(
+            f"Token/offset length mismatch for id={row['id']}: "
+            f"existing_tokens={len(existing_tokens)}, "
+            f"subtoken_offsets={len(subtoken_offsets)}\n"
+            f"old_tail={existing_tokens[-10:]}\n"
+            f"new_tail={subtoken_tokens[-10:]}"
+        )
+
+    df["offsets"] = all_offsets
+    df.to_csv(output_file, index=False)
 
 
 if __name__ == "__main__":
