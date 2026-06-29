@@ -52,7 +52,9 @@ class SimpleDataset(Dataset):
             self.ID_COL = 'pubmed_id'
 
         if self.is_ner:
-            self.chunks = self._build_ner_chunks()
+            # Keep chunk row positions identical to prediction-list positions.
+            # This avoids fragile indexing after groupby/sort operations.
+            self.chunks = self._build_ner_chunks().reset_index(drop=True)
 
     def _build_ner_chunks(self):
         chunked_rows: list[dict[str, any]] = []
@@ -62,19 +64,27 @@ class SimpleDataset(Dataset):
             text = row[self.TEXT_COL]
 
             # Tokenize with offsets to get word_ids
+            # Important: build chunks from text tokens only.
+            # BERT-style models add [CLS]/[SEP] internally, so we reserve
+            # two positions for those later during inference.
             encoding = self.tokenizer(
                 text,
                 return_attention_mask=False,
                 return_token_type_ids=False,
                 return_offsets_mapping=True,
-                truncation=False
+                truncation=False,
+                add_special_tokens=False,
             )
 
             tokens = self.tokenizer.convert_ids_to_tokens(encoding["input_ids"])
             word_ids = encoding.word_ids()
             offsets = encoding["offset_mapping"]
 
-            if len(tokens) <= self.max_len:
+            usable_max_len = self.max_len - 2
+            if usable_max_len <= 0:
+                raise ValueError(f"max_len must be > 2 for NER chunking, got {self.max_len}")
+
+            if len(tokens) <= usable_max_len:
                 chunked_rows.append({
                     self.ID_COL: id_,
                     self.TEXT_COL: text,
@@ -88,7 +98,7 @@ class SimpleDataset(Dataset):
                 chunk_idx = 0
 
                 while start < len(tokens):
-                    end = min(start + self.max_len, len(tokens))
+                    end = min(start + usable_max_len, len(tokens))
 
                     # Move end backwards if it splits a word
                     while (
@@ -100,7 +110,7 @@ class SimpleDataset(Dataset):
                         end -= 1
 
                     if end == start:
-                        end = min(start + self.max_len, len(tokens))
+                        end = min(start + usable_max_len, len(tokens))
 
                     chunked_rows.append({
                         self.ID_COL: id_,
@@ -174,8 +184,8 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
 
     # ---------- NER PREDICTION ----------
     if test_dataset.is_ner:
-        all_logits = []
-        all_probs = []
+        # Store predictions by chunk row position. 
+        all_probs_by_chunk_idx = {}
 
         total_chunks = len(test_dataset)
         report_interval = max(1, total_chunks // 100)
@@ -189,12 +199,22 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
             end = min(start + batch_size, total_chunks)
             batch_samples = [test_dataset[i] for i in range(start, end)]
 
-            # Convert token lists to ids and pad to same length
-            id_seqs = [test_dataset.tokenizer.convert_tokens_to_ids(s["tokens"]) for s in batch_samples]
-            lengths = [len(seq) for seq in id_seqs]
-            max_len = max(lengths)
+            # Convert text-token chunks to ids, then add model special tokens.
+            # The saved tokens/offsets do NOT include [CLS]/[SEP], but the model
+            # should see them because BERT-like models were trained that way.
+            text_id_seqs = [
+                test_dataset.tokenizer.convert_tokens_to_ids(s["tokens"])
+                for s in batch_samples
+            ]
+            model_id_seqs = [
+                test_dataset.tokenizer.build_inputs_with_special_tokens(seq)
+                for seq in text_id_seqs
+            ]
+            text_lengths = [len(seq) for seq in text_id_seqs]
+            model_lengths = [len(seq) for seq in model_id_seqs]
+            max_len = max(model_lengths)
 
-            padded = [seq + [pad_id] * (max_len - len(seq)) for seq in id_seqs]
+            padded = [seq + [pad_id] * (max_len - len(seq)) for seq in model_id_seqs]
             input_ids = torch.tensor(padded, device=device)
             attention_mask = (input_ids != pad_id).long().to(device)
 
@@ -203,22 +223,26 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                 logits_batch = outputs.logits  # (batch, seq_len, num_labels)
                 probs_batch = torch.softmax(logits_batch, dim=-1)
 
-            # Split batch outputs back per chunk, trimming padding
-            for i_in_batch, seq_len in enumerate(lengths):
-                logits = logits_batch[i_in_batch][:seq_len]
-                probs = probs_batch[i_in_batch][:seq_len]
-                all_logits.append(logits.cpu().numpy())
-                all_probs.append(probs.cpu().numpy())
+            # Split batch outputs back per chunk. Remove special-token positions
+            # so probabilities align exactly with saved tokens/word_ids/offsets.
+            for i_in_batch, text_len in enumerate(text_lengths):
+                # For BERT-like single sequences this is: [CLS] text... [SEP].
+                probs = probs_batch[i_in_batch][1:1 + text_len]
+                chunk_row_idx = start + i_in_batch
+                all_probs_by_chunk_idx[chunk_row_idx] = probs.cpu().numpy()
 
             # Progress logging at ~10% intervals
             if (end) % report_interval == 0 or end == total_chunks:
                 logging.info(
                     f"\tNER progress: {end}/{total_chunks} ({int(end/total_chunks*100)}%)")
 
-        # Convert to numpy arrays
-        pred_labels_idx = [np.argmax(p, axis=-1) for p in all_probs]
+        # Convert probabilities to label ids per chunk.
+        pred_labels_by_chunk_idx = {
+            chunk_idx: np.argmax(probs, axis=-1)
+            for chunk_idx, probs in all_probs_by_chunk_idx.items()
+        }
 
-        # Now MERGE CHUNKS PROPERLY
+        # Now merge chunks back to document-level word tokens.
         for sample_id, group in test_dataset.chunks.groupby(test_dataset.ID_COL):
 
             group = group.sort_values("chunk_idx")
@@ -233,8 +257,8 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                 word_ids = test_dataset.chunks.loc[chunk_row_idx, "word_ids"]
                 offsets = test_dataset.chunks.loc[chunk_row_idx, "offsets"]
 
-                preds_chunk = pred_labels_idx[chunk_row_idx]
-                probs_chunk = all_probs[chunk_row_idx]
+                preds_chunk = pred_labels_by_chunk_idx[chunk_row_idx]
+                probs_chunk = all_probs_by_chunk_idx[chunk_row_idx]
 
                 current_word_tokens = []
                 current_word_label = None
