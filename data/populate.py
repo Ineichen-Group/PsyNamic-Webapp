@@ -84,7 +84,7 @@ def create_paper(
         retrieval_id: int,
         url: str
 ):
-    prediction_input = normalize_for_db(prediction_input)
+    prediction_input = prediction_input
     title = normalize_for_db(title)
     abstract = normalize_for_db(abstract)
 
@@ -234,7 +234,7 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             logging.info(f"Paper without abstract: {row[studies_id_column]}")
             continue
         title = row['title']
-        prediction_input = title + '.^\n' + abstract
+        prediction_input = row['text'] if row['text'] != '' else title + '.^\n' + abstract
         paper_id = row[studies_id_column]
 
         if 'pub_date' in row and row['pub_date'] != '':
@@ -377,12 +377,14 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
     token_list = [token.lower() for token in token_list]
     prev_token = prev_token.lower() if prev_token else ''
     next_token = next_token.lower() if next_token else ''
-
     # Remove . and ^ if (newline artefact from Prodigy) they are last two tokens in the token list
-    if token_list[-1] == '^' and token_list[-2] == '.':
+    if len(token_list) >= 2 and token_list[-1] == "^" and token_list[-2] == ".":
         token_list = token_list[:-2]
-    elif token_list[-1] == '^':
+    elif len(token_list) >= 1 and token_list[-1] == "^":
         token_list = token_list[:-1]
+
+    if not token_list:
+        raise ValueError("Token list empty after removing .^ artefact")
 
     # Create the regex pattern to match the token list with optional whitespace between tokens
     pattern = r'\s?'.join(re.escape(token) if token !=
@@ -393,9 +395,10 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
     matches = list(re.finditer(pattern, text))
 
     if not matches:
-        logging.warning(
-            f"No match found for tokens '{token_list}' in text: '{text}' with prev_token: '{prev_token}' and next_token: '{next_token}'")
-        return 0, 0
+        raise ValueError(
+            f"No match found for token_list={token_list!r}, "
+            f"prev_token={prev_token!r}, next_token={next_token!r}"
+        )
 
     if len(matches) == 1:
         return matches[0].start()+offset, matches[0].end()+offset
@@ -437,7 +440,6 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
     # First, check if a DosageNormalization already exists for this NerTag
     existing_norm = session.query(DosageNormalization).filter_by(
         ner_tag_id=ner_tag.id).first()
-
     if existing_norm:
         # Option 1: replace fields with new normalization data
         norm_data = extract_dosages(entity_text)
@@ -467,216 +469,280 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
         return dosage_norm
 
 
+def build_entities(tokens: list[str], ner_tags: list[str], probs, max_o_gap=2):
+    if len(tokens) != len(ner_tags):
+        raise ValueError(
+            f"Number of tokens ({len(tokens)}) does not match number of NER tags ({len(ner_tags)})."
+        )
+
+    if len(tokens) != len(probs):
+        raise ValueError(
+            f"Number of tokens ({len(tokens)}) does not match number of probabilities ({len(probs)})."
+        )
+
+    entities = []
+    current = None
+    i = 0
+
+    def clean_tag(tag: str) -> str:
+        return tag.strip()
+
+    def flush():
+        nonlocal current
+        if current:
+            if len(current["span_tokens"]) >= 2 and current["span_tokens"][-2:] == [".", "^"]:
+                current["span_tokens"] = current["span_tokens"][:-2]
+                current["probs"] = current["probs"][:-2]
+                current["end_i"] -= 2
+            elif current["span_tokens"] and current["span_tokens"][-1] in {"^", "."}:
+                current["span_tokens"] = current["span_tokens"][:-1]
+                current["probs"] = current["probs"][:-1]
+                current["end_i"] -= 1
+
+            if current["span_tokens"]:
+                entities.append(current)
+
+            current = None
+
+    while i < len(tokens):
+        token = tokens[i]
+        tag = clean_tag(ner_tags[i])
+        entity_type = tag[2:] if tag != "O" else None
+
+        if tag.startswith("B-"):
+            flush()
+            current = {
+                "tag": entity_type,
+                "start_i": i,
+                "end_i": i,
+                "span_tokens": [token],
+                "probs": [probs[i]],
+            }
+
+        elif tag.startswith("I-") and current and current["tag"] == entity_type:
+            current["span_tokens"].append(token)
+            current["probs"].append(probs[i])
+            current["end_i"] = i
+
+        elif tag == "O" and current and current["tag"] == "Dosage":
+            j = i
+            o_tokens = []
+            o_probs = []
+
+            while (
+                j < len(tokens)
+                and clean_tag(ner_tags[j]) == "O"
+                and len(o_tokens) < max_o_gap
+            ):
+                o_tokens.append(tokens[j])
+                o_probs.append(probs[j])
+                j += 1
+
+            if j < len(tokens) and clean_tag(ner_tags[j]) == "I-Dosage":
+                current["span_tokens"].extend(o_tokens)
+                current["probs"].extend(o_probs)
+                current["end_i"] = j - 1
+                i = j - 1
+            else:
+                flush()
+
+        elif tag.startswith("I-") and current is None:
+            current = {
+                "tag": entity_type,
+                "start_i": i,
+                "end_i": i,
+                "span_tokens": [token],
+                "probs": [probs[i]],
+            }
+
+        else:
+            flush()
+
+        i += 1
+
+    flush()
+    return entities
+
+
+def ner_tags_from_row(
+    row: dict,
+    pred_text: str,
+    manual: bool,
+    use_offsets: bool,
+    max_o_gap: int = 2,
+) -> list[dict]:
+    tokens = _parse_list_column(row["tokens"], "tokens")
+    ner_tags = _parse_list_column(row["ner_tags"], "ner_tags")
+
+    if manual:
+        probs = [1.0] * len(tokens)
+    else:
+        probs = _parse_list_column(row["probabilities"], "probabilities")
+
+    offsets = None
+    if use_offsets:
+        offsets = _parse_list_column(row["offsets"], "offsets")
+
+    entities = build_entities(
+        tokens=tokens,
+        ner_tags=ner_tags,
+        probs=probs,
+        max_o_gap=max_o_gap,
+    )
+
+    results = []
+    offset = 0
+
+    for entity in entities:
+        entity_start_index = entity["start_i"]
+        entity_end_index = entity["end_i"]
+
+        if use_offsets:
+            source_text = row["text"]
+            start_id = int(offsets[entity_start_index][0])
+            end_id = int(offsets[entity_end_index][1])
+        else:
+            source_text = pred_text
+            prev_token = tokens[entity_start_index - 1] if entity_start_index > 0 else None
+            next_token = (
+                tokens[entity_end_index + 1]
+                if entity_end_index + 1 < len(tokens)
+                else None
+            )
+
+            start_id, end_id = find_pos(
+                pred_text[offset:],
+                entity["span_tokens"],
+                prev_token,
+                next_token=next_token,
+                offset=offset,
+            )
+
+        entity_probs = entity["probs"]
+        probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
+        span_text = source_text[start_id:end_id]
+
+        results.append({
+            "tag": entity["tag"],
+            "start_id": start_id,
+            "end_id": end_id,
+            "text": span_text,
+            "probability": probability,
+            "span_tokens": entity["span_tokens"],
+        })
+
+        offset = end_id
+
+    return results
+
+
+def _parse_list_column(value, column_name: str):
+    """Parse list-like CSV/JSONL columns that may already be lists or may be stringified lists."""
+    if isinstance(value, str):
+        return literal_eval(value)
+    if value is None:
+        raise ValueError(f"Missing required column: {column_name}")
+    return value
+
+
 def populate_ner_predictions(session: Session, file: str, manual: bool = True):
-    # check if input file is json or csv
-    if file.endswith('.csv'):
-        data = pd.read_csv(file).to_dict(orient='records')
-    elif file.endswith('.jsonl'):
-        with open(file, 'r', encoding='utf-8') as f:
+    use_offsets = file.endswith(".csv")
+
+    if file.endswith(".csv"):
+        data = pd.read_csv(file).to_dict(orient="records")
+    elif file.endswith(".jsonl"):
+        with open(file, "r", encoding="utf-8") as f:
             data = [json.loads(line) for line in f.readlines()]
     else:
         raise ValueError("Unsupported file format. Use CSV or JSONL.")
 
     for row in data:
-        paper_id = int(row['id'])
-        paper = session.query(Paper).filter(Paper.id == paper_id).first()
+        paper_id_raw = int(row["id"])
+        if row['id'] in [2805, 3988972]:
+            breakpoint()
+
+        paper = session.query(Paper).filter(Paper.id == paper_id_raw).first()
         if not paper:
-            # check if there is a paper with the same pubmed_id as paper_id
             paper = session.query(Paper).filter(
-                Paper.pubmed_id == paper_id).first()
-            if not paper:
-                logging.warning(f"No paper found with paper_id: {paper_id}")
+                Paper.pubmed_id == paper_id_raw
+            ).first()
+
+        if not paper:
+            logging.warning(f"No paper found with paper_id: {paper_id_raw}")
             continue
 
-        # Prevent overwriting manual annotation with model prediction or vice versa
-        if ner_tag_from_other_model_exists(session, paper.id, model="manual_annotation" if manual else row.get('model', None)):
+        model = "manual_annotation" if manual else row.get("model", None)
+
+        if ner_tag_from_other_model_exists(session, paper.id, model=model):
             logging.warning(
-                f"Skipping NER import: NER tags from another model already exist for paper_id={paper.id}"
+                f"Skipping NER import: NER tags from another model already exist "
+                f"for paper_id={paper.id}"
             )
             continue
 
-        pred_text = paper.prediction_input
-        tokens = literal_eval(row['tokens']) if isinstance(
-            row['tokens'], str) else row['tokens']
-        ner_tags = literal_eval(row['ner_tags']) if isinstance(
-            row['ner_tags'], str) else row['ner_tags']
-
-        current_tag = None
-        entity_tokens = []
-        nr_tags = 0
-        model = None
-        entity_probs = []
-
-        if manual:
-            model = "manual_annotation"
-            # Assign a default probability of 1.0 for manual annotations
-            probs = [1.0] * len(tokens)
-
-        else:
-            probs = literal_eval(row['probabilities']) if isinstance(
-                row['probabilities'], str) else row['probabilities']
-            model = row.get('model', None)
-
-        offset = 0
-        entity_start_index = 0
-        for i, (token, tag) in enumerate(zip(tokens, ner_tags)):
-            # Determine entity type from B- or I- prefix
-            entity_type = tag[2:] if tag != 'O' else None
-
-            # Case 1: new entity starts
-            if tag.startswith("B-"):
-                entity_start_index = i
-
-                # If there was a previous entity, process it first
-                if current_tag:
-                    cur_entity_start_index = entity_start_index - \
-                        (len(entity_tokens)+1)
-                    prev_token = tokens[cur_entity_start_index] if cur_entity_start_index > 0 else None
-
-                    try:
-                        start_id, end_id = find_pos(
-                            pred_text[offset:],
-                            entity_tokens,
-                            prev_token,
-                            next_token=token,
-                            offset=offset
-                        )
-                    except Exception as e:
-                        logging.exception(f"Error occurred: {e}")
-                    # calculate mean probability for the entity (was missing here)
-                    probability = sum(entity_probs) / \
-                        len(entity_probs) if entity_probs else 0.0
-                    ner_tag = create_ner_tag(
-                        session=session, tag=current_tag, start_id=start_id, end_id=end_id,
-                        text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
-                    )
-
-                    session.add(ner_tag)
-                    try:
-                        session.flush()
-                    except IntegrityError:
-                        session.rollback()
-                        logging.info(
-                            f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
-                        # continue processing (don't count as added)
-                        nr_tags += 0
-                    else:
-                        nr_tags += 1
-                    nr_tags += 1
-
-                    # If it's a Dosage tag, normalize it
-                    if current_tag == 'Dosage':
-                        try:
-                            create_dosage_norm(
-                                session, ner_tag, pred_text[start_id:end_id])
-                        except (ValueError, IndexError) as e:
-                            logging.exception(
-                                f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
-
-                # Start the new entity
-                current_tag = entity_type
-                entity_tokens = [token]
-                entity_probs = [probs[i]]
-
-            # Case 2: continue entity
-            elif tag.startswith("I-") and current_tag == entity_type:
-                entity_tokens.append(token)
-                entity_probs.append(probs[i])
-
-            # Case 3: End of an entity (current tag is O or a new B- tag)
-            else:
-                if current_tag:
-                    prev_token = tokens[entity_start_index -
-                                        1] if entity_start_index > 0 else ''
-                    next_token = tokens[i] if i < len(tokens) else ''
-                    try:
-                        start_id, end_id = find_pos(
-                            pred_text[offset:],
-                            entity_tokens,
-                            prev_token,
-                            next_token,
-                            offset=offset
-                        )
-                    except Exception as e:
-                        logging.exception(f"Error occurred: {e}")
-                        # breakpoint()
-                    # calculate mean probability for the entity
-                    probability = sum(entity_probs) / \
-                        len(entity_probs) if entity_probs else 0.0
-                    ner_tag = create_ner_tag(
-                        session=session, tag=current_tag, start_id=start_id, end_id=end_id,
-                        text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
-                    )
-                    # Cut off the pred_text after the end_id for the next search, to avoid finding the same entity again
-                    offset = end_id
-
-                    session.add(ner_tag)
-                    try:
-                        session.flush()
-                    except IntegrityError:
-                        session.rollback()
-                        logging.info(
-                            f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
-                    else:
-                        nr_tags += 1
-
-                    # If it's a Dosage tag, normalize it
-                    if current_tag == 'Dosage':
-                        try:
-                            create_dosage_norm(
-                                session, ner_tag, pred_text[start_id:end_id])
-                        except (ValueError, IndexError) as e:
-                            logging.exception(
-                                f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
-
-                    # Reset for next entity
-                    current_tag = None
-                    entity_tokens = []
-                    entity_probs = []
-
-        # Process any remaining entity at the end of the sequence
-        if current_tag:
-
-            prev_token = tokens[entity_start_index -
-                                1] if entity_start_index > 0 else None
-            next_token = None
-            try:
-
-                start_id, end_id = find_pos(
-                    pred_text[offset:],
-                    entity_tokens,
-                    prev_token,
-                    next_token,
-                    offset=offset
-                )
-            except Exception as e:
-                logging.exception(f"Error occurred: {e}")
-                # breakpoint()
-            probability = sum(entity_probs) / \
-                len(entity_probs) if entity_probs else 0.0
-            ner_tag = create_ner_tag(
-                session=session, tag=current_tag, start_id=start_id, end_id=end_id,
-                text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
+        try:
+            extracted_tags = ner_tags_from_row(
+                row=row,
+                pred_text=paper.prediction_input,
+                manual=manual,
+                use_offsets=use_offsets,
+                max_o_gap=2,
             )
-            offset = end_id
+        except Exception as e:
+            logging.warning(
+                f"Skipping NER row because tag extraction failed: "
+                f"paper_id={paper_id_raw}, error={e}"
+            )
+            continue
+
+        for extracted in extracted_tags:
+            tag = extracted["tag"]
+            start_id = extracted["start_id"]
+            end_id = extracted["end_id"]
+            span_text = extracted["text"]
+            probability = extracted["probability"]
+
+            ner_tag = create_ner_tag(
+                session=session,
+                tag=tag,
+                start_id=start_id,
+                end_id=end_id,
+                text=span_text,
+                probability=probability,
+                model=model,
+                paper_id=paper.id,
+                pred_text=paper.prediction_input,
+            )
+
             session.add(ner_tag)
+
             try:
                 session.flush()
             except IntegrityError:
                 session.rollback()
                 logging.info(
-                    f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
-            else:
-                nr_tags += 1
+                    f"Skipped duplicate NER tag for paper_id {paper.id}, "
+                    f"tag {tag}, span {start_id}-{end_id}"
+                )
+                continue
 
-            # If it's a Dosage tag, normalize it
-            if current_tag == 'Dosage':
+            if tag == "Dosage":
+
+                if not span_text:
+                    logging.warning(
+                        f"Skipping dosage normalization because text is empty: "
+                        f"paper_id={paper.id}, span_text={span_text!r}, ")
+                    continue
+
                 try:
-                    create_dosage_norm(
-                        session, ner_tag, pred_text[start_id:end_id])
+                    create_dosage_norm(session, ner_tag, span_text)
                 except (ValueError, IndexError) as e:
-                    logging.exception(
-                        f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
+                    logging.warning(
+                        "Could not normalize dosage | "
+                        f"paper_id={paper.id} | "
+                        f"entity_text={span_text!r} | "
+                        f"error={e}"
+                    )
 
         session.commit()
 

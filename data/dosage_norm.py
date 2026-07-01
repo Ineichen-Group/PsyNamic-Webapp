@@ -170,6 +170,7 @@ def extract_dosages(dosage: str) -> dict[str, str]:
 
     """
     dosage_norm = normalize_dosage(dosage)
+    dosage_norm_for_error = dosage_norm if dosage_norm.strip() else "<empty>"
 
     dosage_dict = {
         "norm_text": dosage_norm,
@@ -215,7 +216,7 @@ def extract_dosages(dosage: str) -> dict[str, str]:
             dosage_dict["max"] = numbers[-1]
         else:
             raise ValueError(
-                f"Could not extract min and max from dosage: {dosage_norm}")
+                f"Could not extract min and max from dosage: {dosage_norm_for_error}")
 
     else:
         numbers = [n for n in re.findall(r'\d*\.\d+|\d+', dosage_norm)]
@@ -233,7 +234,7 @@ def extract_dosages(dosage: str) -> dict[str, str]:
             dosage_dict["min"] = float(numbers[0])
             dosage_dict["max"] = float(numbers[0])
         else:
-            raise ValueError(f"Could not extract dosage from: {dosage_norm}")
+            raise ValueError(f"Could not extract dosage from: {dosage_norm_for_error}")
 
     # if /kg or /h in dosage -> relative dose
     if re.search(r"/[\s\d]*kg", dosage_norm):
