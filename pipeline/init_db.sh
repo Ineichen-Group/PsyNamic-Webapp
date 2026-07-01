@@ -19,19 +19,22 @@ python -m data.populate \
 
 # Predictions on rest of manually defined as relevant
 python -m data.populate \
-  -p data/manual/class_predictions_20240101_04-48-11.csv
+  -p data/predictions/class_predictions_20240101_04-48-11.csv
 
 python -m data.populate \
-  -p data/manual/ner_predictions_20240101_00-13-08.csv
+  -p data/predictions/ner_predictions_20240101_00-00-27.csv
 
-# Pubmed data automatically downlaoded and predicted on 2026-03-20
-python -m data.populate \
-  -s data/relevant_studies/studies_20260320_00-09-37.csv
+# Pubmed data automatically downloaded and predicted studies up until 2026-05-30, with new search string without study type restriction
+# Automatically deduplicated
+
+python -m data.populate \ 
+  -s data/manual/studies_relevant_deduplicated_excluded_20260530_00-00-00.csv
 
 python -m data.populate \
-  -p data/predictions/class_predictions_20260320_01-32-38.csv
+  -p data/predictions/ner_predictions_20260530_00-00-56.csv
 
 python -m data.populate \
-  -p data/predictions/ner_predictions_20260320_00-04-24.csv
+  -p data/predictions/class_predictions_20260530_00-15-50.csv
+
 
 echo "Database initialization completed successfully."
