@@ -17,7 +17,7 @@ python -m data.populate \
 python -m data.populate \
   -p data/manual/ner_bio_966_manual.jsonl
 
-# Predictions on rest of manually defined as relevant
+# Predictions on rest of manually defined as relevant but not annotated
 python -m data.populate \
   -p data/predictions/class_predictions_20240101_04-48-11.csv
 
@@ -25,13 +25,13 @@ python -m data.populate \
   -p data/predictions/ner_predictions_20240101_00-00-27.csv
 
 # Pubmed data automatically downloaded and predicted studies up until 2026-05-30, with new search string without study type restriction
-# Automatically deduplicated
+# Automatically deduplicated 
 
-python -m data.populate \ 
+python -m data.populate \
   -s data/manual/studies_relevant_deduplicated_excluded_20260530_00-00-00.csv
 
 python -m data.populate \
-  -p data/predictions/ner_predictions_20260530_00-00-56.csv
+  -p data/predictions/ner_predictions_20260530_00-02-38.csv
 
 python -m data.populate \
   -p data/predictions/class_predictions_20260530_00-15-50.csv

@@ -31,6 +31,39 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # TODO: A little redundant with pipeline/train.py's Dataset, consider refactoring
 
 
+def normalize_prediction_input(df: pd.DataFrame) -> pd.DataFrame:
+    """Validate the prediction input and ensure it has usable text."""
+
+    df = df.copy()
+    df.fillna('', inplace=True)
+
+    if 'text' not in df.columns:
+        raise ValueError(
+            "No 'text' column found in the input data. "
+            f"Found: {list(df.columns)}"
+        )
+
+    # Drop any rows where the text column is empty or whitespace.
+    initial_count = len(df)
+    df = df[df['text'].astype(str).str.strip() != ''].copy()
+    dropped_count = initial_count - len(df)
+    if dropped_count > 0:
+        logging.warning(f"Dropped {dropped_count} rows with empty or whitespace text.")
+
+    return df
+
+
+def resolve_identifier_column(df: pd.DataFrame) -> str:
+    if 'id' in df.columns:
+        return 'id'
+    if 'pubmed_id' in df.columns:
+        return 'pubmed_id'
+    raise ValueError(
+        "No identifier column found. Expected 'id' or 'pubmed_id'. "
+        f"Found: {list(df.columns)}"
+    )
+
+
 class SimpleDataset(Dataset):
     """Dataset for prediction with BERT for Classification or NER."""
 
@@ -47,9 +80,7 @@ class SimpleDataset(Dataset):
         self.is_multilabel = multilabel
         self.is_ner = is_ner
 
-        # Check if pubmed_id exists, else use 'id'
-        if self.ID_COL not in self.df.columns:
-            self.ID_COL = 'pubmed_id'
+        self.ID_COL = resolve_identifier_column(self.df)
 
         if self.is_ner:
             # Keep chunk row positions identical to prediction-list positions.
@@ -477,11 +508,6 @@ def main():
         help='Directory to save prediction outputs. Default is data/predictions.'
     )
     parser.add_argument(
-        '--skip_relevance',
-        action='store_true',
-        help='Skip relevance prediction step.'
-    )
-    parser.add_argument(
         '--prediction-mode',
         choices=['all', 'classification', 'ner'],
         default='all',
@@ -583,32 +609,38 @@ def main():
         # ------------------------------------------------------------
         # Prepare relevant_df
         # ------------------------------------------------------------
-        # If prediction-mode is classification or ner, skip relevance prediction.
-        # Input is treated as already relevant.
+        # Case 1) prediction_mode = classification/ner: skip relevance prediction, load relevant_df from csv_file
         if args.prediction_mode in ['classification', 'ner']:
             logging.info(
                 f"prediction_mode='{args.prediction_mode}': skipping relevance prediction. "
-                "Input file is treated as already relevant."
             )
-            relevant_df = pd.read_csv(csv_file)
+            relevant_df = normalize_prediction_input(pd.read_csv(csv_file))
+
+            # Case 1.1) if 'prediction' column exists in csv_file, filter relevant_df to only include relevant studies
+            if 'prediction' in relevant_df.columns:
+                relevant_df = relevant_df[relevant_df['prediction'] == 1]
+                logging.info(
+                    f"Loaded {len(relevant_df)} relevant studies from {csv_file} based on existing 'prediction' column."
+                )
+            # Case 1.2) if 'prediction' column does not exist, assume all studies are relevant
+            else:
+                logging.info(
+                    f"No 'prediction' column found in {csv_file}. Assuming all studies are relevant."
+                )
+
             relevant_df.fillna('', inplace=True)
 
+        # Case 2) prediction_mode = all: 
+        #  - run relevance prediction and filter relevant_df to only include relevant studies
+        #  - run classification/ner on relevant_df
         else:
-            # Default/current behavior: run or reuse relevance prediction unless --skip_relevance is set.
             rel_pred = check_if_pred_exist(RELEVANT_STUDIES, retrieval_date)
 
-            if args.skip_relevance:
-                logging.info(
-                    'Skipping relevance prediction as per argument. Assuming all studies are relevant.'
-                )
-                relevant_df = pd.read_csv(csv_file)
-                relevant_df.fillna('', inplace=True)
-
-            elif rel_pred:
+            if rel_pred:
                 logging.info(
                     f'Relevance predictions for date {retrieval_date} already exist. Skipping prediction.'
                 )
-                relevant_df = pd.read_csv(rel_pred)
+                relevant_df = normalize_prediction_input(pd.read_csv(rel_pred))
                 relevant_df = relevant_df[relevant_df['prediction'] == 1]
                 logging.info(f'Loaded existing relevant studies from {rel_pred}')
 
@@ -630,32 +662,8 @@ def main():
                     f'Loaded relevance model: {relevant_model["model_path"]}'
                 )
 
-                relevant_df = pd.read_csv(csv_file)
-                initial_count = len(relevant_df)
-                relevant_df.fillna('', inplace=True)
-
-                text_filter_cols = [
-                    c for c in ['title', 'abstract', 'text']
-                    if c in relevant_df.columns
-                ]
-
-                if text_filter_cols:
-                    mask = pd.Series(False, index=relevant_df.index)
-                    for col in text_filter_cols:
-                        mask = mask | (relevant_df[col].astype(str).str.strip() != '')
-                    relevant_df = relevant_df[mask]
-                else:
-                    logging.warning(
-                        "No text-bearing columns found among title, abstract, text. "
-                        "Skipping missing-text filtering."
-                    )
-
-                dropped_count = initial_count - len(relevant_df)
-                if dropped_count > 0:
-                    logging.warning(
-                        f"Dropped {dropped_count} samples due to missing text. "
-                        f"Remaining samples: {len(relevant_df)}"
-                    )
+                raw_relevant_df = pd.read_csv(csv_file)
+                relevant_df = normalize_prediction_input(raw_relevant_df)
 
                 data = SimpleDataset(
                     relevant_df,
@@ -672,15 +680,7 @@ def main():
                 )
                 logging.info('Completed predictions of relevance model.')
 
-                if 'pubmed_id' in relevant_df.columns:
-                    merge_col = 'pubmed_id'
-                elif 'id' in relevant_df.columns:
-                    merge_col = 'id'
-                else:
-                    raise ValueError(
-                        f"No identifier column found. Expected 'pubmed_id' or 'id'. "
-                        f"Found: {list(relevant_df.columns)}"
-                    )
+                merge_col = resolve_identifier_column(relevant_df)
 
                 relevant_predictions_df = relevant_predictions_df.merge(
                     relevant_df.drop(columns=['text'], errors='ignore'),
