@@ -12,21 +12,37 @@ show-db-user: load-env
 load-datamodel: load-env
 	docker compose exec web python data/models.py
 
+wait-for-db: load-env
+	@echo "Waiting for Postgres to accept connections..."
+	@for i in $$(seq 1 60); do \
+		if docker compose exec -T db pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME} >/dev/null 2>&1; then \
+			exit 0; \
+		fi; \
+		sleep 1; \
+	done; \
+	echo "Postgres did not become ready in time"; \
+	exit 1
+
 load-indexes:
 	docker compose exec -T db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < data/indexes.sql
 
 db-init: load-env
+	docker compose up -d db
+	$(MAKE) wait-for-db
 	docker compose up db_init
 
 db-dump: load-env
 	DATE=$$(date +%Y%m%d_%H%M%S); \
 	docker compose exec db pg_dump -U ${DATABASE_USER} -d ${DATABASE_NAME} -F c -b -v -f /data/data_dump_$${DATE}.sql
 
-# Drop all data and recreate an empty DB schema, then recreate tables
-db-empty: load-env
-	@echo "Dropping public schema and recreating empty database (backup recommended)"
-	docker compose exec db psql -U ${DATABASE_USER} -d ${DATABASE_NAME} -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-	$(MAKE) load-datamodel
+# Recreate the database from scratch so model changes in data/models.py are applied
+db-reset: load-env
+	@echo "Stopping Compose stack and removing persisted database volume (backup recommended)"
+	docker compose down -v --remove-orphans
+	docker compose up -d db
+	$(MAKE) wait-for-db
+	docker compose up db_init
+
 
 db-populate: load-env
 	docker compose exec web python -m data.populate
