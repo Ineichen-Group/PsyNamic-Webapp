@@ -658,8 +658,6 @@ def populate_ner_predictions(session: Session, file: str, manual: bool = True):
 
     for row in data:
         paper_id_raw = int(row["id"])
-        if row['id'] in [2805, 3988972]:
-            breakpoint()
 
         paper = session.query(Paper).filter(Paper.id == paper_id_raw).first()
         if not paper:
