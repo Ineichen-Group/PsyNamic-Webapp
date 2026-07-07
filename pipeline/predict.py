@@ -237,8 +237,13 @@ def predict(model: Union[AutoModelForTokenClassification, AutoModelForSequenceCl
                 test_dataset.tokenizer.convert_tokens_to_ids(s["tokens"])
                 for s in batch_samples
             ]
+            cls_token_id = test_dataset.tokenizer.cls_token_id
+            sep_token_id = test_dataset.tokenizer.sep_token_id
+            if cls_token_id is None or sep_token_id is None:
+                raise ValueError("NER tokenizer is missing CLS/SEP special token ids.")
+
             model_id_seqs = [
-                test_dataset.tokenizer.build_inputs_with_special_tokens(seq)
+                [cls_token_id, *seq, sep_token_id]
                 for seq in text_id_seqs
             ]
             text_lengths = [len(seq) for seq in text_id_seqs]
