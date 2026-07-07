@@ -72,15 +72,3 @@ def compare_dfs(
 
     # Disclaimer: n_unique may be less than the number of rows in matches if there are duplicate rows in either DataFrame based on the specified columns.
     return n_unique, matches
-
-
-def is_same_title(title1: str, title2: str) -> bool:
-    title1 = title1.strip().lower()
-    title2 = title2.strip().lower()
-
-    if title1 == title2:
-        return True
-    elif title1.startswith(title2) or title2.startswith(title1):
-        return True
-    else:
-        return False
