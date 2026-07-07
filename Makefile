@@ -35,13 +35,19 @@ db-dump: load-env
 	DATE=$$(date +%Y%m%d_%H%M%S); \
 	docker compose exec db pg_dump -U ${DATABASE_USER} -d ${DATABASE_NAME} -F c -b -v -f /data/data_dump_$${DATE}.sql
 
-# Recreate the database from scratch so model changes in data/models.py are applied
 db-reset: load-env
 	@echo "Stopping Compose stack and removing persisted database volume (backup recommended)"
 	docker compose down -v --remove-orphans
 	docker compose up -d db
 	$(MAKE) wait-for-db
 	docker compose up db_init
+
+db-empty: load-env
+	@echo "Stopping Compose stack and removing persisted database volume"
+	docker compose down -v --remove-orphans
+	docker compose up -d db
+	$(MAKE) wait-for-db
+	docker compose run --rm db_init python /app/data/models.py
 
 
 db-populate: load-env
