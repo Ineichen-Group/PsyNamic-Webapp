@@ -11,8 +11,7 @@ import os
 import logging
 import argparse
 import pytz
-from data.helper import cleanup_old_logs, format_timedelta_hms
-from analysis.analysis import is_same_title
+from data.helper import cleanup_old_logs, format_timedelta_hms, is_same_title
 from typing import Optional, List, Sequence
 
 PUBMED_API_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
