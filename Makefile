@@ -78,11 +78,16 @@ cronlog:
 	@echo "===== GENERAL PIPELINE LOG (last 10 lines) ====="
 	@tail -n 10 /home/sysadmin/PsyNamic-Webapp/pipeline.log 2>/dev/null || echo "No general pipeline log found"
 	@echo ""
-	@echo "===== LATEST PIPELINE LOG (last 10 lines) ====="
+	@echo "===== LATEST PIPELINE LOG (last 50 lines) ====="
 	@latest_log=$$(ls -1t /home/sysadmin/PsyNamic-Webapp/pipeline/log/pipeline_*.log 2>/dev/null | head -n 1); \
 	if [ -n "$$latest_log" ]; then \
 		echo "Tailing latest log: $$latest_log"; \
-		tail -n 10 "$$latest_log"; \
+		tail -n 50 "$$latest_log"; \
 	else \
 		echo "No pipeline logs found"; \
 	fi
+	@echo ""
+	@echo "===== BACKUP LOG (last 50 lines) ====="
+	@tail -n 50 /home/sysadmin/PsyNamic-Webapp/backup.log 2>/dev/null || echo "No backup log found"
+backup:
+	./backup.sh
