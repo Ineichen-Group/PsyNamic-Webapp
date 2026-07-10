@@ -334,6 +334,13 @@ def populate_class_predictions(session: Session, file: str):
         task = row['task']
         label = row['label']
         model = row['model']
+        
+        # Prevent overwriting manual annotation or previous prediction
+        if class_pred_from_other_model_exists(session, paper_id, task, model):
+            logging.info(
+                f"Skipping prediction for paper_id={paper.id}, task={row['task']} from model {model} because a prediction from another model already exists"
+            )
+            continue
 
         # prevent duplicates
         if class_pred_exists(session, paper_id, task, label):
@@ -343,12 +350,7 @@ def populate_class_predictions(session: Session, file: str):
             )
             continue
 
-        # Prevent overwriting manual annotation or previous prediction
-        if class_pred_from_other_model_exists(session, paper_id, task, model):
-            logging.info(
-                f"Skipping prediction for paper_id={paper.id}, task={row['task']} from model {model} because a prediction from another model already exists"
-            )
-            continue
+
 
         pred = create_predictions(
             paper_id=paper_id,
