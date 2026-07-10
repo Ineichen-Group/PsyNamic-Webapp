@@ -1,0 +1,1008 @@
+id,task,label,probability,is_multilabel,model
+42388555,Study Type,Other,0.010984542779624462,False,biolinkbert_study_type_20251005
+42385939,Study Type,Systematic review/meta-analysis,0.008003783412277699,False,biolinkbert_study_type_20251005
+42381187,Study Type,Other,0.007121756672859192,False,biolinkbert_study_type_20251005
+42380668,Study Type,Systematic review/meta-analysis,0.007680763024836779,False,biolinkbert_study_type_20251005
+42378255,Study Type,Study protocol,0.08347957581281662,False,biolinkbert_study_type_20251005
+42369371,Study Type,Randomized-controlled trial (RCT),0.9497203230857849,False,biolinkbert_study_type_20251005
+42365488,Study Type,Systematic review/meta-analysis,0.00702891917899251,False,biolinkbert_study_type_20251005
+42348297,Study Type,Systematic review/meta-analysis,0.006931777112185955,False,biolinkbert_study_type_20251005
+42343098,Study Type,Other,0.006286041811108589,False,biolinkbert_study_type_20251005
+42340723,Study Type,Randomized-controlled trial (RCT),0.9544753432273865,False,biolinkbert_study_type_20251005
+42325314,Study Type,Other,0.011081238277256489,False,biolinkbert_study_type_20251005
+42322409,Study Type,Randomized-controlled trial (RCT),0.9555835127830505,False,biolinkbert_study_type_20251005
+42318842,Study Type,Real-world study,0.011232663877308369,False,biolinkbert_study_type_20251005
+42318348,Study Type,Case report,0.0355386845767498,False,biolinkbert_study_type_20251005
+42315644,Study Type,Randomized-controlled trial (RCT),0.9530891180038452,False,biolinkbert_study_type_20251005
+42313772,Study Type,Study protocol,0.016019698232412338,False,biolinkbert_study_type_20251005
+42311441,Study Type,Other,0.013960428535938263,False,biolinkbert_study_type_20251005
+42307775,Study Type,Randomized-controlled trial (RCT),0.9545992612838745,False,biolinkbert_study_type_20251005
+42307049,Study Type,Randomized-controlled trial (RCT),0.9519718289375305,False,biolinkbert_study_type_20251005
+42304595,Study Type,Other,0.015179574489593506,False,biolinkbert_study_type_20251005
+42295696,Study Type,Systematic review/meta-analysis,0.008295338600873947,False,biolinkbert_study_type_20251005
+42292331,Study Type,Case report,0.037416841834783554,False,biolinkbert_study_type_20251005
+42290311,Study Type,Other,0.026467686519026756,False,biolinkbert_study_type_20251005
+42288429,Study Type,Real-world study,0.013039874844253063,False,biolinkbert_study_type_20251005
+42278842,Study Type,Other,0.00833966676145792,False,biolinkbert_study_type_20251005
+42274347,Study Type,Systematic review/meta-analysis,0.01409263163805008,False,biolinkbert_study_type_20251005
+42272233,Study Type,Real-world study,0.021643713116645813,False,biolinkbert_study_type_20251005
+42270128,Study Type,Real-world study,0.011374495923519135,False,biolinkbert_study_type_20251005
+42268384,Study Type,Real-world study,0.016573142260313034,False,biolinkbert_study_type_20251005
+42267710,Study Type,Real-world study,0.009495509788393974,False,biolinkbert_study_type_20251005
+42266089,Study Type,Other,0.024351326748728752,False,biolinkbert_study_type_20251005
+42265057,Study Type,Systematic review/meta-analysis,0.00846895668655634,False,biolinkbert_study_type_20251005
+42264307,Study Type,Real-world study,0.022461259737610817,False,biolinkbert_study_type_20251005
+42261442,Study Type,Randomized-controlled trial (RCT),0.9516600966453552,False,biolinkbert_study_type_20251005
+42255873,Study Type,Case report,0.03294346109032631,False,biolinkbert_study_type_20251005
+42251276,Study Type,Study protocol,0.09001542627811432,False,biolinkbert_study_type_20251005
+42250921,Study Type,Study protocol,0.07118947803974152,False,biolinkbert_study_type_20251005
+42250635,Study Type,Real-world study,0.023409033194184303,False,biolinkbert_study_type_20251005
+42248535,Study Type,Other,0.015123635530471802,False,biolinkbert_study_type_20251005
+42248136,Study Type,Real-world study,0.007998555898666382,False,biolinkbert_study_type_20251005
+42247761,Study Type,Real-world study,0.009509580209851265,False,biolinkbert_study_type_20251005
+42243076,Study Type,Randomized-controlled trial (RCT),0.9522475600242615,False,biolinkbert_study_type_20251005
+42237795,Study Type,Case report,0.03751515597105026,False,biolinkbert_study_type_20251005
+42234079,Study Type,Randomized-controlled trial (RCT),0.9527873992919922,False,biolinkbert_study_type_20251005
+42233004,Study Type,Real-world study,0.010645843110978603,False,biolinkbert_study_type_20251005
+42228481,Study Type,Systematic review/meta-analysis,0.006372269708663225,False,biolinkbert_study_type_20251005
+42220002,Study Type,Randomized-controlled trial (RCT),0.9556136727333069,False,biolinkbert_study_type_20251005
+42218644,Study Type,Systematic review/meta-analysis,0.009764469228684902,False,biolinkbert_study_type_20251005
+42388555,Study Purpose,Efficacy endpoints,0.9000731706619263,True,biobert_study_purpose_20250221
+42388555,Study Purpose,Safety endpoints,0.6409615278244019,True,biobert_study_purpose_20250221
+42385939,Study Purpose,Safety endpoints,0.9486826658248901,True,biobert_study_purpose_20250221
+42385939,Study Purpose,Demographic study,0.38322606682777405,True,biobert_study_purpose_20250221
+42381187,Study Purpose,Mechanism of action,0.9793667197227478,True,biobert_study_purpose_20250221
+42380668,Study Purpose,Efficacy endpoints,0.5404900312423706,True,biobert_study_purpose_20250221
+42380668,Study Purpose,Mechanism of action,0.8577963709831238,True,biobert_study_purpose_20250221
+42378255,Study Purpose,Efficacy endpoints,0.9028406143188477,True,biobert_study_purpose_20250221
+42378255,Study Purpose,Safety endpoints,0.9809390306472778,True,biobert_study_purpose_20250221
+42369371,Study Purpose,Efficacy endpoints,0.9207847714424133,True,biobert_study_purpose_20250221
+42369371,Study Purpose,Safety endpoints,0.9701449871063232,True,biobert_study_purpose_20250221
+42365488,Study Purpose,Efficacy endpoints,0.9491053819656372,True,biobert_study_purpose_20250221
+42365488,Study Purpose,Safety endpoints,0.9457983374595642,True,biobert_study_purpose_20250221
+42348297,Study Purpose,Mechanism of action,0.8507080078125,True,biobert_study_purpose_20250221
+42343098,Study Purpose,Mechanism of action,0.9622174501419067,True,biobert_study_purpose_20250221
+42340723,Study Purpose,Efficacy endpoints,0.9534456133842468,True,biobert_study_purpose_20250221
+42340723,Study Purpose,Safety endpoints,0.966184139251709,True,biobert_study_purpose_20250221
+42325314,Study Purpose,Efficacy endpoints,0.9176079630851746,True,biobert_study_purpose_20250221
+42322409,Study Purpose,Efficacy endpoints,0.9912954568862915,True,biobert_study_purpose_20250221
+42318842,Study Purpose,Demographic study,0.9620642066001892,True,biobert_study_purpose_20250221
+42318348,Study Purpose,Efficacy endpoints,0.9772427678108215,True,biobert_study_purpose_20250221
+42318348,Study Purpose,Safety endpoints,0.5087886452674866,True,biobert_study_purpose_20250221
+42315644,Study Purpose,Safety endpoints,0.5190266370773315,True,biobert_study_purpose_20250221
+42315644,Study Purpose,Mechanism of action,0.8758092522621155,True,biobert_study_purpose_20250221
+42313772,Study Purpose,Efficacy endpoints,0.9741151332855225,True,biobert_study_purpose_20250221
+42311441,Study Purpose,Efficacy endpoints,0.9884302616119385,True,biobert_study_purpose_20250221
+42311441,Study Purpose,Safety endpoints,0.3560197949409485,True,biobert_study_purpose_20250221
+42307775,Study Purpose,Efficacy endpoints,0.9389893412590027,True,biobert_study_purpose_20250221
+42307775,Study Purpose,Safety endpoints,0.8505843877792358,True,biobert_study_purpose_20250221
+42307049,Study Purpose,Efficacy endpoints,0.9705932140350342,True,biobert_study_purpose_20250221
+42307049,Study Purpose,Safety endpoints,0.9298415184020996,True,biobert_study_purpose_20250221
+42304595,Study Purpose,Efficacy endpoints,0.9479987025260925,True,biobert_study_purpose_20250221
+42295696,Study Purpose,Efficacy endpoints,0.8205485343933105,True,biobert_study_purpose_20250221
+42295696,Study Purpose,Safety endpoints,0.9753527641296387,True,biobert_study_purpose_20250221
+42292331,Study Purpose,Efficacy endpoints,0.8686185479164124,True,biobert_study_purpose_20250221
+42290311,Study Purpose,Efficacy endpoints,0.886680543422699,True,biobert_study_purpose_20250221
+42290311,Study Purpose,Mechanism of action,0.5050683617591858,True,biobert_study_purpose_20250221
+42288429,Study Purpose,Safety endpoints,0.35302701592445374,True,biobert_study_purpose_20250221
+42288429,Study Purpose,Demographic study,0.40927213430404663,True,biobert_study_purpose_20250221
+42278842,Study Purpose,Efficacy endpoints,0.9202914834022522,True,biobert_study_purpose_20250221
+42274347,Study Purpose,Efficacy endpoints,0.6054081916809082,True,biobert_study_purpose_20250221
+42274347,Study Purpose,Safety endpoints,0.6856850981712341,True,biobert_study_purpose_20250221
+42274347,Study Purpose,Demographic study,0.42835932970046997,True,biobert_study_purpose_20250221
+42272233,Study Purpose,Efficacy endpoints,0.9501171708106995,True,biobert_study_purpose_20250221
+42270128,Study Purpose,Safety endpoints,0.9556973576545715,True,biobert_study_purpose_20250221
+42268384,Study Purpose,Efficacy endpoints,0.4779232442378998,True,biobert_study_purpose_20250221
+42268384,Study Purpose,Demographic study,0.5534471273422241,True,biobert_study_purpose_20250221
+42267710,Study Purpose,Safety endpoints,0.6564612984657288,True,biobert_study_purpose_20250221
+42267710,Study Purpose,Demographic study,0.7744717001914978,True,biobert_study_purpose_20250221
+42266089,Study Purpose,Efficacy endpoints,0.9931179285049438,True,biobert_study_purpose_20250221
+42265057,Study Purpose,Efficacy endpoints,0.9702660441398621,True,biobert_study_purpose_20250221
+42264307,Study Purpose,Efficacy endpoints,0.43029066920280457,True,biobert_study_purpose_20250221
+42264307,Study Purpose,Safety endpoints,0.6862512230873108,True,biobert_study_purpose_20250221
+42264307,Study Purpose,Demographic study,0.4867541491985321,True,biobert_study_purpose_20250221
+42261442,Study Purpose,Efficacy endpoints,0.9339746236801147,True,biobert_study_purpose_20250221
+42261442,Study Purpose,Safety endpoints,0.9695974588394165,True,biobert_study_purpose_20250221
+42255873,Study Purpose,Safety endpoints,0.9666448831558228,True,biobert_study_purpose_20250221
+42251276,Study Purpose,Efficacy endpoints,0.9884485602378845,True,biobert_study_purpose_20250221
+42251276,Study Purpose,Safety endpoints,0.45318540930747986,True,biobert_study_purpose_20250221
+42250921,Study Purpose,Mechanism of action,0.8206916451454163,True,biobert_study_purpose_20250221
+42250635,Study Purpose,Safety endpoints,0.39733606576919556,True,biobert_study_purpose_20250221
+42248535,Study Purpose,Efficacy endpoints,0.9945182204246521,True,biobert_study_purpose_20250221
+42248136,Study Purpose,Efficacy endpoints,0.3117982745170593,True,biobert_study_purpose_20250221
+42248136,Study Purpose,Safety endpoints,0.9458094239234924,True,biobert_study_purpose_20250221
+42247761,Study Purpose,Safety endpoints,0.7493863105773926,True,biobert_study_purpose_20250221
+42247761,Study Purpose,Demographic study,0.925699770450592,True,biobert_study_purpose_20250221
+42243076,Study Purpose,Efficacy endpoints,0.3441329896450043,True,biobert_study_purpose_20250221
+42243076,Study Purpose,Safety endpoints,0.9734536409378052,True,biobert_study_purpose_20250221
+42237795,Study Purpose,Safety endpoints,0.9738982319831848,True,biobert_study_purpose_20250221
+42234079,Study Purpose,Efficacy endpoints,0.9528010487556458,True,biobert_study_purpose_20250221
+42234079,Study Purpose,Safety endpoints,0.9659726619720459,True,biobert_study_purpose_20250221
+42233004,Study Purpose,Efficacy endpoints,0.7214807868003845,True,biobert_study_purpose_20250221
+42233004,Study Purpose,Safety endpoints,0.8457890748977661,True,biobert_study_purpose_20250221
+42228481,Study Purpose,Efficacy endpoints,0.777092456817627,True,biobert_study_purpose_20250221
+42228481,Study Purpose,Safety endpoints,0.9829113483428955,True,biobert_study_purpose_20250221
+42220002,Study Purpose,Mechanism of action,0.945496141910553,True,biobert_study_purpose_20250221
+42218644,Study Purpose,Efficacy endpoints,0.8356142640113831,True,biobert_study_purpose_20250221
+42218644,Study Purpose,Mechanism of action,0.535023033618927,True,biobert_study_purpose_20250221
+42388555,Study Control,Non-controlled,0.9095519781112671,True,pubmedbert_study_control_20250221
+42385939,Study Control,Not applicable,0.9323376417160034,True,pubmedbert_study_control_20250221
+42381187,Study Control,Other control,0.16951525211334229,True,pubmedbert_study_control_20250221
+42381187,Study Control,Non-controlled,0.8634704947471619,True,pubmedbert_study_control_20250221
+42380668,Study Control,Not applicable,0.9309044480323792,True,pubmedbert_study_control_20250221
+42378255,Study Control,Other control,0.8000912070274353,True,pubmedbert_study_control_20250221
+42378255,Study Control,Non-controlled,0.1272730678319931,True,pubmedbert_study_control_20250221
+42369371,Study Control,Placebo,0.38016754388809204,True,pubmedbert_study_control_20250221
+42369371,Study Control,Active control,0.21228761970996857,True,pubmedbert_study_control_20250221
+42369371,Study Control,Other control,0.29005202651023865,True,pubmedbert_study_control_20250221
+42365488,Study Control,Not applicable,0.931842029094696,True,pubmedbert_study_control_20250221
+42348297,Study Control,Not applicable,0.9283048510551453,True,pubmedbert_study_control_20250221
+42343098,Study Control,Other control,0.1277773231267929,True,pubmedbert_study_control_20250221
+42343098,Study Control,Non-controlled,0.863290548324585,True,pubmedbert_study_control_20250221
+42340723,Study Control,Placebo,0.9738690257072449,True,pubmedbert_study_control_20250221
+42325314,Study Control,Non-controlled,0.9607417583465576,True,pubmedbert_study_control_20250221
+42322409,Study Control,Placebo,0.9739187955856323,True,pubmedbert_study_control_20250221
+42318842,Study Control,Other control,0.4128423035144806,True,pubmedbert_study_control_20250221
+42318842,Study Control,Non-controlled,0.7367640137672424,True,pubmedbert_study_control_20250221
+42318348,Study Control,Non-controlled,0.9591373801231384,True,pubmedbert_study_control_20250221
+42315644,Study Control,Placebo,0.971989631652832,True,pubmedbert_study_control_20250221
+42313772,Study Control,Non-controlled,0.9513728022575378,True,pubmedbert_study_control_20250221
+42311441,Study Control,Non-controlled,0.9591867327690125,True,pubmedbert_study_control_20250221
+42307775,Study Control,Other control,0.13609838485717773,True,pubmedbert_study_control_20250221
+42307775,Study Control,Non-controlled,0.901195764541626,True,pubmedbert_study_control_20250221
+42307049,Study Control,Placebo,0.9708960652351379,True,pubmedbert_study_control_20250221
+42304595,Study Control,Non-controlled,0.9619691967964172,True,pubmedbert_study_control_20250221
+42295696,Study Control,Not applicable,0.9211331009864807,True,pubmedbert_study_control_20250221
+42292331,Study Control,Non-controlled,0.9658002853393555,True,pubmedbert_study_control_20250221
+42290311,Study Control,Non-controlled,0.9479765892028809,True,pubmedbert_study_control_20250221
+42288429,Study Control,Non-controlled,0.9564775824546814,True,pubmedbert_study_control_20250221
+42278842,Study Control,Non-controlled,0.962827205657959,True,pubmedbert_study_control_20250221
+42274347,Study Control,Non-controlled,0.2339097261428833,True,pubmedbert_study_control_20250221
+42274347,Study Control,Not applicable,0.7170717716217041,True,pubmedbert_study_control_20250221
+42272233,Study Control,Non-controlled,0.948986291885376,True,pubmedbert_study_control_20250221
+42270128,Study Control,Non-controlled,0.9645339846611023,True,pubmedbert_study_control_20250221
+42268384,Study Control,Non-controlled,0.9542528986930847,True,pubmedbert_study_control_20250221
+42267710,Study Control,Non-controlled,0.9415040612220764,True,pubmedbert_study_control_20250221
+42266089,Study Control,Non-controlled,0.9542693495750427,True,pubmedbert_study_control_20250221
+42265057,Study Control,Not applicable,0.9308491945266724,True,pubmedbert_study_control_20250221
+42264307,Study Control,Other control,0.9168930649757385,True,pubmedbert_study_control_20250221
+42261442,Study Control,Placebo,0.9742286205291748,True,pubmedbert_study_control_20250221
+42255873,Study Control,Non-controlled,0.9311454892158508,True,pubmedbert_study_control_20250221
+42251276,Study Control,Active control,0.8399358987808228,True,pubmedbert_study_control_20250221
+42251276,Study Control,Other control,0.14917369186878204,True,pubmedbert_study_control_20250221
+42250921,Study Control,Non-controlled,0.9139990210533142,True,pubmedbert_study_control_20250221
+42250635,Study Control,Non-controlled,0.951631486415863,True,pubmedbert_study_control_20250221
+42248535,Study Control,Non-controlled,0.9600666165351868,True,pubmedbert_study_control_20250221
+42248136,Study Control,Non-controlled,0.9561077356338501,True,pubmedbert_study_control_20250221
+42247761,Study Control,Non-controlled,0.9177014231681824,True,pubmedbert_study_control_20250221
+42243076,Study Control,Placebo,0.9779940247535706,True,pubmedbert_study_control_20250221
+42237795,Study Control,Non-controlled,0.9659422636032104,True,pubmedbert_study_control_20250221
+42234079,Study Control,Placebo,0.42905399203300476,True,pubmedbert_study_control_20250221
+42234079,Study Control,Active control,0.862216055393219,True,pubmedbert_study_control_20250221
+42233004,Study Control,Non-controlled,0.9651815295219421,True,pubmedbert_study_control_20250221
+42228481,Study Control,Not applicable,0.9245954751968384,True,pubmedbert_study_control_20250221
+42220002,Study Control,Placebo,0.9751508235931396,True,pubmedbert_study_control_20250221
+42218644,Study Control,Not applicable,0.9317610859870911,True,pubmedbert_study_control_20250221
+42388555,Data Type,Unknown,0.3261135518550873,False,biobert_data_type_20250221
+42385939,Data Type,Not applicable,0.007288190536201,False,biobert_data_type_20250221
+42381187,Data Type,Longitudinal short,0.005012164823710918,False,biobert_data_type_20250221
+42380668,Data Type,Not applicable,0.008044645190238953,False,biobert_data_type_20250221
+42378255,Data Type,Longitudinal long,0.007705151569098234,False,biobert_data_type_20250221
+42369371,Data Type,Longitudinal long,0.009290567599236965,False,biobert_data_type_20250221
+42365488,Data Type,Not applicable,0.00682653347030282,False,biobert_data_type_20250221
+42348297,Data Type,Not applicable,0.008403362706303596,False,biobert_data_type_20250221
+42343098,Data Type,Cross-sectional,0.5676526427268982,False,biobert_data_type_20250221
+42340723,Data Type,Longitudinal short,0.0008547218167223036,False,biobert_data_type_20250221
+42325314,Data Type,Unknown,0.15493282675743103,False,biobert_data_type_20250221
+42322409,Data Type,Longitudinal short,0.0023429570719599724,False,biobert_data_type_20250221
+42318842,Data Type,Cross-sectional,0.9402364492416382,False,biobert_data_type_20250221
+42318348,Data Type,Longitudinal short,0.002576596336439252,False,biobert_data_type_20250221
+42315644,Data Type,Longitudinal short,0.0015750237507745624,False,biobert_data_type_20250221
+42313772,Data Type,Longitudinal short,0.0025188142899423838,False,biobert_data_type_20250221
+42311441,Data Type,Unknown,0.026824340224266052,False,biobert_data_type_20250221
+42307775,Data Type,Longitudinal short,0.013333648443222046,False,biobert_data_type_20250221
+42307049,Data Type,Longitudinal short,0.001225722604431212,False,biobert_data_type_20250221
+42304595,Data Type,Unknown,0.1776747852563858,False,biobert_data_type_20250221
+42295696,Data Type,Not applicable,0.006805142853409052,False,biobert_data_type_20250221
+42292331,Data Type,Unknown,0.03369173780083656,False,biobert_data_type_20250221
+42290311,Data Type,Cross-sectional,0.8914689421653748,False,biobert_data_type_20250221
+42288429,Data Type,Unknown,0.4623608887195587,False,biobert_data_type_20250221
+42278842,Data Type,Unknown,0.1834089308977127,False,biobert_data_type_20250221
+42274347,Data Type,Cross-sectional,0.4255467355251312,False,biobert_data_type_20250221
+42272233,Data Type,Unknown,0.4236639738082886,False,biobert_data_type_20250221
+42270128,Data Type,Cross-sectional,0.8384146094322205,False,biobert_data_type_20250221
+42268384,Data Type,Unknown,0.345352441072464,False,biobert_data_type_20250221
+42267710,Data Type,Cross-sectional,0.6104532480239868,False,biobert_data_type_20250221
+42266089,Data Type,Longitudinal long,0.005717469844967127,False,biobert_data_type_20250221
+42265057,Data Type,Not applicable,0.0065458957105875015,False,biobert_data_type_20250221
+42264307,Data Type,Cross-sectional,0.5126926302909851,False,biobert_data_type_20250221
+42261442,Data Type,Longitudinal short,0.0035187627654522657,False,biobert_data_type_20250221
+42255873,Data Type,Unknown,0.07555124163627625,False,biobert_data_type_20250221
+42251276,Data Type,Longitudinal long,0.006654624827206135,False,biobert_data_type_20250221
+42250921,Data Type,Unknown,0.3001876473426819,False,biobert_data_type_20250221
+42250635,Data Type,Cross-sectional,0.825588583946228,False,biobert_data_type_20250221
+42248535,Data Type,Longitudinal long,0.006124247796833515,False,biobert_data_type_20250221
+42248136,Data Type,Cross-sectional,0.881106436252594,False,biobert_data_type_20250221
+42247761,Data Type,Cross-sectional,0.9225446581840515,False,biobert_data_type_20250221
+42243076,Data Type,Cross-sectional,0.6837169528007507,False,biobert_data_type_20250221
+42237795,Data Type,Longitudinal long,0.08267966657876968,False,biobert_data_type_20250221
+42234079,Data Type,Longitudinal short,0.008892142213881016,False,biobert_data_type_20250221
+42233004,Data Type,Unknown,0.20089168846607208,False,biobert_data_type_20250221
+42228481,Data Type,Not applicable,0.0065187192521989346,False,biobert_data_type_20250221
+42220002,Data Type,Cross-sectional,0.7072741985321045,False,biobert_data_type_20250221
+42218644,Data Type,Not applicable,0.006598432082682848,False,biobert_data_type_20250221
+42388555,Data Collection,Retrospective,0.00982892420142889,False,biobert_data_collection_20250221
+42385939,Data Collection,Not applicable,0.9927020072937012,False,biobert_data_collection_20250221
+42381187,Data Collection,Unknown,0.0007491317810490727,False,biobert_data_collection_20250221
+42380668,Data Collection,Not applicable,0.992638349533081,False,biobert_data_collection_20250221
+42378255,Data Collection,Prospective,0.0019975602626800537,False,biobert_data_collection_20250221
+42369371,Data Collection,Unknown,0.0005688027013093233,False,biobert_data_collection_20250221
+42365488,Data Collection,Not applicable,0.9932942986488342,False,biobert_data_collection_20250221
+42348297,Data Collection,Not applicable,0.9931782484054565,False,biobert_data_collection_20250221
+42343098,Data Collection,Unknown,0.00034770561615005136,False,biobert_data_collection_20250221
+42340723,Data Collection,Unknown,0.0036030178889632225,False,biobert_data_collection_20250221
+42325314,Data Collection,Unknown,0.0004541164089459926,False,biobert_data_collection_20250221
+42322409,Data Collection,Unknown,0.0005339245544746518,False,biobert_data_collection_20250221
+42318842,Data Collection,Unknown,0.0002859834348782897,False,biobert_data_collection_20250221
+42318348,Data Collection,Unknown,0.0004977043718099594,False,biobert_data_collection_20250221
+42315644,Data Collection,Unknown,0.0004028810071758926,False,biobert_data_collection_20250221
+42313772,Data Collection,Prospective,0.002074537333101034,False,biobert_data_collection_20250221
+42311441,Data Collection,Unknown,0.00033850257750600576,False,biobert_data_collection_20250221
+42307775,Data Collection,Unknown,0.0004331516975071281,False,biobert_data_collection_20250221
+42307049,Data Collection,Unknown,0.007477047853171825,False,biobert_data_collection_20250221
+42304595,Data Collection,Unknown,0.006967754103243351,False,biobert_data_collection_20250221
+42295696,Data Collection,Not applicable,0.9929678440093994,False,biobert_data_collection_20250221
+42292331,Data Collection,Unknown,0.00027532459353096783,False,biobert_data_collection_20250221
+42290311,Data Collection,Prospective,0.0051265619695186615,False,biobert_data_collection_20250221
+42288429,Data Collection,Unknown,0.0016863711643964052,False,biobert_data_collection_20250221
+42278842,Data Collection,Unknown,0.00029428472043946385,False,biobert_data_collection_20250221
+42274347,Data Collection,Retrospective,0.05025479570031166,False,biobert_data_collection_20250221
+42272233,Data Collection,Unknown,0.00034334688098169863,False,biobert_data_collection_20250221
+42270128,Data Collection,Unknown,0.00042871845653280616,False,biobert_data_collection_20250221
+42268384,Data Collection,Unknown,0.00042314056190662086,False,biobert_data_collection_20250221
+42267710,Data Collection,Unknown,0.0005399533547461033,False,biobert_data_collection_20250221
+42266089,Data Collection,Prospective,0.007783988956362009,False,biobert_data_collection_20250221
+42265057,Data Collection,Not applicable,0.9932101368904114,False,biobert_data_collection_20250221
+42264307,Data Collection,Retrospective,0.006742323283106089,False,biobert_data_collection_20250221
+42261442,Data Collection,Prospective,0.006328125949949026,False,biobert_data_collection_20250221
+42255873,Data Collection,Unknown,0.0003393648948986083,False,biobert_data_collection_20250221
+42251276,Data Collection,Prospective,0.0020041237585246563,False,biobert_data_collection_20250221
+42250921,Data Collection,Unknown,0.009089293889701366,False,biobert_data_collection_20250221
+42250635,Data Collection,Unknown,0.0007235437515191734,False,biobert_data_collection_20250221
+42248535,Data Collection,Unknown,0.00026584239094518125,False,biobert_data_collection_20250221
+42248136,Data Collection,Unknown,0.002971644513309002,False,biobert_data_collection_20250221
+42247761,Data Collection,Unknown,0.005967008415609598,False,biobert_data_collection_20250221
+42243076,Data Collection,Unknown,0.00028160374495200813,False,biobert_data_collection_20250221
+42237795,Data Collection,Unknown,0.001912319683469832,False,biobert_data_collection_20250221
+42234079,Data Collection,Unknown,0.0008937098900787532,False,biobert_data_collection_20250221
+42233004,Data Collection,Retrospective,0.0070535773411393166,False,biobert_data_collection_20250221
+42228481,Data Collection,Not applicable,0.9896219968795776,False,biobert_data_collection_20250221
+42220002,Data Collection,Unknown,0.0004365358327049762,False,biobert_data_collection_20250221
+42218644,Data Collection,Not applicable,0.9921360015869141,False,biobert_data_collection_20250221
+42388555,Number of Participants,1-20,0.9890915155410767,False,biolinkbert_number_of_participants_20250221
+42385939,Number of Participants,Not applicable,0.0020347791723906994,False,biolinkbert_number_of_participants_20250221
+42381187,Number of Participants,Unknown,0.0010586499702185392,False,biolinkbert_number_of_participants_20250221
+42380668,Number of Participants,Not applicable,0.0023412180598825216,False,biolinkbert_number_of_participants_20250221
+42378255,Number of Participants,Unknown,0.0008405386470258236,False,biolinkbert_number_of_participants_20250221
+42369371,Number of Participants,500-999,0.005442108493298292,False,biolinkbert_number_of_participants_20250221
+42365488,Number of Participants,≥1000,0.0024949517101049423,False,biolinkbert_number_of_participants_20250221
+42348297,Number of Participants,200-499,0.0029241093434393406,False,biolinkbert_number_of_participants_20250221
+42343098,Number of Participants,100-199,0.0022523764055222273,False,biolinkbert_number_of_participants_20250221
+42340723,Number of Participants,100-199,0.0020175939425826073,False,biolinkbert_number_of_participants_20250221
+42325314,Number of Participants,1-20,0.9901885390281677,False,biolinkbert_number_of_participants_20250221
+42322409,Number of Participants,41-60,0.0021044989116489887,False,biolinkbert_number_of_participants_20250221
+42318842,Number of Participants,≥1000,0.002812860067933798,False,biolinkbert_number_of_participants_20250221
+42318348,Number of Participants,1-20,0.9884013533592224,False,biolinkbert_number_of_participants_20250221
+42315644,Number of Participants,41-60,0.0024223271757364273,False,biolinkbert_number_of_participants_20250221
+42313772,Number of Participants,21-40,0.0013538034399971366,False,biolinkbert_number_of_participants_20250221
+42311441,Number of Participants,1-20,0.9787514805793762,False,biolinkbert_number_of_participants_20250221
+42307775,Number of Participants,Unknown,0.0016484970692545176,False,biolinkbert_number_of_participants_20250221
+42307049,Number of Participants,61-80,0.0018710234435275197,False,biolinkbert_number_of_participants_20250221
+42304595,Number of Participants,1-20,0.990068256855011,False,biolinkbert_number_of_participants_20250221
+42295696,Number of Participants,Not applicable,0.0024699950590729713,False,biolinkbert_number_of_participants_20250221
+42292331,Number of Participants,1-20,0.9875110387802124,False,biolinkbert_number_of_participants_20250221
+42290311,Number of Participants,21-40,0.0014910455793142319,False,biolinkbert_number_of_participants_20250221
+42288429,Number of Participants,21-40,0.001331132953055203,False,biolinkbert_number_of_participants_20250221
+42278842,Number of Participants,21-40,0.002932351315394044,False,biolinkbert_number_of_participants_20250221
+42274347,Number of Participants,200-499,0.0017957737436518073,False,biolinkbert_number_of_participants_20250221
+42272233,Number of Participants,41-60,0.002205205848440528,False,biolinkbert_number_of_participants_20250221
+42270128,Number of Participants,200-499,0.002994360402226448,False,biolinkbert_number_of_participants_20250221
+42268384,Number of Participants,100-199,0.002567069139331579,False,biolinkbert_number_of_participants_20250221
+42267710,Number of Participants,21-40,0.056804001331329346,False,biolinkbert_number_of_participants_20250221
+42266089,Number of Participants,41-60,0.0029561289120465517,False,biolinkbert_number_of_participants_20250221
+42265057,Number of Participants,Not applicable,0.002002963563427329,False,biolinkbert_number_of_participants_20250221
+42264307,Number of Participants,≥1000,0.0035385817755013704,False,biolinkbert_number_of_participants_20250221
+42261442,Number of Participants,81-100,0.010012859478592873,False,biolinkbert_number_of_participants_20250221
+42255873,Number of Participants,1-20,0.9848411679267883,False,biolinkbert_number_of_participants_20250221
+42251276,Number of Participants,81-100,0.00943599920719862,False,biolinkbert_number_of_participants_20250221
+42250921,Number of Participants,Unknown,0.0018267456907778978,False,biolinkbert_number_of_participants_20250221
+42250635,Number of Participants,500-999,0.006357252132147551,False,biolinkbert_number_of_participants_20250221
+42248535,Number of Participants,1-20,0.9907146692276001,False,biolinkbert_number_of_participants_20250221
+42248136,Number of Participants,≥1000,0.002464847406372428,False,biolinkbert_number_of_participants_20250221
+42247761,Number of Participants,≥1000,0.0021517632994800806,False,biolinkbert_number_of_participants_20250221
+42243076,Number of Participants,21-40,0.001530765788629651,False,biolinkbert_number_of_participants_20250221
+42237795,Number of Participants,1-20,0.9804076552391052,False,biolinkbert_number_of_participants_20250221
+42234079,Number of Participants,21-40,0.015351981855928898,False,biolinkbert_number_of_participants_20250221
+42233004,Number of Participants,≥1000,0.002937143202871084,False,biolinkbert_number_of_participants_20250221
+42228481,Number of Participants,Not applicable,0.0020396059844642878,False,biolinkbert_number_of_participants_20250221
+42220002,Number of Participants,1-20,0.9908283948898315,False,biolinkbert_number_of_participants_20250221
+42218644,Number of Participants,Not applicable,0.0020264117047190666,False,biolinkbert_number_of_participants_20250221
+42388555,Sex of Participants,Both sexes,0.992361307144165,False,biobert_sex_of_participants_20250221
+42385939,Sex of Participants,Not applicable,0.00825368333607912,False,biobert_sex_of_participants_20250221
+42381187,Sex of Participants,Unknown,0.010727587155997753,False,biobert_sex_of_participants_20250221
+42380668,Sex of Participants,Not applicable,0.00502473721280694,False,biobert_sex_of_participants_20250221
+42378255,Sex of Participants,Both sexes,0.849505603313446,False,biobert_sex_of_participants_20250221
+42369371,Sex of Participants,Both sexes,0.9232794642448425,False,biobert_sex_of_participants_20250221
+42365488,Sex of Participants,Both sexes,0.5128909945487976,False,biobert_sex_of_participants_20250221
+42348297,Sex of Participants,Not applicable,0.01931496523320675,False,biobert_sex_of_participants_20250221
+42343098,Sex of Participants,Both sexes,0.9974543452262878,False,biobert_sex_of_participants_20250221
+42340723,Sex of Participants,Both sexes,0.6053323149681091,False,biobert_sex_of_participants_20250221
+42325314,Sex of Participants,Both sexes,0.9958134293556213,False,biobert_sex_of_participants_20250221
+42322409,Sex of Participants,Both sexes,0.9959322810173035,False,biobert_sex_of_participants_20250221
+42318842,Sex of Participants,Both sexes,0.9974077343940735,False,biobert_sex_of_participants_20250221
+42318348,Sex of Participants,Male,0.10073959082365036,False,biobert_sex_of_participants_20250221
+42315644,Sex of Participants,Both sexes,0.9958673715591431,False,biobert_sex_of_participants_20250221
+42313772,Sex of Participants,Both sexes,0.9976485371589661,False,biobert_sex_of_participants_20250221
+42311441,Sex of Participants,Both sexes,0.9967368245124817,False,biobert_sex_of_participants_20250221
+42307775,Sex of Participants,Both sexes,0.7328948974609375,False,biobert_sex_of_participants_20250221
+42307049,Sex of Participants,Both sexes,0.9676468372344971,False,biobert_sex_of_participants_20250221
+42304595,Sex of Participants,Both sexes,0.9956831932067871,False,biobert_sex_of_participants_20250221
+42295696,Sex of Participants,Not applicable,0.3927215039730072,False,biobert_sex_of_participants_20250221
+42292331,Sex of Participants,Unknown,0.014970725402235985,False,biobert_sex_of_participants_20250221
+42290311,Sex of Participants,Both sexes,0.9923508763313293,False,biobert_sex_of_participants_20250221
+42288429,Sex of Participants,Both sexes,0.9958757758140564,False,biobert_sex_of_participants_20250221
+42278842,Sex of Participants,Both sexes,0.9971104860305786,False,biobert_sex_of_participants_20250221
+42274347,Sex of Participants,Both sexes,0.9900616407394409,False,biobert_sex_of_participants_20250221
+42272233,Sex of Participants,Both sexes,0.9967581629753113,False,biobert_sex_of_participants_20250221
+42270128,Sex of Participants,Both sexes,0.9972327351570129,False,biobert_sex_of_participants_20250221
+42268384,Sex of Participants,Both sexes,0.9962196946144104,False,biobert_sex_of_participants_20250221
+42267710,Sex of Participants,Both sexes,0.9874740839004517,False,biobert_sex_of_participants_20250221
+42266089,Sex of Participants,Both sexes,0.9976467490196228,False,biobert_sex_of_participants_20250221
+42265057,Sex of Participants,Not applicable,0.015217887237668037,False,biobert_sex_of_participants_20250221
+42264307,Sex of Participants,Both sexes,0.9929202198982239,False,biobert_sex_of_participants_20250221
+42261442,Sex of Participants,Both sexes,0.9909664392471313,False,biobert_sex_of_participants_20250221
+42255873,Sex of Participants,Unknown,0.09197822213172913,False,biobert_sex_of_participants_20250221
+42251276,Sex of Participants,Both sexes,0.9936827421188354,False,biobert_sex_of_participants_20250221
+42250921,Sex of Participants,Unknown,0.07101477682590485,False,biobert_sex_of_participants_20250221
+42250635,Sex of Participants,Both sexes,0.996525228023529,False,biobert_sex_of_participants_20250221
+42248535,Sex of Participants,Both sexes,0.9975192546844482,False,biobert_sex_of_participants_20250221
+42248136,Sex of Participants,Both sexes,0.9967212080955505,False,biobert_sex_of_participants_20250221
+42247761,Sex of Participants,Both sexes,0.9932360053062439,False,biobert_sex_of_participants_20250221
+42243076,Sex of Participants,Both sexes,0.9949274063110352,False,biobert_sex_of_participants_20250221
+42237795,Sex of Participants,Unknown,0.017746636644005775,False,biobert_sex_of_participants_20250221
+42234079,Sex of Participants,Both sexes,0.9944926500320435,False,biobert_sex_of_participants_20250221
+42233004,Sex of Participants,Both sexes,0.9963626265525818,False,biobert_sex_of_participants_20250221
+42228481,Sex of Participants,Not applicable,0.005577096249908209,False,biobert_sex_of_participants_20250221
+42220002,Sex of Participants,Male,0.026949914172291756,False,biobert_sex_of_participants_20250221
+42218644,Sex of Participants,Not applicable,0.009386149235069752,False,biobert_sex_of_participants_20250221
+42388555,Age of Participants,Adult (≥18 years),0.9855022430419922,True,pubmedbert_age_of_participants_20250221
+42385939,Age of Participants,Not applicable,0.9518151879310608,True,pubmedbert_age_of_participants_20250221
+42381187,Age of Participants,Adult (≥18 years),0.9788591861724854,True,pubmedbert_age_of_participants_20250221
+42380668,Age of Participants,Not applicable,0.9550122618675232,True,pubmedbert_age_of_participants_20250221
+42378255,Age of Participants,Pediatric (< 18 years old),0.9429816007614136,True,pubmedbert_age_of_participants_20250221
+42378255,Age of Participants,Adult (≥18 years),0.27187734842300415,True,pubmedbert_age_of_participants_20250221
+42369371,Age of Participants,Adult (≥18 years),0.9886245727539062,True,pubmedbert_age_of_participants_20250221
+42365488,Age of Participants,Not applicable,0.9344480037689209,True,pubmedbert_age_of_participants_20250221
+42348297,Age of Participants,Not applicable,0.9527671337127686,True,pubmedbert_age_of_participants_20250221
+42343098,Age of Participants,Adult (≥18 years),0.97563236951828,True,pubmedbert_age_of_participants_20250221
+42340723,Age of Participants,Adult (≥18 years),0.9894434213638306,True,pubmedbert_age_of_participants_20250221
+42325314,Age of Participants,Adult (≥18 years),0.9532598853111267,True,pubmedbert_age_of_participants_20250221
+42322409,Age of Participants,Adult (≥18 years),0.9895967841148376,True,pubmedbert_age_of_participants_20250221
+42318842,Age of Participants,Pediatric (< 18 years old),0.2190757393836975,True,pubmedbert_age_of_participants_20250221
+42318842,Age of Participants,Adult (≥18 years),0.9682083129882812,True,pubmedbert_age_of_participants_20250221
+42318348,Age of Participants,Adult (≥18 years),0.9884987473487854,True,pubmedbert_age_of_participants_20250221
+42315644,Age of Participants,Adult (≥18 years),0.9875472784042358,True,pubmedbert_age_of_participants_20250221
+42313772,Age of Participants,Adult (≥18 years),0.9881894588470459,True,pubmedbert_age_of_participants_20250221
+42311441,Age of Participants,Adult (≥18 years),0.9873771071434021,True,pubmedbert_age_of_participants_20250221
+42307775,Age of Participants,Adult (≥18 years),0.989024817943573,True,pubmedbert_age_of_participants_20250221
+42307049,Age of Participants,Adult (≥18 years),0.9882463812828064,True,pubmedbert_age_of_participants_20250221
+42304595,Age of Participants,Adult (≥18 years),0.9879236817359924,True,pubmedbert_age_of_participants_20250221
+42295696,Age of Participants,Not applicable,0.9443284869194031,True,pubmedbert_age_of_participants_20250221
+42292331,Age of Participants,Adult (≥18 years),0.9881821274757385,True,pubmedbert_age_of_participants_20250221
+42290311,Age of Participants,Adult (≥18 years),0.9882631897926331,True,pubmedbert_age_of_participants_20250221
+42288429,Age of Participants,Adult (≥18 years),0.9701166152954102,True,pubmedbert_age_of_participants_20250221
+42278842,Age of Participants,Adult (≥18 years),0.9874477982521057,True,pubmedbert_age_of_participants_20250221
+42274347,Age of Participants,Adult (≥18 years),0.9876000881195068,True,pubmedbert_age_of_participants_20250221
+42272233,Age of Participants,Adult (≥18 years),0.9798536896705627,True,pubmedbert_age_of_participants_20250221
+42270128,Age of Participants,Adult (≥18 years),0.9858824014663696,True,pubmedbert_age_of_participants_20250221
+42268384,Age of Participants,Adult (≥18 years),0.989402174949646,True,pubmedbert_age_of_participants_20250221
+42267710,Age of Participants,Adult (≥18 years),0.9755423665046692,True,pubmedbert_age_of_participants_20250221
+42266089,Age of Participants,Adult (≥18 years),0.9890700578689575,True,pubmedbert_age_of_participants_20250221
+42265057,Age of Participants,Not applicable,0.9585264921188354,True,pubmedbert_age_of_participants_20250221
+42264307,Age of Participants,Adult (≥18 years),0.9888871312141418,True,pubmedbert_age_of_participants_20250221
+42261442,Age of Participants,Pediatric (< 18 years old),0.951443612575531,True,pubmedbert_age_of_participants_20250221
+42261442,Age of Participants,Adult (≥18 years),0.16120582818984985,True,pubmedbert_age_of_participants_20250221
+42255873,Age of Participants,Adult (≥18 years),0.9850384593009949,True,pubmedbert_age_of_participants_20250221
+42251276,Age of Participants,Adult (≥18 years),0.9889591932296753,True,pubmedbert_age_of_participants_20250221
+42250921,Age of Participants,Adult (≥18 years),0.5742217302322388,True,pubmedbert_age_of_participants_20250221
+42250921,Age of Participants,Unknown,0.15616534650325775,True,pubmedbert_age_of_participants_20250221
+42250921,Age of Participants,Not applicable,0.13027828931808472,True,pubmedbert_age_of_participants_20250221
+42250635,Age of Participants,Adult (≥18 years),0.9893414974212646,True,pubmedbert_age_of_participants_20250221
+42248535,Age of Participants,Adult (≥18 years),0.9894160628318787,True,pubmedbert_age_of_participants_20250221
+42248136,Age of Participants,Adult (≥18 years),0.9797882437705994,True,pubmedbert_age_of_participants_20250221
+42247761,Age of Participants,Adult (≥18 years),0.9889143109321594,True,pubmedbert_age_of_participants_20250221
+42243076,Age of Participants,Adult (≥18 years),0.9891160130500793,True,pubmedbert_age_of_participants_20250221
+42237795,Age of Participants,Adult (≥18 years),0.9827048182487488,True,pubmedbert_age_of_participants_20250221
+42234079,Age of Participants,Pediatric (< 18 years old),0.9532831907272339,True,pubmedbert_age_of_participants_20250221
+42234079,Age of Participants,Adult (≥18 years),0.1597057729959488,True,pubmedbert_age_of_participants_20250221
+42233004,Age of Participants,Adult (≥18 years),0.9874604940414429,True,pubmedbert_age_of_participants_20250221
+42228481,Age of Participants,Not applicable,0.9489628672599792,True,pubmedbert_age_of_participants_20250221
+42220002,Age of Participants,Adult (≥18 years),0.9862609505653381,True,pubmedbert_age_of_participants_20250221
+42218644,Age of Participants,Not applicable,0.9573535919189453,True,pubmedbert_age_of_participants_20250221
+42388555,Substances,Ketamine,0.9940977096557617,True,biolinkbert_substances_20250228
+42385939,Substances,Ketamine,0.994183361530304,True,biolinkbert_substances_20250228
+42381187,Substances,Psilocybin,0.9423108100891113,True,biolinkbert_substances_20250228
+42380668,Substances,MDMA,0.8681052923202515,True,biolinkbert_substances_20250228
+42380668,Substances,LSD,0.7127997279167175,True,biolinkbert_substances_20250228
+42380668,Substances,Psilocybin,0.9491450786590576,True,biolinkbert_substances_20250228
+42380668,Substances,Ayahuasca,0.3909737765789032,True,biolinkbert_substances_20250228
+42378255,Substances,Psilocybin,0.9504170417785645,True,biolinkbert_substances_20250228
+42378255,Substances,Combination Therapy,0.9883307218551636,True,biolinkbert_substances_20250228
+42369371,Substances,S-Ketamine,0.9537824392318726,True,biolinkbert_substances_20250228
+42365488,Substances,LSD,0.7531321048736572,True,biolinkbert_substances_20250228
+42365488,Substances,Psilocybin,0.9538262486457825,True,biolinkbert_substances_20250228
+42348297,Substances,LSD,0.6283175349235535,True,biolinkbert_substances_20250228
+42348297,Substances,Psilocybin,0.9798234105110168,True,biolinkbert_substances_20250228
+42348297,Substances,Combination Therapy,0.4494851231575012,True,biolinkbert_substances_20250228
+42348297,Substances,Unknown,0.30483773350715637,True,biolinkbert_substances_20250228
+42343098,Substances,Psilocybin,0.9659748673439026,True,biolinkbert_substances_20250228
+42340723,Substances,Ketamine,0.18479572236537933,True,biolinkbert_substances_20250228
+42340723,Substances,S-Ketamine,0.9601102471351624,True,biolinkbert_substances_20250228
+42325314,Substances,Ketamine,0.9923359751701355,True,biolinkbert_substances_20250228
+42325314,Substances,Combination Therapy,0.9638699293136597,True,biolinkbert_substances_20250228
+42322409,Substances,LSD,0.9214551448822021,True,biolinkbert_substances_20250228
+42318842,Substances,MDMA,0.8158522844314575,True,biolinkbert_substances_20250228
+42318842,Substances,LSD,0.8822506070137024,True,biolinkbert_substances_20250228
+42318842,Substances,Psilocybin,0.9615494012832642,True,biolinkbert_substances_20250228
+42318348,Substances,5-MeO-DMT,0.48704931139945984,True,biolinkbert_substances_20250228
+42318348,Substances,Ibogaine,0.7767066955566406,True,biolinkbert_substances_20250228
+42318348,Substances,Combination Therapy,0.9736353754997253,True,biolinkbert_substances_20250228
+42315644,Substances,LSD,0.9288142323493958,True,biolinkbert_substances_20250228
+42313772,Substances,MDMA,0.9925963878631592,True,biolinkbert_substances_20250228
+42311441,Substances,Psilocybin,0.9627600312232971,True,biolinkbert_substances_20250228
+42311441,Substances,Combination Therapy,0.9817465543746948,True,biolinkbert_substances_20250228
+42307775,Substances,Psilocybin,0.9718895554542542,True,biolinkbert_substances_20250228
+42307775,Substances,Combination Therapy,0.40801936388015747,True,biolinkbert_substances_20250228
+42307049,Substances,Ketamine,0.9863098859786987,True,biolinkbert_substances_20250228
+42307049,Substances,Combination Therapy,0.9810754060745239,True,biolinkbert_substances_20250228
+42304595,Substances,LSD,0.21314232051372528,True,biolinkbert_substances_20250228
+42304595,Substances,Psilocybin,0.9859071969985962,True,biolinkbert_substances_20250228
+42304595,Substances,Ayahuasca,0.16285103559494019,True,biolinkbert_substances_20250228
+42304595,Substances,DMT,0.2456463873386383,True,biolinkbert_substances_20250228
+42304595,Substances,5-MeO-DMT,0.38713720440864563,True,biolinkbert_substances_20250228
+42304595,Substances,Analogue,0.19065120816230774,True,biolinkbert_substances_20250228
+42304595,Substances,Unknown,0.19700917601585388,True,biolinkbert_substances_20250228
+42292331,Substances,Psilocybin,0.9401178956031799,True,biolinkbert_substances_20250228
+42290311,Substances,S-Ketamine,0.9489498734474182,True,biolinkbert_substances_20250228
+42288429,Substances,Unknown,0.9361009001731873,True,biolinkbert_substances_20250228
+42278842,Substances,Psilocybin,0.9818897247314453,True,biolinkbert_substances_20250228
+42278842,Substances,Combination Therapy,0.3390181064605713,True,biolinkbert_substances_20250228
+42274347,Substances,Ketamine,0.9904493689537048,True,biolinkbert_substances_20250228
+42272233,Substances,Ketamine,0.9887983202934265,True,biolinkbert_substances_20250228
+42272233,Substances,Combination Therapy,0.9860274791717529,True,biolinkbert_substances_20250228
+42270128,Substances,Unknown,0.8770776391029358,True,biolinkbert_substances_20250228
+42268384,Substances,Combination Therapy,0.34927016496658325,True,biolinkbert_substances_20250228
+42268384,Substances,Unknown,0.9410312175750732,True,biolinkbert_substances_20250228
+42267710,Substances,MDMA,0.9929916858673096,True,biolinkbert_substances_20250228
+42266089,Substances,S-Ketamine,0.9505916237831116,True,biolinkbert_substances_20250228
+42265057,Substances,Ketamine,0.417975515127182,True,biolinkbert_substances_20250228
+42265057,Substances,MDMA,0.4893321990966797,True,biolinkbert_substances_20250228
+42265057,Substances,LSD,0.9462735652923584,True,biolinkbert_substances_20250228
+42265057,Substances,Psilocybin,0.9948019981384277,True,biolinkbert_substances_20250228
+42265057,Substances,Ayahuasca,0.27927467226982117,True,biolinkbert_substances_20250228
+42265057,Substances,DMT,0.4747588038444519,True,biolinkbert_substances_20250228
+42265057,Substances,Mescaline,0.4924830198287964,True,biolinkbert_substances_20250228
+42264307,Substances,S-Ketamine,0.9782732725143433,True,biolinkbert_substances_20250228
+42264307,Substances,Combination Therapy,0.2213188111782074,True,biolinkbert_substances_20250228
+42261442,Substances,S-Ketamine,0.9689584970474243,True,biolinkbert_substances_20250228
+42255873,Substances,MDMA,0.988459050655365,True,biolinkbert_substances_20250228
+42251276,Substances,Ketamine,0.9917843341827393,True,biolinkbert_substances_20250228
+42250921,Substances,Ibogaine,0.8811196684837341,True,biolinkbert_substances_20250228
+42250635,Substances,Unknown,0.8647100329399109,True,biolinkbert_substances_20250228
+42248535,Substances,Psilocybin,0.9393004775047302,True,biolinkbert_substances_20250228
+42248535,Substances,Combination Therapy,0.9876003265380859,True,biolinkbert_substances_20250228
+42248136,Substances,Unknown,0.9417551755905151,True,biolinkbert_substances_20250228
+42247761,Substances,Ketamine,0.4784279465675354,True,biolinkbert_substances_20250228
+42247761,Substances,MDMA,0.8447148203849792,True,biolinkbert_substances_20250228
+42247761,Substances,LSD,0.6297480463981628,True,biolinkbert_substances_20250228
+42247761,Substances,Psilocybin,0.9485912919044495,True,biolinkbert_substances_20250228
+42243076,Substances,MDMA,0.9893596172332764,True,biolinkbert_substances_20250228
+42237795,Substances,Ketamine,0.9880088567733765,True,biolinkbert_substances_20250228
+42234079,Substances,Ketamine,0.9905813932418823,True,biolinkbert_substances_20250228
+42233004,Substances,Psilocybin,0.9618897438049316,True,biolinkbert_substances_20250228
+42228481,Substances,Ibogaine,0.890633761882782,True,biolinkbert_substances_20250228
+42220002,Substances,DMT,0.9209491610527039,True,biolinkbert_substances_20250228
+42220002,Substances,5-MeO-DMT,0.23236680030822754,True,biolinkbert_substances_20250228
+42220002,Substances,Combination Therapy,0.539067268371582,True,biolinkbert_substances_20250228
+42218644,Substances,LSD,0.947252094745636,True,biolinkbert_substances_20250228
+42218644,Substances,Psilocybin,0.9883632063865662,True,biolinkbert_substances_20250228
+42218644,Substances,Ayahuasca,0.9276361465454102,True,biolinkbert_substances_20250228
+42218644,Substances,DMT,0.18061189353466034,True,biolinkbert_substances_20250228
+42218644,Substances,Mescaline,0.49785950779914856,True,biolinkbert_substances_20250228
+42218644,Substances,Unknown,0.2126358449459076,True,biolinkbert_substances_20250228
+42388555,Application Form,Unknown,0.9865940809249878,True,scibert_application_form_20250221
+42385939,Application Form,Not applicable,0.9566935896873474,True,scibert_application_form_20250221
+42381187,Application Form,Unknown,0.9897130727767944,True,scibert_application_form_20250221
+42380668,Application Form,Not applicable,0.957944929599762,True,scibert_application_form_20250221
+42378255,Application Form,Unknown,0.9882833957672119,True,scibert_application_form_20250221
+42369371,Application Form,Intravenous,0.9849870800971985,True,scibert_application_form_20250221
+42365488,Application Form,Not applicable,0.9519246816635132,True,scibert_application_form_20250221
+42348297,Application Form,Not applicable,0.9592036604881287,True,scibert_application_form_20250221
+42343098,Application Form,Unknown,0.9881934523582458,True,scibert_application_form_20250221
+42340723,Application Form,Nasal,0.954619288444519,True,scibert_application_form_20250221
+42325314,Application Form,Unknown,0.9893428087234497,True,scibert_application_form_20250221
+42322409,Application Form,Unknown,0.9895150661468506,True,scibert_application_form_20250221
+42318842,Application Form,Unknown,0.9934116005897522,True,scibert_application_form_20250221
+42318348,Application Form,Oral,0.9638455510139465,True,scibert_application_form_20250221
+42315644,Application Form,Unknown,0.9903517365455627,True,scibert_application_form_20250221
+42313772,Application Form,Oral,0.9729961156845093,True,scibert_application_form_20250221
+42311441,Application Form,Unknown,0.990105926990509,True,scibert_application_form_20250221
+42307775,Application Form,Unknown,0.9902072548866272,True,scibert_application_form_20250221
+42307049,Application Form,Intravenous,0.9854317307472229,True,scibert_application_form_20250221
+42304595,Application Form,Unknown,0.9900696873664856,True,scibert_application_form_20250221
+42295696,Application Form,Not applicable,0.9526886940002441,True,scibert_application_form_20250221
+42292331,Application Form,Oral,0.9742840528488159,True,scibert_application_form_20250221
+42290311,Application Form,Intravenous,0.984061062335968,True,scibert_application_form_20250221
+42288429,Application Form,Unknown,0.9848253130912781,True,scibert_application_form_20250221
+42278842,Application Form,Unknown,0.9901567697525024,True,scibert_application_form_20250221
+42274347,Application Form,Unknown,0.9833745956420898,True,scibert_application_form_20250221
+42272233,Application Form,Oral,0.12177795171737671,True,scibert_application_form_20250221
+42272233,Application Form,Other,0.7894719243049622,True,scibert_application_form_20250221
+42270128,Application Form,Unknown,0.9919493198394775,True,scibert_application_form_20250221
+42268384,Application Form,Unknown,0.9916553497314453,True,scibert_application_form_20250221
+42267710,Application Form,Unknown,0.9735556244850159,True,scibert_application_form_20250221
+42266089,Application Form,Nasal,0.9592933654785156,True,scibert_application_form_20250221
+42265057,Application Form,Not applicable,0.957122266292572,True,scibert_application_form_20250221
+42264307,Application Form,Unknown,0.9901379346847534,True,scibert_application_form_20250221
+42261442,Application Form,Intravenous,0.9832997918128967,True,scibert_application_form_20250221
+42255873,Application Form,Unknown,0.9900397658348083,True,scibert_application_form_20250221
+42251276,Application Form,Intravenous,0.9785547852516174,True,scibert_application_form_20250221
+42250921,Application Form,Unknown,0.9794658422470093,True,scibert_application_form_20250221
+42250635,Application Form,Unknown,0.9912772178649902,True,scibert_application_form_20250221
+42248535,Application Form,Unknown,0.9911652207374573,True,scibert_application_form_20250221
+42248136,Application Form,Unknown,0.992038369178772,True,scibert_application_form_20250221
+42247761,Application Form,Unknown,0.9927464127540588,True,scibert_application_form_20250221
+42243076,Application Form,Unknown,0.989271879196167,True,scibert_application_form_20250221
+42237795,Application Form,Unknown,0.9732189178466797,True,scibert_application_form_20250221
+42234079,Application Form,Intravenous,0.9862062335014343,True,scibert_application_form_20250221
+42233004,Application Form,Unknown,0.993226945400238,True,scibert_application_form_20250221
+42228481,Application Form,Not applicable,0.9509849548339844,True,scibert_application_form_20250221
+42220002,Application Form,Oral,0.9513253569602966,True,scibert_application_form_20250221
+42218644,Application Form,Not applicable,0.955960214138031,True,scibert_application_form_20250221
+42388555,Regimen,Unknown,0.8949340581893921,True,pubmedbert_regimen_20250221
+42385939,Regimen,Unknown,0.9274864196777344,True,pubmedbert_regimen_20250221
+42381187,Regimen,Single Dose,0.7936546802520752,True,pubmedbert_regimen_20250221
+42380668,Regimen,Unknown,0.954055666923523,True,pubmedbert_regimen_20250221
+42378255,Regimen,Multiple Applications,0.684059739112854,True,pubmedbert_regimen_20250221
+42378255,Regimen,Single Dose,0.5236974358558655,True,pubmedbert_regimen_20250221
+42369371,Regimen,Single Dose,0.8885800242424011,True,pubmedbert_regimen_20250221
+42365488,Regimen,Unknown,0.5213441252708435,True,pubmedbert_regimen_20250221
+42348297,Regimen,Unknown,0.9400252103805542,True,pubmedbert_regimen_20250221
+42343098,Regimen,Unknown,0.9107903838157654,True,pubmedbert_regimen_20250221
+42340723,Regimen,Single Dose,0.9009133577346802,True,pubmedbert_regimen_20250221
+42325314,Regimen,Unknown,0.898091197013855,True,pubmedbert_regimen_20250221
+42322409,Regimen,Multiple Applications,0.9113760590553284,True,pubmedbert_regimen_20250221
+42318842,Regimen,Unknown,0.8684210777282715,True,pubmedbert_regimen_20250221
+42318348,Regimen,Multiple Applications,0.6127092838287354,True,pubmedbert_regimen_20250221
+42315644,Regimen,Single Dose,0.8012417554855347,True,pubmedbert_regimen_20250221
+42313772,Regimen,Multiple Applications,0.8839516043663025,True,pubmedbert_regimen_20250221
+42311441,Regimen,Unknown,0.726152241230011,True,pubmedbert_regimen_20250221
+42307775,Regimen,Multiple Applications,0.8450514674186707,True,pubmedbert_regimen_20250221
+42307049,Regimen,Single Dose,0.8950528502464294,True,pubmedbert_regimen_20250221
+42304595,Regimen,Unknown,0.9098694920539856,True,pubmedbert_regimen_20250221
+42295696,Regimen,Unknown,0.8729887008666992,True,pubmedbert_regimen_20250221
+42292331,Regimen,Single Dose,0.8627678155899048,True,pubmedbert_regimen_20250221
+42290311,Regimen,Single Dose,0.8809691667556763,True,pubmedbert_regimen_20250221
+42288429,Regimen,Unknown,0.9370914101600647,True,pubmedbert_regimen_20250221
+42278842,Regimen,Unknown,0.6964833736419678,True,pubmedbert_regimen_20250221
+42274347,Regimen,Unknown,0.8952315449714661,True,pubmedbert_regimen_20250221
+42272233,Regimen,Unknown,0.8622664213180542,True,pubmedbert_regimen_20250221
+42270128,Regimen,Unknown,0.930121123790741,True,pubmedbert_regimen_20250221
+42268384,Regimen,Unknown,0.9287785291671753,True,pubmedbert_regimen_20250221
+42267710,Regimen,Unknown,0.7763826251029968,True,pubmedbert_regimen_20250221
+42266089,Regimen,Multiple Applications,0.5105153918266296,True,pubmedbert_regimen_20250221
+42266089,Regimen,Unknown,0.5743566155433655,True,pubmedbert_regimen_20250221
+42265057,Regimen,Unknown,0.9533812403678894,True,pubmedbert_regimen_20250221
+42264307,Regimen,Unknown,0.8118677139282227,True,pubmedbert_regimen_20250221
+42261442,Regimen,Single Dose,0.8628333210945129,True,pubmedbert_regimen_20250221
+42255873,Regimen,Unknown,0.7956125736236572,True,pubmedbert_regimen_20250221
+42251276,Regimen,Single Dose,0.7194579243659973,True,pubmedbert_regimen_20250221
+42250921,Regimen,Single Dose,0.43581199645996094,True,pubmedbert_regimen_20250221
+42250921,Regimen,Unknown,0.6194160580635071,True,pubmedbert_regimen_20250221
+42250635,Regimen,Unknown,0.899703323841095,True,pubmedbert_regimen_20250221
+42248535,Regimen,Single Dose,0.908551812171936,True,pubmedbert_regimen_20250221
+42248136,Regimen,Unknown,0.9359768033027649,True,pubmedbert_regimen_20250221
+42247761,Regimen,Unknown,0.9247769117355347,True,pubmedbert_regimen_20250221
+42243076,Regimen,Multiple Applications,0.7733887434005737,True,pubmedbert_regimen_20250221
+42243076,Regimen,Single Dose,0.5783253312110901,True,pubmedbert_regimen_20250221
+42237795,Regimen,Unknown,0.6711698174476624,True,pubmedbert_regimen_20250221
+42234079,Regimen,Single Dose,0.7013805508613586,True,pubmedbert_regimen_20250221
+42233004,Regimen,Multiple Applications,0.4525385797023773,True,pubmedbert_regimen_20250221
+42233004,Regimen,Unknown,0.5895603895187378,True,pubmedbert_regimen_20250221
+42228481,Regimen,Unknown,0.9379905462265015,True,pubmedbert_regimen_20250221
+42220002,Regimen,Single Dose,0.8246246576309204,True,pubmedbert_regimen_20250221
+42218644,Regimen,Unknown,0.9503845572471619,True,pubmedbert_regimen_20250221
+42388555,Setting,Unknown,0.7548626065254211,True,pubmedbert_setting_20250221
+42385939,Setting,Not applicable,0.9415920972824097,True,pubmedbert_setting_20250221
+42381187,Setting,Clinical,0.9712741374969482,True,pubmedbert_setting_20250221
+42380668,Setting,Not applicable,0.937127947807312,True,pubmedbert_setting_20250221
+42378255,Setting,Clinical,0.9917392730712891,True,pubmedbert_setting_20250221
+42369371,Setting,Clinical,0.9894815683364868,True,pubmedbert_setting_20250221
+42365488,Setting,Not applicable,0.9496947526931763,True,pubmedbert_setting_20250221
+42348297,Setting,Not applicable,0.9582877159118652,True,pubmedbert_setting_20250221
+42343098,Setting,Unknown,0.8714783191680908,True,pubmedbert_setting_20250221
+42340723,Setting,Clinical,0.9912739396095276,True,pubmedbert_setting_20250221
+42325314,Setting,Clinical,0.9297957420349121,True,pubmedbert_setting_20250221
+42322409,Setting,Clinical,0.9915578365325928,True,pubmedbert_setting_20250221
+42318842,Setting,Unknown,0.9584104418754578,True,pubmedbert_setting_20250221
+42318348,Setting,Clinical,0.8536622524261475,True,pubmedbert_setting_20250221
+42315644,Setting,Clinical,0.991675078868866,True,pubmedbert_setting_20250221
+42313772,Setting,Clinical,0.991981565952301,True,pubmedbert_setting_20250221
+42311441,Setting,Clinical,0.9713183045387268,True,pubmedbert_setting_20250221
+42311441,Setting,Palliative Setting,0.5925711989402771,True,pubmedbert_setting_20250221
+42307775,Setting,Clinical,0.9917253255844116,True,pubmedbert_setting_20250221
+42307049,Setting,Clinical,0.9910011887550354,True,pubmedbert_setting_20250221
+42304595,Setting,Naturalistic,0.3355516791343689,True,pubmedbert_setting_20250221
+42304595,Setting,Unknown,0.41383835673332214,True,pubmedbert_setting_20250221
+42295696,Setting,Not applicable,0.9362695217132568,True,pubmedbert_setting_20250221
+42292331,Setting,Clinical,0.9853157997131348,True,pubmedbert_setting_20250221
+42290311,Setting,Clinical,0.991107165813446,True,pubmedbert_setting_20250221
+42288429,Setting,Unknown,0.7664662003517151,True,pubmedbert_setting_20250221
+42278842,Setting,Clinical,0.9595317840576172,True,pubmedbert_setting_20250221
+42278842,Setting,Palliative Setting,0.5251814126968384,True,pubmedbert_setting_20250221
+42274347,Setting,Unknown,0.9169135093688965,True,pubmedbert_setting_20250221
+42272233,Setting,Unknown,0.7845303416252136,True,pubmedbert_setting_20250221
+42270128,Setting,Unknown,0.9291093945503235,True,pubmedbert_setting_20250221
+42268384,Setting,Unknown,0.9233758449554443,True,pubmedbert_setting_20250221
+42267710,Setting,Unknown,0.9463074803352356,True,pubmedbert_setting_20250221
+42266089,Setting,Clinical,0.5499688386917114,True,pubmedbert_setting_20250221
+42266089,Setting,Unknown,0.20545174181461334,True,pubmedbert_setting_20250221
+42265057,Setting,Not applicable,0.9461061954498291,True,pubmedbert_setting_20250221
+42264307,Setting,Unknown,0.9553614854812622,True,pubmedbert_setting_20250221
+42261442,Setting,Clinical,0.9904224872589111,True,pubmedbert_setting_20250221
+42255873,Setting,Unknown,0.8954230546951294,True,pubmedbert_setting_20250221
+42251276,Setting,Clinical,0.9883821606636047,True,pubmedbert_setting_20250221
+42250921,Setting,Clinical,0.11524862051010132,True,pubmedbert_setting_20250221
+42250921,Setting,Unknown,0.5914738178253174,True,pubmedbert_setting_20250221
+42250635,Setting,Naturalistic,0.13368114829063416,True,pubmedbert_setting_20250221
+42250635,Setting,Unknown,0.6291584968566895,True,pubmedbert_setting_20250221
+42248535,Setting,Clinical,0.9905861020088196,True,pubmedbert_setting_20250221
+42248136,Setting,Unknown,0.9166156649589539,True,pubmedbert_setting_20250221
+42247761,Setting,Unknown,0.9631667137145996,True,pubmedbert_setting_20250221
+42243076,Setting,Clinical,0.9921149611473083,True,pubmedbert_setting_20250221
+42237795,Setting,Unknown,0.9387430548667908,True,pubmedbert_setting_20250221
+42234079,Setting,Clinical,0.9916329383850098,True,pubmedbert_setting_20250221
+42233004,Setting,Unknown,0.9059873223304749,True,pubmedbert_setting_20250221
+42228481,Setting,Not applicable,0.9622118473052979,True,pubmedbert_setting_20250221
+42220002,Setting,Clinical,0.9916364550590515,True,pubmedbert_setting_20250221
+42218644,Setting,Not applicable,0.9408314228057861,True,pubmedbert_setting_20250221
+42388555,Substance Naivety,Unknown,0.6333984136581421,True,biomedbert-abstract_substance_naivety_20250221
+42388555,Substance Naivety,Not applicable,0.27085644006729126,True,biomedbert-abstract_substance_naivety_20250221
+42385939,Substance Naivety,Not applicable,0.9374440312385559,True,biomedbert-abstract_substance_naivety_20250221
+42381187,Substance Naivety,Unknown,0.8481236696243286,True,biomedbert-abstract_substance_naivety_20250221
+42380668,Substance Naivety,Not applicable,0.9411632418632507,True,biomedbert-abstract_substance_naivety_20250221
+42378255,Substance Naivety,Unknown,0.9660997986793518,True,biomedbert-abstract_substance_naivety_20250221
+42369371,Substance Naivety,Unknown,0.9779060482978821,True,biomedbert-abstract_substance_naivety_20250221
+42365488,Substance Naivety,Not applicable,0.9365379810333252,True,biomedbert-abstract_substance_naivety_20250221
+42348297,Substance Naivety,Not applicable,0.9391583204269409,True,biomedbert-abstract_substance_naivety_20250221
+42343098,Substance Naivety,Unknown,0.9728673696517944,True,biomedbert-abstract_substance_naivety_20250221
+42340723,Substance Naivety,Unknown,0.9810531735420227,True,biomedbert-abstract_substance_naivety_20250221
+42325314,Substance Naivety,Unknown,0.9680585861206055,True,biomedbert-abstract_substance_naivety_20250221
+42322409,Substance Naivety,Unknown,0.9792397022247314,True,biomedbert-abstract_substance_naivety_20250221
+42318842,Substance Naivety,Substance-non-naïve participants,0.8210771083831787,True,biomedbert-abstract_substance_naivety_20250221
+42318348,Substance Naivety,Unknown,0.9787276387214661,True,biomedbert-abstract_substance_naivety_20250221
+42315644,Substance Naivety,Unknown,0.9719522595405579,True,biomedbert-abstract_substance_naivety_20250221
+42313772,Substance Naivety,Unknown,0.9666026830673218,True,biomedbert-abstract_substance_naivety_20250221
+42311441,Substance Naivety,Unknown,0.9777928590774536,True,biomedbert-abstract_substance_naivety_20250221
+42307775,Substance Naivety,Unknown,0.9781320095062256,True,biomedbert-abstract_substance_naivety_20250221
+42307049,Substance Naivety,Unknown,0.9801902174949646,True,biomedbert-abstract_substance_naivety_20250221
+42304595,Substance Naivety,Unknown,0.9542711973190308,True,biomedbert-abstract_substance_naivety_20250221
+42295696,Substance Naivety,Not applicable,0.9388554692268372,True,biomedbert-abstract_substance_naivety_20250221
+42292331,Substance Naivety,Unknown,0.9746583700180054,True,biomedbert-abstract_substance_naivety_20250221
+42290311,Substance Naivety,Unknown,0.9789986610412598,True,biomedbert-abstract_substance_naivety_20250221
+42288429,Substance Naivety,Unknown,0.40857625007629395,True,biomedbert-abstract_substance_naivety_20250221
+42288429,Substance Naivety,Not applicable,0.4408976137638092,True,biomedbert-abstract_substance_naivety_20250221
+42278842,Substance Naivety,Unknown,0.9787808656692505,True,biomedbert-abstract_substance_naivety_20250221
+42274347,Substance Naivety,Unknown,0.2894277572631836,True,biomedbert-abstract_substance_naivety_20250221
+42274347,Substance Naivety,Not applicable,0.5958614945411682,True,biomedbert-abstract_substance_naivety_20250221
+42272233,Substance Naivety,Unknown,0.8914944529533386,True,biomedbert-abstract_substance_naivety_20250221
+42270128,Substance Naivety,Unknown,0.6550431847572327,True,biomedbert-abstract_substance_naivety_20250221
+42268384,Substance Naivety,Unknown,0.7416809797286987,True,biomedbert-abstract_substance_naivety_20250221
+42267710,Substance Naivety,Unknown,0.7843846678733826,True,biomedbert-abstract_substance_naivety_20250221
+42266089,Substance Naivety,Unknown,0.9726611375808716,True,biomedbert-abstract_substance_naivety_20250221
+42265057,Substance Naivety,Not applicable,0.9304679036140442,True,biomedbert-abstract_substance_naivety_20250221
+42264307,Substance Naivety,Substance-non-naïve participants,0.6854137182235718,True,biomedbert-abstract_substance_naivety_20250221
+42264307,Substance Naivety,Unknown,0.17850184440612793,True,biomedbert-abstract_substance_naivety_20250221
+42261442,Substance Naivety,Unknown,0.9799066185951233,True,biomedbert-abstract_substance_naivety_20250221
+42255873,Substance Naivety,Substance-non-naïve participants,0.5417971611022949,True,biomedbert-abstract_substance_naivety_20250221
+42255873,Substance Naivety,Unknown,0.2573011815547943,True,biomedbert-abstract_substance_naivety_20250221
+42251276,Substance Naivety,Unknown,0.9809951186180115,True,biomedbert-abstract_substance_naivety_20250221
+42250921,Substance Naivety,Unknown,0.9587048292160034,True,biomedbert-abstract_substance_naivety_20250221
+42250635,Substance Naivety,Unknown,0.9683654308319092,True,biomedbert-abstract_substance_naivety_20250221
+42248535,Substance Naivety,Unknown,0.9785990715026855,True,biomedbert-abstract_substance_naivety_20250221
+42248136,Substance Naivety,Unknown,0.33525756001472473,True,biomedbert-abstract_substance_naivety_20250221
+42247761,Substance Naivety,Unknown,0.722649335861206,True,biomedbert-abstract_substance_naivety_20250221
+42243076,Substance Naivety,Unknown,0.979140043258667,True,biomedbert-abstract_substance_naivety_20250221
+42237795,Substance Naivety,Substance-Naïve Participants,0.45523568987846375,True,biomedbert-abstract_substance_naivety_20250221
+42237795,Substance Naivety,Substance-non-naïve participants,0.9065388441085815,True,biomedbert-abstract_substance_naivety_20250221
+42234079,Substance Naivety,Unknown,0.9809584021568298,True,biomedbert-abstract_substance_naivety_20250221
+42233004,Substance Naivety,Unknown,0.9707013368606567,True,biomedbert-abstract_substance_naivety_20250221
+42228481,Substance Naivety,Not applicable,0.9355146288871765,True,biomedbert-abstract_substance_naivety_20250221
+42220002,Substance Naivety,Unknown,0.9795381426811218,True,biomedbert-abstract_substance_naivety_20250221
+42218644,Substance Naivety,Not applicable,0.934660017490387,True,biomedbert-abstract_substance_naivety_20250221
+42388555,Condition,Healthy Participants,0.9718734622001648,True,pubmedbert_condition_20250221
+42385939,Condition,Substance abuse,0.5668424963951111,True,pubmedbert_condition_20250221
+42385939,Condition,Recreational Drug Use,0.8697274327278137,True,pubmedbert_condition_20250221
+42385939,Condition,Healthy Participants,0.6209598183631897,True,pubmedbert_condition_20250221
+42381187,Condition,Healthy Participants,0.9888994097709656,True,pubmedbert_condition_20250221
+42380668,Condition,Psychiatric condition,0.9392334818840027,True,pubmedbert_condition_20250221
+42380668,Condition,Depression,0.48239123821258545,True,pubmedbert_condition_20250221
+42380668,Condition,Healthy Participants,0.6898402571678162,True,pubmedbert_condition_20250221
+42378255,Condition,Psychiatric condition,0.9858112335205078,True,pubmedbert_condition_20250221
+42378255,Condition,Depression,0.8096845746040344,True,pubmedbert_condition_20250221
+42369371,Condition,Psychiatric condition,0.9789699912071228,True,pubmedbert_condition_20250221
+42369371,Condition,Depression,0.9875280261039734,True,pubmedbert_condition_20250221
+42365488,Condition,Healthy Participants,0.9886603355407715,True,pubmedbert_condition_20250221
+42348297,Condition,Healthy Participants,0.981200635433197,True,pubmedbert_condition_20250221
+42343098,Condition,Healthy Participants,0.9900774955749512,True,pubmedbert_condition_20250221
+42340723,Condition,Psychiatric condition,0.9647778272628784,True,pubmedbert_condition_20250221
+42340723,Condition,Depression,0.9773145914077759,True,pubmedbert_condition_20250221
+42340723,Condition,Healthy Participants,0.3188732862472534,True,pubmedbert_condition_20250221
+42325314,Condition,Psychiatric condition,0.9332766532897949,True,pubmedbert_condition_20250221
+42325314,Condition,Healthy Participants,0.2523437440395355,True,pubmedbert_condition_20250221
+42322409,Condition,Psychiatric condition,0.9029184579849243,True,pubmedbert_condition_20250221
+42322409,Condition,Healthy Participants,0.2658236622810364,True,pubmedbert_condition_20250221
+42318842,Condition,Recreational Drug Use,0.9697412252426147,True,pubmedbert_condition_20250221
+42318842,Condition,Healthy Participants,0.9849696159362793,True,pubmedbert_condition_20250221
+42318348,Condition,Psychiatric condition,0.4217492938041687,True,pubmedbert_condition_20250221
+42318348,Condition,Healthy Participants,0.43463629484176636,True,pubmedbert_condition_20250221
+42315644,Condition,Healthy Participants,0.9892147183418274,True,pubmedbert_condition_20250221
+42313772,Condition,Psychiatric condition,0.8966559171676636,True,pubmedbert_condition_20250221
+42313772,Condition,Post-traumatic stress disorder (PTSD),0.40489983558654785,True,pubmedbert_condition_20250221
+42313772,Condition,Healthy Participants,0.43966057896614075,True,pubmedbert_condition_20250221
+42311441,Condition,Psychiatric condition,0.9601646661758423,True,pubmedbert_condition_20250221
+42311441,Condition,Depression,0.9845983982086182,True,pubmedbert_condition_20250221
+42311441,Condition,Palliative Setting,0.6526255011558533,True,pubmedbert_condition_20250221
+42307775,Condition,Healthy Participants,0.989439070224762,True,pubmedbert_condition_20250221
+42307049,Condition,(Chronic) Pain,0.8303350806236267,True,pubmedbert_condition_20250221
+42304595,Condition,Psychiatric condition,0.978621780872345,True,pubmedbert_condition_20250221
+42304595,Condition,Depression,0.9870338439941406,True,pubmedbert_condition_20250221
+42295696,Condition,Healthy Participants,0.9853958487510681,True,pubmedbert_condition_20250221
+42292331,Condition,Psychiatric condition,0.5412256717681885,True,pubmedbert_condition_20250221
+42292331,Condition,Healthy Participants,0.7813418507575989,True,pubmedbert_condition_20250221
+42290311,Condition,Psychiatric condition,0.24007076025009155,True,pubmedbert_condition_20250221
+42290311,Condition,Healthy Participants,0.7756552696228027,True,pubmedbert_condition_20250221
+42288429,Condition,Recreational Drug Use,0.880014955997467,True,pubmedbert_condition_20250221
+42288429,Condition,Healthy Participants,0.9878228902816772,True,pubmedbert_condition_20250221
+42278842,Condition,Healthy Participants,0.9264363646507263,True,pubmedbert_condition_20250221
+42274347,Condition,Psychiatric condition,0.8006508350372314,True,pubmedbert_condition_20250221
+42274347,Condition,Recreational Drug Use,0.5548875331878662,True,pubmedbert_condition_20250221
+42274347,Condition,Healthy Participants,0.42494598031044006,True,pubmedbert_condition_20250221
+42272233,Condition,Psychiatric condition,0.9877277612686157,True,pubmedbert_condition_20250221
+42272233,Condition,Depression,0.9889554381370544,True,pubmedbert_condition_20250221
+42270128,Condition,Healthy Participants,0.9896111488342285,True,pubmedbert_condition_20250221
+42268384,Condition,Psychiatric condition,0.983299970626831,True,pubmedbert_condition_20250221
+42268384,Condition,Depression,0.5119925141334534,True,pubmedbert_condition_20250221
+42268384,Condition,Alcoholism,0.6948760747909546,True,pubmedbert_condition_20250221
+42267710,Condition,Recreational Drug Use,0.9575777649879456,True,pubmedbert_condition_20250221
+42267710,Condition,Healthy Participants,0.9832354784011841,True,pubmedbert_condition_20250221
+42266089,Condition,Psychiatric condition,0.9832497239112854,True,pubmedbert_condition_20250221
+42266089,Condition,Depression,0.9880583882331848,True,pubmedbert_condition_20250221
+42265057,Condition,Psychiatric condition,0.9286627769470215,True,pubmedbert_condition_20250221
+42265057,Condition,Healthy Participants,0.2577434480190277,True,pubmedbert_condition_20250221
+42264307,Condition,Psychiatric condition,0.9913164377212524,True,pubmedbert_condition_20250221
+42264307,Condition,Depression,0.9114116430282593,True,pubmedbert_condition_20250221
+42264307,Condition,Alcoholism,0.28632739186286926,True,pubmedbert_condition_20250221
+42264307,Condition,Other addictions (e.g. smoking),0.5596877336502075,True,pubmedbert_condition_20250221
+42261442,Condition,Psychiatric condition,0.9755136966705322,True,pubmedbert_condition_20250221
+42261442,Condition,Depression,0.9230054616928101,True,pubmedbert_condition_20250221
+42261442,Condition,Anxiety,0.7007042169570923,True,pubmedbert_condition_20250221
+42255873,Condition,Recreational Drug Use,0.9354695677757263,True,pubmedbert_condition_20250221
+42255873,Condition,Healthy Participants,0.9562892913818359,True,pubmedbert_condition_20250221
+42251276,Condition,Psychiatric condition,0.39316853880882263,True,pubmedbert_condition_20250221
+42251276,Condition,(Chronic) Pain,0.8331118822097778,True,pubmedbert_condition_20250221
+42250921,Condition,Healthy Participants,0.9382015466690063,True,pubmedbert_condition_20250221
+42250635,Condition,Healthy Participants,0.986994206905365,True,pubmedbert_condition_20250221
+42248535,Condition,Psychiatric condition,0.9905614256858826,True,pubmedbert_condition_20250221
+42248535,Condition,Depression,0.9670355319976807,True,pubmedbert_condition_20250221
+42248535,Condition,Anxiety,0.800177276134491,True,pubmedbert_condition_20250221
+42248136,Condition,Recreational Drug Use,0.968178927898407,True,pubmedbert_condition_20250221
+42248136,Condition,Healthy Participants,0.9829496145248413,True,pubmedbert_condition_20250221
+42247761,Condition,Recreational Drug Use,0.968014657497406,True,pubmedbert_condition_20250221
+42247761,Condition,Healthy Participants,0.9786871075630188,True,pubmedbert_condition_20250221
+42243076,Condition,Healthy Participants,0.9852510690689087,True,pubmedbert_condition_20250221
+42237795,Condition,Recreational Drug Use,0.8278147578239441,True,pubmedbert_condition_20250221
+42237795,Condition,Healthy Participants,0.9415921568870544,True,pubmedbert_condition_20250221
+42234079,Condition,Psychiatric condition,0.9884520173072815,True,pubmedbert_condition_20250221
+42234079,Condition,Depression,0.9813515543937683,True,pubmedbert_condition_20250221
+42233004,Condition,Healthy Participants,0.9880177974700928,True,pubmedbert_condition_20250221
+42228481,Condition,Psychiatric condition,0.9825833439826965,True,pubmedbert_condition_20250221
+42228481,Condition,Depression,0.2561209797859192,True,pubmedbert_condition_20250221
+42228481,Condition,Other addictions (e.g. smoking),0.7740209102630615,True,pubmedbert_condition_20250221
+42220002,Condition,Healthy Participants,0.9884482026100159,True,pubmedbert_condition_20250221
+42218644,Condition,Healthy Participants,0.9894030094146729,True,pubmedbert_condition_20250221
+42388555,Outcomes,Mental Functions,0.9468443393707275,True,scibert_outcomes_20250221
+42385939,Outcomes,Mental Functions,0.3580802381038666,True,scibert_outcomes_20250221
+42385939,Outcomes,Surveys,0.7237549424171448,True,scibert_outcomes_20250221
+42381187,Outcomes,Functional MRI,0.9342655539512634,True,scibert_outcomes_20250221
+42381187,Outcomes,MRI,0.9642994999885559,True,scibert_outcomes_20250221
+42380668,Outcomes,Functional MRI,0.6036160588264465,True,scibert_outcomes_20250221
+42380668,Outcomes,MRI,0.8417013883590698,True,scibert_outcomes_20250221
+42380668,Outcomes,Mental Functions,0.44572022557258606,True,scibert_outcomes_20250221
+42378255,Outcomes,Functional MRI,0.9799270629882812,True,scibert_outcomes_20250221
+42378255,Outcomes,MRI,0.9848240613937378,True,scibert_outcomes_20250221
+42378255,Outcomes,Mental Functions,0.7071324586868286,True,scibert_outcomes_20250221
+42369371,Outcomes,Mental Functions,0.9876899719238281,True,scibert_outcomes_20250221
+42365488,Outcomes,Physiological Functions,0.9778234958648682,True,scibert_outcomes_20250221
+42365488,Outcomes,Mental Functions,0.9529339671134949,True,scibert_outcomes_20250221
+42348297,Outcomes,Psychedelic experience,0.8942303657531738,True,scibert_outcomes_20250221
+42343098,Outcomes,Functional MRI,0.942395031452179,True,scibert_outcomes_20250221
+42343098,Outcomes,MRI,0.9708964824676514,True,scibert_outcomes_20250221
+42340723,Outcomes,Mental Functions,0.9927123785018921,True,scibert_outcomes_20250221
+42340723,Outcomes,Psychedelic experience,0.6734889149665833,True,scibert_outcomes_20250221
+42340723,Outcomes,Soluble biomarker,0.8248628973960876,True,scibert_outcomes_20250221
+42325314,Outcomes,Interviews,0.9154081344604492,True,scibert_outcomes_20250221
+42322409,Outcomes,Mental Functions,0.9929656982421875,True,scibert_outcomes_20250221
+42318842,Outcomes,Surveys,0.9749140739440918,True,scibert_outcomes_20250221
+42318348,Outcomes,Mental Functions,0.8386578559875488,True,scibert_outcomes_20250221
+42318348,Outcomes,Soluble biomarker,0.5230974555015564,True,scibert_outcomes_20250221
+42315644,Outcomes,Electroencephalography (EEG),0.9689899682998657,True,scibert_outcomes_20250221
+42313772,Outcomes,Interviews,0.9449692368507385,True,scibert_outcomes_20250221
+42311441,Outcomes,Surveys,0.9065245389938354,True,scibert_outcomes_20250221
+42311441,Outcomes,Interviews,0.4397072494029999,True,scibert_outcomes_20250221
+42307775,Outcomes,Mental Functions,0.9544930458068848,True,scibert_outcomes_20250221
+42307049,Outcomes,Mental Functions,0.9495453238487244,True,scibert_outcomes_20250221
+42304595,Outcomes,Interviews,0.9077610373497009,True,scibert_outcomes_20250221
+42295696,Outcomes,Mental Functions,0.8983321785926819,True,scibert_outcomes_20250221
+42295696,Outcomes,Psychedelic experience,0.9139373898506165,True,scibert_outcomes_20250221
+42292331,Outcomes,Physiological Functions,0.5881139636039734,True,scibert_outcomes_20250221
+42292331,Outcomes,Mental Functions,0.8808180093765259,True,scibert_outcomes_20250221
+42290311,Outcomes,Electroencephalography (EEG),0.9577734470367432,True,scibert_outcomes_20250221
+42288429,Outcomes,Interviews,0.8140900731086731,True,scibert_outcomes_20250221
+42278842,Outcomes,Psychedelic experience,0.5778952240943909,True,scibert_outcomes_20250221
+42278842,Outcomes,Interviews,0.6154848337173462,True,scibert_outcomes_20250221
+42274347,Outcomes,Surveys,0.9271831512451172,True,scibert_outcomes_20250221
+42272233,Outcomes,Surveys,0.8933584094047546,True,scibert_outcomes_20250221
+42270128,Outcomes,Mental Functions,0.8692631125450134,True,scibert_outcomes_20250221
+42270128,Outcomes,Surveys,0.8973003625869751,True,scibert_outcomes_20250221
+42268384,Outcomes,Interviews,0.9227914214134216,True,scibert_outcomes_20250221
+42267710,Outcomes,Soluble biomarker,0.8799013495445251,True,scibert_outcomes_20250221
+42267710,Outcomes,Surveys,0.3429108262062073,True,scibert_outcomes_20250221
+42266089,Outcomes,Mental Functions,0.995275616645813,True,scibert_outcomes_20250221
+42265057,Outcomes,Mental Functions,0.961297869682312,True,scibert_outcomes_20250221
+42264307,Outcomes,Suicide,0.9189727306365967,True,scibert_outcomes_20250221
+42264307,Outcomes,Physiological Functions,0.18343156576156616,True,scibert_outcomes_20250221
+42264307,Outcomes,Mental Functions,0.6899269819259644,True,scibert_outcomes_20250221
+42261442,Outcomes,Mental Functions,0.9567729234695435,True,scibert_outcomes_20250221
+42261442,Outcomes,Soluble biomarker,0.9363283514976501,True,scibert_outcomes_20250221
+42255873,Outcomes,Mental Functions,0.40127164125442505,True,scibert_outcomes_20250221
+42251276,Outcomes,Mental Functions,0.9375303387641907,True,scibert_outcomes_20250221
+42251276,Outcomes,Surveys,0.45021551847457886,True,scibert_outcomes_20250221
+42250921,Outcomes,MRI,0.22609107196331024,True,scibert_outcomes_20250221
+42250635,Outcomes,Mental Functions,0.900394082069397,True,scibert_outcomes_20250221
+42250635,Outcomes,Psychedelic experience,0.6324693560600281,True,scibert_outcomes_20250221
+42250635,Outcomes,Surveys,0.4873157739639282,True,scibert_outcomes_20250221
+42248535,Outcomes,Mental Functions,0.9949033260345459,True,scibert_outcomes_20250221
+42248535,Outcomes,Psychedelic experience,0.49629485607147217,True,scibert_outcomes_20250221
+42248136,Outcomes,Surveys,0.8745344877243042,True,scibert_outcomes_20250221
+42248136,Outcomes,Interviews,0.2777373790740967,True,scibert_outcomes_20250221
+42247761,Outcomes,Surveys,0.950208842754364,True,scibert_outcomes_20250221
+42243076,Outcomes,Physiological Functions,0.9899926781654358,True,scibert_outcomes_20250221
+42243076,Outcomes,Mental Functions,0.8921621441841125,True,scibert_outcomes_20250221
+42243076,Outcomes,Soluble biomarker,0.8837459683418274,True,scibert_outcomes_20250221
+42237795,Outcomes,Physiological Functions,0.1818324625492096,True,scibert_outcomes_20250221
+42234079,Outcomes,Suicide,0.9703302383422852,True,scibert_outcomes_20250221
+42234079,Outcomes,Mental Functions,0.9732651114463806,True,scibert_outcomes_20250221
+42233004,Outcomes,Surveys,0.9648922085762024,True,scibert_outcomes_20250221
+42228481,Outcomes,Physiological Functions,0.9311397075653076,True,scibert_outcomes_20250221
+42228481,Outcomes,Mental Functions,0.5917545557022095,True,scibert_outcomes_20250221
+42220002,Outcomes,MRI,0.24627606570720673,True,scibert_outcomes_20250221
+42220002,Outcomes,"PET, SPECT",0.8800666928291321,True,scibert_outcomes_20250221
+42220002,Outcomes,Soluble biomarker,0.3336333632469177,True,scibert_outcomes_20250221
+42218644,Outcomes,Mental Functions,0.9701669812202454,True,scibert_outcomes_20250221
+42388555,Clinical Trial Phase,Not Applicable,0.9712556600570679,True,clinicalbert_clinical_trial_phase_20250221
+42385939,Clinical Trial Phase,Not Applicable,0.9745311141014099,True,clinicalbert_clinical_trial_phase_20250221
+42381187,Clinical Trial Phase,Not Applicable,0.9727550745010376,True,clinicalbert_clinical_trial_phase_20250221
+42380668,Clinical Trial Phase,Not Applicable,0.9750906229019165,True,clinicalbert_clinical_trial_phase_20250221
+42378255,Clinical Trial Phase,Not Applicable,0.9091466665267944,True,clinicalbert_clinical_trial_phase_20250221
+42369371,Clinical Trial Phase,Unknown,0.8331544995307922,True,clinicalbert_clinical_trial_phase_20250221
+42365488,Clinical Trial Phase,Not Applicable,0.976746678352356,True,clinicalbert_clinical_trial_phase_20250221
+42348297,Clinical Trial Phase,Not Applicable,0.9728479385375977,True,clinicalbert_clinical_trial_phase_20250221
+42343098,Clinical Trial Phase,Not Applicable,0.9720269441604614,True,clinicalbert_clinical_trial_phase_20250221
+42340723,Clinical Trial Phase,Unknown,0.8209043145179749,True,clinicalbert_clinical_trial_phase_20250221
+42325314,Clinical Trial Phase,Not Applicable,0.9714563488960266,True,clinicalbert_clinical_trial_phase_20250221
+42322409,Clinical Trial Phase,Unknown,0.27232030034065247,True,clinicalbert_clinical_trial_phase_20250221
+42322409,Clinical Trial Phase,Not Applicable,0.6284635066986084,True,clinicalbert_clinical_trial_phase_20250221
+42318842,Clinical Trial Phase,Not Applicable,0.975396990776062,True,clinicalbert_clinical_trial_phase_20250221
+42318348,Clinical Trial Phase,Unknown,0.4966840445995331,True,clinicalbert_clinical_trial_phase_20250221
+42318348,Clinical Trial Phase,Not Applicable,0.3196619153022766,True,clinicalbert_clinical_trial_phase_20250221
+42315644,Clinical Trial Phase,Not Applicable,0.9656909704208374,True,clinicalbert_clinical_trial_phase_20250221
+42313772,Clinical Trial Phase,Not Applicable,0.9655349254608154,True,clinicalbert_clinical_trial_phase_20250221
+42311441,Clinical Trial Phase,Unknown,0.2601635754108429,True,clinicalbert_clinical_trial_phase_20250221
+42311441,Clinical Trial Phase,Not Applicable,0.6290650963783264,True,clinicalbert_clinical_trial_phase_20250221
+42307775,Clinical Trial Phase,Not Applicable,0.9440663456916809,True,clinicalbert_clinical_trial_phase_20250221
+42307049,Clinical Trial Phase,Unknown,0.8218493461608887,True,clinicalbert_clinical_trial_phase_20250221
+42304595,Clinical Trial Phase,Not Applicable,0.9679766893386841,True,clinicalbert_clinical_trial_phase_20250221
+42295696,Clinical Trial Phase,Not Applicable,0.9735130071640015,True,clinicalbert_clinical_trial_phase_20250221
+42292331,Clinical Trial Phase,Not Applicable,0.9689382314682007,True,clinicalbert_clinical_trial_phase_20250221
+42290311,Clinical Trial Phase,Not Applicable,0.9731605648994446,True,clinicalbert_clinical_trial_phase_20250221
+42288429,Clinical Trial Phase,Not Applicable,0.9700747728347778,True,clinicalbert_clinical_trial_phase_20250221
+42278842,Clinical Trial Phase,Not Applicable,0.9643139839172363,True,clinicalbert_clinical_trial_phase_20250221
+42274347,Clinical Trial Phase,Not Applicable,0.9719505906105042,True,clinicalbert_clinical_trial_phase_20250221
+42272233,Clinical Trial Phase,Not Applicable,0.968835175037384,True,clinicalbert_clinical_trial_phase_20250221
+42270128,Clinical Trial Phase,Not Applicable,0.9724321365356445,True,clinicalbert_clinical_trial_phase_20250221
+42268384,Clinical Trial Phase,Not Applicable,0.970848560333252,True,clinicalbert_clinical_trial_phase_20250221
+42267710,Clinical Trial Phase,Not Applicable,0.9756103754043579,True,clinicalbert_clinical_trial_phase_20250221
+42266089,Clinical Trial Phase,Unknown,0.6456971168518066,True,clinicalbert_clinical_trial_phase_20250221
+42266089,Clinical Trial Phase,Not Applicable,0.20152688026428223,True,clinicalbert_clinical_trial_phase_20250221
+42265057,Clinical Trial Phase,Not Applicable,0.9759044051170349,True,clinicalbert_clinical_trial_phase_20250221
+42264307,Clinical Trial Phase,Not Applicable,0.9478224515914917,True,clinicalbert_clinical_trial_phase_20250221
+42261442,Clinical Trial Phase,Unknown,0.8270258903503418,True,clinicalbert_clinical_trial_phase_20250221
+42255873,Clinical Trial Phase,Not Applicable,0.9708875417709351,True,clinicalbert_clinical_trial_phase_20250221
+42251276,Clinical Trial Phase,Unknown,0.8294762969017029,True,clinicalbert_clinical_trial_phase_20250221
+42250921,Clinical Trial Phase,Phase 1,0.2545780539512634,True,clinicalbert_clinical_trial_phase_20250221
+42250921,Clinical Trial Phase,Phase 2,0.35453999042510986,True,clinicalbert_clinical_trial_phase_20250221
+42250921,Clinical Trial Phase,Phase 3,0.1760997474193573,True,clinicalbert_clinical_trial_phase_20250221
+42250921,Clinical Trial Phase,Phase 4,0.1725727766752243,True,clinicalbert_clinical_trial_phase_20250221
+42250921,Clinical Trial Phase,Unknown,0.17910520732402802,True,clinicalbert_clinical_trial_phase_20250221
+42250921,Clinical Trial Phase,Not Applicable,0.675862729549408,True,clinicalbert_clinical_trial_phase_20250221
+42250635,Clinical Trial Phase,Not Applicable,0.9721731543540955,True,clinicalbert_clinical_trial_phase_20250221
+42248535,Clinical Trial Phase,Unknown,0.8312115669250488,True,clinicalbert_clinical_trial_phase_20250221
+42248136,Clinical Trial Phase,Not Applicable,0.9719716310501099,True,clinicalbert_clinical_trial_phase_20250221
+42247761,Clinical Trial Phase,Not Applicable,0.9751655459403992,True,clinicalbert_clinical_trial_phase_20250221
+42243076,Clinical Trial Phase,Unknown,0.820560097694397,True,clinicalbert_clinical_trial_phase_20250221
+42237795,Clinical Trial Phase,Not Applicable,0.961319088935852,True,clinicalbert_clinical_trial_phase_20250221
+42234079,Clinical Trial Phase,Unknown,0.4132629334926605,True,clinicalbert_clinical_trial_phase_20250221
+42234079,Clinical Trial Phase,Not Applicable,0.43300944566726685,True,clinicalbert_clinical_trial_phase_20250221
+42233004,Clinical Trial Phase,Not Applicable,0.974648118019104,True,clinicalbert_clinical_trial_phase_20250221
+42228481,Clinical Trial Phase,Not Applicable,0.9748232960700989,True,clinicalbert_clinical_trial_phase_20250221
+42220002,Clinical Trial Phase,Not Applicable,0.9643623232841492,True,clinicalbert_clinical_trial_phase_20250221
+42218644,Clinical Trial Phase,Not Applicable,0.9770952463150024,True,clinicalbert_clinical_trial_phase_20250221
+42388555,Study Conclusion,Not Applicable,0.1408369392156601,False,scibert_study_conclusion_20251005
+42385939,Study Conclusion,Not Applicable,0.14426226913928986,False,scibert_study_conclusion_20251005
+42381187,Study Conclusion,Not Applicable,0.021071147173643112,False,scibert_study_conclusion_20251005
+42380668,Study Conclusion,Not Applicable,0.02470213919878006,False,scibert_study_conclusion_20251005
+42378255,Study Conclusion,Positive,0.5827401876449585,False,scibert_study_conclusion_20251005
+42369371,Study Conclusion,Positive,0.7881499528884888,False,scibert_study_conclusion_20251005
+42365488,Study Conclusion,Not Applicable,0.045680683106184006,False,scibert_study_conclusion_20251005
+42348297,Study Conclusion,Not Applicable,0.019989827647805214,False,scibert_study_conclusion_20251005
+42343098,Study Conclusion,Not Applicable,0.02265275828540325,False,scibert_study_conclusion_20251005
+42340723,Study Conclusion,Positive,0.7417213916778564,False,scibert_study_conclusion_20251005
+42325314,Study Conclusion,Not Applicable,0.039073966443538666,False,scibert_study_conclusion_20251005
+42322409,Study Conclusion,Not Applicable,0.25556689500808716,False,scibert_study_conclusion_20251005
+42318842,Study Conclusion,Not Applicable,0.023414678871631622,False,scibert_study_conclusion_20251005
+42318348,Study Conclusion,Positive,0.7319965362548828,False,scibert_study_conclusion_20251005
+42315644,Study Conclusion,Not Applicable,0.021030180156230927,False,scibert_study_conclusion_20251005
+42313772,Study Conclusion,Not Applicable,0.02423025481402874,False,scibert_study_conclusion_20251005
+42311441,Study Conclusion,Positive,0.46103543043136597,False,scibert_study_conclusion_20251005
+42307775,Study Conclusion,Positive,0.5014920234680176,False,scibert_study_conclusion_20251005
+42307049,Study Conclusion,Positive,0.8040966987609863,False,scibert_study_conclusion_20251005
+42304595,Study Conclusion,Not Applicable,0.059401486068964005,False,scibert_study_conclusion_20251005
+42295696,Study Conclusion,Not Applicable,0.44583696126937866,False,scibert_study_conclusion_20251005
+42292331,Study Conclusion,Not Applicable,0.255513459444046,False,scibert_study_conclusion_20251005
+42290311,Study Conclusion,Positive,0.6657469272613525,False,scibert_study_conclusion_20251005
+42288429,Study Conclusion,Not Applicable,0.03434289991855621,False,scibert_study_conclusion_20251005
+42278842,Study Conclusion,Not Applicable,0.0856921598315239,False,scibert_study_conclusion_20251005
+42274347,Study Conclusion,Not Applicable,0.20370198786258698,False,scibert_study_conclusion_20251005
+42272233,Study Conclusion,Not Applicable,0.12027879059314728,False,scibert_study_conclusion_20251005
+42270128,Study Conclusion,Not Applicable,0.020047180354595184,False,scibert_study_conclusion_20251005
+42268384,Study Conclusion,Not Applicable,0.27814146876335144,False,scibert_study_conclusion_20251005
+42267710,Study Conclusion,Not Applicable,0.023882903158664703,False,scibert_study_conclusion_20251005
+42266089,Study Conclusion,Positive,0.789792537689209,False,scibert_study_conclusion_20251005
+42265057,Study Conclusion,Not Applicable,0.05057559162378311,False,scibert_study_conclusion_20251005
+42264307,Study Conclusion,Positive,0.7590664029121399,False,scibert_study_conclusion_20251005
+42261442,Study Conclusion,Positive,0.7978372573852539,False,scibert_study_conclusion_20251005
+42255873,Study Conclusion,Not Applicable,0.0486028753221035,False,scibert_study_conclusion_20251005
+42251276,Study Conclusion,Positive,0.7403653264045715,False,scibert_study_conclusion_20251005
+42250921,Study Conclusion,Not Applicable,0.13426561653614044,False,scibert_study_conclusion_20251005
+42250635,Study Conclusion,Not Applicable,0.05464401841163635,False,scibert_study_conclusion_20251005
+42248535,Study Conclusion,Positive,0.7966199517250061,False,scibert_study_conclusion_20251005
+42248136,Study Conclusion,Not Applicable,0.02525186538696289,False,scibert_study_conclusion_20251005
+42247761,Study Conclusion,Not Applicable,0.031606368720531464,False,scibert_study_conclusion_20251005
+42243076,Study Conclusion,Not Applicable,0.30553361773490906,False,scibert_study_conclusion_20251005
+42237795,Study Conclusion,Not Applicable,0.28387129306793213,False,scibert_study_conclusion_20251005
+42234079,Study Conclusion,Positive,0.6795283555984497,False,scibert_study_conclusion_20251005
+42233004,Study Conclusion,Not Applicable,0.14095325767993927,False,scibert_study_conclusion_20251005
+42228481,Study Conclusion,Not Applicable,0.08522487431764603,False,scibert_study_conclusion_20251005
+42220002,Study Conclusion,Not Applicable,0.0270876195281744,False,scibert_study_conclusion_20251005
+42218644,Study Conclusion,Not Applicable,0.01812240481376648,False,scibert_study_conclusion_20251005
