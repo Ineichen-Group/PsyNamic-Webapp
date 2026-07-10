@@ -36,6 +36,11 @@
     font-weight: normal;
 }
 
+.dosage-normalization {
+    margin-top: 0.75rem;
+    color: #555;
+}
+
 .card-hover {
     cursor: pointer; 
     background-color: #f5f5f5;

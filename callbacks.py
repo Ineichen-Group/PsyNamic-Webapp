@@ -73,6 +73,111 @@ def build_tag_buttons(paper):
     return tag_component(tags)
 
 
+def _split_prediction_input(paper):
+    """Split prediction_input into title and body when the source text includes both."""
+    prediction_input = (
+        paper.get('prediction_input')
+        or paper.get('abstract')
+        or ''
+    )
+    title = paper.get('title', '') or ''
+
+    for separator in ('.^\n', '.^.'):
+        if separator in prediction_input:
+            split_title, body = prediction_input.split(separator, 1)
+            return (split_title or title), body, len(split_title) + len(separator)
+
+    return title, prediction_input, 0
+
+
+def _split_highlight_cutpoints(cutpoints, title_length, body_offset):
+    """Split raw cutpoints into title-relative and body-relative spans."""
+    title_cutpoints = []
+    body_cutpoints = []
+
+    if not cutpoints:
+        return title_cutpoints, body_cutpoints
+
+    for cp in cutpoints:
+        start = cp.get('start', 0)
+        end = cp.get('end', 0)
+
+        if end <= title_length:
+            title_cutpoints.append(cp.copy())
+            continue
+
+        if start >= body_offset:
+            body_cp = cp.copy()
+            body_cp['start'] = max(0, start - body_offset)
+            body_cp['end'] = max(0, end - body_offset)
+            body_cutpoints.append(body_cp)
+            continue
+
+        if start < title_length:
+            title_cp = cp.copy()
+            title_cp['start'] = start
+            title_cp['end'] = min(end, title_length)
+            if title_cp['end'] > title_cp['start']:
+                title_cutpoints.append(title_cp)
+
+        if end > body_offset:
+            body_cp = cp.copy()
+            body_cp['start'] = max(0, start - body_offset)
+            body_cp['end'] = max(0, end - body_offset)
+            if body_cp['end'] > body_cp['start']:
+                body_cutpoints.append(body_cp)
+
+    return title_cutpoints, body_cutpoints
+
+
+def _build_paper_header(paper, highlighted_title):
+    """Build the shared paper header with URL, ids, and title."""
+    paper_url = paper.get('url') or ''
+    internal_id = paper.get('id') or ''
+    pubmed_id = paper.get('pubmed_id') or ''
+
+    return [
+        html.Div([
+            html.Span("URL: "),
+            html.A(paper_url, href=paper_url, target='_blank'),
+        ]),
+        html.Div(
+            f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}",
+            className='text-muted small',
+        ),
+        html.H3(highlighted_title),
+    ]
+
+
+def _build_paper_details(paper, ner_category=None, body_label="Abstract", tags_component=None):
+    """Build a detail card with consistent title/body highlighting."""
+    paper_id = paper.get('id')
+    ner_tags = ner_tags_type(paper_id, ner_category) if ner_category else ner_tags_type(paper_id)
+    paper_title, body_text, body_offset = _split_prediction_input(paper)
+    title_tags, body_tags = _split_highlight_cutpoints(
+        ner_tags,
+        len(paper_title),
+        body_offset,
+    )
+
+    highlighted_title = highlighted_text(paper_title, title_tags) if title_tags else paper_title
+    highlighted_body = highlighted_text(body_text, body_tags) if body_tags else body_text
+
+    children = [
+        *_build_paper_header(paper, highlighted_title),
+        html.H5(body_label),
+        html.Div(highlighted_body, className='mb-3'),
+    ]
+
+    if tags_component:
+        children.extend([
+            html.H5("Tags"),
+            tags_component,
+        ])
+
+    return html.Div(children, className='p-3 border rounded')
+
+
 # =====================================================
 # Registration
 # =====================================================
@@ -672,7 +777,7 @@ def _build_modal_content(selected_rows):
     """Shared modal content builder."""
 
     if not selected_rows:
-        return False, no_update, no_update, no_update, no_update, no_update
+        return False, no_update, no_update, no_update, no_update, no_update, no_update
 
     paper = selected_rows[0]
 
@@ -682,7 +787,7 @@ def _build_modal_content(selected_rows):
     link_href = paper.get("url", "")
     buttons = build_tag_buttons(paper)
 
-    return True, title, link_href, link_text, abstract, buttons
+    return True, title, link_href, link_text, abstract, "", buttons
 
 
 def register_modal_callbacks(app):
@@ -697,6 +802,7 @@ def register_modal_callbacks(app):
             Output("paper-link", "href", allow_duplicate=True),
             Output("paper-link", "children", allow_duplicate=True),
             Output("paper-abstract", "children", allow_duplicate=True),
+            Output("paper-dosage-normalization", "children", allow_duplicate=True),
             Output("modal-tags", "children", allow_duplicate=True),
         ],
         Input({"type": "studies-grid", "index": ALL}, "selectedRows"),
@@ -705,7 +811,7 @@ def register_modal_callbacks(app):
     def show_study_modal(selected_rows_list):
 
         if not selected_rows_list:
-            return False, no_update, no_update, no_update, no_update, no_update
+            return False, no_update, no_update, no_update, no_update, no_update, no_update
 
         selected_row_data = next(
             (rows for rows in selected_rows_list if rows),
@@ -713,7 +819,7 @@ def register_modal_callbacks(app):
         )
 
         if not selected_row_data:
-            return False, no_update, no_update, no_update, no_update, no_update
+            return False, no_update, no_update, no_update, no_update, no_update, no_update
 
         return _build_modal_content(selected_row_data)
 
@@ -728,6 +834,7 @@ def register_modal_callbacks(app):
             Output("paper-link", "href", allow_duplicate=True),
             Output("paper-link", "children", allow_duplicate=True),
             Output("paper-abstract", "children", allow_duplicate=True),
+            Output("paper-dosage-normalization", "children", allow_duplicate=True),
             Output("modal-tags", "children", allow_duplicate=True),
         ],
         Input("dosage-study-grid", "selectedRows"),
@@ -736,48 +843,35 @@ def register_modal_callbacks(app):
     def show_dosage_modal(selected_rows_list):
 
         if not selected_rows_list:
-            return False, no_update, no_update, no_update, no_update, no_update
+            return False, no_update, no_update, no_update, no_update, no_update, no_update
 
         paper = selected_rows_list[0]
         if not paper:
-            return False, no_update, no_update, no_update, no_update, no_update
+            return False, no_update, no_update, no_update, no_update, no_update, no_update
 
-        title = f"{paper['title']} ({paper.get('year', '')})"
-        abstract = paper.get("abstract", "")
+        paper_title, body_text, body_offset = _split_prediction_input(paper)
+        title_tags, body_tags = _split_highlight_cutpoints(
+            ner_tags_type(paper.get('id'), 'Dosage'),
+            len(paper_title),
+            body_offset,
+        )
+
+        highlighted_title = highlighted_text(paper_title, title_tags) if title_tags else paper_title
+        text_with_tag = highlighted_text(body_text, body_tags) if body_tags else body_text
+
+        title = html.H3([highlighted_title, f" ({paper.get('year', '')})"])
         link_text = paper.get("url", "")
         link_href = paper.get("url", "")
+        dosage_normalization = paper.get("dosage_display", paper.get("dosage", ""))
+        dosage_block = (
+            html.Div([
+                html.Strong("Dosage normalization: "),
+                html.Span(dosage_normalization),
+            ]) if dosage_normalization else ""
+        )
+        buttons = build_tag_buttons(paper)
 
-        # Build tag buttons grouped by task (same logic as build_tag_buttons)
-        tags = []
-        prev_task = None
-        task_dict = {"task": "", "buttons": [], "model": ""}
-
-        for tag in paper.get("tags", []):
-            if tag["task"] != prev_task:
-                if task_dict["task"]:
-                    tags.append(task_dict)
-
-                prev_task = tag["task"]
-                task_dict = {
-                    "task": tag["task"],
-                    "buttons": [filter_button(tag["color"], tag["label"], tag["task"])],
-                    "model": "BERT",
-                }
-            else:
-                task_dict["buttons"].append(
-                    filter_button(tag["color"], tag["label"], tag["task"])
-                )
-
-        if task_dict["task"]:
-            tags.append(task_dict)
-
-        buttons = tag_component(tags)
-
-        # Restore NER highlighting for dosage modal
-        ner_tags = ner_tags_type(paper.get('id'), 'Dosage')
-        text_with_tag = highlighted_text(abstract, ner_tags)
-
-        return True, title, link_href, link_text, text_with_tag, buttons
+        return True, title, link_href, link_text, text_with_tag, dosage_block, buttons
 
     # =====================================================
     # Clear selection (shared logic)
@@ -812,8 +906,21 @@ def register_modal_callbacks(app):
 def register_search_callbacks(app):
     """Register callbacks for the explore/search page."""
 
+    hidden_results_style = {
+        'display': 'none',
+        'maxHeight': '400px',
+        'overflowY': 'auto',
+        'border': '1px solid #ced4da',
+        'padding': '0.5rem',
+        'borderRadius': '0.25rem',
+        'backgroundColor': '#fff'
+    }
+
+    visible_results_style = {**hidden_results_style, 'display': 'block'}
+
     @app.callback(
         Output('search-results', 'children', allow_duplicate=True),
+        Output('search-results', 'style', allow_duplicate=True),
         Output('search-paper-details', 'children', allow_duplicate=True),
         Output('last-search-store', 'data', allow_duplicate=True),
         Input('search-button', 'n_clicks'),
@@ -823,12 +930,12 @@ def register_search_callbacks(app):
     @log_time
     def perform_search(n_clicks, query):
         if not query:
-            return html.Div("Please enter a search term."), "", None
+            return "", hidden_results_style, html.Div("Please enter a search term."), None
 
         studies = search_papers(query, start_row=0, end_row=50)
 
         if not studies:
-            return html.Div("No matching papers found."), "", None
+            return html.Div("No matching papers found."), hidden_results_style, "", None
 
         items = []
         for s in studies:
@@ -842,7 +949,7 @@ def register_search_callbacks(app):
             )
 
         # Clear any existing details until a paper is clicked; store results
-        return dbc.ListGroup(items), "", studies
+        return dbc.ListGroup(items), visible_results_style, "", studies
 
     @app.callback(
         Output({'type': 'search-result', 'id': ALL},
@@ -850,34 +957,36 @@ def register_search_callbacks(app):
         Output('search-paper-details', 'children', allow_duplicate=True),
         Output('url', 'search', allow_duplicate=True),
         Output('search-results', 'children', allow_duplicate=True),
+        Output('search-results', 'style', allow_duplicate=True),
         Input({'type': 'search-result', 'id': ALL}, 'n_clicks'),
         State({'type': 'search-result', 'id': ALL}, 'id'),
         prevent_initial_call=True,
     )
     @log_time
     def show_search_paper(n_clicks_list, ids_list):
+        active_no_update = [no_update] * len(ids_list)
         ctx = callback_context
         if not ctx.triggered:
-            return no_update, no_update
+            return active_no_update, no_update, no_update, no_update, no_update
 
         triggered_item = ctx.triggered[0]
         triggered = triggered_item['prop_id'].split('.')[0]
         # if the click value is falsy (0 or None), ignore
         if not triggered_item.get('value'):
-            return no_update, no_update
+            return active_no_update, no_update, no_update, no_update, no_update
         try:
             import json as _json
             parsed = _json.loads(triggered)
             paper_id = parsed.get('id')
         except Exception:
-            return no_update, no_update
+            return active_no_update, no_update, no_update, no_update, no_update
 
         # Fetch base paper info
         studies = get_studies_details(ids=[paper_id], start_row=0, end_row=1)
         if not studies:
             # clear active states
             active_states = [False] * len(ids_list)
-            return active_states, html.Div("Paper not found")
+            return active_states, html.Div("Paper not found"), no_update, no_update, hidden_results_style
 
         paper = studies[0]
 
@@ -889,21 +998,7 @@ def register_search_callbacks(app):
         paper_obj['tags'] = study_tags
         tag_buttons = build_tag_buttons(paper_obj)
 
-        # NER highlighting
-        ner_tags = ner_tags_type(paper_id)
-        abstract = paper.get('abstract', '') or ''
-        highlighted = highlighted_text(
-            abstract, ner_tags) if ner_tags else abstract
-
-        details = html.Div([
-            html.H3(f"{paper.get('title')} ({paper.get('year', '')})"),
-            html.P([html.Span("URL: "), html.A(paper.get('url') or '',
-                   href=paper.get('url') or '', target='_blank')]),
-            html.H5("Abstract"),
-            html.Div(highlighted, className='mb-3'),
-            html.H5("Tags"),
-            tag_buttons,
-        ], className='p-3 border rounded')
+        details = _build_paper_details(paper, tags_component=tag_buttons)
         # build active list based on ids_list
         active_states = [False] * len(ids_list)
         for idx, iddict in enumerate(ids_list):
@@ -916,11 +1011,12 @@ def register_search_callbacks(app):
         search_str = f"?study_id={paper_id}"
 
         # clear the search results display (we're on a dedicated paper view)
-        return active_states, details, search_str, ""
+        return active_states, details, search_str, "", hidden_results_style
 
     @app.callback(
         Output('search-paper-details', 'children', allow_duplicate=True),
         Output('search-results', 'children', allow_duplicate=True),
+        Output('search-results', 'style', allow_duplicate=True),
         Input('url', 'search'),
         State('last-search-store', 'data'),
         prevent_initial_call=True,
@@ -932,7 +1028,7 @@ def register_search_callbacks(app):
         if not search:
             # restore results from store
             if not last_search:
-                return "", ""
+                return "", "", hidden_results_style
             items = []
             for s in last_search:
                 year = s.get('year') or ''
@@ -943,7 +1039,7 @@ def register_search_callbacks(app):
                         html.Div(subtitle, className='text-muted small')
                     ], id={'type': 'search-result', 'id': s['id']}, action=True)
                 )
-            return "", dbc.ListGroup(items)
+            return "", dbc.ListGroup(items), visible_results_style
 
         # parse query string like ?study_id=123
         try:
@@ -958,7 +1054,7 @@ def register_search_callbacks(app):
 
         studies = get_studies_details(ids=[paper_id], start_row=0, end_row=1)
         if not studies:
-            return html.Div("Paper not found"), ""
+            return html.Div("Paper not found"), "", hidden_results_style
 
         paper = studies[0]
 
@@ -969,20 +1065,7 @@ def register_search_callbacks(app):
         paper_obj['tags'] = study_tags
         tag_buttons = build_tag_buttons(paper_obj)
 
-        ner_tags = ner_tags_type(paper_id)
-        abstract = paper.get('abstract', '') or ''
-        highlighted = highlighted_text(
-            abstract, ner_tags) if ner_tags else abstract
-
-        details = html.Div([
-            html.H3(f"{paper.get('title')} ({paper.get('year', '')})"),
-            html.P([html.Span("URL: "), html.A(paper.get('url') or '',
-                   href=paper.get('url') or '', target='_blank')]),
-            html.H5("Abstract"),
-            html.Div(highlighted, className='mb-3'),
-            html.H5("Tags"),
-            tag_buttons,
-        ], className='p-3 border rounded')
+        details = _build_paper_details(paper, tags_component=tag_buttons)
 
         # hide the search results when showing details
-        return details, ""
+        return details, "", hidden_results_style

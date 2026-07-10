@@ -15,6 +15,7 @@ def search_layout():
 
             # results list (scrollable)
             html.Div(id='search-results', className='mb-4', style={
+                'display': 'none',
                 'maxHeight': '400px',
                 'overflowY': 'auto',
                 'border': '1px solid #ced4da',
