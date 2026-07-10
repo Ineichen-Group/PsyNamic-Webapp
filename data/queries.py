@@ -110,7 +110,7 @@ def get_studies_details(
                 query = query.limit(limit_value)
 
         query = query.options(load_only(
-            Paper.id, Paper.title, Paper.abstract,
+            Paper.id, Paper.title, Paper.abstract, Paper.prediction_input,
             Paper.key_terms, Paper.doi,
             Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url,
             Paper.date
@@ -130,6 +130,7 @@ def get_studies_details(
                 'id': paper.id,
                 'title': paper.title,
                 'abstract': paper.abstract,
+                'prediction_input': paper.prediction_input,
                 'key_terms': paper.key_terms,
                 'doi': paper.doi,
                 'year': years.get(paper.id),
@@ -224,13 +225,14 @@ def get_studies_details_ner(
                 'id': study.id,
                 'title': study.title,
                 'abstract': study.abstract,
-                'pred_text': study.prediction_input,
+                'prediction_input': study.prediction_input,
                 'key_terms': study.key_terms,
                 'doi': study.doi,
                 'year': study.date.year,
                 'url': study.url,
                 'tags': study_tags.get(study.id, []) if tags else [],
-                'dosage': get_dosage_string(study.id)
+                'dosage': get_dosage_string(study.id),
+                'dosage_display': get_dosage_display_string(study.id)
             }
             for study in studies
         ]
@@ -652,6 +654,48 @@ def get_dosage_string(paper_id: int) -> str:
         session.close()
 
 
+def get_dosage_display_string(paper_id: int) -> str:
+    """Get dosage tags with 70 kg normalization shown for relative weight dosages."""
+    session = Session()
+    try:
+        query = (
+            session.query(NerTag, DosageNormalization)
+            .join(DosageNormalization, DosageNormalization.ner_tag_id == NerTag.id)
+            .filter(NerTag.paper_id == paper_id, NerTag.tag == 'Dosage')
+        )
+        results = query.all()
+
+        display_texts = []
+        seen_texts = set()
+
+        for tag, norm in results:
+            display_text = norm.norm_text
+
+            if norm.dose_type and norm.dose_type.startswith('relative_weight'):
+                min_val, max_val = normalize_relative_weight_dosages(
+                    norm.min, norm.max, norm.weight_reference, norm.per_weight_unit
+                )
+                min_mg = to_mg(min_val, norm.unit)
+                max_mg = to_mg(max_val, norm.unit)
+
+                if min_mg is not None and max_mg is not None:
+                    if min_mg == max_mg:
+                        normalized_value = f"{min_mg:g} mg"
+                    else:
+                        normalized_value = f"{min_mg:g}-{max_mg:g} mg"
+                    display_text = f"{norm.norm_text} -> {normalized_value} (70 kg person)"
+                else:
+                    display_text = f"{norm.norm_text} (70 kg person)"
+
+            if display_text not in seen_texts:
+                seen_texts.add(display_text)
+                display_texts.append(display_text)
+
+        return ' | '.join(display_texts)
+    finally:
+        session.close()
+
+
 def ner_tags_type(paper_id: int, ner_type: str = None, in_titel=False) -> list[dict]:
     """Get all tags of a specific type for a given paper ID."""
     session = Session()
@@ -675,8 +719,8 @@ def ner_tags_type(paper_id: int, ner_type: str = None, in_titel=False) -> list[d
                 continue
 
             tags.append({
-                'start': tag.start_id if in_titel else tag.start_id - end_id_of_title,
-                'end': tag.end_id if in_titel else tag.end_id - end_id_of_title,
+                'start': tag.start_id, # if in_titel else tag.start_id - end_id_of_title,
+                'end': tag.end_id, # if in_titel else tag.end_id - end_id_of_title,
                 'tag': tag.tag,
             })
         return tags

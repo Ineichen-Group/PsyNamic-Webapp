@@ -489,6 +489,7 @@ def paper_details_modal(id="paper-modal"):
                         target="_blank",
                         href="",),
                     html.P(id="paper-abstract", className="abstract-text"),
+                    html.P(id="paper-dosage-normalization", className="dosage-normalization"),
                     html.Div(id='modal-tags'),
                 ]
             ),
