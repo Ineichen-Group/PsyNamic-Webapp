@@ -1,12 +1,14 @@
-  GNU nano 7.2                                                                             /usr/local/bin/monitor_webapp.sh
+GNU nano 7.2                                                                             /usr/local/bin/monitor_webapp.sh
 #!/bin/bash
 
-EMAIL="vera.bernhard@unibe.ch"
-LOGFILE="/var/log/webapp_monitor.log"
+LOGFILE="$(dirname "$0")/log/monitor.log"
+ENV_FILE="$SCRIPT_DIR/.env"
 
-if [ -f "/home/sysadmin/PsyNamic-Webapp/.env" ]; then
-    export $(grep -v '^#' /home/sysadmin/PsyNamic-Webapp/.env | xargs)
+if [ -f "$ENV_FILE" ]; then
+    export $(grep -v '^#' "$ENV_FILE" | xargs)
 fi
+
+EMAIL="$LOG_EMAIL"
 
 # --------- Check Dash app ---------
 WEB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8050/)
