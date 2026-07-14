@@ -377,44 +377,6 @@ def register_dosage_graph_callbacks(app):
         return {"rowData": studies, "rowCount": row_count}, ids, row_count, figs_no_update
 
 
-def register_pagination_dosages_callbacks(app):
-    @app.callback(
-        Output('dosage-study-grid', "getRowsResponse", allow_duplicate=True),
-        Output('count-filtered', 'children', allow_duplicate=True),
-        Input('dosage-study-grid', "getRowsRequest"),
-        Input("filter-tags", "data"),
-        State("filtered-study-ids", "data"),
-        prevent_initial_call=True
-    )
-    def fetch_studies_infinite(request, filtered_ids, tags):
-        if not request:
-            return no_update, no_update
-
-        start_row = request["startRow"]
-        end_row = request["endRow"]
-
-        sort_model = request.get(
-            "sortModel", [{"colId": "year", "sort": "desc"}])
-        filter_model = request.get("filterModel", {})
-
-        studies = get_studies_details_ner(
-            ids=filtered_ids if filtered_ids else [],
-            start_row=start_row,
-            end_row=end_row,
-            sort_model=sort_model,
-            filter_model=filter_model,
-            tags=tags
-        )
-        if len(studies) == 0:
-            row_count = 0
-        else:
-            row_count = len(filtered_ids) if filtered_ids else nr_studies()
-
-        return {
-            "rowData": studies,
-            "rowCount": row_count
-        }, row_count
-
 # =====================================================
 # Dual Task View
 # =====================================================
@@ -743,7 +705,7 @@ def register_pagination_dosages_callbacks(app):
         Input('dosage-study-grid', "getRowsRequest"),
         Input("filter-tags", "data"),
         State("filtered-study-ids", "data"),
-        prevent_initial_call=True
+        prevent_initial_call='initial_duplicate',
     )
     @log_time
     def fetch_dosage_studies(request, tags, filtered_ids):
@@ -925,7 +887,7 @@ def register_search_callbacks(app):
         Output('last-search-store', 'data', allow_duplicate=True),
         Input('search-button', 'n_clicks'),
         State('search-input', 'value'),
-        prevent_initial_call=True,
+        prevent_initial_call='initial_duplicate',
     )
     @log_time
     def perform_search(n_clicks, query):
@@ -1019,7 +981,7 @@ def register_search_callbacks(app):
         Output('search-results', 'style', allow_duplicate=True),
         Input('url', 'search'),
         State('last-search-store', 'data'),
-        prevent_initial_call=True,
+        prevent_initial_call='initial_duplicate',
     )
     @log_time
     def load_paper_from_url(search, last_search):
@@ -1047,10 +1009,10 @@ def register_search_callbacks(app):
             qs = parse_qs(search.lstrip('?'))
             study_ids = qs.get('study_id') or []
             if not study_ids:
-                return "", ""
+                return "", "", hidden_results_style
             paper_id = int(study_ids[0])
         except Exception:
-            return "", ""
+            return "", "", hidden_results_style
 
         studies = get_studies_details(ids=[paper_id], start_row=0, end_row=1)
         if not studies:
