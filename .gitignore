@@ -2,7 +2,7 @@
 settings.py
 pipeline/models/*
 .env*
-!.env.exp
+!.env.copy
 .vscode/*
 
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,python
