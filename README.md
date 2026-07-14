@@ -1,73 +1,99 @@
-# Installation - How to set up the dash up locally
+# PsyNamic Webapp Installation & Deployment Guide
 
-## NON-Docker setup
+This document describes how to set up the PsyNamic dashboard locally and how to deploy it on a UniBE VM.
 
-### General
+---
 
-- Make virtual environment and install requirements
-- Start webapp:
+# Local Development Setup (Non-Docker)
+
+## General Setup
+
+### Create virtual environment and install dependencies
+
+Create and activate a Python virtual environment:
 
 ```bash
-    python app.py
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
 ```
 
 ### Database
 
-- Install PostgreSQL
-  https://www.postgresql.org/download/linux/ubuntu/
+- Install [PostgreSQL](https://www.postgresql.org/download/linux/ubuntu/)
 
-- Setup database:
-  - Install [PostgreSQL](https://www.postgresql.org/download/)
-  - Check if installation was succesfull
+- Check if installation was succesfull
 
-  ```bash
-  psql --version
-  ```
+```bash
+psql --version
+```
 
-  - Change to the default `postgres` user (or create a new one)
+Switch to the default PostgreSQL user:
 
-  ```bash
-  sudo -i -u postgres
-  ```
+```bash
+sudo -i -u postgres
+```
 
-  - Enter the PostgreSQL Command Line
+Enter the PostgreSQL command line:
 
-  ```bash
-  psql
-  ```
+```bash
+psql
+```
 
-  - Create databse
+Create the database:
 
-  ```sql
-  CREATE DATABASE psynamic;
-  ```
+```sql
+CREATE DATABASE psynamic;
+```
 
-  - Set a password for the default user
+Set a password for the PostgreSQL user:
 
-  ```sql
-  ALTER USER postgres PASSWORD '<your password>';
-  ```
+```sql
+ALTER USER postgres PASSWORD '<your password>';
+```
 
-  - rename `settings_copy.py` to `settings.py` and add your local database configs
+Exit PostgreSQL:
 
-- Create database schema via running `model.py` within the virtual evnironment
+```sql
+\q
+```
 
-  ```bash
-  python data/models.py
-  ```
+### Configure Environment Variables
 
-- Populate database by passing the new prediction and studies csv
+Copy the example environment file:
 
-  ```bash
-  python data/populate.py -p data/predictions.csv -s data/studies.csv
-  ```
+```bash
+cp .env.copy .env
+```
 
-- Delete database
-  ```bash
-  DROP DATABASE psynamic;
-  ```
+Edit `.env` and add your local database configuration.
 
-## Dealing with the database when deployed
+### Initialize and Populate Database and Indexes
+
+- Populate initial database content:
+
+```bash
+./init_db.sh
+```
+
+- Populate all data retrieved automatically by the pipeline:
+
+```bash
+python -m data.populate --all
+```
+
+- Add database indexes:
+
+```bash
+psql -d psynamic -f data/indexes.sql
+```
+
+### Dealing with the database when deployed
 
 - Make dump and load dump into database
 
@@ -76,12 +102,9 @@
   pg_restore --no-owner --dbname  <external_db_link> <dump_file>
   ```
 
-- Add indexes to the database
-  ```bash
-  psql -d <database_name> -f data/indexes.sql
-  ```
+# Deployment with Docker on UniBE VM
 
-# Deployment on server
+## Basic Setup: Make and Docker
 
 - Make sure everything is up to date
 
@@ -115,37 +138,43 @@ sudo apt install make
 
   Then restart docker with `sudo systemctl restart docker`
 
+## Deployment Steps
+
 - Clone the repository and navigate into it
 
 ```bash
 git clone git@github.com:Ineichen-Group/PsyNamic-Webapp.git
 ```
 
-- Set envs in `.env` file (copy from `.env.exp`) and edit accordingly
+- Set envs in `.env` file (copy from `.env.copy`) and edit accordingly
 
-- In app.py, change debug=False
+- Before deployment, disable debug mode in `app.py`:
 
-- Set up nginx as a reverse proxy with SSL
-  What is this and why do we need it?
+```python
+debug=False
+```
 
-  Nginx is a web server and reverse proxy that forwards requests from the internet to the web application running on a specific port. It enables HTTP/HTTPS handling, load balancing, and security features.
+### Configure Nginx and SSL
 
-  Certbot is a tool that automates the process of obtaining and renewing SSL certificates from Let's Encrypt. SSL certificates are used to encrypt data transmitted between the user's browser and the web server, ensuring secure communication.
-  - Install nginx and certbot
+> Nginx is used as a reverse proxy between the public internet and the Dash application.
+> The Dash application runs internally on port `8050`, while Nginx handles incoming HTTP/HTTPS traffic.
+> Certbot is used to automatically obtain and renew SSL certificates from Let's Encrypt.
+
+- Install nginx and certbot
 
   ```bash
-  sudo apt install nginx
+  sudo apt install nginx certbot python3-certbot-nginx
   ```
 
-  - Configure new nginx configs
+- Configure new nginx configs
 
   ```bash
   sudo nano /etc/nginx/sites-available/psynamic
   ```
 
-  Paste the following (replace with your domain):
+  Add the following configuration and replace the domain if required:
 
-  ```
+  ```nginx
   server {
       listen 80;
       server_name psynamic.dcr.unibe.ch;
@@ -158,53 +187,248 @@ git clone git@github.com:Ineichen-Group/PsyNamic-Webapp.git
   }
   ```
 
-  -> port 80 is for HTTP traffic, web app is running on port 8050
-  - Enable the site and test nginx
+  - Port `80` receives HTTP traffic.
+  - The Dash application runs on port `8050`.
+  - Nginx forwards incoming requests to the application.
+
+- Enable the site and test nginx
+  Create a symbolic link:
 
   ```bash
   sudo ln -s /etc/nginx/sites-available/psynamic /etc/nginx/sites-enabled/
+  ```
+
+  Test the configuration:
+
+  ```bash
   sudo nginx -t
+  ```
+
+  Remove the default configuration:
+
+  ```bash
   sudo rm /etc/nginx/sites-enabled/default
+  ```
+
+  Reload Nginx:
+
+  ```bash
   sudo systemctl reload nginx
   ```
 
-  - Obtain SSL certificate with certbot
+- Obtain SSL certificate with certbot
 
   ```bash
-      sudo apt install certbot python3-certbot-nginx
-      sudo certbot --nginx -d psynamic.dcr.unibe.ch
+  sudo certbot --nginx -d psynamic.dcr.unibe.ch
   ```
+
+  After successful setup, the application should be available at:
+
+  ```
+  https://psynamic.dcr.unibe.ch
+  ```
+
+### Build and Run the Application
 
 - Build and start the docker containers
 
-```bash
-make build
-make up
-```
+  ```bash
+  make build
+  make up
+  ```
 
 - Add inital data dump and load
 
-```bash
-make db-init
-```
+  ```bash
+  make db-init
+  ```
 
-- Visit https://psynamic.dcr.unibe.ch
+- Copy models to `pipeline\models` and adjust `model_paths.json` accordingly
 
-- Copy models to and adjust `model_paths.json` accordingly
+### Data Backup
 
-## Scheduled job to retrieve new papers
+- install rsync and cifs-utils
+
+  ```bash
+  sudo apt update
+  sudo apt install cifs-utils rsync
+  ```
+
+- create mount point and set permissions
+
+  ```bash
+    sudo mkdir -p /mnt/research_storage
+    sudo chown sysadmin:sysadmin /mnt/research_storage
+  ```
+
+- test mounting the research storage (replace with your credentials)
+
+  ```bash
+  sudo mount -t cifs //resstore.unibe.ch/dcr_mds /mnt/research_storage \
+  -o username=<username>,domain=campus,vers=3.0,sec=ntlmssp
+  ```
+
+  You will be prompted for the password.
+
+  Verify the mount:
+
+  ```bash
+  ls -lah /mnt/research_storage
+  ```
+
+  Unmount again:
+
+  ```bash
+  sudo umount /mnt/research_storage
+  ```
+
+- cretae a credentials file to avoid entering the password every time
+
+  ```bash
+  sudo nano /root/.research_storage_credentials
+  ```
+
+  Add:
+
+  ```ini
+  username=<your username>
+  password=<your password>
+  domain=campus
+  ```
+
+  Secure the file:
+
+  ```bash
+  sudo chmod 600 /root/.research_storage_credentials
+  sudo chown root:root /root/.research_storage_credentials
+  ```
+
+- configure persistent cifs mounting
+  Edit fstab:
+
+  ```bash
+  sudo nano /etc/fstab
+  ```
+
+  Add:
+
+  ```fstab
+  //resstore.unibe.ch/dcr_mds /mnt/research_storage cifs credentials=/root/.research_storage_credentials,vers=3.0,sec=ntlmssp,uid=0,gid=0,file_mode=0600,dir_mode=0700,_netdev,nofail,x-systemd.automount,x-systemd.mount-timeout=30 0 0
+  ```
+
+- test if the mount is persistent
+  Unmount the share:
+
+  ```bash
+  sudo umount /mnt/research_storage
+  ```
+
+  Reload systemd:
+
+  ```bash
+  sudo systemctl daemon-reload
+  ```
+
+  Mount all configured filesystems:
+
+  ```bash
+  sudo mount -a
+  ```
+
+  Verify:
+
+  ```bash
+  findmnt /mnt/research_storage
+  ```
+
+  Check contents:
+
+  ```bash
+  ls -lah /mnt/research_storage
+  ```
+
+- test backup script
+
+  ```bash
+  chmod +x backup.sh
+  ./backup.sh
+  ```
+
+  The script should synchronize:
+
+  ```
+  data/
+  ├── pubmed_fetch_results
+  ├── predictions
+  └── relevant_studies
+  ```
+
+  to:
+
+  ```
+  /mnt/research_storage/psynamic_data_backup/
+  ```
+
+# Scheduled jobs
+
+Open the crontab:
 
 ```bash
 crontab -e
 ```
 
-Add the following line to run the script every Wednesday, 18:00
-```00 18 * * 3 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make run-pipeline >> /home/sysadmin/PsyNamic-Webapp/pipeline.log 2>&1```
+Add the following entries.
 
-Make sure to adjust the path to the `make` command if it's different on your system (you can find it with `which make`)
+## Run the PubMed Pipeline
 
+Every **Wednesday at 18:00**:
 
-## Common errors
+```cron
+0 18 * * 3 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make run-pipeline >> /home/sysadmin/PsyNamic-Webapp/pipeline.log 2>&1
+```
+
+> **Note:** If necessary, adjust the path to `make` (find it with `which make`).
+
+## Monitor the Web Application
+
+Every **5 minutes**:
+
+```cron
+*/5 * * * * /usr/local/bin/monitor_webapp.sh
+```
+
+The monitoring script:
+
+- checks the Dash application, Docker containers, and PostgreSQL,
+- writes logs to `/var/log/webapp_monitor.log`,
+- sends email alerts if a check fails.
+
+## Backup the Database
+
+Every **Thursday at 03:00**:
+
+```cron
+0 3 * * 4 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make backup >> /home/sysadmin/PsyNamic-Webapp/backup.log 2>&1
+```
+
+# Monitoring
+
+The following monitoring mechanisms are currently used:
+
+- `monitor.sh`
+  - Checks application availability
+  - Checks Docker containers
+  - Checks PostgreSQL connectivity
+  - Sends email alerts on failures
+
+- **UptimeRobot**
+  - External uptime monitoring
+
+- **apticron** (s. [wiki entry](https://github.com/Ineichen-Group/wiki/blob/main/pages/how-to-vms.md#setup-apticron) for details)
+  - Monitors available system updates
+  - Sends email notifications when updates are available
+
+# Common errors
 
 `entrypoint.sh": permission denied: unknown`
 
