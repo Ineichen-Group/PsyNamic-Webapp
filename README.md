@@ -371,6 +371,39 @@ debug=False
 
 # Scheduled jobs
 
+Create the log directory:
+
+```bash
+mkdir -p log
+```
+
+Configure log rotation:
+
+```bash
+sudo nano /etc/logrotate.d/psynamic
+```
+
+Add:
+
+```conf
+/home/sysadmin/PsyNamic-Webapp/log/*.log {
+    weekly
+    size 10M
+    rotate 8
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
+```
+
+Test the configuration:
+
+```bash
+sudo logrotate -d /etc/logrotate.d/psynamic
+```
+
 Open the crontab:
 
 ```bash
@@ -384,17 +417,18 @@ Add the following entries.
 Every **Wednesday at 18:00**:
 
 ```cron
-0 18 * * 3 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make run-pipeline >> /home/sysadmin/PsyNamic-Webapp/pipeline.log 2>&1
-```
+0 18 * * 3 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make run-pipeline```
 
 > **Note:** If necessary, adjust the path to `make` (find it with `which make`).
+
+This will create logs in `/home/sysadmin/PsyNamic-Webapp/log
 
 ## Monitor the Web Application
 
 Every **5 minutes**:
 
 ```cron
-*/5 * * * * /usr/local/bin/monitor_webapp.sh
+*/5 * * * * cd /home/sysadmin/PsyNamic-Webapp && ./monitor.sh
 ```
 
 The monitoring script:
@@ -408,7 +442,7 @@ The monitoring script:
 Every **Thursday at 03:00**:
 
 ```cron
-0 3 * * 4 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make backup >> /home/sysadmin/PsyNamic-Webapp/backup.log 2>&1
+0 3 * * 4 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make backup
 ```
 
 # Monitoring
