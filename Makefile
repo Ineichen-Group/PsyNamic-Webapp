@@ -39,9 +39,7 @@ db-dump: load-env
 db-reset: load-env
 	@echo "Stopping Compose stack and removing persisted database volume (backup recommended)"
 	docker compose down -v --remove-orphans
-	docker compose up -d db
-	$(MAKE) wait-for-db
-	docker compose up db_init
+	$(MAKE) db-init
 
 db-empty: load-env
 	@echo "Stopping Compose stack and removing persisted database volume"
