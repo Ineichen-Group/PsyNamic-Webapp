@@ -1,8 +1,20 @@
 import re
+from collections import defaultdict
+import pandas as pd
+from collections import Counter
 
-all_unicode_characters = r'[^\W\d_/\.]'
-digit = r'\d+(\.\d+)?'
 
+all_unicode_characters = r'[^\W\d_\.]'
+DIGIT = r'\d+(?:\.\d+)?'
+
+
+def replace_ratio(match):
+    parts = re.split(r'\s*/\s*', match.group())
+    
+    if len(parts) == 2:
+        return f"{parts[0]} or {parts[1]}"
+    else:
+        return ", ".join(parts[:-1]) + f", or {parts[-1]}"
 
 def remove_whitespace_around_slashes(dosage: str) -> str:
     """Remove whitespace around slashes in the dosage string."""
@@ -36,6 +48,7 @@ def normalize_dosage(dosage: str) -> str:
         "microgram": "µg",
         "micrograms": "µg",
         "mgs": "mg",
+        "mg.": "mg",
         "grams": "g",
         "kilogram": "kg",
         "hours": "h",
@@ -49,13 +62,17 @@ def normalize_dosage(dosage: str) -> str:
     dosage = remove_whitespace_around_slashes(dosage)
     dosage = dosage.lower()
 
-    # replace weird decimal dot like 0·5 mg/kg with normal dot
+    pattern = rf'{DIGIT}(?:\s*/\s*{DIGIT})+'
+    dosage = re.sub(pattern, replace_ratio, dosage)
+
     dosage = re.sub(r"(\d)·(\d)", r"\1.\2", dosage)
 
+    # replace 'per' with '/'
     dosage = re.sub(r"\s+per\s+", "/", dosage)
 
     # replace ± nubmer or +- with or without ' '
     dosage = re.sub(r"\s*(±|\+-)\s?.*?\s", "", dosage)
+
     # remove , in 4 or more digit numbers
     dosage = re.sub(r"(?<=\d),(?=\d{3,})", "", dosage)
 
@@ -71,7 +88,7 @@ def normalize_dosage(dosage: str) -> str:
 
     # get unit, all letters after a number or / , not including white spaces
     match = re.search(
-        rf"\d+\s*({all_unicode_characters}+(?:/{all_unicode_characters}+)*)", dosage)
+        rf"\d+\s*({all_unicode_characters}+\.?)(\/{all_unicode_characters}+\.?)?(\/{all_unicode_characters}+\.?)?", dosage)
     if match:
         unit = match.group(1)
 
@@ -92,12 +109,38 @@ def normalize_dosage(dosage: str) -> str:
         r"\s*(of body weight|/?\s?bw|/?\s?bodyweight|/?\s?body-weight)$", "", dosage)
 
     # check all units (either after / or space) and replace if in rename_map, e.g. mg/kg --> mg and kg
-    units = re.finditer(
-        rf'(?:(?<=\d)\s*|/)\s*({all_unicode_characters}+)', dosage)
-    for unit in units:
-        unit_str = unit.group(1)
+    matches = list(re.finditer(
+        rf'(?:(?<=\d)\s*|/)\s*({all_unicode_characters}+)',
+        dosage
+    ))
+
+    unit_counts = Counter(m.group(1) for m in matches)
+
+    removed = set()
+    prev = None
+
+    for match in matches:
+        unit_str = match.group(1)
+
+        if unit_str in ['or', 'and']:
+            continue
+
+        # if there is more characters between, remove the between characters
+        if prev and match.start(0) - prev[1] > 3:
+            dosage = dosage[:prev[1]] + dosage[match.start(0):]
+            prev = (match.start(0), match.end(0))
+
+        if unit_counts[unit_str] > 1 and unit_str not in removed:
+            dosage = (
+                dosage[:match.start(1)] +
+                dosage[match.end(1):]
+            )
+            removed.add(unit_str)
+            continue
+
         if unit_str in rename_map:
             dosage = dosage.replace(unit_str, rename_map[unit_str], 1)
+        prev = (match.start(0), match.end(0))
 
     # Remove any - after numbers that are not followed by another number 15- or 20-mg
     dosage = re.sub(r"(\d+)-(?=\D|$)", r"\1 ", dosage)
@@ -114,11 +157,23 @@ def normalize_dosage(dosage: str) -> str:
 
 
 def extract_dosages(dosage: str) -> dict[str, str]:
-    """Extract quantity and unit from a dosage string."""
-    dosage = normalize_dosage(dosage)
+    """Extract quantity and unit from a dosage string.
+
+    Some decision rules:
+    - If there is a range (e.g. 5-10 mg), extract min and max dosage
+    - If there is a per weight unit (e.g. mg/kg), extract weight reference if available (e.g. 98 mg/70 kg -> weight reference is 70 kg)
+    - If there is a per time unit (e.g. mg/h), extract time unit and set dose type to relative_time
+    - If there is both per weight and per time unit (e.g. mg/kg/h), set dose type to relative_weight_time
+    - If there is no per weight or per time unit, set dose type to absolute
+
+    Look at test cases in test_dosage_norm.py for examples of how this should work.
+
+    """
+    dosage_norm = normalize_dosage(dosage)
+    dosage_norm_for_error = dosage_norm if dosage_norm.strip() else "<empty>"
 
     dosage_dict = {
-        "norm_text": dosage,
+        "norm_text": dosage_norm,
         "min": None,
         "max": None,
         "unit": None,
@@ -126,26 +181,27 @@ def extract_dosages(dosage: str) -> dict[str, str]:
         "weight_reference": None,
         "per_time_unit": None,
         "dose_type": None,
-        "original_dosage": dosage,
     }
 
-    # extract unit, last digit followed by space and then unit
     unit = None
-    if '/' in dosage:
+
+
+    # Extract unit
+    if '/' in dosage_norm:
         # unit last thing before first /
-        match = re.search(rf"({all_unicode_characters}+)(?=/)", dosage)
+        match = re.search(rf"({all_unicode_characters}+)(?=/)", dosage_norm)
         if match:
             unit = match.group(1)
             dosage_dict["unit"] = unit
     else:
-        matches = re.findall(rf"[\d\.]+\s({all_unicode_characters}+)", dosage)
+        matches = re.findall(rf"[\d\.]+\s({all_unicode_characters}+)", dosage_norm)
         if matches:
-            unit = matches[-1]   # <-- last occurrence
+            unit = matches[-1]
             dosage_dict["unit"] = unit
 
     # \sor\s or \sand\s in dosage or comma separated numbers
-    if re.search(r"\sor\s|\sand\s|\d\s?[-‐]\s?\d", dosage) or re.search(r",", dosage):
-        dosage_without_units = dosage.split(unit)
+    if re.search(r"\sor\s|\sand\s|\d\s?[-‐]\s?\d", dosage_norm) or re.search(r",", dosage_norm):
+        dosage_without_units = dosage_norm.split(unit)
         if '/' in dosage_without_units[-1]:
             # remove last part after last unit if it contains another unit reference like /kg or /h
             dosage_without_units = dosage_without_units[:-1]
@@ -160,45 +216,45 @@ def extract_dosages(dosage: str) -> dict[str, str]:
             dosage_dict["max"] = numbers[-1]
         else:
             raise ValueError(
-                f"Could not extract min and max from dosage: {dosage}")
+                f"Could not extract min and max from dosage: {dosage_norm_for_error}")
 
     else:
-        numbers = [n for n in re.findall(r'\d*\.\d+|\d+', dosage)]
+        numbers = [n for n in re.findall(r'\d*\.\d+|\d+', dosage_norm)]
         if len(numbers) == 1:
             dosage_dict["min"] = float(numbers[0])
             dosage_dict["max"] = float(numbers[0])
 
-        elif len(numbers) > 1 and '/' not in dosage:
+        elif len(numbers) > 1 and '/' not in dosage_norm:
             # if more than 2 numbers and no /, take first and last as min and max
             dosage_dict["min"] = float(numbers[0])
             dosage_dict["max"] = float(numbers[-1])
 
         # Check if only one number before the unit (and other number is unit reference): '98 mg/70 kg'
-        elif len(re.findall(rf"\d+\s*{unit}", dosage)) == 1:
+        elif len(re.findall(rf"\d+\s*{unit}", dosage_norm)) == 1:
             dosage_dict["min"] = float(numbers[0])
             dosage_dict["max"] = float(numbers[0])
         else:
-            raise ValueError(f"Could not extract dosage from: {dosage}")
+            raise ValueError(f"Could not extract dosage from: {dosage_norm_for_error}")
 
     # if /kg or /h in dosage -> relative dose
-    if re.search(r"/[\s\d]*kg", dosage):
+    if re.search(r"/[\s\d]*kg", dosage_norm):
         # if digit before kg, use it as weight reference
         dosage_dict["per_weight_unit"] = "kg"
-        weight_ref_match = re.search(r"/\s*(\d+(\.\d+)?)\s*kg", dosage)
+        weight_ref_match = re.search(r"/\s*(\d+(\.\d+)?)\s*kg", dosage_norm)
         if weight_ref_match:
             dosage_dict["weight_reference"] = float(weight_ref_match.group(1))
         else:
             dosage_dict["weight_reference"] = 1
 
-        if re.search(r"/h|/min", dosage):
-            time_unit_match = re.search(r"/(h|min)", dosage)
+        if re.search(r"/h|/min", dosage_norm):
+            time_unit_match = re.search(r"/(h|min)", dosage_norm)
             if time_unit_match:
                 dosage_dict["per_time_unit"] = time_unit_match.group(1)
             dosage_dict["dose_type"] = "relative_weight_time"
         else:
             dosage_dict["dose_type"] = "relative_weight"
-    elif re.search(r"/h|/min", dosage):
-        time_unit_match = re.search(r"/(h|min)", dosage)
+    elif re.search(r"/h|/min", dosage_norm):
+        time_unit_match = re.search(r"/(h|min)", dosage_norm)
         if time_unit_match:
             dosage_dict["per_time_unit"] = time_unit_match.group(1)
         dosage_dict["dose_type"] = "relative_time"
@@ -207,3 +263,122 @@ def extract_dosages(dosage: str) -> dict[str, str]:
         dosage_dict["dose_type"] = "absolute"
 
     return dosage_dict
+
+
+def normalize_relative_weight_dosages(minv: float, maxv: float, dosage: float, per_weight_unit: str, factor: int = 70) -> tuple[float, float]:
+    try:
+        ref = float(dosage) if dosage else None
+    except Exception:
+        ref = None
+
+    if ref is not None:
+        if per_weight_unit == 'kg':
+            ref_kg = ref
+        elif per_weight_unit == 'g':
+            ref_kg = ref / 1000.0
+        elif per_weight_unit == 'mg':
+            ref_kg = ref / 1_000_000.0
+        else:
+            ref_kg = ref
+    else:
+        ref_kg = None
+
+    if ref_kg and ref_kg > 0:
+        factor = 70.0 / ref_kg  # Scale to 70 kg person, careful introducing bias
+    else:
+        factor = 70.0
+
+    min_val = (minv * factor) if minv is not None else None
+    max_val = (maxv * factor) if maxv is not None else None
+    return min_val, max_val
+
+
+def remove_several_substances_dosages(df: pd.DataFrame) -> pd.DataFrame:
+    """
+        Remove papers that have more than 1 substance, except for the allowed combinations:
+        * Combination Therapy + any other substance (e.g. "Combination Therapy + LSD", but not "Combination Therapy + Ketamine")
+        * Ketamine + S-ketamine (or similar, e.g. "Ketamine (S-ketamine)")
+        * Ketamine + Combination Therapy, if there is no other substance in the paper (i.e. the only substances are ketamine and combination therapy, but no other substance)
+    """
+    combinations_counts = defaultdict(list)
+    # find all study ids that have more than 1 substance,
+    for study_id, group in df.groupby('Study_ID'):
+        substances = group['Substance'].unique()
+        if len(substances) > 1:
+            # skip if it is just substance + combination therapy
+            if len(substances) == 2 and 'Combination Therapy' in substances:
+                continue
+
+            # allow ketamine + S-ketamine, but not ketamine + other substance
+            elif all('Ketamine' in s for s in substances):
+                continue
+
+            elif 'Ketamine' in substances and 'Combination Therapy' in substances:
+                substances = [s for s in substances if 'ketamine' not in s.lower(
+                ) and s != 'Combination Therapy']
+                if len(substances) == 0:
+                    continue
+
+            # use a tuple as a hashable dict key
+            key = tuple(substances)
+            combinations_counts[key].append(study_id)
+
+    combinations_counts = dict(sorted(
+        combinations_counts.items(), key=lambda item: len(item[1]), reverse=True))
+
+    # Get all combinations and their counts
+    for combo, count in combinations_counts.items():
+        print(f"{combo}: {count}")
+
+    several_substances_ids = []
+    for combo, ids in combinations_counts.items():
+        several_substances_ids.extend(ids)
+
+    print(
+        f'Total papers with multiple substance: {len(several_substances_ids)}')
+
+    # Remove all papers that have more than 1 substance, except for the allowed combinations
+    df_refined = df[~df['Study_ID'].isin(
+        several_substances_ids)].reset_index(drop=True)
+    print(
+        f'Total papers in refined df: {len(df_refined)}')
+    removed_dosages = len(df) - \
+        len(df_refined)
+    total_dosages = len(df)
+    excluded_pct = (removed_dosages / total_dosages *
+                    100) if total_dosages else 0
+    total_papers = len(df['Study_ID'].unique())
+    total_papers_refined = len(df_refined['Study_ID'].unique())
+
+    print(
+        f'Total papers with multiple substances removed: {total_papers - total_papers_refined} ({(total_papers - total_papers_refined) / total_papers * 100:.1f}%)'
+    )
+
+    print(
+        f'Total dosages with multiple substances removed: {removed_dosages} ({excluded_pct:.1f}%)')
+    return df_refined
+
+
+def to_mg(value, unit_str):
+    if value is None:
+        return None
+    try:
+        v = float(value)
+    except Exception:
+        return None
+
+    if not unit_str:
+        return v
+
+    u = unit_str.lower()
+    # normalize microgram variants
+    if u in ("µg", "μg", "ug", "microg"):
+        return v / 1000.0
+    elif u == "mg":
+        return v
+    elif u == "g":
+        return v * 1000.0
+    elif u == "kg":
+        return v * 1_000_000.0
+    else:
+        return None

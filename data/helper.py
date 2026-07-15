@@ -42,3 +42,14 @@ def check_if_pred_exist(pred_dir: str, retrieval_date: str, str_contain: str = '
         if retrieval_date in f and str_contain in f:
             return os.path.join(pred_dir, f)
     return ""
+
+
+def is_same_title(title1: str, title2: str) -> bool:
+    title1 = title1.strip().lower()
+    title2 = title2.strip().lower()
+
+    if title1 == title2:
+        return True
+    if title1.startswith(title2) or title2.startswith(title1):
+        return True
+    return False

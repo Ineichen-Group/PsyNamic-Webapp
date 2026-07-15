@@ -2,13 +2,18 @@
 
 set -Eeuo pipefail
 
-DATA_DIR="/home/sysadmin/PsyNamic-Webapp/data"
-BACKUP_DIR="/mnt/research_storage/psynamic_data_backup"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+DATA_DIR="$SCRIPT_DIR/data"
+BACKUP_DIR="/mnt/research_storage/psynamic_data_backup"
+LOGFILE="$SCRIPT_DIR/log/backup.log"
+
+mkdir -p "$(dirname "$LOGFILE")"
+
+{
 echo "=================================================="
 echo "$(date) Starting PsyNamic backup"
 
-# Mount the Research Storage if necessary
 if ! mountpoint -q /mnt/research_storage; then
     mount /mnt/research_storage
 fi
@@ -23,7 +28,7 @@ for folder in \
     predictions \
     relevant_studies
 do
-    echo ""
+    echo
     echo "Backing up $folder..."
 
     rsync \
@@ -33,6 +38,9 @@ do
         "$BACKUP_DIR/$folder/"
 done
 
-echo ""
+echo
 echo "$(date) Backup completed successfully."
 echo "=================================================="
+echo
+
+} | tee -a "$LOGFILE"
