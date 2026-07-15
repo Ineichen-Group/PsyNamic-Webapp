@@ -36,6 +36,11 @@
     font-weight: normal;
 }
 
+.dosage-normalization {
+    margin-top: 0.75rem;
+    color: #555;
+}
+
 .card-hover {
     cursor: pointer; 
     background-color: #f5f5f5;
@@ -72,4 +77,15 @@
 
 .label-text .accordion-button {
     padding: 0.2rem 0.5rem !important;  /* overrides Bootstrap default */
+}
+
+/* Make active list-group-items use a neutral gray instead of Bootstrap primary blue */
+.list-group-item.active {
+    background-color: #e9ecef !important; /* light gray */
+    border-color: #ced4da !important;
+    color: #000 !important;
+}
+
+.list-group-item:focus, .list-group-item:active {
+    box-shadow: none !important;
 }

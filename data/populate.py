@@ -74,8 +74,9 @@ def create_paper(
         abstract: str,
         prediction_input: str,
         key_terms: str,
-        doi: str, 
+        doi: str,
         date: int,
+        entrez_year: Optional[int],
         authors: str,
         link_to_fulltext: str,
         link_to_pubmed: str,
@@ -83,7 +84,7 @@ def create_paper(
         retrieval_id: int,
         url: str
 ):
-    prediction_input = normalize_for_db(prediction_input)
+    prediction_input = prediction_input
     title = normalize_for_db(title)
     abstract = normalize_for_db(abstract)
 
@@ -92,18 +93,20 @@ def create_paper(
         try:
             date = datetime.strptime(str(date), '%Y-%m-%d')
         except ValueError:
-            logging.warning(f"Date '{date}' is not in expected format 'yyyy-mm-dd'. Setting date to None.")
+            logging.warning(
+                f"Date '{date}' is not in expected format 'yyyy-mm-dd'. Setting date to None.")
             date = None
 
     return Paper(
         id=ID,
-        pubmed_id=int(pubmed_id) if pubmed_id  else None,
+        pubmed_id=int(pubmed_id) if pubmed_id else None,
         title=title,
         abstract=abstract,
         prediction_input=prediction_input,
         key_terms=key_terms if key_terms else None,
         doi=doi if doi else None,
         date=date if date else None,
+        entrez_year=entrez_year if entrez_year else None,
         authors=authors,
         link_to_fulltext=link_to_fulltext if link_to_fulltext else None,
         other_url=url if url else None,
@@ -133,7 +136,8 @@ def create_ner_tag(session: Session, tag: str, start_id: int, end_id: int, text:
         NerTag.text == text
     ).first()
     if ner_tag:
-        logging.info(f"NER tag already exists: {ner_tag}")
+        logging.info(
+            f"NER tag already exists: {ner_tag} for paper_id {paper_id}")
         return ner_tag
 
     return NerTag(
@@ -201,17 +205,18 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
         nr_studies = len(studies_data)
         # Keep relevant studies only
         studies_data = studies_data[studies_data['prediction'] == 1]
-        logging.info(f"Loading only relevant studies from {file}: {len(studies_data)} out of {nr_studies} total studies")
-    
+        logging.info(
+            f"Loading only relevant studies from {file}: {len(studies_data)} out of {nr_studies} total studies")
+
     nr_studies = len(studies_data)
     # Try to reuse an existing BatchRetrieval for this source file if present
     source_file = os.path.basename(file)
     batch = session.query(BatchRetrieval).filter(
         BatchRetrieval.source_file == source_file
     ).first()
-    # If we've already processed this source file, skip populating again
     if batch:
-        logging.info(f"BatchRetrieval for {source_file} already exists (id={batch.id}); skipping populate_studies.")
+        logging.info(
+            f"BatchRetrieval for {source_file} already exists (id={batch.id}); skipping populate_studies.")
         return
     else:
         batch = create_batch_retrieval(file, nr_studies)
@@ -229,11 +234,8 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             logging.info(f"Paper without abstract: {row[studies_id_column]}")
             continue
         title = row['title']
-        prediction_input = title + '.^\n' + abstract
+        prediction_input = row['text'] if row['text'] != '' else title + '.^\n' + abstract
         paper_id = row[studies_id_column]
-        # TODO: check if this is actually needed
-        if pd.isna(paper_id):
-            paper_id = get_unused_id(session)
 
         if 'pub_date' in row and row['pub_date'] != '':
             date = row['pub_date']
@@ -252,7 +254,7 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
                 'nov': '11',
                 'dec': '12'
             }
-                        
+
             date_comp = row['date'].split()
             # Case 1: date has both month and day (e.g. "Mar 15")
             if len(date_comp) == 2:
@@ -260,7 +262,8 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
                 day = date_comp[1]
                 # Check if month is valid and day is a digit
                 if month not in month2number or not day.isdigit():
-                    logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                    logging.warning(
+                        f"Unexpected date format in 'date' field: '{row['date']}'")
                     date = f"{row['year']}-01-01"
                 else:
                     month = month2number[month]
@@ -274,19 +277,22 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
                     month = month2number[month]
                     date = f"{row['year']}-{month}-01"
                 else:
-                    logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                    logging.warning(
+                        f"Unexpected date format in 'date' field: '{row['date']}'")
                     date = f"{row['year']}-01-01"
             # Case 3: something weird in date field
             else:
-                logging.warning(f"Unexpected date format in 'date' field: '{row['date']}'")
+                logging.warning(
+                    f"Unexpected date format in 'date' field: '{row['date']}'")
                 date = f"{row['year']}-01-01"
 
         elif 'year' in row and row['year'] != '':
-            date = str(int(row['year'])) + '-01-01'  # set to first day of the year
+            # set to first day of the year
+            date = str(int(row['year'])) + '-01-01'
         else:
-            logging.warning(f"No valid date found for paper: {row[studies_id_column]}")
+            logging.warning(
+                f"No valid date found for paper: {row[studies_id_column]}")
             date = None
-
         paper = create_paper(
             ID=int(paper_id),
             pubmed_id=row['pubmed_id'],
@@ -296,6 +302,8 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             key_terms=row['keywords'],
             doi=row['doi'],
             date=date,
+            entrez_year=int(row['entrez_year']) if 'entrez_year' in row and pd.notna(
+                row['entrez_year']) else None,
             authors='',
             link_to_fulltext='',
             link_to_pubmed=row['pubmed_url'],
@@ -308,44 +316,60 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
 
 def populate_class_predictions(session: Session, file: str):
     pred_data = pd.read_csv(file, encoding='utf-8')
-    for i, row in pred_data.iterrows():
-        paper_id = int(row['id'])
-        paper = session.query(Paper).filter(Paper.id == paper_id).first()
+
+    for _, row in pred_data.iterrows():
+        paper_id_raw = int(row['id'])
+
+        paper = session.query(Paper).filter(Paper.id == paper_id_raw).first()
         if not paper:
-            # check if there is a paper with the same pubmed_id as paper_id
-            paper = session.query(Paper).filter(Paper.pubmed_id == paper_id).first()
-            if not paper:
-                logging.warning(f"No paper found with paper_id: {paper_id}")
+            paper = session.query(Paper).filter(
+                Paper.pubmed_id == paper_id_raw).first()
+
+        if not paper:
+            logging.warning(f"No paper found: {paper_id_raw}")
             continue
 
-        # Check for duplicate prediction (same paper_id, task, label, model)
-        existing_pred = session.query(Prediction).filter(
-            Prediction.paper_id == paper_id,
-            Prediction.task == row['task'],
-            Prediction.label == row['label'],
-            Prediction.model == row['model']
-        ).first()
-        if existing_pred:
+        paper_id = paper.id
+
+        task = row['task']
+        label = row['label']
+        model = row['model']
+        
+        # Prevent overwriting manual annotation or previous prediction
+        if class_pred_from_other_model_exists(session, paper_id, task, model):
             logging.info(
-                f"Prediction already exists for paper_id {paper_id}, task {row['task']}, label {row['label']}, model {row['model']}")
+                f"Skipping prediction for paper_id={paper.id}, task={row['task']} from model {model} because a prediction from another model already exists"
+            )
             continue
+
+        # prevent duplicates
+        if class_pred_exists(session, paper_id, task, label):
+            logging.info(
+                f"Skipping duplicate prediction for paper_id={paper.id}, "
+                f"task={row['task']}, label={row['label']}"
+            )
+            continue
+
+
 
         pred = create_predictions(
             paper_id=paper_id,
-            task=row['task'],
-            label=row['label'],
+            task=task,
+            label=label,
             probability=row['probability'],
-            model=row['model'],
+            model=model,
             is_multilabel=row['is_multilabel']
         )
+
         session.add(pred)
+
         try:
             session.flush()
         except IntegrityError:
             session.rollback()
-            logging.info(
-                f"Skipped duplicate prediction for paper_id {paper_id}, task {row['task']}, label {row['label']}, model {row['model']}")
-            continue
+            logging.warning(
+                f"Duplicate blocked by DB constraint: {paper_id}, {task}, {label}, {model}")
+
     session.commit()
 
 
@@ -355,12 +379,14 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
     token_list = [token.lower() for token in token_list]
     prev_token = prev_token.lower() if prev_token else ''
     next_token = next_token.lower() if next_token else ''
-
     # Remove . and ^ if (newline artefact from Prodigy) they are last two tokens in the token list
-    if token_list[-1] == '^' and token_list[-2] == '.':
+    if len(token_list) >= 2 and token_list[-1] == "^" and token_list[-2] == ".":
         token_list = token_list[:-2]
-    elif token_list[-1] == '^':
+    elif len(token_list) >= 1 and token_list[-1] == "^":
         token_list = token_list[:-1]
+
+    if not token_list:
+        raise ValueError("Token list empty after removing .^ artefact")
 
     # Create the regex pattern to match the token list with optional whitespace between tokens
     pattern = r'\s?'.join(re.escape(token) if token !=
@@ -371,9 +397,10 @@ def find_pos(text: str, token_list: list[str], prev_token: str, next_token: str,
     matches = list(re.finditer(pattern, text))
 
     if not matches:
-        logging.warning(
-            f"No match found for tokens '{token_list}' in text: '{text}' with prev_token: '{prev_token}' and next_token: '{next_token}'")
-        return 0, 0
+        raise ValueError(
+            f"No match found for token_list={token_list!r}, "
+            f"prev_token={prev_token!r}, next_token={next_token!r}"
+        )
 
     if len(matches) == 1:
         return matches[0].start()+offset, matches[0].end()+offset
@@ -415,7 +442,6 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
     # First, check if a DosageNormalization already exists for this NerTag
     existing_norm = session.query(DosageNormalization).filter_by(
         ner_tag_id=ner_tag.id).first()
-
     if existing_norm:
         # Option 1: replace fields with new normalization data
         norm_data = extract_dosages(entity_text)
@@ -426,7 +452,6 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
         existing_norm.weight_reference = norm_data['weight_reference']
         existing_norm.per_time_unit = norm_data['per_time_unit']
         existing_norm.dose_type = norm_data['dose_type']
-        existing_norm.original_dosage = norm_data['original_dosage']
         existing_norm.norm_text = norm_data['norm_text']
         return existing_norm
     else:
@@ -440,241 +465,352 @@ def create_dosage_norm(session: Session, ner_tag: NerTag, entity_text: str):
             weight_reference=norm_data['weight_reference'],
             per_time_unit=norm_data['per_time_unit'],
             dose_type=norm_data['dose_type'],
-            original_dosage=norm_data['original_dosage'],
             ner_tag=ner_tag
         )
         session.add(dosage_norm)
         return dosage_norm
 
 
-def populate_ner_predictions(session: Session, file: str, manual: bool = True):
-    # check if input file is json or csv
-    if file.endswith('.csv'):
-        data = pd.read_csv(file).to_dict(orient='records')
-    elif file.endswith('.jsonl'):
-        with open(file, 'r', encoding='utf-8') as f:
-            data = [json.loads(line) for line in f.readlines()]
+def build_entities(tokens: list[str], ner_tags: list[str], probs, max_o_gap=2):
+    if len(tokens) != len(ner_tags):
+        raise ValueError(
+            f"Number of tokens ({len(tokens)}) does not match number of NER tags ({len(ner_tags)})."
+        )
 
-    for row in data:
-        paper_id = int(row['id'])
-        paper = session.query(Paper).filter(Paper.id == paper_id).first()
-        if not paper:
-            # check if there is a paper with the same pubmed_id as paper_id
-            paper = session.query(Paper).filter(Paper.pubmed_id == paper_id).first()
-            if not paper:
-                logging.warning(f"No paper found with paper_id: {paper_id}")
-            continue
+    if len(tokens) != len(probs):
+        raise ValueError(
+            f"Number of tokens ({len(tokens)}) does not match number of probabilities ({len(probs)})."
+        )
 
-        pred_text = paper.prediction_input
-        tokens = literal_eval(row['tokens']) if isinstance(
-            row['tokens'], str) else row['tokens']
-        ner_tags = literal_eval(row['ner_tags']) if isinstance(
-            row['ner_tags'], str) else row['ner_tags']
+    entities = []
+    current = None
+    i = 0
 
-        current_tag = None
-        entity_tokens = []
-        nr_tags = 0
-        model = None
-        entity_probs = []
+    def clean_tag(tag: str) -> str:
+        return tag.strip()
 
-        if manual:
-            model = "manual"
-            # Assign a default probability of 1.0 for manual annotations
-            probs = [1.0] * len(tokens)
+    def flush():
+        nonlocal current
+        if current:
+            if len(current["span_tokens"]) >= 2 and current["span_tokens"][-2:] == [".", "^"]:
+                current["span_tokens"] = current["span_tokens"][:-2]
+                current["probs"] = current["probs"][:-2]
+                current["end_i"] -= 2
+            elif current["span_tokens"] and current["span_tokens"][-1] in {"^", "."}:
+                current["span_tokens"] = current["span_tokens"][:-1]
+                current["probs"] = current["probs"][:-1]
+                current["end_i"] -= 1
+
+            if current["span_tokens"]:
+                entities.append(current)
+
+            current = None
+
+    while i < len(tokens):
+        token = tokens[i]
+        tag = clean_tag(ner_tags[i])
+        entity_type = tag[2:] if tag != "O" else None
+
+        if tag.startswith("B-"):
+            flush()
+            current = {
+                "tag": entity_type,
+                "start_i": i,
+                "end_i": i,
+                "span_tokens": [token],
+                "probs": [probs[i]],
+            }
+
+        elif tag.startswith("I-") and current and current["tag"] == entity_type:
+            current["span_tokens"].append(token)
+            current["probs"].append(probs[i])
+            current["end_i"] = i
+
+        elif tag == "O" and current and current["tag"] == "Dosage":
+            j = i
+            o_tokens = []
+            o_probs = []
+
+            while (
+                j < len(tokens)
+                and clean_tag(ner_tags[j]) == "O"
+                and len(o_tokens) < max_o_gap
+            ):
+                o_tokens.append(tokens[j])
+                o_probs.append(probs[j])
+                j += 1
+
+            if j < len(tokens) and clean_tag(ner_tags[j]) == "I-Dosage":
+                current["span_tokens"].extend(o_tokens)
+                current["probs"].extend(o_probs)
+                current["end_i"] = j - 1
+                i = j - 1
+            else:
+                flush()
+
+        elif tag.startswith("I-") and current is None:
+            current = {
+                "tag": entity_type,
+                "start_i": i,
+                "end_i": i,
+                "span_tokens": [token],
+                "probs": [probs[i]],
+            }
 
         else:
-            probs = literal_eval(row['probabilities']) if isinstance(
-                row['probabilities'], str) else row['probabilities']
-            model = row.get('model', None)
+            flush()
 
-        offset = 0
-        entity_start_index = 0
-        for i, (token, tag) in enumerate(zip(tokens, ner_tags)):
-            # Determine entity type from B- or I- prefix
-            entity_type = tag[2:] if tag != 'O' else None
+        i += 1
 
-            # Case 1: new entity starts
-            if tag.startswith("B-"):
-                entity_start_index = i
+    flush()
+    return entities
 
-                # If there was a previous entity, process it first
-                if current_tag:
-                    cur_entity_start_index = entity_start_index - \
-                        (len(entity_tokens)+1)
-                    prev_token = tokens[cur_entity_start_index] if cur_entity_start_index > 0 else None
 
-                    try:
-                        start_id, end_id = find_pos(
-                            pred_text[offset:],
-                            entity_tokens,
-                            prev_token,
-                            next_token=token,
-                            offset=offset
-                        )
-                    except Exception as e:
-                        logging.exception(f"Error occurred: {e}")
-                    # calculate mean probability for the entity (was missing here)
-                    probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
-                    ner_tag = create_ner_tag(
-                        session=session, tag=current_tag, start_id=start_id, end_id=end_id,
-                        text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
-                    )
+def ner_tags_from_row(
+    row: dict,
+    pred_text: str,
+    manual: bool,
+    use_offsets: bool,
+    max_o_gap: int = 2,
+) -> list[dict]:
+    tokens = _parse_list_column(row["tokens"], "tokens")
+    ner_tags = _parse_list_column(row["ner_tags"], "ner_tags")
 
-                    session.add(ner_tag)
-                    try:
-                        session.flush()
-                    except IntegrityError:
-                        session.rollback()
-                        logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
-                        # continue processing (don't count as added)
-                        nr_tags += 0
-                    else:
-                        nr_tags += 1
-                    nr_tags += 1
+    if manual:
+        probs = [1.0] * len(tokens)
+    else:
+        probs = _parse_list_column(row["probabilities"], "probabilities")
 
-                    # If it's a Dosage tag, normalize it
-                    if current_tag == 'Dosage':
-                        try:
-                            create_dosage_norm(
-                                session, ner_tag, pred_text[start_id:end_id])
-                        except (ValueError, IndexError) as e:
-                            logging.exception(
-                                f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
+    offsets = None
+    if use_offsets:
+        offsets = _parse_list_column(row["offsets"], "offsets")
 
-                # Start the new entity
-                current_tag = entity_type
-                entity_tokens = [token]
-                entity_probs = [probs[i]]
+    entities = build_entities(
+        tokens=tokens,
+        ner_tags=ner_tags,
+        probs=probs,
+        max_o_gap=max_o_gap,
+    )
 
-            # Case 2: continue entity
-            elif tag.startswith("I-") and current_tag == entity_type:
-                entity_tokens.append(token)
-                entity_probs.append(probs[i])
+    results = []
+    offset = 0
 
-            # Case 3: End of an entity (current tag is O or a new B- tag)
-            else:
-                if current_tag:
-                    prev_token = tokens[entity_start_index -
-                                        1] if entity_start_index > 0 else ''
-                    next_token = tokens[i] if i < len(tokens) else ''
-                    try:
-                        start_id, end_id = find_pos(
-                            pred_text[offset:],
-                            entity_tokens,
-                            prev_token,
-                            next_token,
-                            offset=offset
-                        )
-                    except Exception as e:
-                        logging.exception(f"Error occurred: {e}")
-                        # breakpoint()
-                    # calculate mean probability for the entity
-                    probability = sum(entity_probs) / \
-                        len(entity_probs) if entity_probs else 0.0
-                    ner_tag = create_ner_tag(
-                        session=session, tag=current_tag, start_id=start_id, end_id=end_id,
-                        text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
-                    )
-                    # Cut off the pred_text after the end_id for the next search, to avoid finding the same entity again
-                    offset = end_id
+    for entity in entities:
+        entity_start_index = entity["start_i"]
+        entity_end_index = entity["end_i"]
 
-                    session.add(ner_tag)
-                    try:
-                        session.flush()
-                    except IntegrityError:
-                        session.rollback()
-                        logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
-                    else:
-                        nr_tags += 1
-
-                    # If it's a Dosage tag, normalize it
-                    if current_tag == 'Dosage':
-                        try:
-                            create_dosage_norm(
-                                session, ner_tag, pred_text[start_id:end_id])
-                        except (ValueError, IndexError) as e:
-                            logging.exception(
-                                f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
-
-                    # Reset for next entity
-                    current_tag = None
-                    entity_tokens = []
-                    entity_probs = []
-
-        # Process any remaining entity at the end of the sequence
-        if current_tag:
-
-            prev_token = tokens[entity_start_index -
-                                1] if entity_start_index > 0 else None
-            next_token = None
-            try:
-
-                start_id, end_id = find_pos(
-                    pred_text[offset:],
-                    entity_tokens,
-                    prev_token,
-                    next_token,
-                    offset=offset
-                )
-            except Exception as e:
-                logging.exception(f"Error occurred: {e}")
-                # breakpoint()
-            probability = sum(entity_probs) / \
-                len(entity_probs) if entity_probs else 0.0
-            ner_tag = create_ner_tag(
-                session=session, tag=current_tag, start_id=start_id, end_id=end_id,
-                text=pred_text[start_id:end_id], probability=probability, model=model, paper_id=row['id'], pred_text=pred_text
+        if use_offsets:
+            source_text = row["text"]
+            start_id = int(offsets[entity_start_index][0])
+            end_id = int(offsets[entity_end_index][1])
+        else:
+            source_text = pred_text
+            prev_token = tokens[entity_start_index - 1] if entity_start_index > 0 else None
+            next_token = (
+                tokens[entity_end_index + 1]
+                if entity_end_index + 1 < len(tokens)
+                else None
             )
-            offset = end_id
+
+            start_id, end_id = find_pos(
+                pred_text[offset:],
+                entity["span_tokens"],
+                prev_token,
+                next_token=next_token,
+                offset=offset,
+            )
+
+        entity_probs = entity["probs"]
+        probability = sum(entity_probs) / len(entity_probs) if entity_probs else 0.0
+        span_text = source_text[start_id:end_id]
+
+        results.append({
+            "tag": entity["tag"],
+            "start_id": start_id,
+            "end_id": end_id,
+            "text": span_text,
+            "probability": probability,
+            "span_tokens": entity["span_tokens"],
+        })
+
+        offset = end_id
+
+    return results
+
+
+def _parse_list_column(value, column_name: str):
+    """Parse list-like CSV/JSONL columns that may already be lists or may be stringified lists."""
+    if isinstance(value, str):
+        return literal_eval(value)
+    if value is None:
+        raise ValueError(f"Missing required column: {column_name}")
+    return value
+
+
+def populate_ner_predictions(session: Session, file: str, manual: bool = True):
+    use_offsets = file.endswith(".csv")
+
+    if file.endswith(".csv"):
+        data = pd.read_csv(file).to_dict(orient="records")
+    elif file.endswith(".jsonl"):
+        with open(file, "r", encoding="utf-8") as f:
+            data = [json.loads(line) for line in f.readlines()]
+    else:
+        raise ValueError("Unsupported file format. Use CSV or JSONL.")
+
+    for row in data:
+        paper_id_raw = int(row["id"])
+
+        paper = session.query(Paper).filter(Paper.id == paper_id_raw).first()
+        if not paper:
+            paper = session.query(Paper).filter(
+                Paper.pubmed_id == paper_id_raw
+            ).first()
+
+        if not paper:
+            logging.warning(f"No paper found with paper_id: {paper_id_raw}")
+            continue
+
+        model = "manual_annotation" if manual else row.get("model", None)
+
+        if ner_tag_from_other_model_exists(session, paper.id, model=model):
+            logging.warning(
+                f"Skipping NER import: NER tags from another model already exist "
+                f"for paper_id={paper.id}"
+            )
+            continue
+
+        try:
+            extracted_tags = ner_tags_from_row(
+                row=row,
+                pred_text=paper.prediction_input,
+                manual=manual,
+                use_offsets=use_offsets,
+                max_o_gap=2,
+            )
+        except Exception as e:
+            logging.warning(
+                f"Skipping NER row because tag extraction failed: "
+                f"paper_id={paper_id_raw}, error={e}"
+            )
+            continue
+
+        for extracted in extracted_tags:
+            tag = extracted["tag"]
+            start_id = extracted["start_id"]
+            end_id = extracted["end_id"]
+            span_text = extracted["text"]
+            probability = extracted["probability"]
+
+            ner_tag = create_ner_tag(
+                session=session,
+                tag=tag,
+                start_id=start_id,
+                end_id=end_id,
+                text=span_text,
+                probability=probability,
+                model=model,
+                paper_id=paper.id,
+                pred_text=paper.prediction_input,
+            )
+
             session.add(ner_tag)
+
             try:
                 session.flush()
             except IntegrityError:
                 session.rollback()
-                logging.info(f"Skipped duplicate NER tag for paper_id {row['id']}, tag {current_tag}, span {start_id}-{end_id}")
-            else:
-                nr_tags += 1
+                logging.info(
+                    f"Skipped duplicate NER tag for paper_id {paper.id}, "
+                    f"tag {tag}, span {start_id}-{end_id}"
+                )
+                continue
 
-            # If it's a Dosage tag, normalize it
-            if current_tag == 'Dosage':
+            if tag == "Dosage":
+
+                if not span_text:
+                    logging.warning(
+                        f"Skipping dosage normalization because text is empty: "
+                        f"paper_id={paper.id}, span_text={span_text!r}, ")
+                    continue
+
                 try:
-                    # make sure to replace existing normalization if it exists, since this is the last entity and we might have found a better match for the text
-                    create_dosage_norm(
-                        session, ner_tag, pred_text[start_id:end_id])
+                    create_dosage_norm(session, ner_tag, span_text)
                 except (ValueError, IndexError) as e:
-                    logging.exception(
-                        f"Could not normalize dosage '{pred_text[start_id:end_id]}': {e}")
+                    logging.warning(
+                        "Could not normalize dosage | "
+                        f"paper_id={paper.id} | "
+                        f"entity_text={span_text!r} | "
+                        f"error={e}"
+                    )
 
         session.commit()
 
 
 def check_if_paper_exists(session: Session, row: pd.Series) -> bool:
-    pubmed_id = row.get('pubmed_id')
-    title = row.get('title')
+    pubmed_id = row.get("pubmed_id")
+
+    # Primary duplicate check: PubMed ID
+    if pd.notna(pubmed_id) and pubmed_id != "":
+        paper = (
+            session.query(Paper)
+            .filter(Paper.pubmed_id == pubmed_id)
+            .first()
+        )
+
+        if paper:
+            logging.info(
+                f"Paper already exists (pubmed_id match): {pubmed_id}")
+            return True
+
+    # Secondary check: title + year (warning only)
+    title = row.get("title")
 
     year = None
-    if 'pub_date' in row:
-        date = row['pub_date']
-        year = date.split('-')[0] if pd.notna(date) else None
-    elif 'year' in row:
-        year = row['year']
+    if "pub_date" in row and pd.notna(row["pub_date"]):
+        year = str(row["pub_date"]).split("-")[0]
+    elif "year" in row and pd.notna(row["year"]):
+        year = str(row["year"])
 
-    if not (pubmed_id and title and year):
-        return False
-
-    paper = session.query(Paper).filter(
-        Paper.pubmed_id == pubmed_id,
-        Paper.title == title,
-        extract('year', Paper.date) == year
-    ).first()
-
-    if paper:
-        logging.info(
-            f"Paper already exists: pubmed_id={pubmed_id}, title={title}, year={year}"
+    if title and year:
+        paper = (
+            session.query(Paper)
+            .filter(
+                Paper.title == title,
+                extract("year", Paper.date) == year
+            )
+            .first()
         )
-        return True
+
+        if paper:
+            logging.warning(
+                f"Potential duplicate detected (title + year match): title={title}, year={year}"
+            )
 
     return False
+
+
+def class_pred_exists(session, paper_id, task, label):
+    return session.query(Prediction).filter(
+        Prediction.paper_id == paper_id,
+        Prediction.task == task,
+        Prediction.label == label,
+    ).first() is not None
+
+
+def class_pred_from_other_model_exists(session, paper_id, task, model):
+    return session.query(Prediction).filter(
+        Prediction.paper_id == paper_id,
+        Prediction.task == task,
+        Prediction.model != model
+    ).first() is not None
+
+
+def ner_tag_from_other_model_exists(session, paper_id, model):
+    return session.query(NerTag).filter(
+        NerTag.paper_id == paper_id,
+        NerTag.model != model
+    ).first() is not None
 
 
 def get_unused_id(session: Session):
@@ -698,6 +834,8 @@ def init_args_parser():
                             help='Path to the predictions file', required=False)
     arg_parser.add_argument('-s', '--studies_file', type=str,
                             help='Path to the studies file', required=False)
+    # add an --all flag
+    arg_parser.add_argument('--all', action='store_true')
     arg_parser.add_argument('--studies_id_column', type=str, default='id',)
     arg_parser.add_argument('-l', '--log-file', type=str, default=None,
                             help='Optional path to logfile. If not provided, logs go to terminal.')
@@ -729,11 +867,12 @@ if __name__ == '__main__':
             force=True
         )
 
-    if not args.predictions_file and not args.studies_file:
+    if not args.predictions_file and not args.studies_file and not args.all:
         # get the latest file in the directory
         latest = max(
             [f for f in os.listdir(STUDIES_DIR) if f.endswith('.csv')],
-            key=lambda f: f.split('_')[1:]  # crude but works if format consistent
+            # crude but works if format consistent
+            key=lambda f: f.split('_')[1:]
         )
         args.studies_file = os.path.join(STUDIES_DIR, latest)
         # get prediction file with the same date as studies file
@@ -762,6 +901,28 @@ if __name__ == '__main__':
         else:
             logging.warning(
                 f"No NER predictions file found for date {date_str}")
+    elif args.all:
+        logging.info(
+            f"Using all files in {STUDIES_DIR} and {PREDICTIONS_DIR} for population.")
+        for file in os.listdir(STUDIES_DIR):
+            if file.endswith('.csv'):
+                logging.info(f"Processing studies file: {file}")
+                populate_db(prediction_file=None, studies_file=os.path.join(
+                    STUDIES_DIR, file), studies_id_column=args.studies_id_column)
+
+        for file in os.listdir(PREDICTIONS_DIR):
+            if file.endswith('.csv') or file.endswith('.jsonl'):
+                logging.info(f"Processing predictions file: {file}")
+                if 'ner' in file:
+                    if 'predictions' in file:
+                        populate_db(prediction_file=os.path.join(
+                            PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
+                    else:
+                        populate_db(prediction_file=os.path.join(
+                            PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
+                else:
+                    populate_db(prediction_file=os.path.join(
+                        PREDICTIONS_DIR, file), studies_file=None, studies_id_column=args.studies_id_column)
 
     else:
         logging.info(

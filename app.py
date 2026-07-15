@@ -10,6 +10,7 @@ from pages.about import about_layout
 from pages.contact import contact_layout
 from pages.home import home_layout
 from pages.explore.dual_task import dual_task_layout
+from pages.explore.search import search_layout
 from pages.explore.time import time_layout
 from pages.explore.filter import filter_layout
 from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_view, sex_bias_view, nr_part_view, study_protocol_view, dosages_view
@@ -38,6 +39,7 @@ logging.getLogger("sqlalchemy.engine.Engine").setLevel(logging.WARNING)
 logging.getLogger("sqlalchemy.dialects").setLevel(logging.WARNING)
 logging.getLogger("sqlalchemy.orm").setLevel(logging.WARNING)
 
+MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE", "false").lower() == "true"
 
 # Dash App Initialization
 app = dash.Dash(__name__, external_stylesheets=[
@@ -75,9 +77,27 @@ app.layout = html.Div([
     footer_layout()
 ])
 
+maintenance_layout = html.Div(
+    [
+        html.Img(
+            src="/assets/automate.png",
+            style={
+                "width": "250px",
+                "marginBottom": "30px"
+            }
+        ),
+        html.H1("PsyNamic is currently down for maintenance"),
+        html.P("We are performing updates. Please check back soon."),
+    ],
+    className="text-center mt-5"
+)
+
 @app.callback(dash.Output('page-content', 'children'),
               [dash.Input('url', 'pathname')])
 def display_page(pathname: str):
+    if MAINTENANCE_MODE:
+        return content_layout(maintenance_layout)
+
     if pathname == '/about':
         return content_layout(about_layout())
     elif pathname == '/contact':
@@ -86,6 +106,8 @@ def display_page(pathname: str):
         
         if pathname == '/explore/time':
             return content_layout(time_layout())
+        elif pathname == '/explore/search':
+            return content_layout(search_layout())
         elif pathname == '/explore/dual-task':
             return content_layout(dual_task_layout('Substances', 'Condition'), id='dual-task-layout')
         elif pathname == '/explore/filter':

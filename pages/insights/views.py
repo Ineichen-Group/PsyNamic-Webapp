@@ -3,10 +3,12 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 from style.colors import get_color_mapping
 from components.layout import filter_component, studies_display, filter_button, study_grid, ner_tag, highlighted_text, dosage_study_grid, get_filter_buttons
-from components.graphs import bar_chart
-from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_ner_tags, get_pred_text, latest_update, get_studies_details_ner
+from components.graphs import bar_chart, box_plot_graph
+from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_pred_text, latest_update, get_studies_details_ner, get_dosage_samples
+from data.dosage_norm import remove_several_substances_dosages
 from callbacks import rgb_to_hex
 from collections import OrderedDict
+import numpy as np
 
 
 
@@ -202,8 +204,71 @@ def dosages_view():
     studies_with_dosage = get_studies_details_ner(start_row=0, end_row=None)
     ids = [s['id'] for s in studies_with_dosage]
 
+    # Fetch absolute dosage samples per substance and draw a box plot (values in mg)
+    df = remove_several_substances_dosages(get_dosage_samples())
+    if df is None or df.empty:
+        graph = html.P("No absolute dosage data available.")
+    else:
+        # get color mapping for substances
+        substance_labels = sorted(df['Substance'].unique().tolist())
+        col_map = get_color_mapping('Substances', substance_labels)
+
+        # Build three plots: LSD, Ibogaine, and the rest (stacked vertically)
+        substances = sorted(df['Substance'].dropna().unique().tolist())
+        lsd_subs = ['LSD']
+        ibogaine_subs = ['Ibogaine']
+        rest_subs = [s for s in substances if s not in lsd_subs + ibogaine_subs]
+
+        graphs = []
+        # Order: rest on top, then Ibogaine, then LSD (stacked vertically)
+        groups = [rest_subs, ibogaine_subs, lsd_subs]
+        for i, subs in enumerate(groups):
+            sub_df = df[df['Substance'].isin(subs)]
+            if sub_df.empty:
+                continue
+            # No separate titles per user request; page H1 provides context
+            # smaller height for Ibogaine and LSD (LSD even smaller)
+            if subs == ibogaine_subs:
+                h = 200
+            elif subs == lsd_subs:
+                h = 200
+            else:
+                h = 700
+
+            # Disable annotation for the lower two small plots (Ibogaine and LSD)
+            add_ann = False if subs == ibogaine_subs or subs == lsd_subs else True
+            # use a pattern-matching id so the callback can listen to all dosage plots
+            plot_id = {"type": "dosage-box-plot", "index": i}
+
+            g = box_plot_graph(
+                sub_df,
+                x='Substance',
+                y='Dosage_mg',
+                title='',
+                x_label='Substance',
+                y_label='Dosage (mg)',
+                group=None,
+                color_mapping=col_map,
+                height=h,
+                add_annotation=add_ann,
+                    id=plot_id,
+            )
+            graphs.append(g)
+
+        if not graphs:
+            graph = html.P("No absolute dosage data available.")
+        else:
+            # Stack graphs vertically (each full-width)
+            # Reduce vertical gaps: small vertical padding and small margin between rows
+            rows = [dbc.Row(dbc.Col(g, width=12), className="py-1", style={"marginBottom": "6px"}) for g in graphs]
+            graph = html.Div(rows, style={"marginTop": "6px"})
+
     return html.Div([
         html.H1(f'{title}', className="my-4"),
+        graph,
+        dbc.Row([
+            dbc.Col(dbc.Button("Reset selection", id="dosage-reset-btn", color="secondary", className="mb-3"), width="auto"),
+        ]),
         dosage_study_grid(total_nr, len(ids), last_update),
         dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
         dcc.Store(id="filter-tags", data={}, storage_type="memory"),

@@ -5,6 +5,9 @@ import numpy as np
 
 
 GREY = '#c7c7c7'
+BROWN = "#e5d8bd"
+BLUE = "#b6c2d1"
+
 SECONDARY_COLOR = '#e5ecf6'
 TASK2COLOR = {
     "Study Type": sequential.Greens,

@@ -48,6 +48,8 @@ def header_layout():
                                     dbc.DropdownMenuItem(
                                         "Filter all studies", href="/explore/filter"),
                                     dbc.DropdownMenuItem(
+                                        "Search", href="/explore/search"),
+                                    dbc.DropdownMenuItem(
                                         "Dual Task Analysis", href="/explore/dual-task"),
                                     dbc.DropdownMenuItem(
                                         "Time", href="/explore/time"),
@@ -487,6 +489,7 @@ def paper_details_modal(id="paper-modal"):
                         target="_blank",
                         href="",),
                     html.P(id="paper-abstract", className="abstract-text"),
+                    html.P(id="paper-dosage-normalization", className="dosage-normalization"),
                     html.Div(id='modal-tags'),
                 ]
             ),
