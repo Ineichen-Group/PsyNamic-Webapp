@@ -19,10 +19,10 @@ python -m data.populate \
 
 # Predictions on rest of manually defined as relevant but not annotated
 python -m data.populate \
-  -p data/predictions/class_predictions_20240101_04-48-11.csv
+  -p data/manual/class_predictions_20240101_04-48-11.csv
 
 python -m data.populate \
-  -p data/predictions/ner_predictions_20240101_00-00-27.csv
+  -p data/manual/ner_predictions_20240101_00-00-27.csv
 
 # Pubmed data automatically downloaded and predicted studies up until 2026-05-30, with new search string without study type restriction
 # Automatically deduplicated 
@@ -31,10 +31,10 @@ python -m data.populate \
   -s data/manual/studies_relevant_deduplicated_excluded_20260530_00-00-00.csv
 
 python -m data.populate \
-  -p data/predictions/ner_predictions_20260530_00-02-38.csv
+  -p data/manual/ner_predictions_20260530_00-02-38.csv
 
 python -m data.populate \
-  -p data/predictions/class_predictions_20260530_00-15-50.csv
+  -p data/manual/class_predictions_20260530_00-15-50.csv
 
 
 echo "Database initialization completed successfully."
