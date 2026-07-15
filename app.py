@@ -39,6 +39,7 @@ logging.getLogger("sqlalchemy.engine.Engine").setLevel(logging.WARNING)
 logging.getLogger("sqlalchemy.dialects").setLevel(logging.WARNING)
 logging.getLogger("sqlalchemy.orm").setLevel(logging.WARNING)
 
+MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE", "false").lower() == "true"
 
 # Dash App Initialization
 app = dash.Dash(__name__, external_stylesheets=[
@@ -76,9 +77,27 @@ app.layout = html.Div([
     footer_layout()
 ])
 
+maintenance_layout = html.Div(
+    [
+        html.Img(
+            src="/assets/automate.png",
+            style={
+                "width": "250px",
+                "marginBottom": "30px"
+            }
+        ),
+        html.H1("PsyNamic is currently down for maintenance"),
+        html.P("We are performing updates. Please check back soon."),
+    ],
+    className="text-center mt-5"
+)
+
 @app.callback(dash.Output('page-content', 'children'),
               [dash.Input('url', 'pathname')])
 def display_page(pathname: str):
+    if MAINTENANCE_MODE:
+        return content_layout(maintenance_layout)
+
     if pathname == '/about':
         return content_layout(about_layout())
     elif pathname == '/contact':
