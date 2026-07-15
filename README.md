@@ -407,7 +407,7 @@ sudo logrotate -d /etc/logrotate.d/psynamic
 Open the crontab:
 
 ```bash
-crontab -e
+sudo crontab -e
 ```
 
 Add the following entries.
