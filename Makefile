@@ -113,4 +113,4 @@ cronlog:
 	@echo "===== BACKUP LOG (last 50 lines) ====="
 	@tail -n 50 /home/sysadmin/PsyNamic-Webapp/backup.log 2>/dev/null || echo "No backup log found"
 backup:
-	./backup.sh
+	sudo ./backup.sh
