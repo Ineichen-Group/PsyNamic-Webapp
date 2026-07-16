@@ -3,7 +3,7 @@ from dash.dependencies import Input, Output, State
 
 from callbacks.utils import log_time
 from data.queries import get_studies_details, get_time_data
-
+from components.graphs import bar_chart
 
 def register(app):
 
@@ -17,16 +17,18 @@ def register(app):
         prevent_initial_call=True
     )
     @log_time
-    def update_time_view(start_year, end_year):
+    def update_time_view(start_year: int, end_year: int):
         df, ids = get_time_data(start_year=start_year, end_year=end_year)
 
-        fig = px.bar(
-            df,
+        fig = bar_chart(
+            data=df,
             x="Year",
             y="Frequency",
             title="Frequency of Publications per Year",
-            labels={"Frequency": "Frequency"},
-        )
+            x_label="Year",
+            y_label="Frequency",
+        ).figure
+
 
         studies = get_studies_details(ids=ids)
 
