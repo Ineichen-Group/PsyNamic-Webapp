@@ -25,8 +25,8 @@ TASK2COLOR = {
     "Substance Naivety": sequential.Darkmint,
     "Condition": sequential.Oranges,
     "Outcomes": sequential.PuBu,
-    "Clinical Trial Phase": sequential.PuBuGn,
-    "Study Conclusion": sequential.PuRd,
+    # "Clinical Trial Phase": sequential.PuBuGn,
+    # "Study Conclusion": sequential.PuRd,
 }
 
 # s. https://plotly.com/python/builtin-colorscales/

@@ -43,6 +43,9 @@ engine = create_engine(DATABASE_URL, echo=False)
 Session = sessionmaker(bind=engine)
 
 
+SKIP_TASKS = ["Study Conclusion", "Clinical Trial Phase"]
+
+
 def log_time(func):
     """Decorator to log the execution time of a function."""
     def wrapper(*args, **kwargs):
@@ -479,7 +482,8 @@ def get_all_tasks() -> list[str]:
     session = Session()
     try:
         query = session.query(Prediction.task).distinct()
-        tasks = [item.task for item in query.all()]
+        tasks = [item.task for item in query.all() if item.task not in SKIP_TASKS]
+        tasks.sort()
         return tasks
     finally:
         session.close()
