@@ -1,12 +1,11 @@
 from collections import defaultdict
 from dash import html, dcc
 import dash_bootstrap_components as dbc
-from style.colors import get_color_mapping
+from style.colors import get_color_mapping, rgb_to_hex, SECONDARY_COLOR, get_color
 from components.layout import filter_component, studies_display, filter_button, study_grid, ner_tag, highlighted_text, dosage_study_grid, get_filter_buttons
 from components.graphs import bar_chart, box_plot_graph
 from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_pred_text, latest_update, get_studies_details_ner, get_dosage_samples
 from data.dosage_norm import remove_several_substances_dosages
-from callbacks import rgb_to_hex
 from collections import OrderedDict
 import numpy as np
 
