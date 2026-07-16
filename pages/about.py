@@ -217,30 +217,30 @@ study_information = {
 
             }
         },
-        {
-            "task_name": "Clinical Trial Phase",
-            "task_description": "",
-            "labels": {
-                "Phase 1": "Tests safety, dosage range, and pharmacokinetics in 20–100 people (usually healthy).",
-                "Phase 2": "Tests effectiveness and optimal dosing; 100–300 patients; often randomized and single- or double-blind.",
-                "Phase 3": "Large-scale testing (hundreds–thousands) to confirm safety and effectiveness before approval, randomized and double-blind.",
-                "Phase 4": "Post-marketing surveillance; monitors long-term safety, rare side effects, and real-world effectiveness.",
-                "Unknown": "Fulfilling above definition but phase not explicitly (or implicitly) mentioned.",
-                "Not Applicable": "Not fulfilling the above definition."
-            }
-        },
-        {
-            "task_name": "Study Conclusion",
-            "task_description": "Overarching finding of the study",
-            "labels": {
-                "Positive": "Having a beneficial therapeutic impact (e.g., 'lsd might decrease suicidal ideation in depression').",
-                "Negative": "E.g., ketamine worsened neuropathic pain in patients.",
-                "Neutral": "E.g., 'we did not observe an effect of MDMA on avoidance behaviour'.",
-                "Mixed": "Both negative and positive conclusion.",
-                "Unknown": "No conclusion.",
-                "Not Applicable": "E.g., for fMRI studies or study protocols."
-            }
-        }
+        # {
+        #     "task_name": "Clinical Trial Phase",
+        #     "task_description": "",
+        #     "labels": {
+        #         "Phase 1": "Tests safety, dosage range, and pharmacokinetics in 20–100 people (usually healthy).",
+        #         "Phase 2": "Tests effectiveness and optimal dosing; 100–300 patients; often randomized and single- or double-blind.",
+        #         "Phase 3": "Large-scale testing (hundreds–thousands) to confirm safety and effectiveness before approval, randomized and double-blind.",
+        #         "Phase 4": "Post-marketing surveillance; monitors long-term safety, rare side effects, and real-world effectiveness.",
+        #         "Unknown": "Fulfilling above definition but phase not explicitly (or implicitly) mentioned.",
+        #         "Not Applicable": "Not fulfilling the above definition."
+        #     }
+        # },
+        # {
+        #     "task_name": "Study Conclusion",
+        #     "task_description": "Overarching finding of the study",
+        #     "labels": {
+        #         "Positive": "Having a beneficial therapeutic impact (e.g., 'lsd might decrease suicidal ideation in depression').",
+        #         "Negative": "E.g., ketamine worsened neuropathic pain in patients.",
+        #         "Neutral": "E.g., 'we did not observe an effect of MDMA on avoidance behaviour'.",
+        #         "Mixed": "Both negative and positive conclusion.",
+        #         "Unknown": "No conclusion.",
+        #         "Not Applicable": "E.g., for fMRI studies or study protocols."
+        #     }
+        # }
 
     ]
 
@@ -464,7 +464,7 @@ def about_layout():
                             html.P(
                                 "Like well-known language models such as ChatGPT, BERT is based on the transformer architecture and was pre-trained on vast amounts of text. However, BERT models are optimized for understanding and analyzing text rather than generating it, and they are considerably smaller in size (around 110 million parameters)."),
                             html.P(
-                                "In PsyNamic, 19 BERT-based models are fine-tuned for individual tasks. Each model acts as an expert for a specific aspect of information extraction, such as determining the study design, identifying participant characteristics, or extracting dosage information.")
+                                "In PsyNamic, 17 BERT-based models are fine-tuned for individual tasks. Each model acts as an expert for a specific aspect of information extraction, such as determining the study design, identifying participant characteristics, or extracting dosage information.")
                         ],
                     ),
 
