@@ -3,6 +3,7 @@ from dash import dcc, html
 import pandas as pd
 from plotly import express as px
 import plotly.graph_objects as go
+import plotly.express as px
 
 
 def bar_chart(

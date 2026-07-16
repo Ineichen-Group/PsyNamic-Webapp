@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 from dash import html, dcc
 from collections import OrderedDict
-from data.queries import nr_studies, get_all_tasks, get_all_labels, get_ids
+from data.queries import nr_studies, get_all_tasks, get_all_labels, get_ids, ner_tags_type
 from style.colors import get_color_mapping
 
 tasks = get_all_tasks()
@@ -550,3 +550,137 @@ def get_filter_buttons(task, labels):
         buttons.append(filter_button(
             color_mapping[label], label, task))
     return buttons
+
+
+def build_tag_buttons(paper):
+    """
+    Extracted shared tag-building logic used in both modals.
+    """
+    tags = []
+    prev_task = None
+    task_dict = {"task": "", "buttons": [], "model": ""}
+
+    for tag in paper.get("tags", []):
+        if tag["task"] != prev_task:
+            if task_dict["task"]:
+                tags.append(task_dict)
+
+            prev_task = tag["task"]
+            task_dict = {
+                "task": tag["task"],
+                "buttons": [filter_button(tag["color"], tag["label"], tag["task"])],
+                "model": "BERT",
+            }
+        else:
+            task_dict["buttons"].append(
+                filter_button(tag["color"], tag["label"], tag["task"])
+            )
+
+    if task_dict["task"]:
+        tags.append(task_dict)
+
+    return tag_component(tags)
+
+
+def build_paper_details(paper, ner_category=None, body_label="Abstract", tags_component=None):
+    """Build a detail card with consistent title/body highlighting."""
+    paper_id = paper.get('id')
+    ner_tags = ner_tags_type(paper_id, ner_category) if ner_category else ner_tags_type(paper_id)
+    paper_title, body_text, body_offset = _split_prediction_input(paper)
+    title_tags, body_tags = _split_highlight_cutpoints(
+        ner_tags,
+        len(paper_title),
+        body_offset,
+    )
+
+    highlighted_title = highlighted_text(paper_title, title_tags) if title_tags else paper_title
+    highlighted_body = highlighted_text(body_text, body_tags) if body_tags else body_text
+
+    children = [
+        *_build_paper_header(paper, highlighted_title),
+        html.H5(body_label),
+        html.Div(highlighted_body, className='mb-3'),
+    ]
+
+    if tags_component:
+        children.extend([
+            html.H5("Tags"),
+            tags_component,
+        ])
+
+    return html.Div(children, className='p-3 border rounded')
+
+def _split_prediction_input(paper):
+    """Split prediction_input into title and body when the source text includes both."""
+    prediction_input = (
+        paper.get('prediction_input')
+        or paper.get('abstract')
+        or ''
+    )
+    title = paper.get('title', '') or ''
+
+    for separator in ('.^\n', '.^.'):
+        if separator in prediction_input:
+            split_title, body = prediction_input.split(separator, 1)
+            return (split_title or title), body, len(split_title) + len(separator)
+
+    return title, prediction_input, 0
+
+
+def _split_highlight_cutpoints(cutpoints, title_length, body_offset):
+    """Split raw cutpoints into title-relative and body-relative spans."""
+    title_cutpoints = []
+    body_cutpoints = []
+
+    if not cutpoints:
+        return title_cutpoints, body_cutpoints
+
+    for cp in cutpoints:
+        start = cp.get('start', 0)
+        end = cp.get('end', 0)
+
+        if end <= title_length:
+            title_cutpoints.append(cp.copy())
+            continue
+
+        if start >= body_offset:
+            body_cp = cp.copy()
+            body_cp['start'] = max(0, start - body_offset)
+            body_cp['end'] = max(0, end - body_offset)
+            body_cutpoints.append(body_cp)
+            continue
+
+        if start < title_length:
+            title_cp = cp.copy()
+            title_cp['start'] = start
+            title_cp['end'] = min(end, title_length)
+            if title_cp['end'] > title_cp['start']:
+                title_cutpoints.append(title_cp)
+
+        if end > body_offset:
+            body_cp = cp.copy()
+            body_cp['start'] = max(0, start - body_offset)
+            body_cp['end'] = max(0, end - body_offset)
+            if body_cp['end'] > body_cp['start']:
+                body_cutpoints.append(body_cp)
+
+    return title_cutpoints, body_cutpoints
+
+
+def _build_paper_header(paper, highlighted_title):
+    """Build the shared paper header with URL, ids, and title."""
+    paper_url = paper.get('url') or ''
+    internal_id = paper.get('id') or ''
+    pubmed_id = paper.get('pubmed_id') or ''
+
+    return [
+        html.Div([
+            html.Span("URL: "),
+            html.A(paper_url, href=paper_url, target='_blank'),
+        ]),
+        html.Div(
+            f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}",
+            className='text-muted small',
+        ),
+        html.H3(highlighted_title),
+    ]
