@@ -101,17 +101,25 @@ def footer_layout():
     )
 
 
-def content_layout(list_of_children: list, id: str = "content"):
+def content_layout(list_of_children: list, id: str = "content", ids=None):
+    # TODO: moving store to a better place
+    stores = [
+        dcc.Store(
+            id="selected-ids",
+            data={},
+            storage_type="memory"
+        ),
+    ]
+
     return dbc.Container(
-        list_of_children,
+        stores + [list_of_children],
         class_name="py-4",
         id=id,
         style={"minHeight": "82vh"},
-
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None, id: str = 'active-filters'):
+def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None, id: str = 'active-filters-tags'):
     children = [
         dbc.Row(
             className="mt-2 mb-2",
@@ -163,7 +171,7 @@ def tag_component(tags: list[dict]):
                     width="auto",
                 ),
                 dbc.Col(
-                    id="active-filters",
+                    id="active-filters-bli-blub",
                     children=tag['buttons'],
                     width="auto",
                 ),
@@ -238,6 +246,7 @@ def study_grid(
                     html.Span(
                         "Found Studies: ",
                         className="d-inline",
+                        id="debug-field",
                         style={"marginRight": "0.2rem"}
                     ),
                     html.Span(
@@ -406,7 +415,7 @@ def filter_selection():
 
         html.H3("Filtered Studies"),
 
-        filter_component(id='selected-filters'),
+        filter_component(id='active-filter-buttons'),
         dcc.Store(
             id="filter-store",
             data={},
@@ -416,11 +425,6 @@ def filter_selection():
         dcc.Store(
             id="filtered-study-ids",
             data=get_ids(),
-            storage_type="memory"
-        ),
-        dcc.Store(
-            id="filter-tags",
-            data={},
             storage_type="memory"
         ),
     ], className="m-0 p-0")

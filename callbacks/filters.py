@@ -57,11 +57,9 @@ def create_filter_buttons(active_filters: OrderedDict[str, list[str]]) -> list[d
 
 def get_active_filters_from_checklist(selected_task: str, selected_labels: list[str], active_filters: OrderedDict[str, list[str]]) -> OrderedDict[str, list[str]]:
     """Creates an OrderedDict of active filters based on the selected task and labels and adds them to the existing active filters."""
-    if active_filters is None:
-        return OrderedDict({selected_task: selected_labels})
-    else:
-        active_filters[selected_task] = selected_labels
-        return active_filters
+    active_filters = OrderedDict(active_filters or {}) 
+    active_filters[selected_task] = selected_labels
+    return active_filters
 
 
 def register(app):
@@ -91,7 +89,7 @@ def register(app):
         )
 
     @app.callback(
-        Output("active-filters", "data", allow_duplicate=True),
+        Output("active-filters", "data"),
         Output("active-filter-buttons", "children"),
         Output("label-checklist", "value"),
         Input("add-filter-btn", "n_clicks"),
@@ -107,7 +105,7 @@ def register(app):
             active_filters = get_active_filters_from_checklist(
                 task, label_checklist, active_filters)
             buttons = create_filter_buttons(active_filters)
-            return active_filters, buttons, label_checklist
+            return dict(active_filters), buttons, label_checklist
         # Case 2: a filter button is clicked to remove a filter
         else:
             active_filters, label_to_remove = remove_filters_from_active_filter(
@@ -115,7 +113,7 @@ def register(app):
             buttons = create_filter_buttons(active_filters)
             if label_to_remove in label_checklist:
                 label_checklist.remove(label_to_remove)
-            return active_filters, buttons, label_checklist
+            return dict(active_filters), buttons, label_checklist
 
     # @app.callback(
     #     Output("active-filter-buttons", "children"),

@@ -11,12 +11,17 @@ def filter_layout():
         nr_filtered_studies=total_nr,
         last_update=latest_update(),
         tags=True,
-        id={"type": "studies-grid", "index": 5}
+        id="studies-grid"
     )
 
     return html.Div([
         html.H1("Explore and filter all studies", className="my-4"),
         html.P("Explore all studies by applying filters to the data."),
         filter_selection(),
+        dcc.Store(
+            id="active-filters",
+            data={},
+            storage_type="memory"
+        ),
         grid,
     ], className="container", id="filter-layout")
