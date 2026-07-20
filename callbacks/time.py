@@ -1,5 +1,4 @@
-import plotly.express as px
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 
 from callbacks.utils import log_time
 from data.queries import get_studies_details, get_time_data
@@ -8,16 +7,16 @@ from components.graphs import bar_chart
 def register(app):
 
     @app.callback(
-        Output({"type": "studies-grid", "index": 6},
-               "getRowsResponse", allow_duplicate=True),
+        Output("studies-grid", "getRowsResponse", allow_duplicate=True),
         Output("time-graph", "figure"),
-        Output("count-filtered", "children"),
+        Output("count-filtered", "children", allow_duplicate=True),
         Input("start-year", "value"),
         Input("end-year", "value"),
         prevent_initial_call=True
     )
     @log_time
     def update_time_view(start_year: int, end_year: int):
+        """Updates the studies grid and time graph based on the selected start and end years."""
         df, ids = get_time_data(start_year=start_year, end_year=end_year)
 
         fig = bar_chart(

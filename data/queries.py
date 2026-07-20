@@ -445,7 +445,9 @@ def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd
 
 
 def get_ids(task: str = None, label: str = None) -> set[int]:
-    """Get the ids of the papers that have a specific label for a given task."""
+    """Get the ids of the papers that have a specific label for a given task.
+    If no task and label are provided, return all paper ids."""
+
     session = Session()
     if task is None and label is None:
         # Return all paper ids
@@ -511,6 +513,7 @@ def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.Data
         )
 
         df = pd.read_sql(query.statement, session.bind)
+        df["year"] = pd.to_numeric(df["year"], errors="coerce").astype("Int64")
     finally:
         session.close()
 
@@ -604,20 +607,34 @@ def search_papers(query: str, start_row: int = 0, end_row: int = 50):
         session.close()
 
 
-def get_filtered_study_ids(filter: OrderedDict[str, list[str]]) -> list[int]:
-    """Get the IDs of the studies that match all the labels for each task."""
-    # TODO: Maybe check if the previous filter is a subset of the new filter and only query the new labels
-    valid_task_label_pairs = [
-        (task, label) for task, labels in filter.items() for label in labels
-    ]
-    # TODO: Check if this is the most efficient way to get the IDs
-    # or rather use database queries instead
-    all_ids = set(get_ids())
+def get_filtered_study_ids(filter: OrderedDict[str, list[str]], mode = "and") -> list[int]:
+    """Get study IDs matching the given filter.
 
-    for pair in valid_task_label_pairs:
-        ids = get_ids(pair[0], pair[1])
-        all_ids = all_ids.intersection(ids)
-    return list(all_ids)
+    Args:
+        filter: Mapping from task names to lists of labels.
+        mode:
+            - "and": studies must match every task/label pair.
+            - "or": studies must match at least one task/label pair.
+    """
+    if mode not in {"and", "or"}:
+        raise ValueError("mode must be 'and' or 'or'")
+
+    valid_task_label_pairs = [
+        (task, label)
+        for task, labels in filter.items()
+        for label in labels
+    ]
+
+    if mode == "and":
+        matching_ids = set(get_ids())
+        for task, label in valid_task_label_pairs:
+            matching_ids &= set(get_ids(task, label))
+    else:
+        matching_ids = set()
+        for task, label in valid_task_label_pairs:
+            matching_ids |= set(get_ids(task, label))
+
+    return list(matching_ids)
 
 
 def get_pred_text(id: int) -> str:

@@ -4,7 +4,7 @@ import os
 import sys
 import logging
 
-from dash import html, dcc
+from dash import html, dcc, Output, Input, State
 
 from pages.about import about_layout
 from pages.contact import contact_layout
@@ -99,17 +99,17 @@ def display_page(pathname: str):
         return content_layout(maintenance_layout)
 
     if pathname == '/about':
-        return content_layout(about_layout())
+        return content_layout([about_layout()])
     elif pathname == '/contact':
-        return content_layout(contact_layout())
+        return content_layout([contact_layout()])
     elif pathname.startswith('/explore'):
         
         if pathname == '/explore/time':
-            return content_layout(time_layout())
+            return content_layout([time_layout()])
         elif pathname == '/explore/search':
-            return content_layout(search_layout())
+            return content_layout([search_layout()])
         elif pathname == '/explore/dual-task':
-            return content_layout(dual_task_layout('Substances', 'Condition'), id='dual-task-layout')
+            return content_layout(dual_task_layout('Substances', 'Condition'))
         elif pathname == '/explore/filter':
             return content_layout(filter_layout())
         else:
