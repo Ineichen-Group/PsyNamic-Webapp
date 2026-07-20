@@ -1,22 +1,15 @@
 from collections import OrderedDict
-import pandas as pd
-from dash import html, dcc
+
 import dash_bootstrap_components as dbc
+import pandas as pd
+from dash import dcc, html
 from plotly import express as px
-from components.layout import filter_component, filter_button, study_grid, get_filter_buttons
+
 from components.graphs import add_interaction_annotation
-
-
-from data.queries import (
-    get_filtered_freq,
-    get_all_tasks,
-    get_ids,
-    get_freq,
-    get_all_labels,
-    nr_studies,
-    latest_update
-)
-from style.colors import get_color_mapping, SECONDARY_COLOR, get_color
+from components.layout import filter_button, studies_display
+from data.queries import (get_all_labels, get_all_tasks, get_filtered_freq,
+                          get_freq, get_ids)
+from style.colors import SECONDARY_COLOR, get_color, get_color_mapping
 
 
 def dual_task_graphs(df_task1: pd.DataFrame = None, df_task2: pd.DataFrame = None, task1: str = None, task2: str = None) -> html.Div:
@@ -52,29 +45,57 @@ def dual_task_graphs(df_task1: pd.DataFrame = None, df_task2: pd.DataFrame = Non
     ], className="container", id="dual-task-graph")
 
 
-def create_pie_chart(df, column, col_map, highlight=None, highlight_color=None):
-    fig = px.pie(df, values='Frequency', names=column,
-                 title=f'Task 1: {column}', color=column, color_discrete_map=col_map)
+def create_pie_chart(df: pd.DataFrame, column: str, col_map: dict, highlight: str = None, highlight_color: str = None) -> px.pie:
+    fig = px.pie(
+        df,
+        values='Frequency',
+        names=column,
+        title=f'Task 1: {column}',
+        color=column,
+        color_discrete_map=col_map
+    )
+
+    if highlight is not None:
+        fig.update_traces(
+            marker=dict(
+                colors=[
+                    highlight_color if s == highlight else SECONDARY_COLOR
+                    for s in df[column]
+                ]
+            ),
+            pull=[
+                0.1 if s == highlight else 0
+                for s in df[column]
+            ]
+        )
+    else:
+        # Reset to original colors
+        fig.update_traces(
+            marker=dict(
+                colors=[
+                    col_map[s]
+                    for s in df[column]
+                ]
+            ),
+            pull=[
+                0
+                for _ in df[column]
+            ]
+        )
 
     add_interaction_annotation(fig, x=0.75, y=0.80)
-
-    if highlight:
-        fig.update_traces(marker=dict(colors=[
-                          highlight_color if s == highlight else SECONDARY_COLOR for s in df[column]]))
-        fig.update_traces(
-            pull=[0.1 if s == highlight else 0 for s in df[column]])
 
     return fig
 
 
-def create_bar_chart(df, column: str, color: str):
+def create_bar_chart(df: pd.DataFrame, column: str, color: str) -> px.bar:
     fig = px.bar(df, x='Frequency', y=column,
                  title=f'Task 2: {column}', orientation='h')
     fig.update_traces(marker_color=color)
     return fig
 
 
-def get_dual_task_data(task1, task2, task1_label=None) -> tuple[pd.DataFrame, pd.DataFrame, list[int], dict]:
+def get_dual_task_data(task1: str, task2: str, task1_label: str = None) -> tuple[pd.DataFrame, pd.DataFrame, list[int], dict]:
     task1_data = get_freq(task1)
 
     if task1_label:
@@ -98,27 +119,39 @@ def get_dual_task_data(task1, task2, task1_label=None) -> tuple[pd.DataFrame, pd
 
 
 def dual_task_layout(task1=None, task2=None, task1_label=None):
+    active_filters = OrderedDict()
+    active_infos = OrderedDict()
     if task1_label:
         df_task1, df_task2, ids, tags = get_dual_task_data(
             task1, task2, task1_label)
-        buttons = get_dual_filters(task1, task1_label)
-        info_buttons = get_filter_buttons(task2, get_all_labels(task2))
+        active_filters = OrderedDict({task1: [task1_label]})
+        active_infos = OrderedDict({task2: get_all_labels(task2)})
+        # buttons = get_dual_filters(task1, task1_label)
+        # active_infos = get_filter_buttons(task2, )
 
     else:
-        df_task1, df_task2, ids, tags = get_dual_task_data(task1, task2)
-        buttons = []
-        info_buttons = get_filter_buttons(task1, get_all_labels(task1)) + get_filter_buttons(task2, get_all_labels(task2))
+        df_task1, df_task2, ids, _ = get_dual_task_data(task1, task2)
+        active_infos = OrderedDict(
+            {task1: get_all_labels(task1), task2: get_all_labels(task2)})
 
     graph = dual_task_graphs(df_task1, df_task2, task1, task2)
-    return graph, html.H4("Filtered Studies"), filter_component(buttons, info_buttons), dual_study_grid(ids, tags)
-
-
-def dual_study_grid(ids: list[int], tags: OrderedDict) -> html.Div:
-    return html.Div([
-        dcc.Store(id='filtered-study-ids', data=ids, storage_type='memory'),
-        dcc.Store(id='filter-tags', data=tags, storage_type='memory'),
-        study_grid(nr_studies(), len(ids), last_update=latest_update(), tags=tags, id={"type": "studies-grid", "index": 6})
-    ], id='dual-study-grid')
+    return [
+        graph,
+        studies_display(page_key='dual-task', ids=ids,
+                        filters=active_filters, infos=active_infos),
+        # html.H4("Filtered Studies"),
+        # filter_component(buttons, info_buttons, id='active-filter-buttons'),
+        # dcc.Store(
+        #     id="filtered-study-ids",
+        #     data=get_ids(),
+        #     storage_type="memory"
+        # ),
+        # study_grid(
+        #     nr_studies(),
+        #     len(ids),
+        #     last_update=latest_update(),
+        # )
+    ]
 
 
 def get_dual_filters(task1: str = None, task1_label: str = None) -> html.Div:

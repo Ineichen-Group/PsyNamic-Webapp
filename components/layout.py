@@ -2,8 +2,9 @@ import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 from dash import html, dcc
 from collections import OrderedDict
-from data.queries import nr_studies, get_all_tasks, get_all_labels, get_ids, ner_tags_type
+from data.queries import nr_studies, get_all_tasks, get_all_labels, get_ids, ner_tags_type, latest_update, get_filtered_study_ids
 from style.colors import get_color_mapping
+from typing import Optional
 
 tasks = get_all_tasks()
 filter_data = OrderedDict({task: get_all_labels(task) for task in tasks})
@@ -102,24 +103,23 @@ def footer_layout():
 
 
 def content_layout(list_of_children: list, id: str = "content", ids=None):
-    # TODO: moving store to a better place
     stores = [
         dcc.Store(
             id="selected-ids",
-            data={},
+            data=[],
             storage_type="memory"
         ),
     ]
 
     return dbc.Container(
-        stores + [list_of_children],
+        stores + list_of_children,
         class_name="py-4",
         id=id,
         style={"minHeight": "82vh"},
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None, id: str = 'active-filters-tags'):
+def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None):
     children = [
         dbc.Row(
             className="mt-2 mb-2",
@@ -130,12 +130,12 @@ def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[d
                     className="text-start text-secondary",
                 ),
                 dbc.Col(
-                    id=id,
+                    id="active-filter-buttons",
                     children=filter_buttons,
                     width=10,
                 ),
             ],
-        )
+        ),
     ]
 
     if info_buttons:
@@ -149,7 +149,7 @@ def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[d
                         className="text-start text-secondary",
                     ),
                     dbc.Col(
-                        id="info-buttons",
+                        id="active-infos-buttons",
                         children=info_buttons,
                         width=10,
                     ),
@@ -189,24 +189,22 @@ def tag_component(tags: list[dict]):
     )
 
 
-def studies_display(study_tags: dict[int, list[html.Div]] = None, last_update: str = 'January 2024'):
-    """
-    Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
-    """
-    # studies, nr = get_studies_details(study_tags)
-    total_studies = nr_studies()
+# def studies_display(study_tags: dict[int, list[html.Div]] = None, last_update: str = 'January 2024'):
+#     """
+#     Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
+#     """
+#     # studies, nr = get_studies_details(study_tags)
+#     total_studies = nr_studies()
 
-    return study_grid(total_studies, last_update, study_tags)
-
+#     return study_grid(total_studies, last_update, study_tags)
 
 def study_grid(
-        nr_total_studies: int,
+        page_key: str,
         nr_filtered_studies: int,
-        last_update: str,
         tags: bool = True,
-        id: str = "studies-grid",
         default_sort_column: str = "year",
-        default_sort_order: str = "desc"):
+        default_sort_order: str = "desc",
+        ):
 
     columns = [
         {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
@@ -261,7 +259,7 @@ def study_grid(
                                "marginRight": "0.25rem"}
                     ),
                     html.Span(
-                        f"{nr_total_studies}",
+                        f"{nr_studies()}",
                         id="count-total",
                         className="d-inline",
                         style={"marginRight": "0.25rem"}
@@ -275,7 +273,7 @@ def study_grid(
             ),
 
             dag.AgGrid(
-                id=id,
+                id="studies-grid",
                 columnDefs=columns,
                 rowModelType="infinite",
                 dashGridOptions=ag_grid_options,
@@ -288,11 +286,61 @@ def study_grid(
 
             dbc.Row(
                 children=[html.Span(
-                    f'Last data update: {last_update}', className="d-flex justify-content-center")]
+                    f'Last data update: {latest_update()}', className="d-flex justify-content-center")]
             ),
             paper_details_modal(),
-        ], id="studies-display"
+        ], id="studies-display", key=page_key
     )
+
+
+def studies_display(
+    page_key: str,
+    ids: list[int] = None,
+    filters: Optional[OrderedDict] = None,
+    infos: Optional[OrderedDict] = None,
+    tags: bool = True,
+) -> html.Div:
+    
+    if ids is None:
+        ids = get_ids()
+
+
+    filter_buttons = build_filter_info_buttons(filters) if filters else []
+    info_buttons = build_filter_info_buttons(infos) if infos else []
+
+    return html.Div([
+        html.H3("Filtered Studies"),
+
+        filter_component(filter_buttons, info_buttons),
+
+        dcc.Store(
+            id="active-filters",
+            data=filters or {},
+            storage_type="memory",
+        ),
+
+        dcc.Store(
+            id="active-infos",
+            data=infos or {},
+            storage_type="memory",
+        ),
+
+        dcc.Store(
+            id="filtered-study-ids",
+            data=ids,
+            storage_type="memory",
+        ),
+        dcc.Store(
+            id="grid-refresh",
+            data=0,
+        ),
+        study_grid(
+            page_key,
+            len(ids),
+            tags=tags,
+            
+        ),
+    ])
 
 
 def dosage_study_grid(
@@ -388,7 +436,7 @@ def dosage_study_grid(
     )
 
 
-def filter_selection():
+def checkbox_filter_selection():
     # Build task options at runtime to avoid DB calls during module import
     tasks = get_all_tasks() or []
     return dbc.Container([
@@ -413,24 +461,12 @@ def filter_selection():
             ], width=12),
         ], className="mb-4"),
 
-        html.H3("Filtered Studies"),
 
-        filter_component(id='active-filter-buttons'),
-        dcc.Store(
-            id="filter-store",
-            data={},
-            storage_type="memory"
-        ),
-
-        dcc.Store(
-            id="filtered-study-ids",
-            data=get_ids(),
-            storage_type="memory"
-        ),
     ], className="m-0 p-0")
 
 
 def get_tags(tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[str]]:
+    """Get consistent tag information for each task and label, including color mapping."""
     ordered_tags = OrderedDict()
     for task, labels in tags.items():
         all_labels_task = get_all_labels(task)
@@ -445,6 +481,27 @@ def get_tags(tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[str]]:
                 ordered_tags[task] = []
             ordered_tags[task].append(tag_info)
     return ordered_tags
+
+
+def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool = False) -> list[dbc.Button]:
+    """
+    Extracted shared tag-building logic used in both modals.
+    input = {
+        "Condition": ['Depression', 'Anxiety'],
+    output = [dbc.Button(...), dbc.Button(...)]
+
+    """
+    consistent_tags = get_tags(tags)
+    return [
+        filter_button(
+            tag["color"],
+            tag["label"],
+            tag["task"],
+            editable=editable
+        )
+        for task in tags
+        for tag in consistent_tags[task]
+    ]
 
 
 def filter_button(color: str, label: str, task: str, editable: bool = False):
@@ -493,7 +550,8 @@ def paper_details_modal(id="paper-modal"):
                         target="_blank",
                         href="",),
                     html.P(id="paper-abstract", className="abstract-text"),
-                    html.P(id="paper-dosage-normalization", className="dosage-normalization"),
+                    html.P(id="paper-dosage-normalization",
+                           className="dosage-normalization"),
                     html.Div(id='modal-tags'),
                 ]
             ),
@@ -589,7 +647,8 @@ def build_tag_buttons(paper):
 def build_paper_details(paper, ner_category=None, body_label="Abstract", tags_component=None):
     """Build a detail card with consistent title/body highlighting."""
     paper_id = paper.get('id')
-    ner_tags = ner_tags_type(paper_id, ner_category) if ner_category else ner_tags_type(paper_id)
+    ner_tags = ner_tags_type(
+        paper_id, ner_category) if ner_category else ner_tags_type(paper_id)
     paper_title, body_text, body_offset = _split_prediction_input(paper)
     title_tags, body_tags = _split_highlight_cutpoints(
         ner_tags,
@@ -597,8 +656,10 @@ def build_paper_details(paper, ner_category=None, body_label="Abstract", tags_co
         body_offset,
     )
 
-    highlighted_title = highlighted_text(paper_title, title_tags) if title_tags else paper_title
-    highlighted_body = highlighted_text(body_text, body_tags) if body_tags else body_text
+    highlighted_title = highlighted_text(
+        paper_title, title_tags) if title_tags else paper_title
+    highlighted_body = highlighted_text(
+        body_text, body_tags) if body_tags else body_text
 
     children = [
         *_build_paper_header(paper, highlighted_title),
@@ -613,6 +674,7 @@ def build_paper_details(paper, ner_category=None, body_label="Abstract", tags_co
         ])
 
     return html.Div(children, className='p-3 border rounded')
+
 
 def _split_prediction_input(paper):
     """Split prediction_input into title and body when the source text includes both."""

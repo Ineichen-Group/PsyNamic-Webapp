@@ -1,27 +1,11 @@
-from dash import html, dcc
-from components.layout import filter_selection, study_grid
-from data.queries import get_studies_details, nr_studies, latest_update
+from dash import html
+from components.layout import checkbox_filter_selection, studies_display
 
 
 def filter_layout():
-    total_nr = nr_studies()
-
-    grid = study_grid(
-        nr_total_studies=total_nr,
-        nr_filtered_studies=total_nr,
-        last_update=latest_update(),
-        tags=True,
-        id="studies-grid"
-    )
-
-    return html.Div([
+    return [
         html.H1("Explore and filter all studies", className="my-4"),
         html.P("Explore all studies by applying filters to the data."),
-        filter_selection(),
-        dcc.Store(
-            id="active-filters",
-            data={},
-            storage_type="memory"
-        ),
-        grid,
-    ], className="container", id="filter-layout")
+        checkbox_filter_selection(),
+        studies_display('filter-page'),
+    ]
