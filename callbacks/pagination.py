@@ -7,7 +7,7 @@ from callbacks.utils import log_time
 
 def register(app):
     @app.callback(
-    Output("count-filtered", "children", allow_duplicate=True),
+    Output("studies-grid-count-filtered", "children", allow_duplicate=True),
     Output("studies-grid", "getRowsResponse"),
     Input("studies-grid", "getRowsRequest"),
     Input("grid-refresh", "data"),
