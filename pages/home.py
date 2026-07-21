@@ -17,8 +17,8 @@ def home_layout():
          "Study Participation: How many participants are included per study?"),
         ("Study Protocols", "/insights/study-protocol",
          "How many study protocols are available?"),
-        # ("Dosages", "/insights/dosage",
-        #  "Inspecting dosage: How are different substances dosed?")
+        ("Dosages", "/insights/dosage",
+         "Inspecting dosage: How are different substances dosed?")
     ]
 
     random_insights = random.sample(insight_views, 3)
