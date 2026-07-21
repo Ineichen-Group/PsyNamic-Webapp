@@ -1,6 +1,7 @@
-from dash import html, no_update, ALL, ctx
+from dash import ALL, ctx, html, no_update
 from dash.dependencies import MATCH, Input, Output, State
 
+from callbacks.utils import log_time
 from components.layout import (_split_highlight_cutpoints,
                                _split_prediction_input, build_tag_buttons,
                                highlighted_text)
@@ -37,6 +38,7 @@ def register(app):
         State({"type": "study-grid", "index": MATCH}, "id"),
         prevent_initial_call=True
     )
+    @log_time
     def show_study_modal(selected_rows_list: list[dict], grid_id: dict[str, str]) -> tuple[bool, str, str, str, str, str, list]:
         """Callback to display the modal with study details when a row is selected in the study grid."""
         if not selected_rows_list:
@@ -138,6 +140,7 @@ def register(app):
         Input({'type': 'collapse-button', 'index': ALL}, 'n_clicks'),
         State({'type': 'collapse', 'index': ALL}, 'is_open'),
     )
+    @log_time
     def toggle_collapse(_, is_open_list: list[bool]) -> list[bool]:
         """Callback to toggle the collapse of the modal sections based on the button clicks."""
 

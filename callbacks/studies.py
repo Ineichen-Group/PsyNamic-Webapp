@@ -1,6 +1,8 @@
 
 from dash import ctx
 from dash.dependencies import Input, Output, State
+
+from callbacks.utils import log_time
 from data.queries import get_filtered_study_ids
 
 
@@ -14,6 +16,7 @@ def register(app):
         State("filtered-study-ids", "data"),
         State("grid-refresh", "data"),
     )
+    @log_time
     def update_filtered_ids(
         active_filters: dict,
         selected_ids: list,
