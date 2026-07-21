@@ -1,7 +1,7 @@
 from dash import html
 import dash_bootstrap_components as dbc
 import random
-from data.queries import nr_studies, latest_update
+from data.queries import get_study_count, get_latest_retrieval_date
 
 
 def home_layout():
@@ -50,7 +50,7 @@ def home_layout():
                 html.Img(src="assets/paper.png",
                          style={'height': '5em', 'margin-bottom': '10px'}),
                 html.H4('Automated Research Retrieval'),
-                  html.P(f"{nr_studies():,} studies retrieved and updated in real-time (last update: {latest_update()}).", style={
+                  html.P(f"{get_study_count():,} studies retrieved and updated in real-time (last update: {get_latest_retrieval_date()}).", style={
                       'font-size': '16px'}),
             ], width=12, md=4, className='text-center mb-4'),
 
