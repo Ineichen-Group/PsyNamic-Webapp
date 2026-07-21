@@ -35,7 +35,7 @@ def register(app):
             return new_ids, (grid_refresh or 0) + 1
 
         elif trigger == "selected-ids":
-            new_ids = selected_ids
+            new_ids = selected_ids if selected_ids else None
             return new_ids, (grid_refresh or 0) + 1
         
         if "insights" in pathname:

@@ -16,7 +16,7 @@ def register(app):
         prevent_initial_call=True
     )
     @log_time
-    def update_selected_ids(select_data: list, click_data: list, reset_clicks: list):
+    def update_selected_ids(select_data: list, click_data: list, _: list):
         if ctx.triggered_id == 'dosage-reset-btn':
             return []
         # if any of selected_data is not None,
