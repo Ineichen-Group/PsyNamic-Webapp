@@ -34,7 +34,7 @@ def bar_chart(
                 data[group], categories=group_order, ordered=True)
             data = data.sort_values([group, x])
 
-        order = data.groupby(x)[y].sum().sort_values(
+        order = data.groupby(x, observed=False)[y].sum().sort_values(
             ascending=False).index.tolist()
         data[x] = pd.Categorical(data[x], categories=order, ordered=True)
 
@@ -42,7 +42,7 @@ def bar_chart(
                      title=title, barmode='group', text=y)
     else:
 
-        order = data.groupby(x)[y].sum().sort_values(
+        order = data.groupby(x, observed=False)[y].sum().sort_values(
             ascending=False).index.tolist()
         data[x] = pd.Categorical(data[x], categories=order, ordered=True)
 
@@ -153,7 +153,7 @@ def box_plot(
     if not data_all.empty:
         try:
             order = (
-                data_all.groupby(x)[y].median().sort_values(
+                data_all.groupby(x, observed=False)[y].median().sort_values(
                     ascending=False).index.tolist()
             )
         except Exception:
@@ -250,7 +250,7 @@ def box_plot(
     vals_all = data_all[y].dropna()
     if not vals_all.empty:
         upper_whiskers = []
-        for cat, sub in data_all.groupby(x):
+        for cat, sub in data_all.groupby(x, observed=False):
             vals = sub[y].dropna()
             if vals.empty:
                 continue
