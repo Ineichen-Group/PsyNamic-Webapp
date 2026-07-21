@@ -1,5 +1,5 @@
 
-from dash import ALL, callback_context, ctx
+from dash import ctx
 from dash.dependencies import Input, Output, State
 from data.queries import get_filtered_study_ids
 
