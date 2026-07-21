@@ -30,15 +30,15 @@ def register(app):
         if trigger is None:
             return filtered_study_ids, grid_refresh
 
-        if "insights" in pathname:
-            return filtered_study_ids, grid_refresh
-
-        if trigger == "active-filters":
+        elif trigger == "active-filters":
             new_ids = get_filtered_study_ids(active_filters)
             return new_ids, (grid_refresh or 0) + 1
 
-        if trigger == "selected-ids":
+        elif trigger == "selected-ids":
             new_ids = selected_ids
             return new_ids, (grid_refresh or 0) + 1
+        
+        if "insights" in pathname:
+            return filtered_study_ids, grid_refresh
 
         return filtered_study_ids, grid_refresh
