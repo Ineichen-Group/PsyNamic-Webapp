@@ -7,8 +7,8 @@ from plotly import express as px
 
 from components.graphs import add_interaction_annotation
 from components.layout import filter_info_button, studies_display
-from data.queries import (get_all_labels, get_all_tasks, get_filtered_freq,
-                          get_freq, get_ids)
+from data.queries import (get_all_labels, get_all_tasks, get_filtered_label_frequencies,
+                          get_task_label_frequencies, get_ids)
 from style.colors import SECONDARY_COLOR, get_color, get_color_mapping
 
 
@@ -100,10 +100,10 @@ def create_bar_chart(df: pd.DataFrame, column: str, color: str) -> px.bar:
 
 def get_dual_task_data(task1: str, task2: str, task1_label: str = None) -> tuple[pd.DataFrame, pd.DataFrame, list[int], dict]:
     """Fetches frequency datasets, matching study IDs, and active tags for dual-task selection."""
-    task1_data = get_freq(task1)
+    task1_data = get_task_label_frequencies(task1)
 
     if task1_label:
-        task2_data = get_filtered_freq(task2, task1, task1_label)
+        task2_data = get_filtered_label_frequencies(task2, task1, task1_label)
         ids = get_ids(task1, task1_label)
 
         tags = OrderedDict()
@@ -114,7 +114,7 @@ def get_dual_task_data(task1: str, task2: str, task1_label: str = None) -> tuple
 
     else:
         ids = get_ids(task1)
-        task2_data = get_freq(task2)
+        task2_data = get_task_label_frequencies(task2)
 
         tags = OrderedDict()
         tags[task1] = task1_data[task1].unique().tolist()

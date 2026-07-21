@@ -5,7 +5,7 @@ from callbacks.utils import log_time
 from components.layout import (_split_highlight_cutpoints,
                                _split_prediction_input, build_tag_buttons,
                                highlighted_text)
-from data.queries import ner_tags_type
+from data.queries import get_paper_ner_tags
 
 
 def _build_modal_content(paper: dict) -> tuple[bool, str, str, str, str, str, list]:
@@ -76,7 +76,7 @@ def register(app):
                 paper)
 
             title_tags, body_tags = _split_highlight_cutpoints(
-                ner_tags_type(
+                get_paper_ner_tags(
                     paper.get("id"),
                     "Dosage",
                 ),

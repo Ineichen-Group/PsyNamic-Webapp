@@ -2,7 +2,7 @@ from dash.dependencies import MATCH, Input, Output, State
 
 from callbacks.utils import log_time
 from data.queries import (get_ids, get_studies_details,
-                          get_studies_details_ner, nr_studies)
+                          get_studies_details_ner, get_study_count)
 
 
 def register(app):
@@ -80,7 +80,7 @@ def register(app):
             "rowCount": (
                 len(filtered_ids)
                 if filtered_ids
-                else nr_studies()
+                else get_study_count()
             ),
         }
 

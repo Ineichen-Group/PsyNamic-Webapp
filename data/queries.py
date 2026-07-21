@@ -53,7 +53,8 @@ def get_studies_details(
     filter_model: dict = None,
     tags: dict[str, list] = None,
     map_all_labels: bool = False
-):
+) -> list[dict]:
+    """Fetches study details from the database, optionally filtered by IDs, sorted, and paginated to be fed into the study grid."""
 
     session = Session()
     try:
@@ -146,7 +147,8 @@ def get_studies_details_ner(
     sort_model: list[dict] = None,
     filter_model: dict = None,
     tags: dict[str, list] = None
-):
+) -> list[dict]:
+    """Fetches study details specifically for studies that have a 'Dosage' NER tag, optionally filtered by IDs, sorted, and paginated."""
 
     session = Session()
     try:
@@ -236,6 +238,7 @@ def get_studies_details_ner(
 
 
 def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool = False) -> dict[int, list[dict]]:
+    """Fetches the tags for the given study IDs and returns them in a structured format, required for the Tags column in the study grid."""
     study_tags = {}
     session = Session()
 
@@ -288,7 +291,7 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
         for paper_id, task_dict in study_tags.items():
             ordered_tags = []
             for task, labels in tags.items():
-                if task in task_dict:  # Ensure the task is present
+                if task in task_dict:
                     for label in labels:
                         for tag_info in task_dict[task]:
                             if tag_info['label'] == label:
@@ -300,7 +303,7 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
         session.close()
 
 
-def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None) -> pd.DataFrame:
+def get_filtered_label_frequencies(task: str, filter_task: str, filter_task_label: str = None) -> pd.DataFrame:
     """
     Get the prediction data for a given task and filter the data 
     based on the filter task and label.
@@ -332,7 +335,7 @@ def get_filtered_freq(task: str, filter_task: str, filter_task_label: str = None
         session.close()
 
 
-def get_freq(task: str, labels: list[str] = None) -> pd.DataFrame:
+def get_task_label_frequencies(task: str, labels: list[str] = None) -> pd.DataFrame:
     """
     Get the frequency of the labels for a given task. If no labels are provided, return the frequency of all labels."""
     session = Session()
@@ -361,7 +364,7 @@ def get_freq(task: str, labels: list[str] = None) -> pd.DataFrame:
         session.close()
 
 
-def get_pred(task: str) -> pd.DataFrame:
+def get_predictions(task: str) -> pd.DataFrame:
     """Get the prediction data for a given task."""
     session = Session()
     try:
@@ -374,7 +377,7 @@ def get_pred(task: str) -> pd.DataFrame:
         session.close()
 
 
-def get_pred_filtered(task: str, ids: list[int]) -> pd.DataFrame:
+def get_predictions_by_ids(task: str, ids: list[int]) -> pd.DataFrame:
     """Get the prediction data for a given task and filter the data based on the paper IDs."""
     session = Session()
     try:
@@ -437,40 +440,18 @@ def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd
         session.close()
 
 
-def get_ids(task: str = None, label: str = None) -> set[int]:
-    """Get the ids of the papers that have a specific label for a given task.
-    If no task and label are provided, return all paper ids."""
-
+def get_ids(task: str = None, label: str = None) -> list[int]:
+    """Returns unique paper IDs, optionally filtered by task and/or label."""
     session = Session()
-    if task is None and label is None:
-        # Return all paper ids
-        try:
-            query = session.query(Prediction.paper_id)
-            ids = [item.paper_id for item in query.all()]
-            return list(set(ids))
-        finally:
-            session.close()
-    elif task is not None:
-        try:
-            query = session.query(Prediction.paper_id).filter(
-                Prediction.task == task
-            )
-            if label is not None:
-                query = query.filter(Prediction.label == label)
-            ids = [item.paper_id for item in query.all()]
-            return list(set(ids))
-        finally:
-            session.close()
-    else:
-        try:
-            query = session.query(Prediction.paper_id).filter(
-                Prediction.task == task,
-                Prediction.label == label)
-            ids = [item.paper_id for item in query.all()]
-            return list(set(ids))
-        finally:
-            session.close()
-
+    try:
+        query = session.query(Prediction.paper_id)
+        if task is not None:
+            query = query.filter(Prediction.task == task)
+        if label is not None:
+            query = query.filter(Prediction.label == label)
+        return list({item.paper_id for item in query.all()})
+    finally:
+        session.close()
 
 def get_all_tasks() -> list[str]:
     """Get all unique tasks from the predictions."""
@@ -529,7 +510,7 @@ def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.Data
     return frequency_df, ids
 
 
-def nr_studies():
+def get_study_count():
     """Get the number of studies in the database."""
     session = Session()
     try:
@@ -630,7 +611,7 @@ def get_filtered_study_ids(filter: OrderedDict[str, list[str]], mode = "and") ->
     return list(matching_ids)
 
 
-def get_pred_text(id: int) -> str:
+def get_paper_prediction_input(id: int) -> str:
     session = Session()
     try:
         query = session.query(Paper.prediction_input).filter(Paper.id == id)
@@ -710,7 +691,7 @@ def get_dosage_display_string(paper_id: int) -> str:
         session.close()
 
 
-def ner_tags_type(paper_id: int, ner_type: str = None, in_titel=False) -> list[dict]:
+def get_paper_ner_tags(paper_id: int, ner_type: str = None, in_titel=False) -> list[dict]:
     """Get all tags of a specific type for a given paper ID."""
     session = Session()
     try:
@@ -812,7 +793,7 @@ def get_dosage_samples(substances: list[str] = None, dosage_types: list[str] = [
 
 
 
-def latest_update():
+def get_latest_retrieval_date():
     """Get the the retrieval date, formated like 20.01.2026, of the latest batch retrieval."""
     session = Session()
     try:

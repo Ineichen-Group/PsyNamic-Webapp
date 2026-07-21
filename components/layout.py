@@ -6,7 +6,7 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html
 
 from data.queries import (get_all_labels, get_all_tasks, get_ids,
-                          latest_update, ner_tags_type, nr_studies)
+                          get_latest_retrieval_date, get_paper_ner_tags, get_study_count)
 from style.colors import get_color_mapping
 
 tasks = get_all_tasks()
@@ -313,7 +313,7 @@ def study_grid(
                     ),
 
                     html.Span(
-                        f"{nr_studies()}",
+                        f"{get_study_count()}",
                         className="d-inline",
                         id={
                             "type": "study-grid-count-total",
@@ -355,7 +355,7 @@ def study_grid(
             dbc.Row(
                 [
                     html.Span(
-                        f"Last data update: {latest_update()}",
+                        f"Last data update: {get_latest_retrieval_date()}",
                         className="d-flex justify-content-center",
                     )
                 ]
@@ -627,8 +627,8 @@ def build_tag_buttons(paper):
 def build_paper_details(paper, ner_category=None, body_label="Abstract", tags_component=None):
     """Build a detail card with consistent title/body highlighting."""
     paper_id = paper.get('id')
-    ner_tags = ner_tags_type(
-        paper_id, ner_category) if ner_category else ner_tags_type(paper_id)
+    ner_tags = get_paper_ner_tags(
+        paper_id, ner_category) if ner_category else get_paper_ner_tags(paper_id)
     paper_title, body_text, body_offset = _split_prediction_input(paper)
     title_tags, body_tags = _split_highlight_cutpoints(
         ner_tags,
