@@ -141,7 +141,7 @@ def dual_task_layout(task1: str, task2: str, task1_label: str = None) -> list[ht
     return [
         graph,
         studies_display(page_key='dual-task', ids=ids,
-                        filters=active_filters, infos=active_infos),
+                        filters=active_filters, infos=active_infos, grid_id="dual-task-study-grid"),
     ]
 
 

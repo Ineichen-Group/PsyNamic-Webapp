@@ -63,7 +63,8 @@ def get_studies_details(
     end_row: int = 20,
     sort_model: list[dict] = None,
     filter_model: dict = None,
-    tags: dict[str, list] = None
+    tags: dict[str, list] = None,
+    map_all_labels: bool = False
 ):
 
     session = Session()
@@ -126,7 +127,7 @@ def get_studies_details(
 
         # Tags
         if tags:
-            study_tags = get_study_tags([p.id for p in papers], tags)
+            study_tags = get_study_tags([p.id for p in papers], tags, map_all_labels=map_all_labels)
 
         results = [
             {
@@ -246,7 +247,7 @@ def get_studies_details_ner(
         session.close()
 
 
-def get_study_tags(ids: list[int], tags: dict[str, list]) -> dict[int, list[dict]]:
+def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool = False) -> dict[int, list[dict]]:
     study_tags = {}
     session = Session()
 
@@ -273,8 +274,12 @@ def get_study_tags(ids: list[int], tags: dict[str, list]) -> dict[int, list[dict
 
         study_tags = {}
         # TODO: cache color mappings
-        color_mappings = {task: get_color_mapping(
-            task, labels) for task, labels in tags.items()}
+        if map_all_labels:
+            color_mappings = {task: get_color_mapping(
+                task, get_all_labels(task)) for task, labels in tags.items()}
+        else:
+            color_mappings = {task: get_color_mapping(
+                task, labels) for task, labels in tags.items()}
 
         for paper_id, task, label in results:
             tag_info = {
