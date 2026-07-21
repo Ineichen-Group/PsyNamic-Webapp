@@ -113,7 +113,7 @@ def display_page(pathname: str):
         elif pathname == '/explore/filter':
             return content_layout(filter_layout())
         else:
-            return content_layout(home_layout())
+            return content_layout([home_layout()])
     elif pathname.startswith('/insights'):
         if pathname == '/insights/evidence-strength':
             return content_layout([rct_view()])
@@ -130,7 +130,7 @@ def display_page(pathname: str):
         elif pathname == '/insights/dosage':
             return content_layout([dosages_view()])
     else:
-        return content_layout(home_layout())
+        return content_layout([home_layout()])
 
 register_callbacks(app)
 

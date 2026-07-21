@@ -90,13 +90,13 @@ def register(app):
                 return no_update, no_update, no_update
             else:
                 active_filters = new_active_filters
-                buttons = build_filter_info_buttons(active_filters, editable=True)
+                buttons = build_filter_info_buttons(active_filters, editable=True, map_all_labels=False)
                 return active_filters, buttons, label_checklist
         # Case 2: a filter button is clicked to remove a filter
         else:
             active_filters, label_to_remove = remove_filters_from_active_filter(
                 active_filters, remove_filter_clicks)
-            buttons = build_filter_info_buttons(active_filters, editable=True)
+            buttons = build_filter_info_buttons(active_filters, editable=True, map_all_labels=False)
             if label_to_remove in label_checklist:
                 label_checklist.remove(label_to_remove)
             return active_filters, buttons, label_checklist

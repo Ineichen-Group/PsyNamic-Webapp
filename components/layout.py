@@ -384,8 +384,8 @@ def studies_display(
     if ids is None:
         ids = get_ids()
 
-    filter_buttons = build_filter_info_buttons(filters) if filters else []
-    info_buttons = build_filter_info_buttons(infos) if infos else []
+    filter_buttons = build_filter_info_buttons(filters, map_all_labels=False) if filters else []
+    info_buttons = build_filter_info_buttons(infos, map_all_labels=False) if infos else []
 
     return html.Div([
         html.H3("Filtered Studies"),
@@ -454,7 +454,7 @@ def checkbox_filter_selection() -> html.Div:
     ], className="m-0 p-0")
 
 
-def get_tags(active_tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[str]]:
+def _get_tags(active_tags: OrderedDict[str, list[str]], map_all_labels: bool = True) -> OrderedDict[str, list[str]]:
     """Get consistent tag information for each task and label, including color mapping.
 
     OrderedDict({'Study Type': ['Randomized-controlled trial (RCT)', 'Systematic review/meta-analysis', 'Other']})
@@ -463,7 +463,10 @@ def get_tags(active_tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[
     """
     ordered_tags = OrderedDict()
     for task, labels in active_tags.items():
-        all_labels_task = get_all_labels(task)
+        if map_all_labels:
+            all_labels_task = get_all_labels(task)
+        else:
+            all_labels_task = labels
         task_color_mapping = get_color_mapping(task, all_labels_task)
         for label in labels:
             tag_info = {
@@ -477,7 +480,7 @@ def get_tags(active_tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[
     return ordered_tags
 
 
-def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool = False) -> list[dbc.Button]:
+def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool = False, map_all_labels: bool = True) -> list[dbc.Button]:
     """
     Extracted shared tag-building logic used in both modals.
     input = {
@@ -485,7 +488,7 @@ def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool
     output = [dbc.Button(...), dbc.Button(...)]
 
     """
-    consistent_tags = get_tags(tags)
+    consistent_tags = _get_tags(tags, map_all_labels=map_all_labels)
     return [
         filter_info_button(
             tag["color"],
