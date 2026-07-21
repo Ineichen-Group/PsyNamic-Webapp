@@ -41,26 +41,39 @@ def register(app):
 
         is_dosage = grid_id["index"] == "dosage-study-grid"
 
-        query_fn = (
-            get_studies_details_ner
-            if is_dosage
-            else get_studies_details
-        )
-
-        studies = query_fn(
-            ids=filtered_ids if filtered_ids else [],
-            start_row=study_grid_request["startRow"],
-            end_row=study_grid_request["endRow"],
-            sort_model=study_grid_request.get(
-                "sortModel",
-                [{"colId": "year", "sort": "desc"}],
-            ),
-            filter_model=study_grid_request.get(
-                "filterModel",
-                {},
-            ),
-            tags=tags,
-        )
+        if is_dosage:
+            studies = get_studies_details_ner(
+                ids=filtered_ids if filtered_ids else [],
+                start_row=study_grid_request["startRow"],
+                end_row=study_grid_request["endRow"],
+                sort_model=study_grid_request.get(
+                    "sortModel",
+                    [{"colId": "year", "sort": "desc"}],
+                ),
+                filter_model=study_grid_request.get(
+                    "filterModel",
+                    {},
+                ),
+                tags=tags,
+            )
+        else:
+            # check if grid came from dual task view, if so, map all colors for the active infos
+            map_all_labels = grid_id["index"] == "dual-task-study-grid"
+            studies = get_studies_details(
+                ids=filtered_ids if filtered_ids else [],
+                start_row=study_grid_request["startRow"],
+                end_row=study_grid_request["endRow"],
+                sort_model=study_grid_request.get(
+                    "sortModel",
+                    [{"colId": "year", "sort": "desc"}],
+                ),
+                filter_model=study_grid_request.get(
+                    "filterModel",
+                    {},
+                ),
+                tags=tags,
+                map_all_labels=map_all_labels,
+            )
 
         response = {
             "rowData": studies,

@@ -4,7 +4,7 @@ from dash import ctx, no_update
 from dash.dependencies import Input, Output
 
 from callbacks.utils import log_time
-from components.layout import get_filter_buttons
+from components.layout import build_filter_info_buttons
 from data.queries import get_all_labels
 from pages.explore.dual_task import (create_bar_chart, create_pie_chart,
                                      get_dual_task_data)
@@ -45,17 +45,18 @@ def register(app):
             if task1 == task2:
                 return no_update, no_update, "Choose two different tasks.", no_update
             else:
-                active_info_buttons = get_filter_buttons(task1, get_all_labels(task1)) + \
-                    get_filter_buttons(task2, get_all_labels(task2))
-                active_infos = OrderedDict(
-                    {task1: get_all_labels(task1), task2: get_all_labels(task2)})
+                labels_task1 = get_all_labels(task1)
+                labels_task2 = get_all_labels(task2)
+
+                active_infos = OrderedDict({task1: labels_task1, task2: labels_task2})
+                active_filter_buttons = build_filter_info_buttons(active_infos, editable=False, map_all_labels=True)
                 task1_data, task2_data, ids, tags = get_dual_task_data(
                     task1, task2)
                 pie_chart = create_pie_chart(
                     task1_data, task1, get_color_mapping(task1, get_all_labels(task1)))
                 bar_chart = create_bar_chart(
                     task2_data, task2, get_color(task2, 'hex'))
-                return {}, "", "", pie_chart, bar_chart, active_infos, active_info_buttons
+                return {}, "", "", pie_chart, bar_chart, active_infos, active_filter_buttons
 
         elif 'task1-pie-graph' in ctx.triggered_id:
             label, color = get_label_color_from_click_data(click_data)
@@ -70,11 +71,13 @@ def register(app):
             else:
                 pie_chart = create_pie_chart(task1_data, task1, get_color_mapping(
                     task1, get_all_labels(task1)), highlight=label, highlight_color=color)
-            bar_chart = create_bar_chart(task2_data, task2, color)
-            active_info_buttons = get_filter_buttons(
-                task2, get_all_labels(task2))
-            active_filters_buttons = get_filter_buttons(task1, [label])
-            active_infos = OrderedDict({task2: get_all_labels(task2)})
+                
+            labels_task2 = get_all_labels(task2)
+            active_infos = OrderedDict({task2: labels_task2})
+            active_info_buttons = build_filter_info_buttons(
+                active_infos, editable=False, map_all_labels=True)
             active_filters = OrderedDict({task1: [label]})
-
+            active_filters_buttons = build_filter_info_buttons(
+                active_filters, editable=False, map_all_labels=True)  
+            bar_chart = create_bar_chart(task2_data, task2, color)
             return active_filters, active_filters_buttons, "", pie_chart, bar_chart, active_infos, active_info_buttons

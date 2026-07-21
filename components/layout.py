@@ -595,18 +595,6 @@ def highlighted_text(text: str, cutpoints: list) -> html.Span:
     return html.Span(elements)
 
 
-def get_filter_buttons(task, labels):
-    """
-    Creates filter buttons based on task and labels.
-    """
-    labels = sorted(labels)
-    color_mapping = get_color_mapping(task, labels)
-    buttons = []
-    for label in labels:
-        buttons.append(filter_info_button(
-            color_mapping[label], label, task))
-    return buttons
-
 
 def build_tag_buttons(paper):
     """Extracted shared tag-building logic used in both modals."""
