@@ -13,6 +13,7 @@ from style.colors import SECONDARY_COLOR, get_color, get_color_mapping
 
 
 def dual_task_graphs(df_task1: pd.DataFrame = None, df_task2: pd.DataFrame = None, task1: str = None, task2: str = None) -> html.Div:
+    """Renders the container layout with dropdowns, pie chart, and bar chart for dual-task analysis."""
     all_tasks = get_all_tasks()
 
     if task1 and task2:
@@ -46,6 +47,7 @@ def dual_task_graphs(df_task1: pd.DataFrame = None, df_task2: pd.DataFrame = Non
 
 
 def create_pie_chart(df: pd.DataFrame, column: str, col_map: dict, highlight: str = None, highlight_color: str = None) -> px.pie:
+    """Creates a Plotly pie chart for Task 1 with slice highlighting and annotation."""
     fig = px.pie(
         df,
         values='Frequency',
@@ -89,6 +91,7 @@ def create_pie_chart(df: pd.DataFrame, column: str, col_map: dict, highlight: st
 
 
 def create_bar_chart(df: pd.DataFrame, column: str, color: str) -> px.bar:
+    """Creates a Plotly bar chart for Task 2 with the specified color."""
     fig = px.bar(df, x='Frequency', y=column,
                  title=f'Task 2: {column}', orientation='h')
     fig.update_traces(marker_color=color)
@@ -96,6 +99,7 @@ def create_bar_chart(df: pd.DataFrame, column: str, color: str) -> px.bar:
 
 
 def get_dual_task_data(task1: str, task2: str, task1_label: str = None) -> tuple[pd.DataFrame, pd.DataFrame, list[int], dict]:
+    """Fetches frequency datasets, matching study IDs, and active tags for dual-task selection."""
     task1_data = get_freq(task1)
 
     if task1_label:
@@ -118,7 +122,8 @@ def get_dual_task_data(task1: str, task2: str, task1_label: str = None) -> tuple
     return task1_data, task2_data, ids, tags
 
 
-def dual_task_layout(task1=None, task2=None, task1_label=None):
+def dual_task_layout(task1: str, task2: str, task1_label: str = None) -> list[html.Div]:
+    """Assembles the full dual-task view layout including visualization graphs and study table."""
     active_filters = OrderedDict()
     active_infos = OrderedDict()
     if task1_label:
@@ -126,8 +131,6 @@ def dual_task_layout(task1=None, task2=None, task1_label=None):
             task1, task2, task1_label)
         active_filters = OrderedDict({task1: [task1_label]})
         active_infos = OrderedDict({task2: get_all_labels(task2)})
-        # buttons = get_dual_filters(task1, task1_label)
-        # active_infos = get_filter_buttons(task2, )
 
     else:
         df_task1, df_task2, ids, _ = get_dual_task_data(task1, task2)
@@ -139,22 +142,11 @@ def dual_task_layout(task1=None, task2=None, task1_label=None):
         graph,
         studies_display(page_key='dual-task', ids=ids,
                         filters=active_filters, infos=active_infos),
-        # html.H4("Filtered Studies"),
-        # filter_component(buttons, info_buttons, id='active-filter-buttons'),
-        # dcc.Store(
-        #     id="filtered-study-ids",
-        #     data=get_ids(),
-        #     storage_type="memory"
-        # ),
-        # study_grid(
-        #     nr_studies(),
-        #     len(ids),
-        #     last_update=latest_update(),
-        # )
     ]
 
 
 def get_dual_filters(task1: str = None, task1_label: str = None) -> html.Div:
+    """Generates styled active filter info buttons for the selected Task 1 label."""
     if not task1_label:
         return []
     labels_task1 = get_all_labels(task1)

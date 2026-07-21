@@ -13,14 +13,13 @@ def time_layout():
 
     df, ids = get_time_data(start_year=min_year, end_year=max_year)
     fig = bar_chart(
-            data=df,
-            x="Year",
-            y="Frequency",
-            title="Frequency of Publications per Year",
-            x_label="Year",
-            y_label="Frequency",
-        ).figure
-
+        data=df,
+        x="Year",
+        y="Frequency",
+        title="Frequency of Publications per Year",
+        x_label="Year",
+        y_label="Frequency",
+    ).figure
 
     return html.Div([
         html.H1("Number of publications over time", className="my-4"),
