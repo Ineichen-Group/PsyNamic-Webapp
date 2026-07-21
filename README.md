@@ -73,7 +73,7 @@ cp .env.copy .env
 
 Edit `.env` and add your local database configuration.
 
-### Initialize and Populate Database and Indexes
+### Initialize and Populate Database
 
 - Populate initial database content:
 
@@ -87,11 +87,6 @@ Edit `.env` and add your local database configuration.
 python -m data.populate --all
 ```
 
-- Add database indexes:
-
-```bash
-psql -d psynamic -f data/indexes.sql
-```
 
 ### Dealing with the database when deployed
 
