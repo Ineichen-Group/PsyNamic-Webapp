@@ -2,7 +2,7 @@
 from collections import OrderedDict
 
 import dash_bootstrap_components as dbc
-from dash import ALL, ctx
+from dash import ALL, ctx, no_update
 from dash.dependencies import Input, Output, State
 
 from callbacks.utils import log_time
@@ -80,14 +80,18 @@ def register(app):
         State("task-dropdown", "value"),
         prevent_initial_call=True
     )
-    def modify_filter(add_clicks: int, remove_filter_clicks: list[int], active_filters: OrderedDict[str, list[str]], label_checklist: list[str], task: str):
+    def modify_filter(_, remove_filter_clicks: list[int], active_filters: OrderedDict[str, list[str]], label_checklist: list[str], task: str):
         """Modifies the active filters based on user interactions with the checklist and filter buttons."""
         # Case 1: checkboxes are adjusted and the "Add Filter" button is clicked, can mean adding or removing
         if ctx.triggered_id == "add-filter-btn":
-            active_filters = get_active_filters_from_checklist(
+            new_active_filters = get_active_filters_from_checklist(
                 task, label_checklist, active_filters)
-            buttons = build_filter_info_buttons(active_filters, editable=True)
-            return active_filters, buttons, label_checklist
+            if new_active_filters[task] == []:
+                return no_update, no_update, no_update
+            else:
+                active_filters = new_active_filters
+                buttons = build_filter_info_buttons(active_filters, editable=True)
+                return active_filters, buttons, label_checklist
         # Case 2: a filter button is clicked to remove a filter
         else:
             active_filters, label_to_remove = remove_filters_from_active_filter(
