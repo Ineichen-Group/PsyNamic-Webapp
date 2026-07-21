@@ -346,12 +346,11 @@ def study_grid(
 
             dbc.Button(
                 "Download CSV",
-                id=f"{grid_id}-download-btn",
+                id={"type": "download-btn", "index": grid_id},
                 color="primary",
                 className="mt-3",
             ),
-
-            dcc.Download(id=f"{grid_id}-download"),
+            dcc.Download(id={"type": "download-csv", "index": grid_id}),
 
             dbc.Row(
                 [
