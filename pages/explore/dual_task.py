@@ -6,7 +6,7 @@ from dash import dcc, html
 from plotly import express as px
 
 from components.graphs import add_interaction_annotation
-from components.layout import filter_button, studies_display
+from components.layout import filter_info_button, studies_display
 from data.queries import (get_all_labels, get_all_tasks, get_filtered_freq,
                           get_freq, get_ids)
 from style.colors import SECONDARY_COLOR, get_color, get_color_mapping
@@ -159,6 +159,6 @@ def get_dual_filters(task1: str = None, task1_label: str = None) -> html.Div:
         return []
     labels_task1 = get_all_labels(task1)
     task1_col_map = get_color_mapping(task1, labels_task1)
-    button = filter_button(
+    button = filter_info_button(
         task1_col_map[task1_label], task1_label, task1)
     return [button]
