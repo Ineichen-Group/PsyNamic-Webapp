@@ -45,18 +45,6 @@ Session = sessionmaker(bind=engine)
 
 SKIP_TASKS = ["Study Conclusion", "Clinical Trial Phase"]
 
-
-def log_time(func):
-    """Decorator to log the execution time of a function."""
-    def wrapper(*args, **kwargs):
-        start_time = datetime.now()
-        result = func(*args, **kwargs)
-        duration = (datetime.now() - start_time).total_seconds()
-        logging.info(f"{func.__name__} query took {duration:.4f} seconds")
-        return result
-    return wrapper
-
-
 def get_studies_details(
     ids: list[int] = None,
     start_row: int = 0,
