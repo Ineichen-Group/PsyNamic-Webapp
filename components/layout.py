@@ -1,20 +1,22 @@
-import dash_bootstrap_components as dbc
-import dash_ag_grid as dag
-from dash import html, dcc
 from collections import OrderedDict
-from data.queries import nr_studies, get_all_tasks, get_all_labels, get_ids, ner_tags_type, latest_update, get_filtered_study_ids
-from style.colors import get_color_mapping
 from typing import Optional
+
+import dash_ag_grid as dag
+import dash_bootstrap_components as dbc
+from dash import dcc, html
+
+from data.queries import (get_all_labels, get_all_tasks, get_ids,
+                          latest_update, ner_tags_type, nr_studies)
+from style.colors import get_color_mapping
 
 tasks = get_all_tasks()
 filter_data = OrderedDict({task: get_all_labels(task) for task in tasks})
 
 
-def header_layout():
+def header_layout() -> dbc.Navbar:
     return dbc.Navbar(
         dbc.Container(
             [
-                # link to home
                 dbc.NavbarBrand("PsyNamic", href="/"),
                 dbc.NavbarToggler(id="navbar-toggler"),
                 dbc.Collapse(
@@ -83,7 +85,7 @@ def header_layout():
     )
 
 
-def footer_layout():
+def footer_layout() -> html.Footer:
     return html.Footer(
         dbc.Container(
             html.Div(
@@ -102,7 +104,7 @@ def footer_layout():
     )
 
 
-def content_layout(list_of_children: list, id: str = "content", ids=None):
+def content_layout(list_of_children: list, id: str = "content") -> dbc.Container:
     stores = [
         dcc.Store(
             id="selected-ids",
@@ -119,7 +121,8 @@ def content_layout(list_of_children: list, id: str = "content", ids=None):
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = None):
+def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = []) -> html.Div:
+    """Builds the sections that display the active filters and info buttons in the studies display page."""
     children = [
         dbc.Row(
             className="mt-2 mb-2",
@@ -130,7 +133,7 @@ def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[d
                     className="text-start text-secondary",
                 ),
                 dbc.Col(
-                    id="active-filter-buttons",
+                    id="active-filters-buttons",
                     children=filter_buttons,
                     width=10,
                 ),
@@ -162,7 +165,8 @@ def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[d
     )
 
 
-def tag_component(tags: list[dict]):
+def tag_component(tags: list[dict]) -> html.Div:
+    """Builds the sections that display the active tags in the paper modal."""
     rows = [dbc.Row(
             className="d-flex align-items-center mt-2 mb-2",
             children=[
@@ -189,41 +193,75 @@ def tag_component(tags: list[dict]):
     )
 
 
-# def studies_display(study_tags: dict[int, list[html.Div]] = None, last_update: str = 'January 2024'):
-#     """
-#     Main display function with AG Grid for studies, expandable text, pagination, filtering, and CSV download.
-#     """
-#     # studies, nr = get_studies_details(study_tags)
-#     total_studies = nr_studies()
-
-#     return study_grid(total_studies, last_update, study_tags)
-
 def study_grid(
-        page_key: str,
-        nr_filtered_studies: int,
-        tags: bool = True,
-        default_sort_column: str = "year",
-        default_sort_order: str = "desc",
-        ):
+    page_key: str,
+    nr_filtered_studies: int,
+    grid_id: str = "studies-grid",
+    is_dosage: bool = False,
+    tags: bool = True,
+    default_sort_column: str = None,
+    default_sort_order: str = "desc",
+) -> html.Div:
+    """
+    A unified, shared data grid component for displaying research studies.
+    Can be configured as a generic study grid or a specialized dosage grid.
+    """
 
-    columns = [
-        {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
-        {"field": "abstract", "headerName": "Abstract", "filter": True,
-         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2},
-        {"field": "year", "headerName": "Year", "sortable": True, "width": 100},
-        {"field": "url", "headerName": "URL",
-            "sortable": False, "filter": False, "width": 150}
-    ]
+    if is_dosage:
+        columns = [
+            {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
+            {
+                "field": "abstract",
+                "headerName": "Abstract",
+                "filter": True,
+                "cellStyle": {"whiteSpace": "pre-line"},
+                "sortable": True,
+                "flex": 2,
+            },
+            {"field": "year", "headerName": "Year",
+                "sortable": True, "width": 100},
+            {"field": "dosage", "headerName": "Dosage", "sortable": True, "flex": 2},
+        ]
+
+        if default_sort_column is None:
+            default_sort_column = "dosage"
+
+    else:
+        columns = [
+            {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
+            {
+                "field": "abstract",
+                "headerName": "Abstract",
+                "filter": True,
+                "cellStyle": {"whiteSpace": "pre-line"},
+                "sortable": True,
+                "flex": 2,
+            },
+            {"field": "year", "headerName": "Year",
+                "sortable": True, "width": 100},
+            {
+                "field": "url",
+                "headerName": "URL",
+                "sortable": False,
+                "filter": False,
+                "width": 150,
+            },
+        ]
+
+        if default_sort_column is None:
+            default_sort_column = "year"
 
     if tags:
-        columns.append({
-            "headerName": "Tags",
-            "field": "tags",
-            "filter": False,
-            "sortable": False,
-            "width": 200,
-            "cellRenderer": "Tag",
-        })
+        columns.append(
+            {
+                "headerName": "Tags",
+                "field": "tags",
+                "filter": False,
+                "sortable": False,
+                "width": 200,
+                "cellRenderer": "Tag",
+            }
+        )
 
     ag_grid_options = {
         "pagination": True,
@@ -234,62 +272,102 @@ def study_grid(
             "sortable": True,
             "resizable": True,
         },
-        "sortModel": [{"colId": default_sort_column, "sort": default_sort_order}],
+        "sortModel": [
+            {
+                "colId": default_sort_column,
+                "sort": default_sort_order,
+            }
+        ],
     }
 
     return html.Div(
         [
             html.Div(
-                children=[
+                [
                     html.Span(
-                        "Found Studies: ",
+                        "Found Studies:",
                         className="d-inline",
-                        id="debug-field",
-                        style={"marginRight": "0.2rem"}
+                        id={
+                            "type": "study-grid-debug-field",
+                            "index": grid_id,
+                        },
+                        style={"marginRight": "0.2rem"},
                     ),
+
                     html.Span(
                         f"{nr_filtered_studies}",
                         className="d-inline",
-                        id="count-filtered",
+                        id={
+                            "type": "study-grid-count-filtered",
+                            "index": grid_id,
+                        },
                     ),
+
                     html.Span(
                         "(of total",
                         className="d-inline",
-                        style={"marginLeft": "0.25rem",
-                               "marginRight": "0.25rem"}
+                        style={
+                            "marginLeft": "0.25rem",
+                            "marginRight": "0.25rem",
+                        },
                     ),
+
                     html.Span(
                         f"{nr_studies()}",
-                        id="count-total",
                         className="d-inline",
-                        style={"marginRight": "0.25rem"}
+                        id={
+                            "type": "study-grid-count-total",
+                            "index": grid_id,
+                        },
+                        style={"marginRight": "0.25rem"},
                     ),
+
                     html.Span(
                         ")",
-                        className="d-inline"
+                        className="d-inline",
                     ),
                 ],
-                className="d-flex"
+                className="d-flex",
             ),
 
             dag.AgGrid(
-                id="studies-grid",
+                id={
+                    "type": "study-grid",
+                    "index": grid_id,
+                },
                 columnDefs=columns,
                 rowModelType="infinite",
                 dashGridOptions=ag_grid_options,
-                style={"height": "500px", "width": "100%"},
+                style={
+                    "height": "500px",
+                    "width": "100%",
+                },
             ),
 
-            dbc.Button("Download CSV", id="download-csv-button",
-                       color="primary", className="mt-3"),
-            dcc.Download(id="download-csv"),
+            dbc.Button(
+                "Download CSV",
+                id=f"{grid_id}-download-btn",
+                color="primary",
+                className="mt-3",
+            ),
+
+            dcc.Download(id=f"{grid_id}-download"),
 
             dbc.Row(
-                children=[html.Span(
-                    f'Last data update: {latest_update()}', className="d-flex justify-content-center")]
+                [
+                    html.Span(
+                        f"Last data update: {latest_update()}",
+                        className="d-flex justify-content-center",
+                    )
+                ]
             ),
-            paper_details_modal(),
-        ], id="studies-display", key=page_key
+
+            paper_details_modal(
+                id_prefix=grid_id,
+            ),
+        ],
+        id=f"{grid_id}-display",
+        key=page_key,
     )
 
 
@@ -299,11 +377,13 @@ def studies_display(
     filters: Optional[OrderedDict] = None,
     infos: Optional[OrderedDict] = None,
     tags: bool = True,
+    grid_id: str = "studies-grid",
+    is_dosage: bool = False,
 ) -> html.Div:
-    
+    """Builds the studies display page with a filter component and a study grid."""
+
     if ids is None:
         ids = get_ids()
-
 
     filter_buttons = build_filter_info_buttons(filters) if filters else []
     info_buttons = build_filter_info_buttons(infos) if infos else []
@@ -335,109 +415,19 @@ def studies_display(
             data=0,
         ),
         study_grid(
-            page_key,
-            len(ids),
+            page_key=page_key,
+            nr_filtered_studies=len(ids),
+            grid_id=grid_id,
+            is_dosage=is_dosage,
             tags=tags,
-            
         ),
     ])
 
 
-def dosage_study_grid(
-        nr_total_studies: int,
-        nr_filtered_studies: int,
-        last_update: str,
-        tags: bool = True,
-        default_sort_column: str = "Dosage",
-        default_sort_order: str = "desc"):
-
-    columns = [
-        {"field": "title", "headerName": "Title", "sortable": True, "flex": 1},
-        {"field": "abstract", "headerName": "Abstract", "filter": True,
-         "cellStyle": {"whiteSpace": "pre-line"}, "sortable": True, "flex": 2},
-        {"field": "year", "headerName": "Year", "sortable": True, "width": 100},
-        {"field": "dosage", "headerName": "Dosage", "sortable": True, "flex": 2},
-    ]
-
-    if tags:
-        columns.append({
-            "headerName": "Tags",
-            "field": "tags",
-            "filter": False,
-            "sortable": False,
-            "width": 200,
-            "cellRenderer": "Tag",
-        })
-
-    ag_grid_options = {
-        "pagination": True,
-        "paginationPageSize": 20,
-        "rowSelection": "single",
-        "cacheBlockSize": 20,
-        "defaultColDef": {
-            "sortable": True,
-            "resizable": True,
-        },
-        "sortModel": [{"colId": default_sort_column, "sort": default_sort_order}],
-    }
-
-    return html.Div(
-        [
-            html.Div(
-                children=[
-                    html.Span(
-                        "Found Studies: ",
-                        className="d-inline",
-                        style={"marginRight": "0.2rem"}
-                    ),
-                    html.Span(
-                        f"{nr_filtered_studies}",
-                        className="d-inline",
-                        id="count-filtered",
-                    ),
-                    html.Span(
-                        "(of total",
-                        className="d-inline",
-                        style={"marginLeft": "0.25rem",
-                               "marginRight": "0.25rem"}
-                    ),
-                    html.Span(
-                        f"{nr_total_studies}",
-                        id="count-total",
-                        className="d-inline",
-                        style={"marginRight": "0.25rem"}
-                    ),
-                    html.Span(
-                        ")",
-                        className="d-inline"
-                    ),
-                ],
-                className="d-flex",
-            ),
-
-            dag.AgGrid(
-                id='dosage-study-grid',
-                columnDefs=columns,
-                rowModelType="infinite",
-                dashGridOptions=ag_grid_options,
-                style={"height": "500px", "width": "100%"},
-            ),
-
-            dbc.Button("Download CSV", id="download-csv-button",
-                       color="primary", className="mt-3"),
-            dcc.Download(id="download-csv"),
-
-            dbc.Row(
-                children=[html.Span(
-                    f'Last data update: {last_update}', className="d-flex justify-content-center")]
-            ),
-            paper_details_modal(id="dosage-modal"),
-        ], id="studies-display"
-    )
-
-
-def checkbox_filter_selection():
-    # Build task options at runtime to avoid DB calls during module import
+def checkbox_filter_selection() -> html.Div:
+    """
+    Builds the checkbox menu in the filter page, allowing users to select tasks and labels for filtering studies.
+    """
     tasks = get_all_tasks() or []
     return dbc.Container([
         dbc.Row([
@@ -465,10 +455,15 @@ def checkbox_filter_selection():
     ], className="m-0 p-0")
 
 
-def get_tags(tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[str]]:
-    """Get consistent tag information for each task and label, including color mapping."""
+def get_tags(active_tags: OrderedDict[str, list[str]]) -> OrderedDict[str, list[str]]:
+    """Get consistent tag information for each task and label, including color mapping.
+
+    OrderedDict({'Study Type': ['Randomized-controlled trial (RCT)', 'Systematic review/meta-analysis', 'Other']})
+    ->
+    OrderedDict({'Study Type': [{'task': 'Study Type', 'label': 'Randomized-controlled trial (RCT)', 'color': 'rgb(85, 131, 102)'}, {'task': 'Study Type', 'label': 'Systematic review/meta-analysis', 'color': 'rgb(119, 157, 132)'}, {'task': 'Study Type', 'label': 'Other', 'color': 'rgb(199, 199, 199)'}]})
+    """
     ordered_tags = OrderedDict()
-    for task, labels in tags.items():
+    for task, labels in active_tags.items():
         all_labels_task = get_all_labels(task)
         task_color_mapping = get_color_mapping(task, all_labels_task)
         for label in labels:
@@ -493,7 +488,7 @@ def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool
     """
     consistent_tags = get_tags(tags)
     return [
-        filter_button(
+        filter_info_button(
             tag["color"],
             tag["label"],
             tag["task"],
@@ -504,7 +499,8 @@ def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool
     ]
 
 
-def filter_button(color: str, label: str, task: str, editable: bool = False):
+def filter_info_button(color: str, label: str, task: str, editable: bool = False):
+    """ Create info/filter button """
     children = [html.Span(f"{label}", style={"font-size": "16px"})]
     custom_style = {
         "borderRadius": "1rem",
@@ -538,27 +534,23 @@ def filter_button(color: str, label: str, task: str, editable: bool = False):
     )
 
 
-def paper_details_modal(id="paper-modal"):
+def paper_details_modal(id_prefix: str):
+
     return dbc.Modal(
         [
-            dbc.ModalHeader(dbc.ModalTitle(id="paper-title")),
+            dbc.ModalHeader(id={"type": "paper-title", "index": id_prefix}),
             dbc.ModalBody(
                 [
-                    html.Span("URL: "),
-                    html.A(
-                        id="paper-link",
-                        target="_blank",
-                        href="",),
-                    html.P(id="paper-abstract", className="abstract-text"),
-                    html.P(id="paper-dosage-normalization",
-                           className="dosage-normalization"),
-                    html.Div(id='modal-tags'),
+                    html.A(id={"type": "paper-link", "index": id_prefix}),
+                    html.Div(
+                        id={"type": "paper-abstract", "index": id_prefix}),
+                    html.Div(
+                        id={"type": "paper-dosage-normalization", "index": id_prefix}),
+                    html.Div(id={"type": "modal-tags", "index": id_prefix}),
                 ]
             ),
         ],
-        id=id,
-        size="xl",
-        is_open=False,
+        id={"type": "study-grid-modal", "index": id_prefix}, size="xl",
     )
 
 
@@ -609,15 +601,13 @@ def get_filter_buttons(task, labels):
     color_mapping = get_color_mapping(task, labels)
     buttons = []
     for label in labels:
-        buttons.append(filter_button(
+        buttons.append(filter_info_button(
             color_mapping[label], label, task))
     return buttons
 
 
 def build_tag_buttons(paper):
-    """
-    Extracted shared tag-building logic used in both modals.
-    """
+    """Extracted shared tag-building logic used in both modals."""
     tags = []
     prev_task = None
     task_dict = {"task": "", "buttons": [], "model": ""}
@@ -630,12 +620,12 @@ def build_tag_buttons(paper):
             prev_task = tag["task"]
             task_dict = {
                 "task": tag["task"],
-                "buttons": [filter_button(tag["color"], tag["label"], tag["task"])],
-                "model": "BERT",
+                "buttons": [filter_info_button(tag["color"], tag["label"], tag["task"])],
+                "model": "BERT",  # TODO: Replace with actual model name if available in the tag data
             }
         else:
             task_dict["buttons"].append(
-                filter_button(tag["color"], tag["label"], tag["task"])
+                filter_info_button(tag["color"], tag["label"], tag["task"])
             )
 
     if task_dict["task"]:

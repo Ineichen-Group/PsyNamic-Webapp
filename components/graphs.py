@@ -1,9 +1,7 @@
-import dash
-from dash import dcc, html
 import pandas as pd
-from plotly import express as px
-import plotly.graph_objects as go
 import plotly.express as px
+import plotly.graph_objects as go
+from dash import dcc
 
 
 def bar_chart(
@@ -32,26 +30,29 @@ def bar_chart(
     """
     if group:
         if group_order is not None:
-            data[group] = pd.Categorical(data[group], categories=group_order, ordered=True)
+            data[group] = pd.Categorical(
+                data[group], categories=group_order, ordered=True)
             data = data.sort_values([group, x])
 
-        order = data.groupby(x)[y].sum().sort_values(ascending=False).index.tolist()
+        order = data.groupby(x)[y].sum().sort_values(
+            ascending=False).index.tolist()
         data[x] = pd.Categorical(data[x], categories=order, ordered=True)
 
-        fig = px.bar(data, x=x, y=y, color=group, title=title, barmode='group', text=y)
+        fig = px.bar(data, x=x, y=y, color=group,
+                     title=title, barmode='group', text=y)
     else:
 
-        order = data.groupby(x)[y].sum().sort_values(ascending=False).index.tolist()
+        order = data.groupby(x)[y].sum().sort_values(
+            ascending=False).index.tolist()
         data[x] = pd.Categorical(data[x], categories=order, ordered=True)
 
         fig = px.bar(data, x=x, y=y, title=title, barmode='group', text=y)
 
-
     if 'order' in locals() and order:
         fig.update_xaxes(categoryorder='array', categoryarray=order)
     elif pd.api.types.is_categorical_dtype(data[x].dtype):
-        fig.update_xaxes(categoryorder='array', categoryarray=list(data[x].cat.categories))
-
+        fig.update_xaxes(categoryorder='array',
+                         categoryarray=list(data[x].cat.categories))
 
     # Update x and y axis labels
     fig.update_xaxes(title_text=x_label)
@@ -75,7 +76,6 @@ def bar_chart(
 
     fig.update_layout(plot_bgcolor='#f8f8f8')
     add_interaction_annotation(fig)
-
 
     if average:
         # add average number of participants per substance as a line
@@ -124,7 +124,8 @@ def box_plot_graph(
     # exclude Psychdelic mushrooms Unkown and LSD from the plot
     data = data[~data[x].isin(['Psychedelic mushrooms', 'Unknown'])]
 
-    fig = box_plot(data, x, y, title, x_label, y_label, group, color_mapping, height=height, width=width)
+    fig = box_plot(data, x, y, title, x_label, y_label, group,
+                   color_mapping, height=height, width=width)
     if add_annotation:
         add_interaction_annotation(fig)
     config = {
@@ -152,7 +153,8 @@ def box_plot(
     if not data_all.empty:
         try:
             order = (
-                data_all.groupby(x)[y].median().sort_values(ascending=False).index.tolist()
+                data_all.groupby(x)[y].median().sort_values(
+                    ascending=False).index.tolist()
             )
         except Exception:
             order = data_all[x].unique().tolist()
@@ -161,12 +163,14 @@ def box_plot(
 
     # ensure categorical ordering for consistent plotting
     if order:
-        data_all[x] = pd.Categorical(data_all[x], categories=order, ordered=True)
+        data_all[x] = pd.Categorical(
+            data_all[x], categories=order, ordered=True)
 
     # Use the full dataset for standard box calculation (quartiles and whiskers)
     data_filtered = data_all.copy()
     if order and x in data_filtered.columns:
-        data_filtered[x] = pd.Categorical(data_filtered[x], categories=order, ordered=True)
+        data_filtered[x] = pd.Categorical(
+            data_filtered[x], categories=order, ordered=True)
 
     # Create horizontal box plot from filtered data (y=category, x=numeric)
     # Use Plotly's default box calculation and show outliers ('outliers')
@@ -268,7 +272,8 @@ def box_plot(
 
     # enforce y category order and display largest median on top
     if order:
-        fig.update_yaxes(categoryorder='array', categoryarray=order, autorange='reversed')
+        fig.update_yaxes(categoryorder='array',
+                         categoryarray=order, autorange='reversed')
 
     # Apply requested size if provided
     layout_updates = {'plot_bgcolor': '#f8f8f8'}
@@ -315,4 +320,60 @@ def add_interaction_annotation(fig, x=0.88, y=0.86, ax=36, ay=-72, text="Interac
     fig.layout.annotations = tuple(existing)
 
 
+def extract_study_id(point: dict) -> int | None:
+    """Extract study ID from a Plotly point's customdata."""
+    customdata = point.get("customdata")
 
+    if customdata is None:
+        return None
+
+    if isinstance(customdata, (list, tuple)):
+        if not customdata:
+            return None
+        study_id = customdata[0]
+    else:
+        study_id = customdata
+
+    # Convert numpy scalar types if needed
+    if hasattr(study_id, "item"):
+        study_id = study_id.item()
+
+    return int(study_id)
+
+
+def get_ids_from_selected_data(selected_data: list[dict]) -> list[int]:
+    """Extract study IDs from a list of Plotly selectedData dicts."""
+    # data might look like this:
+    # [{'points': [{'curveNumber': 9, 'pointNumber': 1250, 'pointIndex': 1250, 'y': 'S-Ketamine', 'x': 87.5, 'customdata': [41265303]}, {'curveNumber': 10, 'pointNumber': 741, 'pointIndex': 741, 'y': 'S-Ketamine', 'x': 80.9, 'customdata': [39200909]}, {'curveNumber': 10, 'pointNumber': 5, 'pointIndex': 5, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1240]}, {'curveNumber': 10, 'pointNumber': 8, 'pointIndex': 8, 'y': 'S-Ketamine', 'x': 84, 'customdata': [5968]}, {'curveNumber': 10, 'pointNumber': 43, 'pointIndex': 43, 'y': 'S-Ketamine', 'x': 84, 'customdata': [5828]}, {'curveNumber': 10, 'pointNumber': 60, 'pointIndex': 60, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1238]}, {'curveNumber': 10, 'pointNumber': 68, 'pointIndex': 68, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2398]}, {'curveNumber': 10, 'pointNumber': 73, 'pointIndex': 73, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2053]}, {'curveNumber': 10, 'pointNumber': 77, 'pointIndex': 77, 'y': 'S-Ketamine', 'x': 84, 'customdata': [3818]}, {'curveNumber': 10, 'pointNumber': 123, 'pointIndex': 123, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1237]}, {'curveNumber': 10, 'pointNumber': 134, 'pointIndex': 134, 'y': 'S-Ketamine', 'x': 84, 'customdata': [8959]}, {'curveNumber': 10, 'pointNumber': 203, 'pointIndex': 203, 'y': 'S-Ketamine', 'x': 84, 'customdata': [30]}, {'curveNumber': 10, 'pointNumber': 254, 'pointIndex': 254, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1236]}, {'curveNumber': 10, 'pointNumber': 256, 'pointIndex': 256, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1239]}, {'curveNumber': 10, 'pointNumber': 284, 'pointIndex': 284, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1819]}, {'curveNumber': 10, 'pointNumber': 295, 'pointIndex': 295, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2049]}, {'curveNumber': 10, 'pointNumber': 311, 'pointIndex': 311, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2387]}, {'curveNumber': 10, 'pointNumber': 326, 'pointIndex': 326, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2542]}, {'curveNumber': 10, 'pointNumber': 332, 'pointIndex': 332, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2762]}, {'curveNumber': 10, 'pointNumber': 334, 'pointIndex': 334, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2763]}, {'curveNumber': 10, 'pointNumber': 363, 'pointIndex': 363, 'y': 'S-Ketamine', 'x': 84, 'customdata': [3819]}, {'curveNumber': 10, 'pointNumber': 437, 'pointIndex': 437, 'y': 'S-Ketamine', 'x': 84, 'customdata': [5967]}, {'curveNumber': 10, 'pointNumber': 687, 'pointIndex': 687, 'y': 'S-Ketamine', 'x': 84, 'customdata': [37551607]}, {'curveNumber': 10, 'pointNumber': 717, 'pointIndex': 717, 'y': 'S-Ketamine', 'x': 84, 'customdata': [38626563]}, {'curveNumber': 10, 'pointNumber': 724, 'pointIndex': 724, 'y': 'S-Ketamine', 'x': 84, 'customdata': [38819020]}, {'curveNumber': 10, 'pointNumber': 760, 'pointIndex': 760, 'y': 'S-Ketamine', 'x': 84, 'customdata': [39522447]}, {'curveNumber': 10, 'pointNumber': 842, 'pointIndex': 842, 'y': 'S-Ketamine', 'x': 84, 'customdata': [40601310]}, {'curveNumber': 10, 'pointNumber': 870, 'pointIndex': 870, 'y': 'S-Ketamine', 'x': 84, 'customdata': [40896221]}, {'curveNumber': 10, 'pointNumber': 938, 'pointIndex': 938, 'y': 'S-Ketamine', 'x': 84, 'customdata': [42095692]}], 'lassoPoints': {'x': [96.69093270137392, 93.07024304620151, 87.27713959792565, 82.57024304620151, 80.57886373585669, 81.12196718413254, 83.29438097723599, 89.81162235654634, 92.70817408068427, 92.70817408068427], 'y': [1.6545758928571428, 1.5260044642857142, 1.4938616071428572, 1.6706473214285713, 1.9438616071428572, 2.056361607142857, 2.1206473214285713, 2.1206473214285713, 1.9277901785714286, 1.8474330357142856]}}, None, None]
+    ids = set()
+
+    for graph_selection in selected_data:
+        if not graph_selection:
+            continue
+
+        for point in graph_selection.get("points", []):
+            study_id = extract_study_id(point)
+
+            if study_id is not None:
+                ids.add(study_id)
+
+    return list(ids)
+
+
+def get_ids_from_click_data(click_data: list[dict]) -> list[int]:
+    """Extract study IDs from a list of Plotly clickData dicts."""
+    # data might look like this:
+    # [{'points': [{'curveNumber': 9, 'pointNumber': 910, 'pointIndex': 910, 'x': 52.5, 'y': 'Ayahuasca', 'bbox': {'x0': 615, 'x1': 621, 'y0': 273.11, 'y1': 279.11}, 'customdata': [8696]}]}, None, None]
+    ids = set()
+
+    for graph_click in click_data:
+        if not graph_click:
+            continue
+
+        for point in graph_click.get("points", []):
+            study_id = extract_study_id(point)
+
+            if study_id is not None and study_id not in ids:
+                ids.add(study_id)
+
+    return list(ids)
