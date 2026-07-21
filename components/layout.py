@@ -133,7 +133,7 @@ def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[d
                     className="text-start text-secondary",
                 ),
                 dbc.Col(
-                    id="active-filters-buttons",
+                    id="active-filter-buttons",
                     children=filter_buttons,
                     width=10,
                 ),
