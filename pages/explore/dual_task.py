@@ -30,7 +30,7 @@ def dual_task_graphs(df_task1: pd.DataFrame = None, df_task2: pd.DataFrame = Non
             dbc.Col([
                 # Add a label for the dropdown
                 html.Label("Choose Task 1", className="mt-2"),
-                dcc.Dropdown(all_tasks, id="jux_dropdown1", placeholder="Select a Task", value=task1 if task1 else None, style={'width': '75%'}
+                dcc.Dropdown(all_tasks, id="jux_dropdown1", placeholder="Select a Task", value=task1 if task1 else None, style={'width': '75%'}, clearable=False
                              ),
                 dcc.Graph(id='task1-pie-graph',
                           figure=create_pie_chart(df_task1, task1, task1_col_map) if df_task1 is not None else {}),
@@ -38,7 +38,7 @@ def dual_task_graphs(df_task1: pd.DataFrame = None, df_task2: pd.DataFrame = Non
             dbc.Col([
                 html.Label("Choose Task 2", className="mt-2"),
                 dcc.Dropdown(all_tasks, id="jux_dropdown2", placeholder="Select a Task",
-                             value=task2 if task2 else None, style={'width': '75%'}),
+                             value=task2 if task2 else None, style={'width': '75%'}, clearable=False),
                 dcc.Graph(id='task2-bar-graph',
                           figure=create_bar_chart(df_task2, task2, task2_color) if df_task2 is not None else {}),
             ], width=6)
