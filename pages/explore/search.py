@@ -15,7 +15,6 @@ def search_layout():
                     color='primary', n_clicks=0), width=3),
         ], className='mb-3'),
 
-        # results list (scrollable)
         html.Div(id='search-results', className='mb-4', style={
             'display': 'none',
             'maxHeight': '400px',
@@ -26,8 +25,6 @@ def search_layout():
             'backgroundColor': '#fff'
         }),
 
-        # paper details area (non-modal)
         html.Div(id='search-paper-details'),
-        # store last search results so browser back can restore
         dcc.Store(id='last-search-store', data=None, storage_type='memory')
     ], className='container', id='search-layout')
