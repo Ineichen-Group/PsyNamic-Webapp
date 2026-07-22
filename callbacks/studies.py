@@ -1,9 +1,9 @@
 
-from dash import ctx
+from dash import ctx, no_update
 from dash.dependencies import Input, Output, State
 
 from callbacks.utils import log_time
-from data.queries import get_filtered_study_ids
+from data.queries import get_filtered_study_ids, get_ids
 
 
 def register(app):
@@ -25,14 +25,16 @@ def register(app):
         grid_refresh: int,
     ):
         """Callback to update the filtered study IDs based on active filters or selected IDs (in graphs)."""
+       
         trigger = ctx.triggered_id
-        # layout initialization
-        if trigger is None:
-            return filtered_study_ids, grid_refresh
-
+        if trigger is None and not active_filters:
+            return no_update, no_update
         elif trigger == "active-filters":
-            new_ids = get_filtered_study_ids(active_filters)
-            return new_ids, (grid_refresh or 0) + 1
+            if not active_filters:
+                new_ids = get_ids()
+            else:
+                new_ids = get_filtered_study_ids(active_filters)
+                return new_ids, (grid_refresh or 0) + 1
 
         elif trigger == "selected-ids":
             new_ids = selected_ids if selected_ids else None

@@ -175,7 +175,6 @@ def tag_component(tags: list[dict]) -> html.Div:
                     width="auto",
                 ),
                 dbc.Col(
-                    id="active-filters-bli-blub",
                     children=tag['buttons'],
                     width="auto",
                 ),
