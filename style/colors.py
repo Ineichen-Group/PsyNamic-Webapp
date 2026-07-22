@@ -17,10 +17,10 @@ TASK2COLOR = {
     "Data Collection": sequential.Magenta,
     "Number of Participants": sequential.Bluered,
     "Sex of Participants": sequential.Mint,
-    "Age of Participants": sequential.Sunsetdark, # Fix
+    "Age of Participants": sequential.Sunsetdark,
     "Substances": sequential.Purples,
     "Application Form": sequential.Burgyl,
-    "Regimen": sequential.Brwnyl, # Fix
+    "Regimen": sequential.Brwnyl,
     "Setting": sequential.PuBu,
     "Substance Naivety": sequential.Darkmint,
     "Condition": sequential.Oranges,

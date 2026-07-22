@@ -44,6 +44,9 @@ Session = sessionmaker(bind=engine)
 
 
 SKIP_TASKS = ["Study Conclusion", "Clinical Trial Phase"]
+DISPLAY_LABELS = {
+    'Party setting': 'Recreational setting'
+}
 
 
 def get_studies_details(
@@ -246,10 +249,14 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
     study_tags = {}
     session = Session()
 
+    db_tags = {task: [database_label(label) for label in labels] for task, labels in tags.items()}
+    display_tags = {task: [display_label(label) for label in labels] for task, labels in tags.items()}
+    print(db_tags)
+    print(display_tags)
     try:
 
         valid_task_label_pairs = [
-            (task, label) for task, labels in tags.items() for label in labels
+            (task, label) for task, labels in db_tags.items() for label in labels
         ]
 
         query = session.query(
@@ -258,7 +265,7 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
             Prediction.label
         ).filter(
             and_(
-                Prediction.task.in_(tags.keys()),
+                Prediction.task.in_(db_tags.keys()),
                 tuple_(Prediction.task, Prediction.label).in_(
                     valid_task_label_pairs),
                 Prediction.paper_id.in_(ids)
@@ -271,16 +278,17 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
         # TODO: cache color mappings
         if map_all_labels:
             color_mappings = {task: get_color_mapping(
-                task, get_all_labels(task)) for task, labels in tags.items()}
+                task, get_all_labels(task)) for task, labels in display_tags.items()}
         else:
             color_mappings = {task: get_color_mapping(
-                task, labels) for task, labels in tags.items()}
+                task, labels) for task, labels in display_tags.items()}
 
+        print(f"Color mappings: {color_mappings}")
         for paper_id, task, label in results:
             tag_info = {
                 'task': task,
-                'label': label,
-                'color': color_mappings[task][label],
+                'label': display_label(label),
+                'color': color_mappings[task][display_label(label)],
             }
 
             if paper_id not in study_tags:
@@ -294,11 +302,11 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
         ordered_study_tags = {}
         for paper_id, task_dict in study_tags.items():
             ordered_tags = []
-            for task, labels in tags.items():
+            for task, labels in display_tags.items():
                 if task in task_dict:
                     for label in labels:
                         for tag_info in task_dict[task]:
-                            if tag_info['label'] == label:
+                            if tag_info["label"] == label:
                                 ordered_tags.append(tag_info)
             ordered_study_tags[paper_id] = ordered_tags
 
@@ -313,6 +321,7 @@ def get_filtered_label_frequencies(task: str, filter_task: str, filter_task_labe
     based on the filter task and label.
     """
     session = Session()
+    filter_task_label = database_label(filter_task_label)
     try:
         # Explicitly use select() for the subquery
         subquery = (
@@ -352,12 +361,14 @@ def get_task_label_frequencies(task: str, labels: list[str] = None) -> pd.DataFr
             Prediction.task == task,
         )
         if labels:
+            labels = [database_label(l) for l in labels]
             query = query.filter(Prediction.label.in_(labels))
         query = query.group_by(Prediction.label).order_by(
             func.count(Prediction.id).desc())
         result = pd.read_sql(query.statement, session.bind)
         result.rename(
             columns={'label': task, 'Frequency': 'Frequency'}, inplace=True)
+        result[task] = result[task].map(display_label)
         return result
 
     except Exception as e:
@@ -376,6 +387,7 @@ def get_predictions(task: str) -> pd.DataFrame:
             Prediction.task == task,
         )
         result = pd.read_sql(query.statement, session.bind)
+        result["label"] = result["label"].map(display_label)
         return result
     finally:
         session.close()
@@ -390,6 +402,7 @@ def get_predictions_by_ids(task: str, ids: list[int]) -> pd.DataFrame:
             Prediction.paper_id.in_(ids),
         )
         result = pd.read_sql(query.statement, session.bind)
+        result["label"] = result["label"].map(display_label)
         return result
     finally:
         session.close()
@@ -399,7 +412,7 @@ def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd
     """Get the predictions where task is labels, group by group task and labels. 
     The output is a dataframe with columns group_task, label, and Study_ID (without frequency)."""
     session = Session()
-
+    labels = [database_label(l) for l in labels]
     try:
         use_rest = 'Other' in labels if labels else False
 
@@ -438,6 +451,8 @@ def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd
 
         # Convert results to a Pandas DataFrame, now including Study_ID
         df = pd.DataFrame(result, columns=[group_task, task, "Study_ID"])
+        df[task] = df[task].map(display_label)
+        df[group_task] = df[group_task].map(display_label)
         return df
 
     finally:
@@ -451,10 +466,12 @@ def get_ids(task: str = None, label: str = None) -> list[int]:
         if task is not None:
             query = query.filter(Prediction.task == task)
         if label is not None:
+            label = database_label(label)
             query = query.filter(Prediction.label == label)
         return [r[0] for r in query.distinct().all()]
     finally:
         session.close()
+
 
 def get_all_tasks() -> list[str]:
     """Get all unique tasks from the predictions."""
@@ -475,7 +492,7 @@ def get_all_labels(task: str) -> list[str]:
         query = session.query(Prediction.label).filter(
             Prediction.task == task).distinct()
         labels = [item.label for item in query.all()]
-        return labels
+        return [display_label(label) for label in labels]
     finally:
         session.close()
 
@@ -522,6 +539,15 @@ def get_study_count():
         return result[0]
     finally:
         session.close()
+
+
+def display_label(label: str) -> str:
+    return DISPLAY_LABELS.get(label, label)
+
+
+def database_label(label: str) -> str:
+    reverse = {v: k for k, v in DISPLAY_LABELS.items()}
+    return reverse.get(label, label)
 
 
 def search_papers(query: str, start_row: int = 0, end_row: int = 50):
@@ -587,6 +613,10 @@ def search_papers(query: str, start_row: int = 0, end_row: int = 50):
 def get_filtered_study_ids(filter: OrderedDict[str, list[str]], mode="and") -> list[int]:
     if not filter:
         return []
+    filter = {
+        task: [database_label(label) for label in labels]
+        for task, labels in filter.items()
+    }
 
     valid_pairs = [(task, label)
                    for task, labels in filter.items() for label in labels]
@@ -747,6 +777,7 @@ def get_dosage_samples(
 
     EXCLUDED_SUBSTANCES = {'Unknown', 'Analogue', 'Combination Therapy'}
     session = Session()
+    substances = [database_label(s) for s in substances]
 
     try:
         # Base query: place select_from() before distinct() and filter()
@@ -823,6 +854,7 @@ def get_dosage_samples(
         # Secondary Python drop_duplicates just in case to_mg math yielded identical normalized values
         df = df.drop_duplicates(
             subset=['Substance', 'Dosage_mg', 'Unit', 'Study_ID', 'Dose_Type', 'Norm_Text'])
+        df["Substance"] = df["Substance"].map(display_label)
 
         return df
 
