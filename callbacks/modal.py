@@ -145,7 +145,7 @@ def register(app):
         """Callback to toggle the collapse of the modal sections based on the button clicks."""
 
         if not ctx.triggered:
-            return is_open_list
+            return no_update
 
         button_id = ctx.triggered_id
         index = int(button_id.split('{"index":')[1].split(',')[0])

@@ -1,4 +1,5 @@
 from dash.dependencies import MATCH, Input, Output, State
+from dash import ctx, no_update
 
 from callbacks.utils import log_time
 from data.queries import (get_ids, get_studies_details,
@@ -29,10 +30,7 @@ def register(app):
     ):
         """Callback to update the study grid with filtered and sorted data based on user interactions."""
         if study_grid_request is None:
-            return 0, {
-                "rowData": [],
-                "rowCount": 0,
-            }
+            return no_update, no_update
 
         if filtered_ids is None:
             filtered_ids = get_ids()
@@ -43,7 +41,7 @@ def register(app):
 
         if is_dosage:
             studies = get_studies_details_ner(
-                ids=filtered_ids if filtered_ids else [],
+                ids=filtered_ids,
                 start_row=study_grid_request["startRow"],
                 end_row=study_grid_request["endRow"],
                 sort_model=study_grid_request.get(
