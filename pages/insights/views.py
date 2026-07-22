@@ -57,7 +57,8 @@ def rct_view() -> html.Div:
     )
     task = "Study Type"
     key = "rct-view"
-    labels = ["Randomized-controlled trial (RCT)", "Systematic review/meta-analysis", "Other"]
+    labels = [
+        "Randomized-controlled trial (RCT)", "Systematic review/meta-analysis", "Other"]
     group_task = "Substances"
     graph_title = "Number of RCTs and Systematic Reviews per Substance"
 
@@ -329,10 +330,13 @@ def dosages_view() -> html.Div:
         substances = sorted(df["Substance"].dropna().unique().tolist())
         lsd_subs = ["LSD"]
         ibogaine_subs = ["Ibogaine"]
-        rest_subs = [s for s in substances if s not in lsd_subs + ibogaine_subs]
+        rest_subs = [
+            s for s in substances if s not in lsd_subs + ibogaine_subs]
 
         graphs = []
-        groups = [rest_subs, ibogaine_subs, lsd_subs]
+        groups = [ibogaine_subs, rest_subs, lsd_subs]
+
+        ids = set()
 
         for i, subs in enumerate(groups):
             sub_df = df[df["Substance"].isin(subs)]
@@ -342,6 +346,7 @@ def dosages_view() -> html.Div:
             h = 200 if subs in (ibogaine_subs, lsd_subs) else 700
             add_ann = subs not in (ibogaine_subs, lsd_subs)
             plot_id = {"type": "dosage-box-plot", "index": i}
+            ids.update(sub_df["Study_ID"].unique().tolist())
 
             g = box_plot_graph(
                 sub_df,
@@ -364,15 +369,15 @@ def dosages_view() -> html.Div:
             rows = [
                 dbc.Row(
                     dbc.Col(g, width=12),
-                    className="py-1",
-                    style={"marginBottom": "6px"},
+                    className="py-0",
+                    style={"marginBottom": "0px"},
                 )
                 for g in graphs
             ]
             graph = html.Div(rows, style={"marginTop": "6px"})
 
     return html.Div([
-        html.H1(f"{title}", className="my-4"),
+        html.H1(f"{title}", className="my-0"),
         graph,
         dbc.Row([
             dbc.Col(
@@ -390,5 +395,6 @@ def dosages_view() -> html.Div:
             grid_id="dosage-study-grid",
             is_dosage=True,
             tags=True,
+            ids=list(ids)
         ),
     ])
