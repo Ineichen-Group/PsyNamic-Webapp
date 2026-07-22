@@ -251,8 +251,6 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
 
     db_tags = {task: [database_label(label) for label in labels] for task, labels in tags.items()}
     display_tags = {task: [display_label(label) for label in labels] for task, labels in tags.items()}
-    print(db_tags)
-    print(display_tags)
     try:
 
         valid_task_label_pairs = [
@@ -283,7 +281,6 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
             color_mappings = {task: get_color_mapping(
                 task, labels) for task, labels in display_tags.items()}
 
-        print(f"Color mappings: {color_mappings}")
         for paper_id, task, label in results:
             tag_info = {
                 'task': task,
