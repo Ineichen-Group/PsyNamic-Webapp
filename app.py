@@ -73,7 +73,10 @@ app.logger.setLevel(logging.DEBUG)
 app.layout = html.Div([
     header_layout(),
     dcc.Location(id='url', refresh=False),
-    dcc.Loading(id='loading', type='circle', children=html.Div(id='page-content', className='mx-5 my-2')),
+    html.Div(
+        id='page-content',
+        className='mx-5 my-2'
+    ),
     footer_layout()
 ])
 
