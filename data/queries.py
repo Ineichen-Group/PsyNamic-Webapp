@@ -2,14 +2,15 @@
 This module contains database query functions for the PsyNamic-Webapp.
 """
 
+import json
 import os
 import sys
 from collections import OrderedDict
+from pathlib import Path
 
 import pandas as pd
 from dotenv import load_dotenv
-from sqlalchemy import (and_, case, create_engine, extract, func,
-                        or_, tuple_)
+from sqlalchemy import and_, case, create_engine, extract, func, or_, tuple_
 from sqlalchemy.orm import load_only, sessionmaker
 from sqlalchemy.sql import select
 
@@ -46,6 +47,20 @@ Session = sessionmaker(bind=engine)
 SKIP_TASKS = ["Study Conclusion", "Clinical Trial Phase"]
 DISPLAY_LABELS = {
     'Party setting': 'Recreational setting'
+}
+MODEL_PATHS = Path(__file__).parent.parent / "pipeline" / "model_paths.json"
+with open(MODEL_PATHS) as f:
+    MODEL_CONFIG = json.load(f)
+
+LABEL_ORDER = {
+    entry["task"]: [
+        label
+        for _, label in sorted(
+            entry["id2label"].items(),
+            key=lambda x: int(x[0])
+        )
+    ]
+    for entry in MODEL_CONFIG
 }
 
 
@@ -249,8 +264,10 @@ def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool =
     study_tags = {}
     session = Session()
 
-    db_tags = {task: [database_label(label) for label in labels] for task, labels in tags.items()}
-    display_tags = {task: [display_label(label) for label in labels] for task, labels in tags.items()}
+    db_tags = {task: [database_label(label) for label in labels]
+               for task, labels in tags.items()}
+    display_tags = {task: [display_label(
+        label) for label in labels] for task, labels in tags.items()}
     try:
 
         valid_task_label_pairs = [
@@ -409,7 +426,8 @@ def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd
     """Get the predictions where task is labels, group by group task and labels. 
     The output is a dataframe with columns group_task, label, and Study_ID (without frequency)."""
     session = Session()
-    labels = [database_label(l) for l in labels]
+    if labels:
+        labels = [database_label(l) for l in labels]
     try:
         use_rest = 'Other' in labels if labels else False
 
@@ -483,11 +501,15 @@ def get_all_tasks() -> list[str]:
 
 
 def get_all_labels(task: str) -> list[str]:
-    """Get all unique labels for a given task."""
+    """Return labels in the order defined in model_paths.json."""
+    if task in LABEL_ORDER:
+        return [display_label(l) for l in LABEL_ORDER[task]]
+
     session = Session()
     try:
         query = session.query(Prediction.label).filter(
-            Prediction.task == task).distinct()
+            Prediction.task == task
+        ).distinct()
         labels = [item.label for item in query.all()]
         return [display_label(label) for label in labels]
     finally:
