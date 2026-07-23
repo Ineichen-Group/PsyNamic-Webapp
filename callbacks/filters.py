@@ -86,17 +86,21 @@ def register(app):
         if ctx.triggered_id == "add-filter-btn":
             new_active_filters = get_active_filters_from_checklist(
                 task, label_checklist, active_filters)
-            if new_active_filters[task] == []:
+            if new_active_filters == active_filters:
                 return no_update, no_update, no_update
+            elif len(new_active_filters) == 1 and new_active_filters[task] == []:
+                return {}, [], []
             else:
                 active_filters = new_active_filters
-                buttons = build_filter_info_buttons(active_filters, editable=True, map_all_labels=False)
+                buttons = build_filter_info_buttons(
+                    active_filters, editable=True, map_all_labels=False)
                 return active_filters, buttons, label_checklist
         # Case 2: a filter button is clicked to remove a filter
         else:
             active_filters, label_to_remove = remove_filters_from_active_filter(
                 active_filters, remove_filter_clicks)
-            buttons = build_filter_info_buttons(active_filters, editable=True, map_all_labels=False)
+            buttons = build_filter_info_buttons(
+                active_filters, editable=True, map_all_labels=False)
             if label_to_remove in label_checklist:
                 label_checklist.remove(label_to_remove)
             return active_filters, buttons, label_checklist
