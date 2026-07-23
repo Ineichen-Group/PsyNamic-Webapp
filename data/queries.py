@@ -774,7 +774,8 @@ def get_dosage_samples(
 
     EXCLUDED_SUBSTANCES = {'Unknown', 'Analogue', 'Combination Therapy'}
     session = Session()
-    substances = [database_label(s) for s in substances]
+    if substances:
+        substances = [database_label(s) for s in substances]
 
     try:
         # Base query: place select_from() before distinct() and filter()
