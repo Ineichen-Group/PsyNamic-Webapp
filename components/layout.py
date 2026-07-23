@@ -263,6 +263,7 @@ def study_grid(
         )
 
     ag_grid_options = {
+        "rowModelType": "infinite",
         "pagination": True,
         "paginationPageSize": 20,
         "rowSelection": "single",
@@ -383,8 +384,10 @@ def studies_display(
     if ids is None:
         ids = get_ids()
 
-    filter_buttons = build_filter_info_buttons(filters, map_all_labels=False) if filters else []
-    info_buttons = build_filter_info_buttons(infos, map_all_labels=False) if infos else []
+    filter_buttons = build_filter_info_buttons(
+        filters, map_all_labels=False) if filters else []
+    info_buttons = build_filter_info_buttons(
+        infos, map_all_labels=False) if infos else []
 
     return html.Div([
         html.H3("Filtered Studies"),
@@ -412,12 +415,16 @@ def studies_display(
             id="grid-refresh",
             data=0,
         ),
-        study_grid(
-            page_key=page_key,
-            nr_filtered_studies=len(ids),
-            grid_id=grid_id,
-            is_dosage=is_dosage,
-            tags=tags,
+        dcc.Loading(
+            id=f"{grid_id}-loading",
+            type="circle",
+            children=study_grid(
+                page_key=page_key,
+                nr_filtered_studies=len(ids),
+                grid_id=grid_id,
+                is_dosage=is_dosage,
+                tags=tags,
+            ),
         ),
     ])
 
@@ -495,7 +502,7 @@ def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool
             tag["task"],
             editable=editable
         )
-        for task in tags
+        for task in tags if tags[task]
         for tag in consistent_tags[task]
     ]
 
@@ -592,7 +599,6 @@ def highlighted_text(text: str, cutpoints: list) -> html.Span:
         elements.append(html.Span(text[last_index:]))
 
     return html.Span(elements)
-
 
 
 def build_tag_buttons(paper):
