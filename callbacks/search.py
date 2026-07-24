@@ -33,7 +33,7 @@ def register(app):
 
     @app.callback(
         Output("search-results", "children", allow_duplicate=True),
-        Output("search-results", "style", allow_duplicate=True),  # FIX: Update style, not className
+        Output("search-results", "style", allow_duplicate=True),
         Output("search-paper-details", "children", allow_duplicate=True),
         Output("last-search-store", "data", allow_duplicate=True),
         Input("search-button", "n_clicks"),
