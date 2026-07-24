@@ -49,14 +49,16 @@ def build_modal_components(paper: dict, grid_type: str) -> tuple[list, html.Div]
 
     body_content = html.Div(
         [
-            html.Div(
+            html.Div([
+                html.Strong("URL: "),
                 html.A(
                     paper_url,
                     href=paper_url,
                     target="_blank",
                     rel="noopener noreferrer",
                 ),
-                className="modal-paper-link",
+            ],
+            className="modal-paper-link",
             )
             if paper_url
             else None,

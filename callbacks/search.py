@@ -64,7 +64,6 @@ def register(app):
                 )
             )
 
-        # Return visible_results_style to override "display: none"
         return dbc.ListGroup(items), visible_results_style, "", studies
 
     @app.callback(

@@ -18,8 +18,8 @@
     line-height: 1.2;
     display: inline-flex;
     align-items: center;
-    padding: 6px 7px;
-    border-radius: 4px;
+    padding: 5px 7px 7px 7px;
+    border-radius: 5px;
     color: black;
     margin: 2px;
 }

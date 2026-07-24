@@ -661,49 +661,49 @@ def build_paper_details(paper: dict, tags_component=None) -> html.Div:
         raw_abstract, cutpoints=cutpoints)
 
     return html.Div(
-            [
-                html.H3(full_title, className="mb-2"),
-                (
-                    html.Div(
-                        [
-                            html.Strong("URL: "),
-                            html.A(
-                                paper_url,
-                                href=paper_url,
-                                target="_blank",
-                                rel="noopener noreferrer",
-                            ),
-                        ],
-                        className="modal-paper-link mb-2",
-                    )
-                    if paper_url
-                    else None
-                ),
-                html.Div(
-                    f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}"
-                    + (f" | DOI: {doi}" if doi else ""),
-                    className="text-muted small mb-3",
-                ),
+        [
+            html.H3(full_title, className="mb-2"),
+            (
                 html.Div(
                     [
-                        html.H4("Abstract", className="fw-bold mb-2"),
-                        abstract_content,
+                        html.Strong("URL: "),
+                        html.A(
+                            paper_url,
+                            href=paper_url,
+                            target="_blank",
+                            rel="noopener noreferrer",
+                        ),
                     ],
-                    className="modal-paper-abstract mb-3",
-                ),
-                (
-                    html.Div(
-                        [
-                            html.H4("Tags", className="fw-bold mb-2"),
-                            tags_component,
-                        ],
-                        className="modal-tags",
-                    )
-                    if tags_component
-                    else None
-                ),
-            ], style = {"border": "1px solid #ccc", "padding": "1rem", "borderRadius": "0.5rem"}
-        )
+                    className="modal-paper-link mb-2",
+                )
+                if paper_url
+                else None
+            ),
+            html.Div(
+                f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}"
+                + (f" | DOI: {doi}" if doi else ""),
+                className="text-muted small mb-3",
+            ),
+            html.Div(
+                [
+                    html.H4("Abstract", className="fw-bold mb-2"),
+                    abstract_content,
+                ],
+                className="modal-paper-abstract mb-3",
+            ),
+            (
+                html.Div(
+                    [
+                        html.H4("Tags", className="fw-bold mb-2"),
+                        tags_component,
+                    ],
+                    className="modal-tags",
+                )
+                if tags_component
+                else None
+            ),
+        ], style={"border": "1px solid #ccc", "padding": "1rem", "borderRadius": "0.5rem"}
+    )
 
 
 def structured_highlighted_text(text, cutpoints):
@@ -837,6 +837,44 @@ def build_structured_abstract(text: str, cutpoints: list | None = None) -> html.
 
     children = []
 
+    def get_section_cutpoints(sec_start: int, sec_end: int) -> list:
+        sec_cps = []
+        for cp in cutpoints:
+            cp_start, cp_end = cp.get("start", 0), cp.get("end", 0)
+            if cp_end <= sec_start or cp_start >= sec_end:
+                continue
+
+            c_start = max(sec_start, cp_start) - sec_start
+            c_end = min(sec_end, cp_end) - sec_start
+
+            if c_end > c_start:
+                sec_cps.append({
+                    **cp,
+                    "start": c_start,
+                    "end": c_end,
+                })
+        return sec_cps
+
+    first_match_start = matches[0].start()
+    if first_match_start > 0:
+        raw_prefix = text[:first_match_start]
+        trailing_spaces = len(raw_prefix) - len(raw_prefix.rstrip())
+        sec_end = first_match_start - trailing_spaces
+        sec_start = 0
+
+        prefix_text = text[sec_start:sec_end].strip()
+        if prefix_text:
+            prefix_cutpoints = get_section_cutpoints(sec_start, sec_end)
+            children.append(
+                html.Div(
+                    highlighted_text(prefix_text, prefix_cutpoints)
+                    if prefix_cutpoints
+                    else prefix_text,
+                    style={"marginBottom": "0.35rem"},
+                    className="abstract-section abstract-prefix",
+                )
+            )
+
     for i, match in enumerate(matches):
         heading = match.group(1).upper()
 
@@ -852,23 +890,7 @@ def build_structured_abstract(text: str, cutpoints: list | None = None) -> html.
         sec_end = raw_end - trailing_spaces
 
         section_text = text[sec_start:sec_end]
-
-        # Filter and project cutpoints for the current section window
-        section_cutpoints = []
-        for cp in cutpoints:
-            cp_start, cp_end = cp.get("start", 0), cp.get("end", 0)
-            if cp_end <= sec_start or cp_start >= sec_end:
-                continue
-
-            c_start = max(sec_start, cp_start) - sec_start
-            c_end = min(sec_end, cp_end) - sec_start
-
-            if c_end > c_start:
-                section_cutpoints.append({
-                    **cp,
-                    "start": c_start,
-                    "end": c_end,
-                })
+        section_cutpoints = get_section_cutpoints(sec_start, sec_end)
 
         children.append(
             html.Div(
