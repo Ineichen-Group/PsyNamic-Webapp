@@ -639,6 +639,12 @@ def build_tag_buttons(paper):
 
     return tag_component(tags)
 
+def id_bar(internal_id: str, pubmed_id: str, doi: str) -> html.Div:
+    return html.Div(
+                f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}"
+                + (f" | DOI: {doi}" if doi else ""),
+                className="text-muted mb-2",
+            )
 
 def build_paper_details(paper: dict, tags_component=None) -> html.Div:
     """Build detailed paper view for search/explore page using unified abstract styling."""
@@ -662,6 +668,7 @@ def build_paper_details(paper: dict, tags_component=None) -> html.Div:
 
     return html.Div(
         [
+            id_bar(internal_id, pubmed_id, doi),
             html.H3(full_title, className="mb-2"),
             (
                 html.Div(
@@ -679,11 +686,7 @@ def build_paper_details(paper: dict, tags_component=None) -> html.Div:
                 if paper_url
                 else None
             ),
-            html.Div(
-                f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}"
-                + (f" | DOI: {doi}" if doi else ""),
-                className="text-muted small mb-3",
-            ),
+
             html.Div(
                 [
                     html.H4("Abstract", className="fw-bold mb-2"),

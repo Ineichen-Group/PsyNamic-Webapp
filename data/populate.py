@@ -304,7 +304,7 @@ def populate_studies(session: Session, file: str, studies_id_column: str):
             date=date,
             entrez_year=int(row['entrez_year']) if 'entrez_year' in row and pd.notna(
                 row['entrez_year']) else None,
-            authors='',
+            authors=row['authors'] if 'authors' in row else '',
             link_to_fulltext='',
             link_to_pubmed=row['pubmed_url'],
             retrieval_id=batch.id,

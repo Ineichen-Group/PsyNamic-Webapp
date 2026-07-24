@@ -14,6 +14,7 @@ from sqlalchemy import and_, case, create_engine, extract, func, or_, tuple_
 from sqlalchemy.orm import load_only, sessionmaker
 from sqlalchemy.sql import select
 
+from data.helper import format_author_citation
 from style.colors import get_color_mapping
 
 from .dosage_norm import normalize_relative_weight_dosages, to_mg
@@ -123,7 +124,7 @@ def get_studies_details(
 
         query = query.options(load_only(
             Paper.id, Paper.title, Paper.abstract, Paper.prediction_input,
-            Paper.key_terms, Paper.doi,
+            Paper.key_terms, Paper.doi, Paper.authors,
             Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url,
             Paper.date
         ))
@@ -143,6 +144,7 @@ def get_studies_details(
                 'id': paper.id,
                 'title': paper.title,
                 'abstract': paper.abstract,
+                'authors': format_author_citation(paper.authors),
                 'prediction_input': paper.prediction_input,
                 'key_terms': paper.key_terms,
                 'doi': paper.doi,
@@ -221,7 +223,7 @@ def get_studies_details_ner(
 
         # Specify which fields to load into the Paper instances
         query = query.options(load_only(
-            Paper.id, Paper.title, Paper.abstract,
+            Paper.id, Paper.title, Paper.abstract, Paper.authors,
             Paper.key_terms, Paper.doi, Paper.date,
             Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
         ))
@@ -241,6 +243,7 @@ def get_studies_details_ner(
                 'id': study.id,
                 'title': study.title,
                 'abstract': study.abstract,
+                'authors': format_author_citation(study.authors),
                 'prediction_input': study.prediction_input,
                 'key_terms': study.key_terms,
                 'doi': study.doi,
@@ -638,19 +641,19 @@ def search_papers(query: str, start_row: int = 0, end_row: int = 50):
                 query_stmt = query_stmt.limit(limit_value)
 
         query_stmt = query_stmt.options(load_only(
-            Paper.id, Paper.title, Paper.abstract,
+            Paper.id, Paper.title, Paper.abstract, Paper.authors,
             Paper.key_terms, Paper.doi, Paper.date,
             Paper.pubmed_id, Paper.link_to_pubmed, Paper.other_url
         ))
 
         studies = query_stmt.all()
-
         # no tags by default
         results = [
             {
                 'id': s.id,
                 'title': s.title,
                 'abstract': s.abstract,
+                'authors': format_author_citation(s.authors),
                 'key_terms': s.key_terms,
                 'doi': s.doi,
                 'year': s.date.year if s.date else None,

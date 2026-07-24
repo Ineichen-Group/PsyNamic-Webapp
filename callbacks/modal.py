@@ -13,7 +13,7 @@ def build_modal_components(paper: dict, grid_type: str) -> tuple[list, html.Div]
     if not paper:
         return [], html.Div()
 
-    year_str = f" ({paper.get('year', '')})" if paper.get("year") else ""
+    year_str = f" – {paper.get('authors', '')} ({paper.get('year', '')})" if paper.get("year") else ""
     paper_url = paper.get("url", "")
     paper_id = paper.get("id")
 
@@ -67,7 +67,6 @@ def build_modal_components(paper: dict, grid_type: str) -> tuple[list, html.Div]
             html.Div(build_tag_buttons(paper), className="modal-tags"),
         ]
     )
-
     return header_title, body_content
 
 
