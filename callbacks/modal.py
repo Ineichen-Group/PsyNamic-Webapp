@@ -4,153 +4,116 @@ from dash.dependencies import MATCH, Input, Output, State
 from callbacks.utils import log_time
 from components.layout import (_split_highlight_cutpoints,
                                _split_prediction_input, build_tag_buttons,
-                               highlighted_text)
+                               highlighted_text, build_structured_abstract)
 from data.queries import get_paper_ner_tags
 
 
-def _build_modal_content(paper: dict) -> tuple[bool, str, str, str, str, str, list]:
-    """Shared modal content builder for standard study grids."""
+def build_modal_components(paper: dict, grid_type: str) -> tuple[list, html.Div]:
+    """Build modal header title and structured body content for all grid types."""
     if not paper:
-        return False, no_update, no_update, no_update, no_update, no_update, no_update
+        return [], html.Div()
 
-    title = f"{paper['title']} ({paper.get('year', '')})"
-    abstract = paper.get("abstract", "")
-    link_text = paper.get("url", "")
-    link_href = paper.get("url", "")
-    buttons = build_tag_buttons(paper)
+    year_str = f" ({paper.get('year', '')})" if paper.get("year") else ""
+    paper_url = paper.get("url", "")
+    paper_id = paper.get("id")
 
-    return True, title, link_href, link_text, abstract, "", buttons
+    cutpoints = []
+    if grid_type == "dosage-study-grid":
+        paper_title, body_text, body_offset = _split_prediction_input(paper)
+        raw_tags = get_paper_ner_tags(paper_id, ner_type="Dosage")
+        title_tags, cutpoints = _split_highlight_cutpoints(
+            raw_tags, len(paper_title), body_offset
+        )
+        header_title = [
+            highlighted_text(paper_title, title_tags) if title_tags else paper_title,
+            year_str,
+        ]
+    else:
+        body_text = paper.get("abstract")
+        header_title = [paper.get("title", ""), year_str]
+
+    abstract_content = build_structured_abstract(body_text, cutpoints=cutpoints)
+
+    dosage_norm = paper.get("dosage_display", paper.get("dosage", ""))
+    dosage_block = (
+        html.Div(
+            [
+                html.Strong("Dosage normalization: "),
+                html.Span(dosage_norm),
+            ],
+            className="modal-dosage-block",
+        )
+        if (grid_type == "dosage-study-grid" and dosage_norm)
+        else None
+    )
+
+    body_content = html.Div(
+        [
+            html.Div(
+                html.A(
+                    paper_url,
+                    href=paper_url,
+                    target="_blank",
+                    rel="noopener noreferrer",
+                ),
+                className="modal-paper-link",
+            )
+            if paper_url
+            else None,
+            abstract_content,
+            dosage_block,
+            html.Div(build_tag_buttons(paper), className="modal-tags"),
+        ]
+    )
+
+    return header_title, body_content
 
 
 def register(app):
     @app.callback(
         [
             Output({"type": "study-grid-modal", "index": MATCH}, "is_open"),
-            Output({"type": "paper-title", "index": MATCH}, "children"),
-            Output({"type": "paper-link", "index": MATCH}, "href"),
-            Output({"type": "paper-link", "index": MATCH}, "children"),
-            Output({"type": "paper-abstract", "index": MATCH}, "children"),
-            Output({"type": "paper-dosage-normalization",
-                   "index": MATCH}, "children"),
-            Output({"type": "modal-tags", "index": MATCH}, "children"),
+            Output({"type": "paper-modal-title", "index": MATCH}, "children"),
+            Output({"type": "paper-modal-content", "index": MATCH}, "children"),
         ],
         Input({"type": "study-grid", "index": MATCH}, "selectedRows"),
         State({"type": "study-grid", "index": MATCH}, "id"),
-        prevent_initial_call=True
+        prevent_initial_call=True,
     )
     @log_time
-    def show_study_modal(selected_rows_list: list[dict], grid_id: dict[str, str]) -> tuple[bool, str, str, str, str, str, list]:
-        """Callback to display the modal with study details when a row is selected in the study grid."""
+    def show_study_modal(selected_rows_list: list[dict], grid_id: dict[str, str]):
+        """Displays modal with structured paper details when a row is selected."""
         if not selected_rows_list:
-            return (
-                False,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-            )
+            return False, no_update, no_update
 
-        # AG Grid selectedRows is a list of rows
-        paper = next(
-            (row for row in selected_rows_list if row),
-            None
-        )
-
+        paper = next((row for row in selected_rows_list if row), None)
         if not paper:
-            return (
-                False,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-            )
+            return False, no_update, no_update
 
-        current_grid = grid_id["index"]
+        grid_type = grid_id.get("index", "") if isinstance(
+            grid_id, dict) else ""
+        header_title, modal_body = build_modal_components(paper, grid_type)
 
-        if current_grid == "dosage-study-grid":
-            paper_title, body_text, body_offset = _split_prediction_input(
-                paper)
-
-            title_tags, body_tags = _split_highlight_cutpoints(
-                get_paper_ner_tags(
-                    paper.get("id"),
-                    "Dosage",
-                ),
-                len(paper_title),
-                body_offset,
-            )
-
-            highlighted_title = (
-                highlighted_text(paper_title, title_tags)
-                if title_tags
-                else paper_title
-            )
-
-            highlighted_abstract = (
-                highlighted_text(body_text, body_tags)
-                if body_tags
-                else body_text
-            )
-
-            title = html.H3(
-                [
-                    highlighted_title,
-                    f" ({paper.get('year', '')})",
-                ]
-            )
-
-            dosage_normalization = paper.get(
-                "dosage_display",
-                paper.get("dosage", ""),
-            )
-
-            dosage_block = (
-                html.Div(
-                    [
-                        html.Strong("Dosage normalization: "),
-                        html.Span(dosage_normalization),
-                    ]
-                )
-                if dosage_normalization
-                else ""
-            )
-
-            link_text = paper.get("url", "")
-            link_href = paper.get("url", "")
-            buttons = build_tag_buttons(paper)
-
-            return (
-                True,
-                title,
-                link_href,
-                link_text,
-                highlighted_abstract,
-                dosage_block,
-                buttons,
-            )
-
-        return _build_modal_content(paper)
+        return True, header_title, modal_body
 
     @app.callback(
-        Output({'type': 'collapse', 'index': ALL}, 'is_open'),
-        Input({'type': 'collapse-button', 'index': ALL}, 'n_clicks'),
-        State({'type': 'collapse', 'index': ALL}, 'is_open'),
+        Output({"type": "collapse", "index": ALL}, "is_open"),
+        Input({"type": "collapse-button", "index": ALL}, "n_clicks"),
+        State({"type": "collapse", "index": ALL}, "is_open"),
     )
     @log_time
     def toggle_collapse(_, is_open_list: list[bool]) -> list[bool]:
-        """Callback to toggle the collapse of the modal sections based on the button clicks."""
-
+        """Toggles accordion/collapse section states dynamically."""
         if not ctx.triggered:
             return no_update
 
-        button_id = ctx.triggered_id
-        index = int(button_id.split('{"index":')[1].split(',')[0])
+        triggered = ctx.triggered_id
+        if not isinstance(triggered, dict) or "index" not in triggered:
+            return no_update
 
-        new_is_open_list = [False] * len(is_open_list)
-        new_is_open_list[index] = not is_open_list[index]
+        target_index = triggered["index"]
 
-        return new_is_open_list
+        return [
+            not current_state if i == target_index else False
+            for i, current_state in enumerate(is_open_list)
+        ]

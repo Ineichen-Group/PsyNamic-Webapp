@@ -259,72 +259,109 @@ def get_studies_details_ner(
         session.close()
 
 
-def get_study_tags(ids: list[int], tags: dict[str, list], map_all_labels: bool = False) -> dict[int, list[dict]]:
-    """Fetches the tags for the given study IDs and returns them in a structured format, required for the Tags column in the study grid."""
-    study_tags = {}
+def get_study_tags(
+    ids: list[int], 
+    tags: dict[str, list] | None = None, 
+    map_all_labels: bool = False
+) -> dict[int, list[dict]]:
+    """Fetches the tags for the given study IDs and returns them in a structured format, 
+    required for the Tags column in the study grid."""
+    
     session = Session()
-
-    db_tags = {task: [database_label(label) for label in labels]
-               for task, labels in tags.items()}
-    display_tags = {task: [display_label(
-        label) for label in labels] for task, labels in tags.items()}
     try:
+        # 1. Build Query
+        if tags:
+            db_tags = {
+                task: [database_label(label) for label in labels] 
+                for task, labels in tags.items()
+            }
+            display_tags = {
+                task: [display_label(label) for label in labels] 
+                for task, labels in tags.items()
+            }
+            valid_task_label_pairs = [
+                (task, label) 
+                for task, labels in db_tags.items() 
+                for label in labels
+            ]
 
-        valid_task_label_pairs = [
-            (task, label) for task, labels in db_tags.items() for label in labels
-        ]
-
-        query = session.query(
-            Prediction.paper_id,
-            Prediction.task,
-            Prediction.label
-        ).filter(
-            and_(
-                Prediction.task.in_(db_tags.keys()),
-                tuple_(Prediction.task, Prediction.label).in_(
-                    valid_task_label_pairs),
-                Prediction.paper_id.in_(ids)
+            query = session.query(
+                Prediction.paper_id,
+                Prediction.task,
+                Prediction.label
+            ).filter(
+                and_(
+                    Prediction.paper_id.in_(ids),
+                    Prediction.task.in_(db_tags.keys()),
+                    tuple_(Prediction.task, Prediction.label).in_(valid_task_label_pairs)
+                )
             )
-        )
+        else:
+            query = session.query(
+                Prediction.paper_id,
+                Prediction.task,
+                Prediction.label
+            ).filter(
+                and_(
+                    Prediction.paper_id.in_(ids),
+                    Prediction.task.notin_(SKIP_TASKS)
+                )
+            )
 
         results = query.all()
 
-        study_tags = {}
-        # TODO: cache color mappings
-        if map_all_labels:
-            color_mappings = {task: get_color_mapping(
-                task, get_all_labels(task)) for task, labels in display_tags.items()}
-        else:
-            color_mappings = {task: get_color_mapping(
-                task, labels) for task, labels in display_tags.items()}
+        # 2. Extract display_tags dynamically if `tags` parameter wasn't provided
+        if not tags:
+            display_tags = {}
+            for _, task, label in results:
+                disp_lbl = display_label(label)
+                if task not in display_tags:
+                    display_tags[task] = []
+                if disp_lbl not in display_tags[task]:
+                    display_tags[task].append(disp_lbl)
 
-        for paper_id, task, label in results:
-            tag_info = {
-                'task': task,
-                'label': display_label(label),
-                'color': color_mappings[task][display_label(label)],
+        # 3. Build Color Mappings
+        if map_all_labels:
+            color_mappings = {
+                task: get_color_mapping(task, get_all_labels(task)) 
+                for task in display_tags
+            }
+        else:
+            color_mappings = {
+                task: get_color_mapping(task, labels) 
+                for task, labels in display_tags.items()
             }
 
-            if paper_id not in study_tags:
-                study_tags[paper_id] = {}
+        # 4. Group results by paper_id and task-label pair
+        # Structure: { paper_id: { (task, label): tag_info } }
+        study_tags_map = {}
+        for paper_id, task, label in results:
+            disp_lbl = display_label(label)
+            task_colors = color_mappings.get(task, {})
+            
+            tag_info = {
+                'task': task,
+                'label': disp_lbl,
+                'color': task_colors.get(disp_lbl, "#6c757d")
+            }
 
-            if task not in study_tags[paper_id]:
-                study_tags[paper_id][task] = []
+            if paper_id not in study_tags_map:
+                study_tags_map[paper_id] = {}
+            
+            study_tags_map[paper_id][(task, disp_lbl)] = tag_info
 
-            study_tags[paper_id][task].append(tag_info)
-
-        ordered_study_tags = {}
-        for paper_id, task_dict in study_tags.items():
-            ordered_tags = []
+        # 5. Build ordered output matching display_tags order
+        ordered_study_tags = {paper_id: [] for paper_id in ids}
+        
+        for paper_id, tags_by_pair in study_tags_map.items():
             for task, labels in display_tags.items():
-                if task in task_dict:
-                    for label in labels:
-                        for tag_info in task_dict[task]:
-                            if tag_info["label"] == label:
-                                ordered_tags.append(tag_info)
-            ordered_study_tags[paper_id] = ordered_tags
+                for label in labels:
+                    key = (task, label)
+                    if key in tags_by_pair:
+                        ordered_study_tags[paper_id].append(tags_by_pair[key])
 
         return ordered_study_tags
+
     finally:
         session.close()
 

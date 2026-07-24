@@ -15,16 +15,10 @@ def search_layout():
                     color='primary', n_clicks=0), width=3),
         ], className='mb-3'),
 
-        html.Div(id='search-results', className='mb-4', style={
-            'display': 'none',
-            'maxHeight': '400px',
-            'overflowY': 'auto',
-            'border': '1px solid #ced4da',
-            'padding': '0.5rem',
-            'borderRadius': '0.25rem',
-            'backgroundColor': '#fff'
-        }),
-
+        html.Div(
+            id="search-results",
+            className="search-results-container hidden"
+        ),
         html.Div(id='search-paper-details'),
         dcc.Store(id='last-search-store', data=None, storage_type='memory')
     ], className='container', id='search-layout')
