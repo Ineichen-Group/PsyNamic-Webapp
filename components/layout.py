@@ -639,12 +639,14 @@ def build_tag_buttons(paper):
 
     return tag_component(tags)
 
+
 def id_bar(internal_id: str, pubmed_id: str, doi: str) -> html.Div:
     return html.Div(
-                f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}"
-                + (f" | DOI: {doi}" if doi else ""),
-                className="text-muted mb-2",
-            )
+        f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}"
+        + (f" | DOI: {doi}" if doi else ""),
+        className="text-muted",
+    )
+
 
 def build_paper_details(paper: dict, tags_component=None) -> html.Div:
     """Build detailed paper view for search/explore page using unified abstract styling."""
@@ -668,7 +670,13 @@ def build_paper_details(paper: dict, tags_component=None) -> html.Div:
 
     return html.Div(
         [
-            id_bar(internal_id, pubmed_id, doi),
+            html.Div(
+                [
+                    id_bar(internal_id, pubmed_id, doi),
+                    build_share_button(internal_id),
+                ],
+                className="d-flex justify-content-between align-items-center mb-2",
+            ),
             html.H3(full_title, className="mb-2"),
             (
                 html.Div(
@@ -706,6 +714,24 @@ def build_paper_details(paper: dict, tags_component=None) -> html.Div:
                 else None
             ),
         ], style={"border": "1px solid #ccc", "padding": "1rem", "borderRadius": "0.5rem"}
+    )
+
+
+def build_share_button(paper_id: int) -> html.Div:
+    """Build a borderless share icon button neatly aligned in flex containers."""
+    return html.Div(
+        [
+            html.Button(
+                [
+                    html.I(className="fa-solid fa-share-nodes fa-lg"),
+                ],
+                className="btn btn-link text-secondary p-0 border-0 text-decoration-none share-paper-btn d-flex align-items-center",
+                type="button",
+                title="Share this paper",
+                **{"data-paper-id": str(paper_id)},
+            ),
+        ],
+        className="d-inline-flex align-items-center p-2 m-2",
     )
 
 

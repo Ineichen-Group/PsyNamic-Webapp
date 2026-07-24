@@ -1,19 +1,13 @@
 import json
+from urllib.parse import parse_qs
 
 import dash_bootstrap_components as dbc
 from dash import ALL, callback_context, html, no_update
 from dash.dependencies import Input, Output, State
-from urllib.parse import parse_qs
 
 from callbacks.utils import log_time
 from components.layout import build_paper_details, build_tag_buttons
-from data.queries import (
-    get_all_labels,
-    get_all_tasks,
-    get_studies_details,
-    get_study_tags,
-    search_papers,
-)
+from data.queries import get_studies_details, get_study_tags, search_papers
 
 
 def register(app):
@@ -67,7 +61,8 @@ def register(app):
         return dbc.ListGroup(items), visible_results_style, "", studies
 
     @app.callback(
-        Output({"type": "search-result", "id": ALL}, "active", allow_duplicate=True),
+        Output({"type": "search-result", "id": ALL},
+               "active", allow_duplicate=True),
         Output("search-paper-details", "children", allow_duplicate=True),
         Output("url", "search", allow_duplicate=True),
         Output("search-results", "children", allow_duplicate=True),
@@ -102,7 +97,6 @@ def register(app):
             )
 
         paper = studies[0]
-
 
         study_tags = get_study_tags([paper_id])
         paper_obj = paper.copy()
