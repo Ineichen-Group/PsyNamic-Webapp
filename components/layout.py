@@ -1,3 +1,4 @@
+import re
 from collections import OrderedDict
 from typing import Optional
 
@@ -6,8 +7,27 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html
 
 from data.queries import (get_all_labels, get_all_tasks, get_ids,
-                          get_latest_retrieval_date, get_paper_ner_tags, get_study_count)
+                          get_latest_retrieval_date, get_paper_ner_tags,
+                          get_study_count)
 from style.colors import get_color_mapping
+
+SECTION_PATTERN = re.compile(
+    r"("
+    r"BACKGROUND|INTRODUCTION|CONTEXT|RATIONALE|CONDITIONS?|"
+    r"OBJECTIVE|OBJECTIVES|AIM|AIMS|PURPOSE|IMPORTANCE|"
+    r"DESIGN|STUDY DESIGN|SETTING|SETTINGS|POPULATION|PARTICIPANTS|SUBJECTS|"
+    r"ELIGIBILITY|INCLUSION CRITERIA|EXCLUSION CRITERIA|"
+    r"METHODS?|PATIENTS AND METHODS|MATERIALS AND METHODS|STATISTICAL ANALYSIS|"
+    r"INTERVENTION|INTERVENTIONS|DOSAGE|DOSAGE AND ADMINISTRATION|"
+    r"PRIMARY OUTCOME|PRIMARY OUTCOMES|SECONDARY OUTCOME|SECONDARY OUTCOMES|"
+    r"MAIN OUTCOME MEASURES|OUTCOMES?|MEASURES|EFFICACY|SAFETY|SAFETY AND EFFICACY|ADVERSE EVENTS|"
+    r"RESULTS?|FINDINGS|"
+    r"DISCUSSION|INTERPRETATION|LIMITATIONS|TRIAL LIMITATIONS|"
+    r"CONCLUSION|CONCLUSIONS|REGISTRATION|TRIAL REGISTRATION|CLINICALTRIAL\.GOV IDENTIFIER|"
+    r"FUNDING|FINANCIAL SUPPORT|ACKNOWLEDGMENTS?|REFERENCES?|CONFLICT OF INTEREST"
+    r")\s*:",
+    flags=re.IGNORECASE,
+)
 
 tasks = get_all_tasks()
 filter_data = OrderedDict({task: get_all_labels(task) for task in tasks})
@@ -543,22 +563,21 @@ def filter_info_button(color: str, label: str, task: str, editable: bool = False
 
 
 def paper_details_modal(id_prefix: str):
-
+    """Render a modal container for paper/study details."""
     return dbc.Modal(
         [
-            dbc.ModalHeader(id={"type": "paper-title", "index": id_prefix}),
+            dbc.ModalHeader(
+                dbc.ModalTitle(
+                    id={"type": "paper-modal-title", "index": id_prefix})
+            ),
             dbc.ModalBody(
-                [
-                    html.A(id={"type": "paper-link", "index": id_prefix}),
-                    html.Div(
-                        id={"type": "paper-abstract", "index": id_prefix}),
-                    html.Div(
-                        id={"type": "paper-dosage-normalization", "index": id_prefix}),
-                    html.Div(id={"type": "modal-tags", "index": id_prefix}),
-                ]
+                html.Div(
+                    id={"type": "paper-modal-content", "index": id_prefix})
             ),
         ],
-        id={"type": "study-grid-modal", "index": id_prefix}, size="xl",
+        id={"type": "study-grid-modal", "index": id_prefix},
+        size="xl",
+        is_open=False,
     )
 
 
@@ -583,11 +602,17 @@ def ner_tag(text: str, category: str = None):
 
 
 def highlighted_text(text: str, cutpoints: list) -> html.Span:
+    """Renders text with inline NER highlights given character cutpoints."""
+    if not cutpoints:
+        return html.Span(text)
+
     elements = []
     last_index = 0
 
-    for cp in cutpoints:
-        start, end, tag = cp['start'], cp['end'], cp['tag']
+    sorted_cutpoints = sorted(cutpoints, key=lambda cp: cp["start"])
+
+    for cp in sorted_cutpoints:
+        start, end, tag = cp["start"], cp["end"], cp.get("tag", "")
 
         if last_index < start:
             elements.append(html.Span(text[last_index:start]))
@@ -606,7 +631,6 @@ def build_tag_buttons(paper):
     tags = []
     prev_task = None
     task_dict = {"task": "", "buttons": [], "model": ""}
-
     for tag in paper.get("tags", []):
         if tag["task"] != prev_task:
             if task_dict["task"]:
@@ -629,36 +653,125 @@ def build_tag_buttons(paper):
     return tag_component(tags)
 
 
-def build_paper_details(paper, ner_category=None, body_label="Abstract", tags_component=None):
-    """Build a detail card with consistent title/body highlighting."""
-    paper_id = paper.get('id')
-    ner_tags = get_paper_ner_tags(
-        paper_id, ner_category) if ner_category else get_paper_ner_tags(paper_id)
-    paper_title, body_text, body_offset = _split_prediction_input(paper)
-    title_tags, body_tags = _split_highlight_cutpoints(
-        ner_tags,
-        len(paper_title),
-        body_offset,
-    )
+def build_paper_details(paper: dict, tags_component=None) -> html.Div:
+    """Build detailed paper view for search/explore page using unified abstract styling."""
+    if not paper:
+        return html.Div()
 
-    highlighted_title = highlighted_text(
-        paper_title, title_tags) if title_tags else paper_title
-    highlighted_body = highlighted_text(
-        body_text, body_tags) if body_tags else body_text
+    title = paper.get("title", "")
+    year_str = f" ({paper.get('year', '')})" if paper.get("year") else ""
+    full_title = f"{title}{year_str}"
 
-    children = [
-        *_build_paper_header(paper, highlighted_title),
-        html.H5(body_label),
-        html.Div(highlighted_body, className='mb-3'),
-    ]
+    paper_url = paper.get("url", "")
+    internal_id = paper.get("id", "")
+    pubmed_id = paper.get("pubmed_id", "")
+    doi = paper.get("doi", "")
 
-    if tags_component:
-        children.extend([
-            html.H5("Tags"),
-            tags_component,
-        ])
+    raw_abstract = paper.get("prediction_input")
+    cutpoints = get_paper_ner_tags(internal_id)
 
-    return html.Div(children, className='p-3 border rounded')
+    abstract_content = build_structured_abstract(
+        raw_abstract, cutpoints=cutpoints)
+
+    return html.Div(
+            [
+                html.H3(full_title, className="mb-2"),
+                (
+                    html.Div(
+                        [
+                            html.Strong("URL: "),
+                            html.A(
+                                paper_url,
+                                href=paper_url,
+                                target="_blank",
+                                rel="noopener noreferrer",
+                            ),
+                        ],
+                        className="modal-paper-link mb-2",
+                    )
+                    if paper_url
+                    else None
+                ),
+                html.Div(
+                    f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}"
+                    + (f" | DOI: {doi}" if doi else ""),
+                    className="text-muted small mb-3",
+                ),
+                html.Div(
+                    [
+                        html.H4("Abstract", className="fw-bold mb-2"),
+                        abstract_content,
+                    ],
+                    className="modal-paper-abstract mb-3",
+                ),
+                (
+                    html.Div(
+                        [
+                            html.H4("Tags", className="fw-bold mb-2"),
+                            tags_component,
+                        ],
+                        className="modal-tags",
+                    )
+                    if tags_component
+                    else None
+                ),
+            ], style = {"border": "1px solid #ccc", "padding": "1rem", "borderRadius": "0.5rem"}
+        )
+
+
+def structured_highlighted_text(text, cutpoints):
+    """Render structured abstracts while preserving NER highlighting."""
+    matches = list(SECTION_PATTERN.finditer(text))
+
+    if not matches:
+        return highlighted_text(text, cutpoints)
+
+    children = []
+
+    for i, match in enumerate(matches):
+        heading = match.group(1).upper()
+
+        raw_start = match.end()
+        raw_end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+
+        raw_section = text[raw_start:raw_end]
+
+        leading_spaces = len(raw_section) - len(raw_section.lstrip())
+        trailing_spaces = len(raw_section) - len(raw_section.rstrip())
+
+        sec_start = raw_start + leading_spaces
+        sec_end = raw_end - trailing_spaces
+
+        section_text = text[sec_start:sec_end]
+
+        section_cutpoints = []
+        for cp in cutpoints:
+            if cp["end"] <= sec_start or cp["start"] >= sec_end:
+                continue
+
+            c_start = max(sec_start, cp["start"]) - sec_start
+            c_end = min(sec_end, cp["end"]) - sec_start
+
+            if c_end > c_start:
+                section_cutpoints.append({
+                    **cp,
+                    "start": c_start,
+                    "end": c_end,
+                })
+
+        children.append(
+            html.Div(
+                [
+                    html.Strong(f"{heading}: "),
+                    highlighted_text(section_text, section_cutpoints)
+                    if section_cutpoints
+                    else section_text,
+                ],
+                style={"marginBottom": "0.35rem"},
+            )
+        )
+
+    return children
 
 
 def _split_prediction_input(paper):
@@ -718,20 +831,69 @@ def _split_highlight_cutpoints(cutpoints, title_length, body_offset):
     return title_cutpoints, body_cutpoints
 
 
-def _build_paper_header(paper, highlighted_title):
-    """Build the shared paper header with URL, ids, and title."""
-    paper_url = paper.get('url') or ''
-    internal_id = paper.get('id') or ''
-    pubmed_id = paper.get('pubmed_id') or ''
+def build_structured_abstract(text: str, cutpoints: list | None = None) -> html.Div:
+    """
+    Renders structured abstracts into formatted paragraphs with preserved NER highlights.
+    """
+    if not text:
+        return html.Div("No abstract available.", className="text-muted")
 
-    return [
-        html.Div([
-            html.Span("URL: "),
-            html.A(paper_url, href=paper_url, target='_blank'),
-        ]),
-        html.Div(
-            f"Internal ID: {internal_id} | PubMed ID: {pubmed_id}",
-            className='text-muted small',
-        ),
-        html.H3(highlighted_title),
-    ]
+    cutpoints = cutpoints or []
+    matches = list(SECTION_PATTERN.finditer(text))
+
+    # Fallback for plain/unstructured abstracts
+    if not matches:
+        return html.Div(
+            highlighted_text(text, cutpoints),
+            className="abstract-container"
+        )
+
+    children = []
+
+    for i, match in enumerate(matches):
+        heading = match.group(1).upper()
+
+        raw_start = match.end()
+        raw_end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+
+        raw_section = text[raw_start:raw_end]
+
+        leading_spaces = len(raw_section) - len(raw_section.lstrip())
+        trailing_spaces = len(raw_section) - len(raw_section.rstrip())
+
+        sec_start = raw_start + leading_spaces
+        sec_end = raw_end - trailing_spaces
+
+        section_text = text[sec_start:sec_end]
+
+        # Filter and project cutpoints for the current section window
+        section_cutpoints = []
+        for cp in cutpoints:
+            cp_start, cp_end = cp.get("start", 0), cp.get("end", 0)
+            if cp_end <= sec_start or cp_start >= sec_end:
+                continue
+
+            c_start = max(sec_start, cp_start) - sec_start
+            c_end = min(sec_end, cp_end) - sec_start
+
+            if c_end > c_start:
+                section_cutpoints.append({
+                    **cp,
+                    "start": c_start,
+                    "end": c_end,
+                })
+
+        children.append(
+            html.Div(
+                [
+                    html.Strong(f"{heading}: ", className="abstract-heading"),
+                    highlighted_text(section_text, section_cutpoints)
+                    if section_cutpoints
+                    else section_text,
+                ],
+                style={"marginBottom": "0.35rem"},
+                className="abstract-section",
+            )
+        )
+
+    return html.Div(children, className="abstract-container")

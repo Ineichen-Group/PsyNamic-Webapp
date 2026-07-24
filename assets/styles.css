@@ -89,3 +89,45 @@
 .list-group-item:focus, .list-group-item:active {
     box-shadow: none !important;
 }
+
+.search-results-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ced4da;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    background-color: #fff;
+}
+
+.search-results-container.hidden {
+    display: none;
+}
+
+.search-results-container.visible {
+    display: block;
+}
+
+.abstract-container {
+    margin-bottom: 1rem;
+}
+
+.abstract-section {
+    margin-bottom: 0.35rem;
+}
+
+.abstract-heading {
+    font-weight: 700;
+}
+
+.modal-paper-link {
+    margin-bottom: 1rem;
+}
+
+.modal-dosage-block {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modal-tags {
+    margin-top: 1.5rem;
+}
