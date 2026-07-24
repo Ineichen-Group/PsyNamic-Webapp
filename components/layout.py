@@ -115,12 +115,6 @@ def footer_layout() -> html.Footer:
             className="py-3"
         ),
         className="footer bg-light",
-        style={
-            "marginTop": "auto",
-            "width": "100%",
-            "position": "relative",
-            "bottom": "0",
-        }
     )
 
 
@@ -135,9 +129,8 @@ def content_layout(list_of_children: list, id: str = "content") -> dbc.Container
 
     return dbc.Container(
         stores + list_of_children,
-        class_name="py-4",
+        class_name="py-4 content-container",
         id=id,
-        style={"minHeight": "82vh"},
     )
 
 
@@ -306,12 +299,11 @@ def study_grid(
                 [
                     html.Span(
                         "Found Studies:",
-                        className="d-inline",
+                        className="d-inline me-1",
                         id={
                             "type": "study-grid-debug-field",
                             "index": grid_id,
                         },
-                        style={"marginRight": "0.2rem"},
                     ),
 
                     html.Span(
@@ -325,11 +317,7 @@ def study_grid(
 
                     html.Span(
                         "(of total",
-                        className="d-inline",
-                        style={
-                            "marginLeft": "0.25rem",
-                            "marginRight": "0.25rem",
-                        },
+                        className="d-inline mx-1",
                     ),
 
                     html.Span(
@@ -339,7 +327,6 @@ def study_grid(
                             "type": "study-grid-count-total",
                             "index": grid_id,
                         },
-                        style={"marginRight": "0.25rem"},
                     ),
 
                     html.Span(

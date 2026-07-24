@@ -131,3 +131,20 @@
 .modal-tags {
     margin-top: 1.5rem;
 }
+
+.footer {
+    margin-top: auto;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    background-color: #f8f9fa;
+}
+
+.content-container {
+    min-height: 82vh;
+}
+
+.study-grid {
+    height: 500px;
+    width: 100%;
+}
