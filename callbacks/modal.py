@@ -1,5 +1,6 @@
 from dash import ALL, ctx, html, no_update
 from dash.dependencies import MATCH, Input, Output, State
+import dash_bootstrap_components as dbc
 
 from callbacks.utils import log_time
 from components.layout import (_split_highlight_cutpoints,
@@ -13,7 +14,8 @@ def build_modal_components(paper: dict, grid_type: str) -> tuple[list, html.Div]
     if not paper:
         return [], html.Div()
 
-    year_str = f" – {paper.get('authors', '')} ({paper.get('year', '')})" if paper.get("year") else ""
+    year_str = f" – {paper.get('authors', '')} ({paper.get('year', '')})" if paper.get(
+        "year") else ""
     paper_url = paper.get("url", "")
     paper_id = paper.get("id")
 
@@ -25,14 +27,16 @@ def build_modal_components(paper: dict, grid_type: str) -> tuple[list, html.Div]
             raw_tags, len(paper_title), body_offset
         )
         header_title = [
-            highlighted_text(paper_title, title_tags) if title_tags else paper_title,
+            highlighted_text(
+                paper_title, title_tags) if title_tags else paper_title,
             year_str,
         ]
     else:
         body_text = paper.get("abstract")
         header_title = [paper.get("title", ""), year_str]
 
-    abstract_content = build_structured_abstract(body_text, cutpoints=cutpoints)
+    abstract_content = build_structured_abstract(
+        body_text, cutpoints=cutpoints)
 
     dosage_norm = paper.get("dosage_display", paper.get("dosage", ""))
     dosage_block = (
@@ -47,24 +51,43 @@ def build_modal_components(paper: dict, grid_type: str) -> tuple[list, html.Div]
         else None
     )
 
+    # Link to search/explore overview page
+    search_link = f"/explore/search?study_id={paper_id}" if paper_id else None
+
     body_content = html.Div(
         [
-            html.Div([
-                html.Strong("URL: "),
-                html.A(
-                    paper_url,
-                    href=paper_url,
-                    target="_blank",
-                    rel="noopener noreferrer",
-                ),
-            ],
-            className="modal-paper-link",
+            html.Div(
+                [
+                    html.Strong("URL: "),
+                    html.A(
+                        paper_url,
+                        href=paper_url,
+                        target="_blank",
+                        rel="noopener noreferrer",
+                    ),
+                ],
+                className="modal-paper-link",
             )
             if paper_url
             else None,
             abstract_content,
             dosage_block,
-            html.Div(build_tag_buttons(paper), className="modal-tags"),
+            html.Div(build_tag_buttons(paper), className="modal-tags mt-3"),
+            html.Div(
+                [dbc.Button(
+                    [
+                        html.I(className=f"fas fa-arrow-right-to-bracket me-2"),
+                        "View Study",
+                    ],
+                    href=search_link,
+                    color="primary",
+                    size="sm",
+                )
+                ],
+                className="modal-footer-link mt-4 pt-3 border-top",
+            )
+            if search_link
+            else None,
         ]
     )
     return header_title, body_content

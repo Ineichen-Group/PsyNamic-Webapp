@@ -723,7 +723,7 @@ def build_share_button(paper_id: int) -> html.Div:
         [
             html.Button(
                 [
-                    html.I(className="fa-solid fa-share-nodes fa-lg"),
+                    html.I(className="fas fa-share-nodes fa-lg"),
                 ],
                 className="btn btn-link text-secondary p-0 border-0 text-decoration-none share-paper-btn d-flex align-items-center",
                 type="button",
