@@ -5,88 +5,121 @@ from dash import dcc
 
 
 def bar_chart(
-        data: pd.DataFrame,
-        x: str,
-        y: str,
-        title: str,
-        x_label: str,
-        y_label: str,
-        group: str = None,
-        color_mapping: dict[str, str] = None,
-        remove_button: list[str] = [],
-        group_order: list[str] = None,
-        average: bool = False,
+    data: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    x_label: str,
+    y_label: str,
+    group: str = None,
+    color_mapping: dict[str, str] = None,
+    remove_button: list[str] = [],
+    group_order: list[str] = None,
+    average: bool = False,
 ) -> dcc.Graph:
-    """
-    Creates a bar chart.
+    """Creates a bar chart with Study_ID attached as customdata for selections."""
 
-    data: pandas.DataFrame with columns `x` and `y`.
-    - `x`: categorical (or convertible) for x-axis categories.
-    - `y`: numeric values for bar heights (aggregated by sum).
-    - optional `group`: categorical column to group/color bars.
-    - optional `Study_ID`: allowed but unused here.
+    data = data.copy()
 
-    Returns a Dash `dcc.Graph`.
-    """
+    # Apply group ordering
+    if group and group_order is not None:
+        data[group] = pd.Categorical(
+            data[group],
+            categories=group_order,
+            ordered=True,
+        )
+        data = data.sort_values([group, x])
+
+    # Sort x-axis categories by frequency
+    order = (
+        data.groupby(x, observed=False)[y]
+        .sum()
+        .sort_values(ascending=False)
+        .index.tolist()
+    )
+
+    data[x] = pd.Categorical(
+        data[x],
+        categories=order,
+        ordered=True,
+    )
+
+    # Create figure
+    px_kwargs = dict(
+        data_frame=data,
+        x=x,
+        y=y,
+        title=title,
+        text=y,
+    )
+
     if group:
-        if group_order is not None:
-            data[group] = pd.Categorical(
-                data[group], categories=group_order, ordered=True)
-            data = data.sort_values([group, x])
+        px_kwargs.update(
+            {
+                "color": group,
+                "barmode": "group",
+            }
+        )
 
-        order = data.groupby(x, observed=False)[y].sum().sort_values(
-            ascending=False).index.tolist()
-        data[x] = pd.Categorical(data[x], categories=order, ordered=True)
+    # IMPORTANT:
+    # Pass Study_ID directly to Plotly so selectedData contains it
+    if "Study_ID" in data.columns:
+        px_kwargs["custom_data"] = ["Study_ID"]
 
-        fig = px.bar(data, x=x, y=y, color=group,
-                     title=title, barmode='group', text=y)
-    else:
+    fig = px.bar(**px_kwargs)
 
-        order = data.groupby(x, observed=False)[y].sum().sort_values(
-            ascending=False).index.tolist()
-        data[x] = pd.Categorical(data[x], categories=order, ordered=True)
-
-        fig = px.bar(data, x=x, y=y, title=title, barmode='group', text=y)
-
-    if 'order' in locals() and order:
-        fig.update_xaxes(categoryorder='array', categoryarray=order)
-    elif pd.api.types.is_categorical_dtype(data[x].dtype):
-        fig.update_xaxes(categoryorder='array',
-                         categoryarray=list(data[x].cat.categories))
-
-    # Update x and y axis labels
+    # Axis labels
     fig.update_xaxes(title_text=x_label)
     fig.update_yaxes(title_text=y_label)
 
-    # Ensure text labels appear above bars
-    fig.update_traces(textposition='outside', textfont_size=10)
+    # Preserve category ordering
+    fig.update_xaxes(
+        categoryorder="array",
+        categoryarray=order,
+    )
 
-    # Update the color mapping if provided
+    # Text labels
+    fig.update_traces(
+        textposition="outside",
+        textfont_size=10,
+    )
+
+    # Apply colors
     if color_mapping:
-        if group:  # Color by group
-            for group_val in data[group].unique():
-                color = color_mapping.get(group_val, None)
-                fig.for_each_trace(lambda trace: trace.update(
-                    marker_color=color) if trace.name == group_val else ())
-        else:  # Color by x values
-            for x_val in data[x].unique():
-                color = color_mapping.get(x_val, None)
-                fig.for_each_trace(lambda trace: trace.update(
-                    marker_color=color) if trace.name == x_val else ())
+        if group:
+            for trace in fig.data:
+                if trace.name in color_mapping:
+                    trace.update(
+                        marker_color=color_mapping[trace.name]
+                    )
+        else:
+            for trace in fig.data:
+                if trace.name in color_mapping:
+                    trace.update(
+                        marker_color=color_mapping[trace.name]
+                    )
 
-    fig.update_layout(plot_bgcolor='#f8f8f8')
+    # Background
+    fig.update_layout(
+        plot_bgcolor="#f8f8f8"
+    )
+
     add_interaction_annotation(fig)
 
+    # Optional average line
     if average:
-        # add average number of participants per substance as a line
-        data['Average'] = data[y].mean()
+        avg_value = data[y].mean()
+
         fig.add_trace(
             dict(
                 x=data[x],
-                y=data['Average'],
-                mode='lines',
-                name='Average',
-                line=dict(color='black', width=2)
+                y=[avg_value] * len(data[x]),
+                mode="lines",
+                name="Average",
+                line=dict(
+                    color="black",
+                    width=2,
+                ),
             )
         )
 
@@ -95,8 +128,14 @@ def bar_chart(
         'displaylogo': False,  # Optionally hide the Plotly logo
     }
 
-    return dcc.Graph(figure=fig, config=config)
-
+    return dcc.Graph(
+        id={
+            "type": "view-graph",
+            "index": title.lower().replace(" ", "-"),
+        },
+        figure=fig,
+        config=config,
+    )
 
 def box_plot_graph(
     data: pd.DataFrame,
@@ -320,31 +359,50 @@ def add_interaction_annotation(fig, x=0.88, y=0.86, ax=36, ay=-72, text="Interac
     fig.layout.annotations = tuple(existing)
 
 
-def extract_study_id(point: dict) -> int | None:
-    """Extract study ID from a Plotly point's customdata."""
+def extract_study_id(point: dict) -> int | list[int] | None:
+    """Extract study ID(s) from a Plotly point's customdata.
+
+    Handles:
+    - scalar IDs: customdata=123
+    - aggregated IDs: customdata=[1,2,3]
+    - wrapped aggregated IDs: customdata=[[1,2,3]]
+    """
     customdata = point.get("customdata")
 
     if customdata is None:
         return None
 
+    # Convert numpy arrays/tuples to normal lists
+    if hasattr(customdata, "tolist"):
+        customdata = customdata.tolist()
+
+    # Handle list/tuple customdata
     if isinstance(customdata, (list, tuple)):
         if not customdata:
             return None
-        study_id = customdata[0]
-    else:
-        study_id = customdata
 
-    # Convert numpy scalar types if needed
-    if hasattr(study_id, "item"):
-        study_id = study_id.item()
+        # Case: customdata=[[1,2,3]]
+        # (old Plotly wrapping style)
+        if isinstance(customdata[0], (list, tuple)):
+            customdata = customdata[0]
 
-    return int(study_id)
+        # Case: customdata=[1,2,3]
+        if isinstance(customdata, (list, tuple)):
+            ids = []
+            for item in customdata:
+                if hasattr(item, "item"):
+                    item = item.item()
+                ids.append(int(item))
+            return ids
 
+    # Case: customdata=123
+    if hasattr(customdata, "item"):
+        customdata = customdata.item()
+
+    return int(customdata)
 
 def get_ids_from_selected_data(selected_data: list[dict]) -> list[int]:
     """Extract study IDs from a list of Plotly selectedData dicts."""
-    # data might look like this:
-    # [{'points': [{'curveNumber': 9, 'pointNumber': 1250, 'pointIndex': 1250, 'y': 'S-Ketamine', 'x': 87.5, 'customdata': [41265303]}, {'curveNumber': 10, 'pointNumber': 741, 'pointIndex': 741, 'y': 'S-Ketamine', 'x': 80.9, 'customdata': [39200909]}, {'curveNumber': 10, 'pointNumber': 5, 'pointIndex': 5, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1240]}, {'curveNumber': 10, 'pointNumber': 8, 'pointIndex': 8, 'y': 'S-Ketamine', 'x': 84, 'customdata': [5968]}, {'curveNumber': 10, 'pointNumber': 43, 'pointIndex': 43, 'y': 'S-Ketamine', 'x': 84, 'customdata': [5828]}, {'curveNumber': 10, 'pointNumber': 60, 'pointIndex': 60, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1238]}, {'curveNumber': 10, 'pointNumber': 68, 'pointIndex': 68, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2398]}, {'curveNumber': 10, 'pointNumber': 73, 'pointIndex': 73, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2053]}, {'curveNumber': 10, 'pointNumber': 77, 'pointIndex': 77, 'y': 'S-Ketamine', 'x': 84, 'customdata': [3818]}, {'curveNumber': 10, 'pointNumber': 123, 'pointIndex': 123, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1237]}, {'curveNumber': 10, 'pointNumber': 134, 'pointIndex': 134, 'y': 'S-Ketamine', 'x': 84, 'customdata': [8959]}, {'curveNumber': 10, 'pointNumber': 203, 'pointIndex': 203, 'y': 'S-Ketamine', 'x': 84, 'customdata': [30]}, {'curveNumber': 10, 'pointNumber': 254, 'pointIndex': 254, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1236]}, {'curveNumber': 10, 'pointNumber': 256, 'pointIndex': 256, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1239]}, {'curveNumber': 10, 'pointNumber': 284, 'pointIndex': 284, 'y': 'S-Ketamine', 'x': 84, 'customdata': [1819]}, {'curveNumber': 10, 'pointNumber': 295, 'pointIndex': 295, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2049]}, {'curveNumber': 10, 'pointNumber': 311, 'pointIndex': 311, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2387]}, {'curveNumber': 10, 'pointNumber': 326, 'pointIndex': 326, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2542]}, {'curveNumber': 10, 'pointNumber': 332, 'pointIndex': 332, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2762]}, {'curveNumber': 10, 'pointNumber': 334, 'pointIndex': 334, 'y': 'S-Ketamine', 'x': 84, 'customdata': [2763]}, {'curveNumber': 10, 'pointNumber': 363, 'pointIndex': 363, 'y': 'S-Ketamine', 'x': 84, 'customdata': [3819]}, {'curveNumber': 10, 'pointNumber': 437, 'pointIndex': 437, 'y': 'S-Ketamine', 'x': 84, 'customdata': [5967]}, {'curveNumber': 10, 'pointNumber': 687, 'pointIndex': 687, 'y': 'S-Ketamine', 'x': 84, 'customdata': [37551607]}, {'curveNumber': 10, 'pointNumber': 717, 'pointIndex': 717, 'y': 'S-Ketamine', 'x': 84, 'customdata': [38626563]}, {'curveNumber': 10, 'pointNumber': 724, 'pointIndex': 724, 'y': 'S-Ketamine', 'x': 84, 'customdata': [38819020]}, {'curveNumber': 10, 'pointNumber': 760, 'pointIndex': 760, 'y': 'S-Ketamine', 'x': 84, 'customdata': [39522447]}, {'curveNumber': 10, 'pointNumber': 842, 'pointIndex': 842, 'y': 'S-Ketamine', 'x': 84, 'customdata': [40601310]}, {'curveNumber': 10, 'pointNumber': 870, 'pointIndex': 870, 'y': 'S-Ketamine', 'x': 84, 'customdata': [40896221]}, {'curveNumber': 10, 'pointNumber': 938, 'pointIndex': 938, 'y': 'S-Ketamine', 'x': 84, 'customdata': [42095692]}], 'lassoPoints': {'x': [96.69093270137392, 93.07024304620151, 87.27713959792565, 82.57024304620151, 80.57886373585669, 81.12196718413254, 83.29438097723599, 89.81162235654634, 92.70817408068427, 92.70817408068427], 'y': [1.6545758928571428, 1.5260044642857142, 1.4938616071428572, 1.6706473214285713, 1.9438616071428572, 2.056361607142857, 2.1206473214285713, 2.1206473214285713, 1.9277901785714286, 1.8474330357142856]}}, None, None]
     ids = set()
 
     for graph_selection in selected_data:
@@ -355,15 +413,16 @@ def get_ids_from_selected_data(selected_data: list[dict]) -> list[int]:
             study_id = extract_study_id(point)
 
             if study_id is not None:
-                ids.add(study_id)
+                if isinstance(study_id, list):
+                    ids.update(study_id)
+                else:
+                    ids.add(study_id)
 
     return list(ids)
 
 
 def get_ids_from_click_data(click_data: list[dict]) -> list[int]:
     """Extract study IDs from a list of Plotly clickData dicts."""
-    # data might look like this:
-    # [{'points': [{'curveNumber': 9, 'pointNumber': 910, 'pointIndex': 910, 'x': 52.5, 'y': 'Ayahuasca', 'bbox': {'x0': 615, 'x1': 621, 'y0': 273.11, 'y1': 279.11}, 'customdata': [8696]}]}, None, None]
     ids = set()
 
     for graph_click in click_data:
@@ -371,9 +430,7 @@ def get_ids_from_click_data(click_data: list[dict]) -> list[int]:
             continue
 
         for point in graph_click.get("points", []):
-            study_id = extract_study_id(point)
-
-            if study_id is not None and study_id not in ids:
-                ids.add(study_id)
+            point_ids = extract_study_ids(point)
+            ids.update(point_ids)
 
     return list(ids)

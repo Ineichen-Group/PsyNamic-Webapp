@@ -36,12 +36,19 @@ def view_layout(
     return html.Div([
         html.H1(f"{title}", className="my-4"),
         graph,
+        dbc.Button(
+            "Reset selection",
+            id="reset-btn",
+            color="secondary",
+            className="mb-3",
+        ),
         studies_display(
             page_key=page_key,
             ids=ids,
             filters=active_filters,
             infos=active_infos,
         ),
+        dcc.Store(id="default-view-ids", data=ids, storage_type="memory"),
     ])
 
 
@@ -63,11 +70,11 @@ def rct_view() -> html.Div:
     graph_title = "Number of RCTs and Systematic Reviews per Substance"
 
     color_mapping = get_color_mapping(task, labels)
-    data_rct = get_freq_grouped(task, group_task, labels=labels)
-    data_rct_freq = (
-        data_rct.groupby([group_task, task])
-        .size()
-        .reset_index(name="Frequency")
+    data_rct_freq = get_freq_grouped(
+        task,
+        group_task,
+        labels=labels,
+        aggregate=True,
     )
 
     graph = bar_chart(
@@ -79,18 +86,13 @@ def rct_view() -> html.Div:
         "Frequency",
         task,
         color_mapping,
-        ["pan", "select", "lasso2d"],
         labels,
     )
 
-    active_filters = OrderedDict({task: labels})
+    active_filters = OrderedDict({task: labels[:-1]})
     active_infos = OrderedDict({group_task: get_all_labels(group_task)})
-    ids = (
-        data_rct[data_rct[task].isin(labels[:-1])]["Study_ID"]
-        .unique()
-        .tolist()
-    )
-
+    filtered_df = data_rct_freq[data_rct_freq[task].isin(labels[:-1])]
+    ids = filtered_df["Study_ID"].explode().dropna().unique().tolist()
     return view_layout(title, graph, key, active_filters, active_infos, ids=ids)
 
 
@@ -110,13 +112,7 @@ def efficacy_safety_view() -> html.Div:
     group_task = "Substances"
     graph_title = "Number of studies measuring efficacy and safety endpoints per substance"
 
-    data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = (
-        data.groupby([group_task, task])
-        .size()
-        .reset_index(name="Frequency")
-    )
-
+    data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
     graph = bar_chart(
         data_freq,
         group_task,
@@ -126,13 +122,13 @@ def efficacy_safety_view() -> html.Div:
         "Frequency",
         task,
         get_color_mapping(task, labels),
-        ["pan", "select", "lasso2d"],
         labels,
     )
 
     active_filters = OrderedDict({task: labels})
     active_infos = OrderedDict({group_task: get_all_labels(group_task)})
-    ids = data[data[task].isin(labels)]["Study_ID"].unique().tolist()
+    data_filtered = data_freq[data_freq[task].isin(labels[:-1])]
+    ids = data_filtered["Study_ID"].explode().dropna().unique().tolist()
 
     return view_layout(title, graph, key, active_filters, active_infos, ids)
 
@@ -150,12 +146,7 @@ def longitudinal_view() -> html.Div:
     group_task = "Substances"
     graph_title = "Number of studies per substance for different data types"
 
-    data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = (
-        data.groupby([group_task, task])
-        .size()
-        .reset_index(name="Frequency")
-    )
+    data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
 
     graph = bar_chart(
         data_freq,
@@ -166,11 +157,11 @@ def longitudinal_view() -> html.Div:
         "Frequency",
         task,
         get_color_mapping(task, labels),
-        ["pan", "select", "lasso2d"],
-        labels,
+        group_order = labels,
     )
 
-    ids = data[data[task].isin(labels)]["Study_ID"].unique().tolist()
+    filtered_df = data_freq[data_freq[task].isin(labels)]
+    ids = filtered_df["Study_ID"].explode().dropna().unique().tolist()
     active_filters = OrderedDict({task: labels})
     active_infos = OrderedDict({group_task: get_all_labels(group_task)})
 
@@ -197,13 +188,7 @@ def sex_bias_view() -> html.Div:
     group_task = "Substances"
     graph_title = "Sex of participants of studies per substance"
 
-    data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = (
-        data.groupby([group_task, task])
-        .size()
-        .reset_index(name="Frequency")
-    )
-
+    data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
     graph = bar_chart(
         data_freq,
         group_task,
@@ -213,13 +198,13 @@ def sex_bias_view() -> html.Div:
         "Frequency",
         task,
         get_color_mapping(task, labels),
-        ["pan", "select", "lasso2d"],
-        labels,
+        group_order = labels,
     )
 
     active_filters = OrderedDict({task: labels})
     active_infos = OrderedDict({group_task: get_all_labels(group_task)})
-    ids = data[data[task].isin(labels)]["Study_ID"].unique().tolist()
+    filtered_df = data_freq[data_freq[task].isin(labels)]
+    ids = filtered_df["Study_ID"].explode().dropna().unique().tolist()
 
     return view_layout(
         title,
@@ -240,27 +225,13 @@ def nr_part_view() -> html.Div:
     title = "Study Participation: How many participants are included per study?"
     task = "Number of Participants"
     group_task = "Substances"
-    labels = [
-        "1-20",
-        "21-40",
-        "41-60",
-        "61-80",
-        "81-100",
-        "100-199",
-        "200-499",
-        "500-999",
-        "≥1000",
-        "Unknown",
-    ]
+    labels = get_all_labels(task)
+    print(f"Labels for {task}: {labels}")
     graph_title = "Number of Participants per Substance"
     key = "nr-part-view"
 
-    data = get_freq_grouped(task, group_task)
-    data_freq = (
-        data.groupby([group_task, task])
-        .size()
-        .reset_index(name="Frequency")
-    )
+    data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
+
     graph = bar_chart(
         data_freq,
         group_task,
@@ -270,11 +241,11 @@ def nr_part_view() -> html.Div:
         "Frequency",
         task,
         get_color_mapping(task, labels),
-        ["pan", "select", "lasso2d"],
-        labels,
+        group_order = labels,
     )
 
-    ids = data[data[task].isin(labels)]["Study_ID"].unique().tolist()
+    filtered_df = data_freq[data_freq[task].isin(labels)]
+    ids = filtered_df["Study_ID"].explode().dropna().unique().tolist()
 
     return view_layout(
         title,

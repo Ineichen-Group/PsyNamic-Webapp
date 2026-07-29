@@ -462,52 +462,89 @@ def get_predictions_by_ids(task: str, ids: list[int]) -> pd.DataFrame:
         session.close()
 
 
-def get_freq_grouped(task: str, group_task: str, labels: list[str] = None) -> pd.DataFrame:
-    """Get the predictions where task is labels, group by group task and labels. 
-    The output is a dataframe with columns group_task, label, and Study_ID (without frequency)."""
-    session = Session()
-    if labels:
-        labels = [database_label(l) for l in labels]
-    try:
-        use_rest = 'Other' in labels if labels else False
+def get_freq_grouped(
+    task: str,
+    group_task: str,
+    labels: list[str] = None,
+    aggregate: bool = False,
+) -> pd.DataFrame:
+    """Get grouped predictions.
 
-        # Subquery to group by the group_task
+    Returns either:
+    - raw rows with group_task, task, and Study_ID
+    - aggregated rows with frequency and Study_ID lists
+
+    Args:
+        task: Prediction task to filter.
+        group_task: Task used for grouping.
+        labels: Optional labels to include.
+        aggregate: If True, aggregate by group_task and task and include
+                   frequency plus Study_ID lists.
+    """
+    session = Session()
+
+    if labels:
+        labels = [database_label(label) for label in labels]
+
+    try:
+        use_rest = "Other" in labels if labels else False
+
         grouping_query = (
             session.query(
                 Prediction.paper_id.label("paper_id"),
-                Prediction.label.label(group_task)
+                Prediction.label.label(group_task),
             )
             .filter(Prediction.task == group_task)
             .subquery()
         )
 
-        # Handle the case where specific labels are provided
         if labels:
-            label_case = case(
-                (Prediction.label.in_(labels), Prediction.label),
-                else_="Other" if use_rest else Prediction.label
-            )
+            if "Other" in labels:
+                selected = [l for l in labels if l != "Other"]
+                label_case = case(
+                    (Prediction.label.in_(selected), Prediction.label),
+                    else_="Other",
+                )
+            else:
+                label_case = Prediction.label
         else:
             label_case = Prediction.label
 
-        # Main query (without frequency counting, including Study_ID)
         query = (
-            session.query(
-                grouping_query.c[group_task].label(group_task),
-                label_case.label("Label"),
-                Prediction.paper_id.label("Study_ID")  # Include Study_ID
-            )
-            .join(grouping_query, grouping_query.c.paper_id == Prediction.paper_id)
-            .filter(Prediction.task == task)
+        session.query(
+            grouping_query.c[group_task].label(group_task),
+            label_case.label(task),
+            Prediction.paper_id.label("Study_ID"),
         )
+        .join(
+            grouping_query,
+            grouping_query.c.paper_id == Prediction.paper_id,
+        )
+        .filter(Prediction.task == task)
+    ) 
+        if labels and "Other" not in labels:
+            query = query.filter(Prediction.label.in_(labels))
 
-        # Execute query and fetch results
         result = query.all()
 
-        # Convert results to a Pandas DataFrame, now including Study_ID
-        df = pd.DataFrame(result, columns=[group_task, task, "Study_ID"])
+        df = pd.DataFrame(
+            result,
+            columns=[group_task, task, "Study_ID"],
+        )
+
         df[task] = df[task].map(display_label)
         df[group_task] = df[group_task].map(display_label)
+
+        if aggregate:
+            df = (
+                df.groupby([group_task, task])
+                .agg(
+                    Frequency=("Study_ID", "size"),
+                    Study_ID=("Study_ID", lambda x: list(x.unique())),
+                )
+                .reset_index()
+            )
+
         return df
 
     finally:
@@ -542,7 +579,9 @@ def get_all_tasks() -> list[str]:
 
 def get_all_labels(task: str) -> list[str]:
     """Return labels in the order defined in model_paths.json."""
-    if task in LABEL_ORDER:
+    if task == "Number of Participants":
+        return ["1-20", "21-40", "41-60", "61-80", "81-100", "101-199", "200-499", "500-999", "≥1000", "Unknown", "Not applicable"]
+    elif task in LABEL_ORDER:
         return [display_label(l) for l in LABEL_ORDER[task]]
 
     session = Session()

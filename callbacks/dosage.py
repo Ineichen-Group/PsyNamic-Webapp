@@ -9,10 +9,10 @@ from components.graphs import (get_ids_from_click_data,
 
 def register(app):
     @app.callback(
-        Output('selected-ids', 'data'),
-        Input({'type': 'dosage-box-plot', 'index': ALL}, 'selectedData'),
-        Input({'type': 'dosage-box-plot', 'index': ALL}, 'clickData'),
-        Input('dosage-reset-btn', 'n_clicks'),
+        Output("selected-ids", "data", allow_duplicate=True),
+        Input({"type": "dosage-box-plot", "index": ALL}, "selectedData"),
+        Input({"type": "dosage-box-plot", "index": ALL}, "clickData"),
+        Input("dosage-reset-btn", "n_clicks"),
         prevent_initial_call=True
     )
     @log_time

@@ -8,6 +8,7 @@ from . import (
     studies,
     time,
     download,
+    views,
 )
 
 def register_callbacks(app):
@@ -20,3 +21,4 @@ def register_callbacks(app):
     studies.register(app)
     time.register(app)
     download.register(app)
+    views.register(app)
