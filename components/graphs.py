@@ -4,20 +4,14 @@ import plotly.graph_objects as go
 from dash import dcc
 
 
-def bar_chart(
+def _prepare_data_for_bar_chart(
     data: pd.DataFrame,
     x: str,
     y: str,
-    title: str,
-    x_label: str,
-    y_label: str,
     group: str = None,
-    color_mapping: dict[str, str] = None,
-    remove_button: list[str] = [],
     group_order: list[str] = None,
-    average: bool = False,
-) -> dcc.Graph:
-    """Creates a bar chart with Study_ID attached as customdata for selections."""
+) -> tuple[pd.DataFrame, list[str]]:
+    """Prepare dataframe for bar chart creation."""
 
     data = data.copy()
 
@@ -30,7 +24,7 @@ def bar_chart(
         )
         data = data.sort_values([group, x])
 
-    # Sort x-axis categories by frequency
+    # Sort x-axis categories by aggregated value
     order = (
         data.groupby(x, observed=False)[y]
         .sum()
@@ -44,14 +38,31 @@ def bar_chart(
         ordered=True,
     )
 
-    # Create figure
-    px_kwargs = dict(
-        data_frame=data,
-        x=x,
-        y=y,
-        title=title,
-        text=y,
-    )
+    return data, order
+
+
+def create_bar_figure(
+    data: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    x_label: str,
+    y_label: str,
+    order: list[str],
+    group: str = None,
+    group_order: list[str] = None,
+    color_mapping: dict[str, str] = None,
+    average: bool = False,
+) -> go.Figure:
+    """Create a Plotly bar chart figure."""
+
+    px_kwargs = {
+        "data_frame": data,
+        "x": x,
+        "y": y,
+        "title": title,
+        "text": y,
+    }
 
     if group:
         px_kwargs.update(
@@ -61,21 +72,25 @@ def bar_chart(
             }
         )
 
-    # IMPORTANT:
-    # Pass Study_ID directly to Plotly so selectedData contains it
+        if group_order is not None:
+            px_kwargs["category_orders"] = {
+                group: group_order,
+            }
+
     if "Study_ID" in data.columns:
         px_kwargs["custom_data"] = ["Study_ID"]
 
     fig = px.bar(**px_kwargs)
 
     # Axis labels
-    fig.update_xaxes(title_text=x_label)
-    fig.update_yaxes(title_text=y_label)
-
-    # Preserve category ordering
     fig.update_xaxes(
+        title_text=x_label,
         categoryorder="array",
         categoryarray=order,
+    )
+
+    fig.update_yaxes(
+        title_text=y_label,
     )
 
     # Text labels
@@ -84,20 +99,13 @@ def bar_chart(
         textfont_size=10,
     )
 
-    # Apply colors
+    # Colors
     if color_mapping:
-        if group:
-            for trace in fig.data:
-                if trace.name in color_mapping:
-                    trace.update(
-                        marker_color=color_mapping[trace.name]
-                    )
-        else:
-            for trace in fig.data:
-                if trace.name in color_mapping:
-                    trace.update(
-                        marker_color=color_mapping[trace.name]
-                    )
+        for trace in fig.data:
+            if trace.name in color_mapping:
+                trace.update(
+                    marker_color=color_mapping[trace.name]
+                )
 
     # Background
     fig.update_layout(
@@ -111,7 +119,7 @@ def bar_chart(
         avg_value = data[y].mean()
 
         fig.add_trace(
-            dict(
+            go.Scatter(
                 x=data[x],
                 y=[avg_value] * len(data[x]),
                 mode="lines",
@@ -123,19 +131,59 @@ def bar_chart(
             )
         )
 
+    return fig
+
+
+def bar_chart(
+    data: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    x_label: str,
+    y_label: str,
+    group: str = None,
+    color_mapping: dict[str, str] = None,
+    remove_button: list[str] = None,
+    group_order: list[str] = None,
+    average: bool = False,
+) -> dcc.Graph:
+    """Creates a bar chart with Study_ID attached as customdata."""
+
+    remove_button = remove_button or []
+
+    data, order = _prepare_data_for_bar_chart(
+        data=data,
+        x=x,
+        y=y,
+        group=group,
+        group_order=group_order,
+    )
+
+    fig = create_bar_figure(
+        data=data,
+        x=x,
+        y=y,
+        title=title,
+        x_label=x_label,
+        y_label=y_label,
+        order=order,
+        group=group,
+        group_order=group_order,
+        color_mapping=color_mapping,
+        average=average,
+    )
+
     config = {
-        'modeBarButtonsToRemove': remove_button,  # Remove specific buttons
-        'displaylogo': False,  # Optionally hide the Plotly logo
+        "modeBarButtonsToRemove": remove_button,
+        "displaylogo": False,
     }
 
     return dcc.Graph(
-        id={
-            "type": "view-graph",
-            "index": title.lower().replace(" ", "-"),
-        },
+        id="view-bar-chart",
         figure=fig,
         config=config,
     )
+
 
 def box_plot_graph(
     data: pd.DataFrame,
@@ -400,6 +448,7 @@ def extract_study_id(point: dict) -> int | list[int] | None:
         customdata = customdata.item()
 
     return int(customdata)
+
 
 def get_ids_from_selected_data(selected_data: list[dict]) -> list[int]:
     """Extract study IDs from a list of Plotly selectedData dicts."""

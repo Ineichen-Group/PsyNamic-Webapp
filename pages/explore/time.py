@@ -12,14 +12,16 @@ def time_layout():
     max_year = df["Year"].max()
 
     df, ids = get_time_data(start_year=min_year, end_year=max_year)
-    fig = bar_chart(
+    graph = bar_chart(
         data=df,
         x="Year",
         y="Frequency",
         title="Frequency of Publications per Year",
         x_label="Year",
         y_label="Frequency",
-    ).figure
+        remove_button=["lasso2d", "select2d"]
+    )
+    graph.id = "time-graph"
 
     return html.Div([
         html.H1("Number of publications over time", className="my-4"),
@@ -36,7 +38,7 @@ def time_layout():
                           min=min_year, max=max_year, className="form-control", debounce=True),
             ], className="col-md-3"),
         ], className="row g-3 mb-3"),
-        dcc.Graph(id="time-graph", figure=fig),
+        graph,
         studies_display(page_key='time', ids=ids,
                         filters={}, infos={}, tags=False),
     ], className="container", id="time-layout")

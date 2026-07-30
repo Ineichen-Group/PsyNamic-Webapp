@@ -1,15 +1,15 @@
 from dash.dependencies import Input, Output
 
 from callbacks.utils import log_time
-from data.queries import get_studies_details, get_time_data
 from components.graphs import bar_chart
+from data.queries import get_time_data
+
 
 def register(app):
 
     @app.callback(
-        Output("studies-grid", "getRowsResponse", allow_duplicate=True),
+        Output("selected-ids", "data", allow_duplicate=True),
         Output("time-graph", "figure"),
-        Output("count-filtered", "children", allow_duplicate=True),
         Input("start-year", "value"),
         Input("end-year", "value"),
         prevent_initial_call=True
@@ -28,11 +28,4 @@ def register(app):
             y_label="Frequency",
         ).figure
 
-
-        studies = get_studies_details(ids=ids)
-
-        return (
-            {"rowData": studies, "rowCount": len(ids)},
-            fig,
-            len(ids),
-        )
+        return ids, fig

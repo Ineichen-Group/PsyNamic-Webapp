@@ -34,23 +34,36 @@ def view_layout(
         A Dash html.Div component structuring the view.
     """
     return html.Div([
-        html.H1(f"{title}", className="my-4"),
+        html.H1(title, className="my-4"),
+
         graph,
+
         dbc.Button(
             "Reset selection",
             id="reset-btn",
             color="secondary",
             className="mb-3",
         ),
+
         studies_display(
             page_key=page_key,
             ids=ids,
             filters=active_filters,
             infos=active_infos,
         ),
-        dcc.Store(id="default-view-ids", data=ids, storage_type="memory"),
-    ])
 
+        dcc.Store(
+            id="default-view-ids",
+            data=ids,
+            storage_type="memory",
+        ),
+
+        dcc.Store(
+            id="default-view-figure",
+            data=graph.figure,
+            storage_type="memory",
+        ),
+    ])
 
 def rct_view() -> html.Div:
     """Renders the view analyzing Randomized Controlled Trials (RCTs) vs. Systematic Reviews per substance.
@@ -78,15 +91,15 @@ def rct_view() -> html.Div:
     )
 
     graph = bar_chart(
-        data_rct_freq,
-        group_task,
-        "Frequency",
-        graph_title,
-        group_task,
-        "Frequency",
-        task,
-        color_mapping,
-        labels,
+        data = data_rct_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = color_mapping,
+        group_order = labels,
     )
 
     active_filters = OrderedDict({task: labels[:-1]})
@@ -114,15 +127,15 @@ def efficacy_safety_view() -> html.Div:
 
     data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
     graph = bar_chart(
-        data_freq,
-        group_task,
-        "Frequency",
-        graph_title,
-        group_task,
-        "Frequency",
-        task,
-        get_color_mapping(task, labels),
-        labels,
+        data = data_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = get_color_mapping(task, labels),
+        group_order = labels,
     )
 
     active_filters = OrderedDict({task: labels})
@@ -149,14 +162,14 @@ def longitudinal_view() -> html.Div:
     data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
 
     graph = bar_chart(
-        data_freq,
-        group_task,
-        "Frequency",
-        graph_title,
-        group_task,
-        "Frequency",
-        task,
-        get_color_mapping(task, labels),
+        data = data_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = get_color_mapping(task, labels),
         group_order = labels,
     )
 
@@ -190,14 +203,14 @@ def sex_bias_view() -> html.Div:
 
     data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
     graph = bar_chart(
-        data_freq,
-        group_task,
-        "Frequency",
-        graph_title,
-        group_task,
-        "Frequency",
-        task,
-        get_color_mapping(task, labels),
+        data = data_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = get_color_mapping(task, labels),
         group_order = labels,
     )
 
@@ -233,14 +246,14 @@ def nr_part_view() -> html.Div:
     data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
 
     graph = bar_chart(
-        data_freq,
-        group_task,
-        "Frequency",
-        graph_title,
-        group_task,
-        "Frequency",
-        task,
-        get_color_mapping(task, labels),
+        data = data_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = get_color_mapping(task, labels),
         group_order = labels,
     )
 

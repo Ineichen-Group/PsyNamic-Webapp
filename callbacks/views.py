@@ -1,50 +1,38 @@
-from dash import ALL, Input, Output, ctx, State, no_update
+from dash import Input, Output, State, ctx, no_update
+
 from components.graphs import get_ids_from_selected_data
-from copy import deepcopy
-import plotly.graph_objects as go
+
 
 def register(app):
+
     @app.callback(
         Output("selected-ids", "data", allow_duplicate=True),
-        Output({"type": "view-graph", "index": ALL}, "figure"),
+        Output("view-bar-chart", "figure"),
         Input("reset-btn", "n_clicks"),
-        Input({"type": "view-graph", "index": ALL}, "selectedData"),
+        Input("view-bar-chart", "selectedData"),
         State("default-view-ids", "data"),
-        State({"type": "view-graph", "index": ALL}, "figure"),
+        State("default-view-figure", "data"),
         prevent_initial_call=True,
     )
     def update_selected_ids(
-        n_clicks,
-        all_selected_data,
+        _,
+        selected_data,
         default_view_ids,
-        figures,
+        default_view_figure,
     ):
-        trigger = ctx.triggered_id
+        if ctx.triggered_id == "reset-btn":
+            # Replace the whole figure
+            return (
+                default_view_ids,
+                default_view_figure,
+            )
 
-        # Reset button
-        if trigger == "reset-btn":
-            cleared_figures = []
+        if not selected_data or not selected_data.get("points"):
+            return no_update, no_update
 
-            for fig_dict in figures:
-                fig = go.Figure(fig_dict)
-                fig.update_traces(selectedpoints=[])
-
-                cleared_figures.append(fig)
-
-            return default_view_ids, cleared_figures
-
-        # Normal selection
-        valid_selections = [
-            s for s in all_selected_data
-            if s and s.get("points")
-        ]
-
-        if not valid_selections:
-            return no_update, [no_update] * len(all_selected_data)
-
-        selected_ids = get_ids_from_selected_data(valid_selections)
+        selected_ids = get_ids_from_selected_data([selected_data])
 
         return (
             selected_ids if selected_ids else no_update,
-            [no_update] * len(all_selected_data),
+            no_update,
         )
