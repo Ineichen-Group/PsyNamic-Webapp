@@ -1,4 +1,4 @@
-from dash import ALL, ctx, html, no_update
+from dash import ALL, ctx, dcc, html, no_update
 from dash.dependencies import MATCH, Input, Output, State
 import dash_bootstrap_components as dbc
 
@@ -74,15 +74,19 @@ def build_modal_components(paper: dict, grid_type: str) -> tuple[list, html.Div]
             dosage_block,
             html.Div(build_tag_buttons(paper), className="modal-tags mt-3"),
             html.Div(
-                [dbc.Button(
-                    [
-                        html.I(className=f"fas fa-arrow-right-to-bracket me-2"),
-                        "View Study",
-                    ],
-                    href=search_link,
-                    color="primary",
-                    size="sm",
-                )
+                [
+                    dcc.Link(
+                        dbc.Button(
+                            [
+                                html.I(className="fas fa-arrow-right-to-bracket me-2"),
+                                "View Study",
+                            ],
+                            color="primary",
+                            size="sm",
+                        ),
+                        href=search_link,
+                        refresh=False,
+                    )
                 ],
                 className="modal-footer-link mt-4 pt-3 border-top",
             )
