@@ -654,9 +654,8 @@ def build_paper_details(paper: dict, tags_component=None) -> html.Div:
         return html.Div()
 
     title = paper.get("title", "")
-    year_str = f" ({paper.get('year', '')})" if paper.get("year") else ""
+    year_str = f" – {paper.get('authors', '')} ({paper.get('year', '')})" if paper.get("year") else ""
     full_title = f"{title}{year_str}"
-
     paper_url = paper.get("url", "")
     internal_id = paper.get("id", "")
     pubmed_id = paper.get("pubmed_id", "")
