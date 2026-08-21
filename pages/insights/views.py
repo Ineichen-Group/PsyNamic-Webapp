@@ -1,276 +1,384 @@
-from collections import defaultdict
-from dash import html, dcc
-import dash_bootstrap_components as dbc
-from style.colors import get_color_mapping
-from components.layout import filter_component, studies_display, filter_button, study_grid, ner_tag, highlighted_text, dosage_study_grid, get_filter_buttons
-from components.graphs import bar_chart, box_plot_graph
-from data.queries import get_freq_grouped, get_ids, get_pred_filtered, get_all_labels, nr_studies, get_pred_text, latest_update, get_studies_details_ner, get_dosage_samples
-from data.dosage_norm import remove_several_substances_dosages
-from callbacks import rgb_to_hex
 from collections import OrderedDict
-import numpy as np
+from typing import Optional
+
+import dash_bootstrap_components as dbc
+from dash import dcc, html
+
+from components.graphs import bar_chart, box_plot_graph
+from components.layout import studies_display
+from data.dosage_norm import remove_several_substances_dosages
+from data.queries import (get_all_labels, get_dosage_samples, get_freq_grouped,
+                          get_ids)
+from style.colors import get_color_mapping
 
 
+def view_layout(
+    title: str,
+    graph: dcc.Graph | html.Div,
+    page_key: str,
+    active_filters: OrderedDict,
+    active_infos: OrderedDict,
+    ids: Optional[list[int]] = None,
+) -> html.Div:
+    """Generates the standardized view wrapper containing a title, graph, and study list.
 
+    Args:
+        title: Page heading display text.
+        graph: Dash Graph component or HTML container displaying data visualizations.
+        page_key: Unique identifier for the page context.
+        active_filters: Ordered dictionary mapping filter keys to active values.
+        active_infos: Ordered dictionary mapping info keys to active values.
+        ids: Optional list of filtered study database IDs.
 
-def view_layout(title: str, graph: dcc.Graph, filter_buttons: list[dbc.Button],  ids: list[int], id: str, info_buttons: list[dbc.Button] = None, tags: OrderedDict = None, ) -> html.Div:
+    Returns:
+        A Dash html.Div component structuring the view.
+    """
     return html.Div([
-        html.H1(f'{title}', className="my-4"),
+        html.H1(title, className="my-4"),
+
         graph,
-        html.H4("Filtered Studies"),
-        filter_component(
-            filter_buttons, info_buttons if info_buttons else None),
-        dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
-        dcc.Store(id="filter-tags", data=tags, storage_type="memory"),
-        study_grid(nr_studies(), len(ids), latest_update(), tags=True, id=id)
+
+        dbc.Button(
+            "Reset selection",
+            id="reset-btn",
+            color="secondary",
+            className="mb-3",
+        ),
+
+        studies_display(
+            page_key=page_key,
+            ids=ids,
+            filters=active_filters,
+            infos=active_infos,
+        ),
+
+        dcc.Store(
+            id="default-view-ids",
+            data=ids,
+            storage_type="memory",
+        ),
+
+        dcc.Store(
+            id="default-view-figure",
+            data=graph.figure,
+            storage_type="memory",
+        ),
     ])
 
+def rct_view() -> html.Div:
+    """Renders the view analyzing Randomized Controlled Trials (RCTs) vs. Systematic Reviews per substance.
 
-def rct_view():
-    title = "Assessing evidence strength: How many Randomized Controlled Trials (RCTs) and Systematic Reviews are there per substance?"
-    task = 'Study Type'
+    Returns:
+        A Dash html.Div component with RCT frequency visualization and study lists.
+    """
+    title = (
+        "Assessing evidence strength: How many Randomized Controlled Trials (RCTs) "
+        "and Systematic Reviews are there per substance?"
+    )
+    task = "Study Type"
+    key = "rct-view"
     labels = [
-        'Randomized-controlled trial (RCT)', 'Systematic review/meta-analysis', 'Other']
-    group_task = 'Substances'
-    graph_title = 'Number of RCTs and Systematic Reviews per Substance'
+        "Randomized-controlled trial (RCT)", "Systematic review/meta-analysis", "Other"]
+    group_task = "Substances"
+    graph_title = "Number of RCTs and Systematic Reviews per Substance"
 
     color_mapping = get_color_mapping(task, labels)
+    data_rct_freq = get_freq_grouped(
+        task,
+        group_task,
+        labels=labels,
+        aggregate=True,
+    )
 
-    data_rct = get_freq_grouped(task, group_task, labels=labels)
-    data_rct_freq = data_rct_freq = data_rct.groupby(
-        [group_task, task]).size().reset_index(name='Frequency')
-    graph = bar_chart(data_rct_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
-                      task, color_mapping, ['pan', 'select', 'lasso2d'], labels)
+    graph = bar_chart(
+        data = data_rct_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = color_mapping,
+        group_order = labels,
+    )
 
-    filter_buttons = get_filter_buttons(task, labels[:-1])
-    group_labels = get_all_labels(group_task)
-    info_buttons = get_filter_buttons(
-        group_task, group_labels)
-
-    ids = data_rct[data_rct[task].isin(
-        labels[:-1])]['Study_ID'].unique().tolist()
-
-    # Setting tags
-    tags = OrderedDict()
-    tags[task] = labels[:-1]
-    tags[group_task] = group_labels
-
-    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 0}, info_buttons=info_buttons, tags=tags)
+    active_filters = OrderedDict({task: labels[:-1]})
+    active_infos = OrderedDict({group_task: get_all_labels(group_task)})
+    filtered_df = data_rct_freq[data_rct_freq[task].isin(labels[:-1])]
+    ids = filtered_df["Study_ID"].explode().dropna().unique().tolist()
+    return view_layout(title, graph, key, active_filters, active_infos, ids=ids)
 
 
-def efficacy_safety_view():
-    title = "Effectiveness and safety: Is there enough studies measuring efficacy and safety endpoints per substance?"
+def efficacy_safety_view() -> html.Div:
+    """Renders the view displaying study counts measuring efficacy and safety endpoints per substance.
+
+    Returns:
+        A Dash html.Div component with efficacy/safety endpoint visualizations.
+    """
+    title = (
+        "Effectiveness and safety: Is there enough studies measuring "
+        "efficacy and safety endpoints per substance?"
+    )
     task = "Study Purpose"
+    key = "efficacy-safety-view"
     labels = ["Efficacy endpoints", "Safety endpoints"]
-    group_task = 'Substances'
-    graph_title = 'Number of studies measuring efficacy and safety endpoints per substance'
+    group_task = "Substances"
+    graph_title = "Number of studies measuring efficacy and safety endpoints per substance"
 
-    data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = data.groupby(
-        [group_task, task]).size().reset_index(name='Frequency')
+    data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
+    graph = bar_chart(
+        data = data_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = get_color_mapping(task, labels),
+        group_order = labels,
+    )
 
-    graph = bar_chart(data_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
-                      task, get_color_mapping(task, labels), ['pan', 'select', 'lasso2d'], labels)
+    active_filters = OrderedDict({task: labels})
+    active_infos = OrderedDict({group_task: get_all_labels(group_task)})
+    data_filtered = data_freq[data_freq[task].isin(labels[:-1])]
+    ids = data_filtered["Study_ID"].explode().dropna().unique().tolist()
 
-    filter_buttons = get_filter_buttons(task, labels)
-    group_labels = get_all_labels(group_task)
-    info_buttons = get_filter_buttons(
-        group_task, group_labels)
-
-    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
-
-    # Setting tags
-    tags = OrderedDict()
-    tags[task] = labels
-    tags[group_task] = group_labels
-
-    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 1}, info_buttons=info_buttons, tags=tags)
+    return view_layout(title, graph, key, active_filters, active_infos, ids)
 
 
-def longitudinal_view():
+def longitudinal_view() -> html.Div:
+    """Renders the view comparing study counts across longitudinal vs cross-sectional data types per substance.
+
+    Returns:
+        A Dash html.Div component displaying study design distribution.
+    """
     title = "Do we have enough longitudinal studies and cross-sectional studies for each substance?"
     task = "Data Type"
+    key = "longitudinal-view"
     labels = ["Longitudinal short", "Longitudinal long", "Cross-sectional"]
-    group_task = 'Substances'
-    graph_title = 'Number of studies per substance for different data types'
+    group_task = "Substances"
+    graph_title = "Number of studies per substance for different data types"
 
-    data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = data.groupby(
-        [group_task, task]).size().reset_index(name='Frequency')
+    data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
 
-    graph = bar_chart(data_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
-                      task, get_color_mapping(task, labels), ['pan', 'select', 'lasso2d'], labels)
+    graph = bar_chart(
+        data = data_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = get_color_mapping(task, labels),
+        group_order = labels,
+    )
 
-    filter_buttons = get_filter_buttons(task, labels)
-    info_buttons = get_filter_buttons(
-        group_task, get_all_labels(group_task))
+    filtered_df = data_freq[data_freq[task].isin(labels)]
+    ids = filtered_df["Study_ID"].explode().dropna().unique().tolist()
+    active_filters = OrderedDict({task: labels})
+    active_infos = OrderedDict({group_task: get_all_labels(group_task)})
 
-    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
-    tags = OrderedDict()
-    tags[task] = labels
-    tags[group_task] = get_all_labels(group_task)
+    return view_layout(
+        title,
+        graph,
+        key,
+        active_filters=active_filters,
+        active_infos=active_infos,
+        ids=ids,
+    )
 
-    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 2}, info_buttons=info_buttons, tags=tags)
 
+def sex_bias_view() -> html.Div:
+    """Renders the view inspecting participant sex distribution across studies per substance.
 
-def sex_bias_view():
+    Returns:
+        A Dash html.Div component displaying participant sex breakdowns.
+    """
     title = "Is there sex bias per substance?"
     task = "Sex of Participants"
+    key = "sex-bias-view"
     labels = ["Male", "Female", "Both sexes", "Unknown"]
-    group_task = 'Substances'
-    graph_title = 'Sex of participants of studies per substance'
+    group_task = "Substances"
+    graph_title = "Sex of participants of studies per substance"
 
-    data = get_freq_grouped(task, group_task, labels=labels)
-    data_freq = data.groupby(
-        [group_task, task]).size().reset_index(name='Frequency')
+    data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
+    graph = bar_chart(
+        data = data_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = get_color_mapping(task, labels),
+        group_order = labels,
+    )
 
-    filter_buttons = get_filter_buttons(task, labels)
-    graph = bar_chart(data_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
-                      task, get_color_mapping(task, labels), ['pan', 'select', 'lasso2d'], labels)
+    active_filters = OrderedDict({task: labels})
+    active_infos = OrderedDict({group_task: get_all_labels(group_task)})
+    filtered_df = data_freq[data_freq[task].isin(labels)]
+    ids = filtered_df["Study_ID"].explode().dropna().unique().tolist()
 
-    info_buttons = get_filter_buttons(
-        group_task, get_all_labels(group_task))
+    return view_layout(
+        title,
+        graph,
+        key,
+        active_filters=active_filters,
+        active_infos=active_infos,
+        ids=ids,
+    )
 
-    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
-    tags = OrderedDict()
-    tags[task] = labels
-    tags[group_task] = get_all_labels(group_task)
 
-    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 3}, info_buttons=info_buttons, tags=tags)
+def nr_part_view() -> html.Div:
+    """Renders the view analyzing distribution of total participant counts per study by substance.
 
-
-def nr_part_view():
+    Returns:
+        A Dash html.Div component showcasing sample size distributions per study.
+    """
     title = "Study Participation: How many participants are included per study?"
     task = "Number of Participants"
-    group_task = 'Substances'
-    labels = ['1-20', '21-40', '41-60', '61-80', '81-100',
-              '100-199', '200-499', '500-999', '≥1000', 'Unknown']
-    graph_title = 'Number of Participants per Substance'
+    group_task = "Substances"
+    labels = get_all_labels(task)
+    print(f"Labels for {task}: {labels}")
+    graph_title = "Number of Participants per Substance"
+    key = "nr-part-view"
 
-    data = get_freq_grouped(task, group_task)
-    data_freq = data.groupby(
-        [group_task, task]).size().reset_index(name='Frequency')
-    filter_buttons = get_filter_buttons(task, labels)
-    graph = bar_chart(data_freq, group_task, 'Frequency', graph_title, group_task, 'Frequency',
-                      task, get_color_mapping(task, labels), ['pan', 'select', 'lasso2d'], labels)
+    data_freq = get_freq_grouped(task, group_task, labels=labels, aggregate=True)
 
-    info_buttons = get_filter_buttons(
-        group_task, get_all_labels(group_task))
+    graph = bar_chart(
+        data = data_freq,
+        x = group_task,
+        y = "Frequency",
+        title = graph_title,
+        x_label = group_task,
+        y_label = "Frequency",
+        group = task,
+        color_mapping = get_color_mapping(task, labels),
+        group_order = labels,
+    )
 
-    ids = data[data[task].isin(labels)]['Study_ID'].unique().tolist()
-    tags = OrderedDict()
-    tags[task] = labels
-    tags[group_task] = get_all_labels(group_task)
+    filtered_df = data_freq[data_freq[task].isin(labels)]
+    ids = filtered_df["Study_ID"].explode().dropna().unique().tolist()
 
-    return view_layout(title, graph, filter_buttons, ids, id={"type": "studies-grid", "index": 4}, info_buttons=info_buttons, tags=tags)
+    return view_layout(
+        title,
+        graph,
+        key,
+        active_filters=OrderedDict({task: labels}),
+        active_infos=OrderedDict({group_task: get_all_labels(group_task)}),
+        ids=ids,
+    )
 
 
-def study_protocol_view():
+def study_protocol_view() -> html.Div:
+    """Renders a simple summary view displaying all published study protocols.
+
+    Returns:
+        A Dash html.Div component showing total protocol counts and study items.
+    """
     title = "How many study protocols are available?"
     task = "Study Type"
     label = "Study protocol"
+    key = "study-protocol-view"
+    filters = OrderedDict({task: [label]})
 
-    # Fetch data
-    color_mapping = get_color_mapping(task, [label])
     ids = get_ids(task, label)
-
-    tags = OrderedDict()
-    tags[task] = [label]
-
     freq_span = html.P(
-        f"Total number of study protocols: {len(ids)}", className="mb-4")
+        f"Total number of study protocols: {len(ids)}", className="mb-4"
+    )
 
     return html.Div([
-        html.H1(f'{title}', className="my-4"),
+        html.H1(f"{title}", className="my-4"),
         freq_span,
-        html.H4("Filtered Studies"),
-        filter_component(filter_button(
-            color_mapping[label], label, task, False)),
-        dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
-        dcc.Store(id="filter-tags", data=tags, storage_type="memory"),
-        study_grid(nr_studies(), len(ids), latest_update(), tags=True,
-                   id={"type": "studies-grid", "index": 5})
+        studies_display(page_key=key, ids=ids, filters=filters, tags=False),
     ])
 
 
-def dosages_view():
+def dosages_view() -> html.Div:
+    """Renders the view displaying dosage distributions across substances using box plots.
+
+    Returns:
+        A Dash html.Div component containing dosage normalization box plots and controls.
+    """
     title = "Inspecting dosage: How are different substances dosed?"
-    id = 'study_view_test'
 
-
-    last_update = latest_update()
-    total_nr = nr_studies()
-    # Populate dosage view with papers that have Dosage NER tags
-    studies_with_dosage = get_studies_details_ner(start_row=0, end_row=None)
-    ids = [s['id'] for s in studies_with_dosage]
-
-    # Fetch absolute dosage samples per substance and draw a box plot (values in mg)
+    # Fetch absolute dosage samples per substance (values in mg)
     df = remove_several_substances_dosages(get_dosage_samples())
     if df is None or df.empty:
         graph = html.P("No absolute dosage data available.")
     else:
-        # get color mapping for substances
-        substance_labels = sorted(df['Substance'].unique().tolist())
-        col_map = get_color_mapping('Substances', substance_labels)
+        substance_labels = sorted(df["Substance"].unique().tolist())
+        col_map = get_color_mapping("Substances", substance_labels)
 
         # Build three plots: LSD, Ibogaine, and the rest (stacked vertically)
-        substances = sorted(df['Substance'].dropna().unique().tolist())
-        lsd_subs = ['LSD']
-        ibogaine_subs = ['Ibogaine']
-        rest_subs = [s for s in substances if s not in lsd_subs + ibogaine_subs]
+        substances = sorted(df["Substance"].dropna().unique().tolist())
+        lsd_subs = ["LSD"]
+        ibogaine_subs = ["Ibogaine"]
+        rest_subs = [
+            s for s in substances if s not in lsd_subs + ibogaine_subs]
 
         graphs = []
-        # Order: rest on top, then Ibogaine, then LSD (stacked vertically)
-        groups = [rest_subs, ibogaine_subs, lsd_subs]
+        groups = [ibogaine_subs, rest_subs, lsd_subs]
+
+        ids = set()
+
         for i, subs in enumerate(groups):
-            sub_df = df[df['Substance'].isin(subs)]
+            sub_df = df[df["Substance"].isin(subs)]
             if sub_df.empty:
                 continue
-            # No separate titles per user request; page H1 provides context
-            # smaller height for Ibogaine and LSD (LSD even smaller)
-            if subs == ibogaine_subs:
-                h = 200
-            elif subs == lsd_subs:
-                h = 200
-            else:
-                h = 700
 
-            # Disable annotation for the lower two small plots (Ibogaine and LSD)
-            add_ann = False if subs == ibogaine_subs or subs == lsd_subs else True
-            # use a pattern-matching id so the callback can listen to all dosage plots
+            h = 200 if subs in (ibogaine_subs, lsd_subs) else 700
+            add_ann = subs not in (ibogaine_subs, lsd_subs)
             plot_id = {"type": "dosage-box-plot", "index": i}
+            ids.update(sub_df["Study_ID"].unique().tolist())
 
             g = box_plot_graph(
                 sub_df,
-                x='Substance',
-                y='Dosage_mg',
-                title='',
-                x_label='Substance',
-                y_label='Dosage (mg)',
+                x="Substance",
+                y="Dosage_mg",
+                title="",
+                x_label="Substance",
+                y_label="Dosage (mg)",
                 group=None,
                 color_mapping=col_map,
                 height=h,
                 add_annotation=add_ann,
-                    id=plot_id,
+                id=plot_id,
             )
             graphs.append(g)
 
         if not graphs:
             graph = html.P("No absolute dosage data available.")
         else:
-            # Stack graphs vertically (each full-width)
-            # Reduce vertical gaps: small vertical padding and small margin between rows
-            rows = [dbc.Row(dbc.Col(g, width=12), className="py-1", style={"marginBottom": "6px"}) for g in graphs]
+            rows = [
+                dbc.Row(
+                    dbc.Col(g, width=12),
+                    className="py-0",
+                    style={"marginBottom": "0px"},
+                )
+                for g in graphs
+            ]
             graph = html.Div(rows, style={"marginTop": "6px"})
 
     return html.Div([
-        html.H1(f'{title}', className="my-4"),
+        html.H1(f"{title}", className="my-0"),
         graph,
         dbc.Row([
-            dbc.Col(dbc.Button("Reset selection", id="dosage-reset-btn", color="secondary", className="mb-3"), width="auto"),
+            dbc.Col(
+                dbc.Button(
+                    "Reset selection",
+                    id="dosage-reset-btn",
+                    color="secondary",
+                    className="mb-3",
+                ),
+                width="auto",
+            ),
         ]),
-        dosage_study_grid(total_nr, len(ids), last_update),
-        dcc.Store(id="filtered-study-ids", data=ids, storage_type="memory"),
-        dcc.Store(id="filter-tags", data={}, storage_type="memory"),
-
+        studies_display(
+            page_key="dosage-normalization-page",
+            grid_id="dosage-study-grid",
+            is_dosage=True,
+            tags=True,
+            ids=list(ids)
+        ),
     ])

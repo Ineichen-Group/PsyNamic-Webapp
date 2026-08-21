@@ -1,6 +1,7 @@
 
-import os
 import logging
+import os
+import re
 from datetime import datetime, timedelta
 
 
@@ -53,3 +54,37 @@ def is_same_title(title1: str, title2: str) -> bool:
     if title1.startswith(title2) or title2.startswith(title1):
         return True
     return False
+
+
+def format_author_citation(author_str: str) -> str:
+    """
+    Formats an author string or stringified list into inline citations:
+    - 1 author  -> "Lastname"
+    - 2 authors -> "Lastname1 & Lastname2"
+    - 3+ authors-> "Lastname1 et al."
+    """
+    if not author_str:
+        return ""
+
+    # Clean stringified list brackets/quotes: "['A', 'B']" -> "A, B"
+    cleaned_str = re.sub(r"[\[\]'\"\]]", "", author_str)
+
+    last_names = []
+    for author in cleaned_str.split(","):
+        author = author.strip()
+        if not author:
+            continue
+        # Extract the last name (last sequence of letters/hyphens in each author segment)
+        match = re.search(r'([A-Za-z\-]+)\s*$', author)
+        if match:
+            last_names.append(match.group(1))
+
+    count = len(last_names)
+
+    if count == 0:
+        return ""
+    if count == 1:
+        return last_names[0]
+    if count == 2:
+        return f"{last_names[0]} & {last_names[1]}"
+    return f"{last_names[0]} et al."

@@ -1,100 +1,188 @@
-import dash
-from dash import dcc, html
 import pandas as pd
-from plotly import express as px
+import plotly.express as px
 import plotly.graph_objects as go
+from dash import dcc
 
 
-def bar_chart(
-        data: pd.DataFrame,
-        x: str,
-        y: str,
-        title: str,
-        x_label: str,
-        y_label: str,
-        group: str = None,
-        color_mapping: dict[str, str] = None,
-        remove_button: list[str] = [],
-        group_order: list[str] = None,
-        average: bool = False,
-) -> dcc.Graph:
-    """
-    Creates a bar chart.
+def _prepare_data_for_bar_chart(
+    data: pd.DataFrame,
+    x: str,
+    y: str,
+    group: str = None,
+    group_order: list[str] = None,
+) -> tuple[pd.DataFrame, list[str]]:
+    """Prepare dataframe for bar chart creation."""
 
-    data: pandas.DataFrame with columns `x` and `y`.
-    - `x`: categorical (or convertible) for x-axis categories.
-    - `y`: numeric values for bar heights (aggregated by sum).
-    - optional `group`: categorical column to group/color bars.
-    - optional `Study_ID`: allowed but unused here.
+    data = data.copy()
 
-    Returns a Dash `dcc.Graph`.
-    """
+    # Apply group ordering
+    if group and group_order is not None:
+        data[group] = pd.Categorical(
+            data[group],
+            categories=group_order,
+            ordered=True,
+        )
+        data = data.sort_values([group, x])
+
+    # Sort x-axis categories by aggregated value
+    order = (
+        data.groupby(x, observed=False)[y]
+        .sum()
+        .sort_values(ascending=False)
+        .index.tolist()
+    )
+
+    data[x] = pd.Categorical(
+        data[x],
+        categories=order,
+        ordered=True,
+    )
+
+    return data, order
+
+
+def create_bar_figure(
+    data: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    x_label: str,
+    y_label: str,
+    order: list[str],
+    group: str = None,
+    group_order: list[str] = None,
+    color_mapping: dict[str, str] = None,
+    average: bool = False,
+) -> go.Figure:
+    """Create a Plotly bar chart figure."""
+
+    px_kwargs = {
+        "data_frame": data,
+        "x": x,
+        "y": y,
+        "title": title,
+        "text": y,
+    }
+
     if group:
+        px_kwargs.update(
+            {
+                "color": group,
+                "barmode": "group",
+            }
+        )
+
         if group_order is not None:
-            data[group] = pd.Categorical(data[group], categories=group_order, ordered=True)
-            data = data.sort_values([group, x])
+            px_kwargs["category_orders"] = {
+                group: group_order,
+            }
 
-        order = data.groupby(x)[y].sum().sort_values(ascending=False).index.tolist()
-        data[x] = pd.Categorical(data[x], categories=order, ordered=True)
+    if "Study_ID" in data.columns:
+        px_kwargs["custom_data"] = ["Study_ID"]
 
-        fig = px.bar(data, x=x, y=y, color=group, title=title, barmode='group', text=y)
-    else:
+    fig = px.bar(**px_kwargs)
 
-        order = data.groupby(x)[y].sum().sort_values(ascending=False).index.tolist()
-        data[x] = pd.Categorical(data[x], categories=order, ordered=True)
+    # Axis labels
+    fig.update_xaxes(
+        title_text=x_label,
+        categoryorder="array",
+        categoryarray=order,
+    )
 
-        fig = px.bar(data, x=x, y=y, title=title, barmode='group', text=y)
+    fig.update_yaxes(
+        title_text=y_label,
+    )
 
+    # Text labels
+    fig.update_traces(
+        textposition="outside",
+        textfont_size=10,
+    )
 
-    if 'order' in locals() and order:
-        fig.update_xaxes(categoryorder='array', categoryarray=order)
-    elif pd.api.types.is_categorical_dtype(data[x].dtype):
-        fig.update_xaxes(categoryorder='array', categoryarray=list(data[x].cat.categories))
-
-
-    # Update x and y axis labels
-    fig.update_xaxes(title_text=x_label)
-    fig.update_yaxes(title_text=y_label)
-
-    # Ensure text labels appear above bars
-    fig.update_traces(textposition='outside', textfont_size=10)
-
-    # Update the color mapping if provided
+    # Colors
     if color_mapping:
-        if group:  # Color by group
-            for group_val in data[group].unique():
-                color = color_mapping.get(group_val, None)
-                fig.for_each_trace(lambda trace: trace.update(
-                    marker_color=color) if trace.name == group_val else ())
-        else:  # Color by x values
-            for x_val in data[x].unique():
-                color = color_mapping.get(x_val, None)
-                fig.for_each_trace(lambda trace: trace.update(
-                    marker_color=color) if trace.name == x_val else ())
+        for trace in fig.data:
+            if trace.name in color_mapping:
+                trace.update(
+                    marker_color=color_mapping[trace.name]
+                )
 
-    fig.update_layout(plot_bgcolor='#f8f8f8')
+    # Background
+    fig.update_layout(
+        plot_bgcolor="#f8f8f8"
+    )
+
     add_interaction_annotation(fig)
 
-
+    # Optional average line
     if average:
-        # add average number of participants per substance as a line
-        data['Average'] = data[y].mean()
+        avg_value = data[y].mean()
+
         fig.add_trace(
-            dict(
+            go.Scatter(
                 x=data[x],
-                y=data['Average'],
-                mode='lines',
-                name='Average',
-                line=dict(color='black', width=2)
+                y=[avg_value] * len(data[x]),
+                mode="lines",
+                name="Average",
+                line=dict(
+                    color="black",
+                    width=2,
+                ),
             )
         )
 
+    return fig
+
+
+def bar_chart(
+    data: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    x_label: str,
+    y_label: str,
+    group: str = None,
+    color_mapping: dict[str, str] = None,
+    remove_button: list[str] = None,
+    group_order: list[str] = None,
+    average: bool = False,
+) -> dcc.Graph:
+    """Creates a bar chart with Study_ID attached as customdata."""
+
+    remove_button = remove_button or []
+
+    data, order = _prepare_data_for_bar_chart(
+        data=data,
+        x=x,
+        y=y,
+        group=group,
+        group_order=group_order,
+    )
+
+    fig = create_bar_figure(
+        data=data,
+        x=x,
+        y=y,
+        title=title,
+        x_label=x_label,
+        y_label=y_label,
+        order=order,
+        group=group,
+        group_order=group_order,
+        color_mapping=color_mapping,
+        average=average,
+    )
+
     config = {
-        'modeBarButtonsToRemove': remove_button,  # Remove specific buttons
-        'displaylogo': False,  # Optionally hide the Plotly logo
+        "modeBarButtonsToRemove": remove_button,
+        "displaylogo": False,
     }
 
-    return dcc.Graph(figure=fig, config=config)
+    return dcc.Graph(
+        id="view-bar-chart",
+        figure=fig,
+        config=config,
+    )
 
 
 def box_plot_graph(
@@ -123,7 +211,8 @@ def box_plot_graph(
     # exclude Psychdelic mushrooms Unkown and LSD from the plot
     data = data[~data[x].isin(['Psychedelic mushrooms', 'Unknown'])]
 
-    fig = box_plot(data, x, y, title, x_label, y_label, group, color_mapping, height=height, width=width)
+    fig = box_plot(data, x, y, title, x_label, y_label, group,
+                   color_mapping, height=height, width=width)
     if add_annotation:
         add_interaction_annotation(fig)
     config = {
@@ -151,7 +240,8 @@ def box_plot(
     if not data_all.empty:
         try:
             order = (
-                data_all.groupby(x)[y].median().sort_values(ascending=False).index.tolist()
+                data_all.groupby(x, observed=False)[y].median().sort_values(
+                    ascending=False).index.tolist()
             )
         except Exception:
             order = data_all[x].unique().tolist()
@@ -160,12 +250,14 @@ def box_plot(
 
     # ensure categorical ordering for consistent plotting
     if order:
-        data_all[x] = pd.Categorical(data_all[x], categories=order, ordered=True)
+        data_all[x] = pd.Categorical(
+            data_all[x], categories=order, ordered=True)
 
     # Use the full dataset for standard box calculation (quartiles and whiskers)
     data_filtered = data_all.copy()
     if order and x in data_filtered.columns:
-        data_filtered[x] = pd.Categorical(data_filtered[x], categories=order, ordered=True)
+        data_filtered[x] = pd.Categorical(
+            data_filtered[x], categories=order, ordered=True)
 
     # Create horizontal box plot from filtered data (y=category, x=numeric)
     # Use Plotly's default box calculation and show outliers ('outliers')
@@ -245,7 +337,7 @@ def box_plot(
     vals_all = data_all[y].dropna()
     if not vals_all.empty:
         upper_whiskers = []
-        for cat, sub in data_all.groupby(x):
+        for cat, sub in data_all.groupby(x, observed=False):
             vals = sub[y].dropna()
             if vals.empty:
                 continue
@@ -267,7 +359,8 @@ def box_plot(
 
     # enforce y category order and display largest median on top
     if order:
-        fig.update_yaxes(categoryorder='array', categoryarray=order, autorange='reversed')
+        fig.update_yaxes(categoryorder='array',
+                         categoryarray=order, autorange='reversed')
 
     # Apply requested size if provided
     layout_updates = {'plot_bgcolor': '#f8f8f8'}
@@ -314,4 +407,79 @@ def add_interaction_annotation(fig, x=0.88, y=0.86, ax=36, ay=-72, text="Interac
     fig.layout.annotations = tuple(existing)
 
 
+def extract_study_id(point: dict) -> int | list[int] | None:
+    """Extract study ID(s) from a Plotly point's customdata.
 
+    Handles:
+    - scalar IDs: customdata=123
+    - aggregated IDs: customdata=[1,2,3]
+    - wrapped aggregated IDs: customdata=[[1,2,3]]
+    """
+    customdata = point.get("customdata")
+
+    if customdata is None:
+        return None
+
+    # Convert numpy arrays/tuples to normal lists
+    if hasattr(customdata, "tolist"):
+        customdata = customdata.tolist()
+
+    # Handle list/tuple customdata
+    if isinstance(customdata, (list, tuple)):
+        if not customdata:
+            return None
+
+        # Case: customdata=[[1,2,3]]
+        # (old Plotly wrapping style)
+        if isinstance(customdata[0], (list, tuple)):
+            customdata = customdata[0]
+
+        # Case: customdata=[1,2,3]
+        if isinstance(customdata, (list, tuple)):
+            ids = []
+            for item in customdata:
+                if hasattr(item, "item"):
+                    item = item.item()
+                ids.append(int(item))
+            return ids
+
+    # Case: customdata=123
+    if hasattr(customdata, "item"):
+        customdata = customdata.item()
+
+    return int(customdata)
+
+
+def get_ids_from_selected_data(selected_data: list[dict]) -> list[int]:
+    """Extract study IDs from a list of Plotly selectedData dicts."""
+    ids = set()
+
+    for graph_selection in selected_data:
+        if not graph_selection:
+            continue
+
+        for point in graph_selection.get("points", []):
+            study_id = extract_study_id(point)
+
+            if study_id is not None:
+                if isinstance(study_id, list):
+                    ids.update(study_id)
+                else:
+                    ids.add(study_id)
+
+    return list(ids)
+
+
+def get_ids_from_click_data(click_data: list[dict]) -> list[int]:
+    """Extract study IDs from a list of Plotly clickData dicts."""
+    ids = set()
+
+    for graph_click in click_data:
+        if not graph_click:
+            continue
+
+        for point in graph_click.get("points", []):
+            point_ids = extract_study_ids(point)
+            ids.update(point_ids)
+
+    return list(ids)

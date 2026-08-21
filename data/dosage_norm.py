@@ -327,21 +327,21 @@ def remove_several_substances_dosages(df: pd.DataFrame) -> pd.DataFrame:
         combinations_counts.items(), key=lambda item: len(item[1]), reverse=True))
 
     # Get all combinations and their counts
-    for combo, count in combinations_counts.items():
-        print(f"{combo}: {count}")
+    # for combo, count in combinations_counts.items():
+    #     print(f"{combo}: {count}")
 
     several_substances_ids = []
     for combo, ids in combinations_counts.items():
         several_substances_ids.extend(ids)
 
-    print(
-        f'Total papers with multiple substance: {len(several_substances_ids)}')
+    # print(
+    #     f'Total papers with multiple substance: {len(several_substances_ids)}')
 
     # Remove all papers that have more than 1 substance, except for the allowed combinations
     df_refined = df[~df['Study_ID'].isin(
         several_substances_ids)].reset_index(drop=True)
-    print(
-        f'Total papers in refined df: {len(df_refined)}')
+    # print(
+    #     f'Total papers in refined df: {len(df_refined)}')
     removed_dosages = len(df) - \
         len(df_refined)
     total_dosages = len(df)
@@ -350,12 +350,12 @@ def remove_several_substances_dosages(df: pd.DataFrame) -> pd.DataFrame:
     total_papers = len(df['Study_ID'].unique())
     total_papers_refined = len(df_refined['Study_ID'].unique())
 
-    print(
-        f'Total papers with multiple substances removed: {total_papers - total_papers_refined} ({(total_papers - total_papers_refined) / total_papers * 100:.1f}%)'
-    )
+    # print(
+    #     f'Total papers with multiple substances removed: {total_papers - total_papers_refined} ({(total_papers - total_papers_refined) / total_papers * 100:.1f}%)'
+    # )
 
-    print(
-        f'Total dosages with multiple substances removed: {removed_dosages} ({excluded_pct:.1f}%)')
+    # print(
+    #     f'Total dosages with multiple substances removed: {removed_dosages} ({excluded_pct:.1f}%)')
     return df_refined
 
 

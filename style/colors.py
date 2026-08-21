@@ -1,8 +1,8 @@
 
 import re
-from plotly.express.colors import sequential
-import numpy as np
 
+import numpy as np
+from plotly.express.colors import sequential
 
 GREY = '#c7c7c7'
 BROWN = "#e5d8bd"
@@ -17,16 +17,16 @@ TASK2COLOR = {
     "Data Collection": sequential.Magenta,
     "Number of Participants": sequential.Bluered,
     "Sex of Participants": sequential.Mint,
-    "Age of Participants": sequential.Peach,
+    "Age of Participants": sequential.Sunsetdark,
     "Substances": sequential.Purples,
     "Application Form": sequential.Burgyl,
-    "Regimen": sequential.Pinkyl,
-    "Setting": sequential.Bluyl,
+    "Regimen": sequential.Brwnyl,
+    "Setting": sequential.PuBu,
     "Substance Naivety": sequential.Darkmint,
     "Condition": sequential.Oranges,
-    "Outcomes": sequential.PuBu,
-    "Clinical Trial Phase": sequential.PuBuGn,
-    "Study Conclusion": sequential.PuRd,
+    "Outcomes": sequential.Bluyl,
+    # "Clinical Trial Phase": sequential.PuBuGn,
+    # "Study Conclusion": sequential.PuRd,
 }
 
 # s. https://plotly.com/python/builtin-colorscales/
@@ -76,6 +76,15 @@ def rgb_to_hex(rgb: str):
         rgb = rgb.lstrip('rgba')
         int_list = [int(i) for i in rgb.strip('()').split(',')][:3]
         return '#%02x%02x%02x' % tuple(int_list)
+
+
+def hex_to_rgb(hex_color: str) -> str:
+    """Convert a hex color string to an RGB string."""
+    hex_color = hex_color.lstrip('#')
+    if len(hex_color) != 6:
+        raise ValueError(f"Invalid hex color: {hex_color}")
+    r, g, b = tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+    return f"rgb({r}, {g}, {b})"
 
 
 def calculate_luminance(color_component):
@@ -135,7 +144,7 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
     non_special = [lbl for lbl in list_labels if lbl not in special_labels]
     # If all labels are special, return gray for all
     if len(non_special) == 0:
-        return {lbl: GREY for lbl in list_labels}
+        return {lbl: hex_to_rgb(GREY) for lbl in list_labels}
 
     n = len(non_special)
     if n == 1:
@@ -163,7 +172,7 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
     idx = 0
     for lbl in list_labels:
         if lbl in special_labels:
-            mapping[lbl] = GREY if type != 'hex' else GREY
+            mapping[lbl] = hex_to_rgb(GREY) if type != 'hex' else hex_to_rgb(GREY)
         else:
             mapping[lbl] = selected_colors[idx]
             idx += 1

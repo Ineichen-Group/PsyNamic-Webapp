@@ -18,8 +18,8 @@
     line-height: 1.2;
     display: inline-flex;
     align-items: center;
-    padding: 6px 7px;
-    border-radius: 4px;
+    padding: 5px 7px 7px 7px;
+    border-radius: 5px;
     color: black;
     margin: 2px;
 }
@@ -88,4 +88,63 @@
 
 .list-group-item:focus, .list-group-item:active {
     box-shadow: none !important;
+}
+
+.search-results-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ced4da;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    background-color: #fff;
+}
+
+.search-results-container.hidden {
+    display: none;
+}
+
+.search-results-container.visible {
+    display: block;
+}
+
+.abstract-container {
+    margin-bottom: 1rem;
+}
+
+.abstract-section {
+    margin-bottom: 0.35rem;
+}
+
+.abstract-heading {
+    font-weight: 700;
+}
+
+.modal-paper-link {
+    margin-bottom: 1rem;
+}
+
+.modal-dosage-block {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modal-tags {
+    margin-top: 1.5rem;
+}
+
+.footer {
+    margin-top: auto;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+    background-color: #f8f9fa;
+}
+
+.content-container {
+    min-height: 82vh;
+}
+
+.study-grid {
+    height: 500px;
+    width: 100%;
 }

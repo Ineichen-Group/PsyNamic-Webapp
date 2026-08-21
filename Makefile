@@ -23,9 +23,6 @@ wait-for-db: load-env
 	echo "Postgres did not become ready in time"; \
 	exit 1
 
-load-indexes:
-	docker compose exec -T db psql -U $(DATABASE_USER) -d $(DATABASE_NAME) < data/indexes.sql
-
 db-init: load-env
 	docker compose up -d db
 	$(MAKE) wait-for-db
