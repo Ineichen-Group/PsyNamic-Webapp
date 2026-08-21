@@ -96,10 +96,7 @@ logs:
 	@echo "===== ROOT CRONTAB (last 10 cron entries) ====="
 	@grep CRON /var/log/syslog | tail -n 10
 	@echo ""
-	@echo "===== GENERAL PIPELINE LOG (last 10 lines) ====="
-	@tail -n 10 /home/sysadmin/PsyNamic-Webapp/pipeline.log 2>/dev/null || echo "No general pipeline log found"
-	@echo ""
-	@echo "===== LATEST PIPELINE LOG (last 50 lines) ====="
+	@echo "===== PIPELINE LOG (last 50 lines) ====="
 	@latest_log=$$(ls -1t /home/sysadmin/PsyNamic-Webapp/pipeline/log/pipeline_*.log 2>/dev/null | head -n 1); \
 	if [ -n "$$latest_log" ]; then \
 		echo "Tailing latest log: $$latest_log"; \
