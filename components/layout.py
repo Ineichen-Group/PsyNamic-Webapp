@@ -134,11 +134,17 @@ def content_layout(list_of_children: list, id: str = "content") -> dbc.Container
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = []) -> html.Div:
+def filter_component(
+    filter_buttons: list[dbc.Button] = [],
+    info_buttons: list[dbc.Button] = [],
+    show_filters: bool = True,
+) -> html.Div:
     """Builds the sections that display the active filters and info buttons in the studies display page."""
     children = []
 
-    if filter_buttons:
+    # "active-filter-buttons" must stay in the layout whenever the page can add filters,
+    # since callbacks target it by a plain (non-pattern-matching) id.
+    if show_filters:
         children.append(
             dbc.Row(
                 className="mt-2 mb-2",
@@ -389,6 +395,7 @@ def studies_display(
     grid_id: str = "studies-grid",
     is_dosage: bool = False,
     toggle_index: str = None,
+    show_filters: bool = True,
 ) -> html.Div:
     """Builds the studies display page with a filter component and a study grid."""
 
@@ -426,7 +433,7 @@ def studies_display(
             className="mb-2",
         ),
 
-        filter_component(filter_buttons, info_buttons),
+        filter_component(filter_buttons, info_buttons, show_filters=show_filters),
 
         dcc.Store(
             id="active-filters",

@@ -390,5 +390,6 @@ def dosages_view() -> html.Div:
             tags=True,
             ids=ids,
             infos=OrderedDict({"Substances": substances}),
+            show_filters=False,
         ),
     ])
