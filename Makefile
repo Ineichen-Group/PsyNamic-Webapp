@@ -27,11 +27,11 @@ db-init: load-env
 	docker compose up -d db
 	$(MAKE) wait-for-db
 	docker compose up db_init
+	docker compose up web
 	docker compose exec web python -m data.populate --all
-	
+
 db-dump: load-env
-	DATE=$$(date +%Y%m%d_%H%M%S); \
-	docker compose exec db pg_dump -U ${DATABASE_USER} -d ${DATABASE_NAME} -F c -b -v -f /data/data_dump_$${DATE}.sql
+	@docker compose exec -T db pg_dump -U postgres -d psynamic -F c -b -v > ./data/data_dump_$$(date +%Y%m%d_%H%M%S).dump
 
 db-reset: load-env
 	@echo "Stopping Compose stack and removing persisted database volume (backup recommended)"
