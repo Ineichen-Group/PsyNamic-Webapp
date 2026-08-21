@@ -385,6 +385,7 @@ def studies_display(
     tags: bool = True,
     grid_id: str = "studies-grid",
     is_dosage: bool = False,
+    toggle_index: str = None,
 ) -> html.Div:
     """Builds the studies display page with a filter component and a study grid."""
 
@@ -398,6 +399,29 @@ def studies_display(
 
     return html.Div([
         html.H3("Filtered Studies"),
+
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.Checklist(
+                        id={
+                            "type": "include-study-protocol-toggle",
+                            "index": toggle_index or page_key,
+                        },
+                        options=[
+                            {
+                                "label": "include study protocols",
+                                "value": "include",
+                            }
+                        ],
+                        value=["include"],
+                        switch=True,
+                    ),
+                    width="auto",
+                )
+            ],
+            className="mb-2",
+        ),
 
         filter_component(filter_buttons, info_buttons),
 

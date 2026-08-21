@@ -12,6 +12,65 @@ from data.queries import (get_all_labels, get_dosage_samples, get_freq_grouped,
 from style.colors import get_color_mapping
 
 
+def build_dosage_graph(include_study_protocols: bool = True) -> tuple[html.Div | html.P, list[int]]:
+    """Build dosage graph container and corresponding study IDs."""
+    df = remove_several_substances_dosages(
+        get_dosage_samples(include_study_protocols=include_study_protocols)
+    )
+    if df is None or df.empty:
+        return html.P("No absolute dosage data available."), []
+
+    substance_labels = sorted(df["Substance"].unique().tolist())
+    col_map = get_color_mapping("Substances", substance_labels)
+
+    substances = sorted(df["Substance"].dropna().unique().tolist())
+    lsd_subs = ["LSD"]
+    ibogaine_subs = ["Ibogaine"]
+    rest_subs = [s for s in substances if s not in lsd_subs + ibogaine_subs]
+
+    graphs = []
+    groups = [ibogaine_subs, rest_subs, lsd_subs]
+    ids = set()
+
+    for i, subs in enumerate(groups):
+        sub_df = df[df["Substance"].isin(subs)]
+        if sub_df.empty:
+            continue
+
+        h = 200 if subs in (ibogaine_subs, lsd_subs) else 700
+        add_ann = subs not in (ibogaine_subs, lsd_subs)
+        plot_id = {"type": "dosage-box-plot", "index": i}
+        ids.update(sub_df["Study_ID"].unique().tolist())
+
+        g = box_plot_graph(
+            sub_df,
+            x="Substance",
+            y="Dosage_mg",
+            title="",
+            x_label="Substance",
+            y_label="Dosage (mg)",
+            group=None,
+            color_mapping=col_map,
+            height=h,
+            add_annotation=add_ann,
+            id=plot_id,
+        )
+        graphs.append(g)
+
+    if not graphs:
+        return html.P("No absolute dosage data available."), []
+
+    rows = [
+        dbc.Row(
+            dbc.Col(g, width=12),
+            className="py-0",
+            style={"marginBottom": "0px"},
+        )
+        for g in graphs
+    ]
+    return html.Div(rows, style={"marginTop": "6px"}), sorted(ids)
+
+
 def view_layout(
     title: str,
     graph: dcc.Graph | html.Div,
@@ -50,6 +109,7 @@ def view_layout(
             ids=ids,
             filters=active_filters,
             infos=active_infos,
+            toggle_index="insight-chart",
         ),
 
         dcc.Store(
@@ -284,7 +344,7 @@ def study_protocol_view() -> html.Div:
 
     ids = get_ids(task, label)
     freq_span = html.P(
-        f"Total number of study protocols: {len(ids)}", className="mb-4"
+        f"Total number of study protocols: {len(ids)}", className="mb-4", id="study-protocol-count"
     )
 
     return html.Div([
@@ -301,68 +361,11 @@ def dosages_view() -> html.Div:
         A Dash html.Div component containing dosage normalization box plots and controls.
     """
     title = "Inspecting dosage: How are different substances dosed?"
-
-    # Fetch absolute dosage samples per substance (values in mg)
-    df = remove_several_substances_dosages(get_dosage_samples())
-    if df is None or df.empty:
-        graph = html.P("No absolute dosage data available.")
-    else:
-        substance_labels = sorted(df["Substance"].unique().tolist())
-        col_map = get_color_mapping("Substances", substance_labels)
-
-        # Build three plots: LSD, Ibogaine, and the rest (stacked vertically)
-        substances = sorted(df["Substance"].dropna().unique().tolist())
-        lsd_subs = ["LSD"]
-        ibogaine_subs = ["Ibogaine"]
-        rest_subs = [
-            s for s in substances if s not in lsd_subs + ibogaine_subs]
-
-        graphs = []
-        groups = [ibogaine_subs, rest_subs, lsd_subs]
-
-        ids = set()
-
-        for i, subs in enumerate(groups):
-            sub_df = df[df["Substance"].isin(subs)]
-            if sub_df.empty:
-                continue
-
-            h = 200 if subs in (ibogaine_subs, lsd_subs) else 700
-            add_ann = subs not in (ibogaine_subs, lsd_subs)
-            plot_id = {"type": "dosage-box-plot", "index": i}
-            ids.update(sub_df["Study_ID"].unique().tolist())
-
-            g = box_plot_graph(
-                sub_df,
-                x="Substance",
-                y="Dosage_mg",
-                title="",
-                x_label="Substance",
-                y_label="Dosage (mg)",
-                group=None,
-                color_mapping=col_map,
-                height=h,
-                add_annotation=add_ann,
-                id=plot_id,
-            )
-            graphs.append(g)
-
-        if not graphs:
-            graph = html.P("No absolute dosage data available.")
-        else:
-            rows = [
-                dbc.Row(
-                    dbc.Col(g, width=12),
-                    className="py-0",
-                    style={"marginBottom": "0px"},
-                )
-                for g in graphs
-            ]
-            graph = html.Div(rows, style={"marginTop": "6px"})
+    graph, ids = build_dosage_graph(include_study_protocols=True)
 
     return html.Div([
         html.H1(f"{title}", className="my-0"),
-        graph,
+        html.Div(graph, id="dosage-graph-container"),
         dbc.Row([
             dbc.Col(
                 dbc.Button(
@@ -379,6 +382,6 @@ def dosages_view() -> html.Div:
             grid_id="dosage-study-grid",
             is_dosage=True,
             tags=True,
-            ids=list(ids)
+            ids=ids
         ),
     ])

@@ -65,6 +65,14 @@ LABEL_ORDER = {
 }
 
 
+def _study_protocol_subquery():
+    """Subquery returning paper IDs classified as Study protocol."""
+    return select(Prediction.paper_id).where(
+        Prediction.task == "Study Type",
+        Prediction.label == database_label("Study protocol"),
+    )
+
+
 def get_studies_details(
     ids: list[int] = None,
     start_row: int = 0,
@@ -369,7 +377,12 @@ def get_study_tags(
         session.close()
 
 
-def get_filtered_label_frequencies(task: str, filter_task: str, filter_task_label: str = None) -> pd.DataFrame:
+def get_filtered_label_frequencies(
+    task: str,
+    filter_task: str,
+    filter_task_label: str = None,
+    include_study_protocols: bool = True,
+) -> pd.DataFrame:
     """
     Get the prediction data for a given task and filter the data 
     based on the filter task and label.
@@ -393,6 +406,10 @@ def get_filtered_label_frequencies(task: str, filter_task: str, filter_task_labe
             .group_by(Prediction.label)
             .order_by("Frequency")
         )
+        if not include_study_protocols:
+            query = query.where(
+                ~Prediction.paper_id.in_(_study_protocol_subquery())
+            )
 
         result = pd.read_sql(query, session.bind)
         result.rename(
@@ -402,7 +419,11 @@ def get_filtered_label_frequencies(task: str, filter_task: str, filter_task_labe
         session.close()
 
 
-def get_task_label_frequencies(task: str, labels: list[str] = None) -> pd.DataFrame:
+def get_task_label_frequencies(
+    task: str,
+    labels: list[str] = None,
+    include_study_protocols: bool = True,
+) -> pd.DataFrame:
     """
     Get the frequency of the labels for a given task. If no labels are provided, return the frequency of all labels."""
     session = Session()
@@ -414,6 +435,10 @@ def get_task_label_frequencies(task: str, labels: list[str] = None) -> pd.DataFr
         ).filter(
             Prediction.task == task,
         )
+        if not include_study_protocols:
+            query = query.filter(
+                ~Prediction.paper_id.in_(_study_protocol_subquery())
+            )
         if labels:
             labels = [database_label(l) for l in labels]
             query = query.filter(Prediction.label.in_(labels))
@@ -467,6 +492,7 @@ def get_freq_grouped(
     group_task: str,
     labels: list[str] = None,
     aggregate: bool = False,
+    include_study_protocols: bool = True,
 ) -> pd.DataFrame:
     """Get grouped predictions.
 
@@ -522,6 +548,10 @@ def get_freq_grouped(
         )
         .filter(Prediction.task == task)
     ) 
+        if not include_study_protocols:
+            query = query.filter(
+                ~Prediction.paper_id.in_(_study_protocol_subquery())
+            )
         if labels and "Other" not in labels:
             query = query.filter(Prediction.label.in_(labels))
 
@@ -551,7 +581,11 @@ def get_freq_grouped(
         session.close()
 
 
-def get_ids(task: str = None, label: str = None) -> list[int]:
+def get_ids(
+    task: str = None,
+    label: str = None,
+    include_study_protocols: bool = True,
+) -> list[int]:
     session = Session()
     try:
         query = session.query(Prediction.paper_id)
@@ -560,6 +594,10 @@ def get_ids(task: str = None, label: str = None) -> list[int]:
         if label is not None:
             label = database_label(label)
             query = query.filter(Prediction.label == label)
+        if not include_study_protocols:
+            query = query.filter(
+                ~Prediction.paper_id.in_(_study_protocol_subquery())
+            )
         return [r[0] for r in query.distinct().all()]
     finally:
         session.close()
@@ -595,7 +633,11 @@ def get_all_labels(task: str) -> list[str]:
         session.close()
 
 
-def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.DataFrame, list[int]]:
+def get_time_data(
+    end_year: int = None,
+    start_year: int = None,
+    include_study_protocols: bool = True,
+) -> tuple[pd.DataFrame, list[int]]:
     """Get the frequency of IDs per year. Optionally filter by start and end year."""
     session = Session()
     try:
@@ -608,6 +650,11 @@ def get_time_data(end_year: int = None, start_year: int = None) -> tuple[pd.Data
         df["year"] = pd.to_numeric(df["year"], errors="coerce").astype("Int64")
     finally:
         session.close()
+
+    if not include_study_protocols:
+        protocol_ids = set(get_ids("Study Type", "Study protocol"))
+        if protocol_ids:
+            df = df[~df["id"].isin(protocol_ids)]
 
     # filter
     if end_year:
@@ -708,7 +755,11 @@ def search_papers(query: str, start_row: int = 0, end_row: int = 50):
         session.close()
 
 
-def get_filtered_study_ids(filter: OrderedDict[str, list[str]], mode="and") -> list[int]:
+def get_filtered_study_ids(
+    filter: OrderedDict[str, list[str]],
+    mode="and",
+    include_study_protocols: bool = True,
+) -> list[int]:
     if not filter:
         return []
     filter = {
@@ -726,6 +777,10 @@ def get_filtered_study_ids(filter: OrderedDict[str, list[str]], mode="and") -> l
                 .filter(tuple_(Prediction.task, Prediction.label).in_(valid_pairs))
                 .distinct()
             )
+            if not include_study_protocols:
+                query = query.filter(
+                    ~Prediction.paper_id.in_(_study_protocol_subquery())
+                )
             return [r[0] for r in query.all()]
 
         # Mode == "and": Study must match ALL specified pairs
@@ -735,6 +790,10 @@ def get_filtered_study_ids(filter: OrderedDict[str, list[str]], mode="and") -> l
             .group_by(Prediction.paper_id)
             .having(func.count(func.distinct(tuple_(Prediction.task, Prediction.label))) == len(valid_pairs))
         )
+        if not include_study_protocols:
+            query = query.filter(
+                ~Prediction.paper_id.in_(_study_protocol_subquery())
+            )
         return [r[0] for r in query.all()]
     finally:
         session.close()
@@ -869,7 +928,8 @@ def get_paper_ner_tags(paper_id: int, ner_type: str = None, in_titel=False) -> l
 def get_dosage_samples(
     substances: list[str] = None,
     dosage_types: list[str] = ['absolute', 'relative_weight'],
-    initial_dataset: bool = False
+    initial_dataset: bool = False,
+    include_study_protocols: bool = True,
 ) -> pd.DataFrame:
     """Return a DataFrame with dosage samples per substance."""
 
@@ -902,6 +962,11 @@ def get_dosage_samples(
                 Prediction.label.notin_(EXCLUDED_SUBSTANCES),
             )
         )
+
+        if not include_study_protocols:
+            query = query.filter(
+                ~Paper.id.in_(_study_protocol_subquery())
+            )
 
         if initial_dataset:
             query = query.filter(

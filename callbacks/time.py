@@ -12,12 +12,18 @@ def register(app):
         Output("time-graph", "figure"),
         Input("start-year", "value"),
         Input("end-year", "value"),
+        Input({"type": "include-study-protocol-toggle", "index": "time"}, "value"),
         prevent_initial_call=True
     )
     @log_time
-    def update_time_view(start_year: int, end_year: int):
+    def update_time_view(start_year: int, end_year: int, include_study_protocol_toggle: list):
         """Updates the studies grid and time graph based on the selected start and end years."""
-        df, ids = get_time_data(start_year=start_year, end_year=end_year)
+        include_study_protocols = "include" in (include_study_protocol_toggle or [])
+        df, ids = get_time_data(
+            start_year=start_year,
+            end_year=end_year,
+            include_study_protocols=include_study_protocols,
+        )
 
         fig = bar_chart(
             data=df,

@@ -98,13 +98,26 @@ def create_bar_chart(df: pd.DataFrame, column: str, color: str) -> px.bar:
     return fig
 
 
-def get_dual_task_data(task1: str, task2: str, task1_label: str = None) -> tuple[pd.DataFrame, pd.DataFrame, list[int], dict]:
+def get_dual_task_data(
+    task1: str,
+    task2: str,
+    task1_label: str = None,
+    include_study_protocols: bool = True,
+) -> tuple[pd.DataFrame, pd.DataFrame, list[int], dict]:
     """Fetches frequency datasets, matching study IDs, and active tags for dual-task selection."""
-    task1_data = get_task_label_frequencies(task1)
+    task1_data = get_task_label_frequencies(
+        task1,
+        include_study_protocols=include_study_protocols,
+    )
 
     if task1_label:
-        task2_data = get_filtered_label_frequencies(task2, task1, task1_label)
-        ids = get_ids(task1, task1_label)
+        task2_data = get_filtered_label_frequencies(
+            task2,
+            task1,
+            task1_label,
+            include_study_protocols=include_study_protocols,
+        )
+        ids = get_ids(task1, task1_label, include_study_protocols=include_study_protocols)
 
         tags = OrderedDict()
         tags[task1] = [task1_label]
@@ -113,8 +126,11 @@ def get_dual_task_data(task1: str, task2: str, task1_label: str = None) -> tuple
         return task1_data, task2_data, ids, tags
 
     else:
-        ids = get_ids(task1)
-        task2_data = get_task_label_frequencies(task2)
+        ids = get_ids(task1, include_study_protocols=include_study_protocols)
+        task2_data = get_task_label_frequencies(
+            task2,
+            include_study_protocols=include_study_protocols,
+        )
 
         tags = OrderedDict()
         tags[task1] = task1_data[task1].unique().tolist()
