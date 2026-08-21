@@ -19,7 +19,6 @@ def time_layout():
         title="Frequency of Publications per Year",
         x_label="Year",
         y_label="Frequency",
-        remove_button=["lasso2d", "select2d"]
     )
     graph.id = "time-graph"
 

@@ -664,12 +664,12 @@ def get_time_data(
 
     ids = df['id'].to_list()
 
-    # count IDs per year
+    # count IDs per year, keeping the list of Study_IDs for graph selection
     frequency_df = (
         df.groupby('year')
-        .count()
+        .agg(Frequency=('id', 'size'), Study_ID=('id', list))
         .reset_index()
-        .rename(columns={'id': 'Frequency', 'year': 'Year'})
+        .rename(columns={'year': 'Year'})
     )
 
     return frequency_df, ids
