@@ -61,7 +61,7 @@ down:
 build:
 	docker compose build
 
-logs:
+docker-logs:
 	docker compose logs -f
 
 db-shell: load-env
@@ -92,7 +92,7 @@ cronjobs:
 	sudo crontab -l
 
 
-cronlog:
+logs:
 	@echo "===== ROOT CRONTAB (last 10 cron entries) ====="
 	@grep CRON /var/log/syslog | tail -n 10
 	@echo ""
@@ -109,6 +109,6 @@ cronlog:
 	fi
 	@echo ""
 	@echo "===== BACKUP LOG (last 50 lines) ====="
-	@tail -n 50 /home/sysadmin/PsyNamic-Webapp/backup.log 2>/dev/null || echo "No backup log found"
+	@tail -n 50 /home/sysadmin/PsyNamic-Webapp/log/backup.log 2>/dev/null || echo "No backup log found"
 backup:
 	sudo ./backup.sh
