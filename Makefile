@@ -27,11 +27,11 @@ db-init: load-env
 	docker compose up -d db
 	$(MAKE) wait-for-db
 	docker compose up db_init
+	docker compose up web
 	docker compose exec web python -m data.populate --all
-	
+
 db-dump: load-env
-	DATE=$$(date +%Y%m%d_%H%M%S); \
-	docker compose exec db pg_dump -U ${DATABASE_USER} -d ${DATABASE_NAME} -F c -b -v -f /data/data_dump_$${DATE}.sql
+	@docker compose exec -T db pg_dump -U postgres -d psynamic -F c -b -v > ./data/data_dump_$$(date +%Y%m%d_%H%M%S).dump
 
 db-reset: load-env
 	@echo "Stopping Compose stack and removing persisted database volume (backup recommended)"
@@ -58,7 +58,7 @@ down:
 build:
 	docker compose build
 
-logs:
+docker-logs:
 	docker compose logs -f
 
 db-shell: load-env
@@ -89,14 +89,11 @@ cronjobs:
 	sudo crontab -l
 
 
-cronlog:
+logs:
 	@echo "===== ROOT CRONTAB (last 10 cron entries) ====="
 	@grep CRON /var/log/syslog | tail -n 10
 	@echo ""
-	@echo "===== GENERAL PIPELINE LOG (last 10 lines) ====="
-	@tail -n 10 /home/sysadmin/PsyNamic-Webapp/pipeline.log 2>/dev/null || echo "No general pipeline log found"
-	@echo ""
-	@echo "===== LATEST PIPELINE LOG (last 50 lines) ====="
+	@echo "===== PIPELINE LOG (last 50 lines) ====="
 	@latest_log=$$(ls -1t /home/sysadmin/PsyNamic-Webapp/pipeline/log/pipeline_*.log 2>/dev/null | head -n 1); \
 	if [ -n "$$latest_log" ]; then \
 		echo "Tailing latest log: $$latest_log"; \
@@ -106,6 +103,6 @@ cronlog:
 	fi
 	@echo ""
 	@echo "===== BACKUP LOG (last 50 lines) ====="
-	@tail -n 50 /home/sysadmin/PsyNamic-Webapp/backup.log 2>/dev/null || echo "No backup log found"
+	@tail -n 50 /home/sysadmin/PsyNamic-Webapp/log/backup.log 2>/dev/null || echo "No backup log found"
 backup:
 	sudo ./backup.sh
