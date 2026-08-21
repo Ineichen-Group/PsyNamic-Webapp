@@ -136,23 +136,26 @@ def content_layout(list_of_children: list, id: str = "content") -> dbc.Container
 
 def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = []) -> html.Div:
     """Builds the sections that display the active filters and info buttons in the studies display page."""
-    children = [
-        dbc.Row(
-            className="mt-2 mb-2",
-            children=[
-                dbc.Col(
-                    html.Span("Active Filters"),
-                    width=2,
-                    className="text-start text-secondary",
-                ),
-                dbc.Col(
-                    id="active-filter-buttons",
-                    children=filter_buttons,
-                    width=10,
-                ),
-            ],
-        ),
-    ]
+    children = []
+
+    if filter_buttons:
+        children.append(
+            dbc.Row(
+                className="mt-2 mb-2",
+                children=[
+                    dbc.Col(
+                        html.Span("Active Filters"),
+                        width=2,
+                        className="text-start text-secondary",
+                    ),
+                    dbc.Col(
+                        id="active-filter-buttons",
+                        children=filter_buttons,
+                        width=10,
+                    ),
+                ],
+            )
+        )
 
     if info_buttons:
         children.append(
@@ -395,7 +398,7 @@ def studies_display(
     filter_buttons = build_filter_info_buttons(
         filters, map_all_labels=False) if filters else []
     info_buttons = build_filter_info_buttons(
-        infos, map_all_labels=False) if infos else []
+        infos, map_all_labels=True) if infos else []
 
     return html.Div([
         html.H3("Filtered Studies"),
@@ -505,7 +508,9 @@ def _get_tags(active_tags: OrderedDict[str, list[str]], map_all_labels: bool = T
         else:
             all_labels_task = labels
         task_color_mapping = get_color_mapping(task, all_labels_task)
-        for label in labels:
+        # keep the color-defining order rather than the input order of `labels`
+        ordered_labels = [lbl for lbl in all_labels_task if lbl in labels]
+        for label in ordered_labels:
             tag_info = {
                 'task': task,
                 'label': label,

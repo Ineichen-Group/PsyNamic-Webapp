@@ -8,7 +8,7 @@ from components.graphs import bar_chart, box_plot_graph
 from components.layout import studies_display
 from data.dosage_norm import remove_several_substances_dosages
 from data.queries import (get_all_labels, get_dosage_samples, get_freq_grouped,
-                          get_ids)
+                          get_ids, get_predictions_by_ids)
 from style.colors import get_color_mapping
 
 
@@ -363,6 +363,12 @@ def dosages_view() -> html.Div:
     title = "Inspecting dosage: How are different substances dosed?"
     graph, ids = build_dosage_graph(include_study_protocols=True)
 
+    # Substances actually shown in the study grid's tags column for these studies.
+    substances = (
+        sorted(get_predictions_by_ids("Substances", ids)["label"].unique().tolist())
+        if ids else []
+    )
+
     return html.Div([
         html.H1(f"{title}", className="my-0"),
         html.Div(graph, id="dosage-graph-container"),
@@ -382,6 +388,7 @@ def dosages_view() -> html.Div:
             grid_id="dosage-study-grid",
             is_dosage=True,
             tags=True,
-            ids=ids
+            ids=ids,
+            infos=OrderedDict({"Substances": substances}),
         ),
     ])
