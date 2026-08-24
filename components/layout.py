@@ -426,11 +426,13 @@ def studies_display(
                         ],
                         value=["include"],
                         switch=True,
+                        className="study-protocol-toggle",
                     ),
                     width="auto",
+                    className="d-flex align-items-center",
                 )
             ],
-            className="mb-2",
+            className="mb-2 align-items-center",
         ),
 
         filter_component(filter_buttons, info_buttons, show_filters=show_filters),
@@ -489,49 +491,54 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                     className="mb-2",
                 ),
 
-                html.Div([
-                    dbc.InputGroup([
-                        dbc.Input(
-                            id="filter-text",
-                            value="",
-                            type="text",
-                            disabled=not advanced,
-                            className="form-control bg-light",
-                            style={
-                                "minHeight": "38px",
-                                "fontFamily": "monospace",
-                            },
-                        ),
+                dbc.Row([
+                    dbc.Col(
+                        dbc.InputGroup([
+                            dbc.Input(
+                                id="filter-text",
+                                value="",
+                                type="text",
+                                disabled=not advanced,
+                                className="form-control bg-light",
+                                style={
+                                    "minHeight": "38px",
+                                    "fontFamily": "monospace",
+                                },
+                            ),
 
-                        dbc.Button(
-                            html.I(className="fa-solid fa-xmark"),
-                            id="clear-search-btn",
-                            color="light",
-                            title="Clear search",
-                            n_clicks=0,
-                            style={
-                                "minWidth": "45px",
-                                "border": "1px solid rgb(222, 226, 230)",
-                            },
-                        ),
-                    ]),
+                            dbc.Button(
+                                html.I(className="fa-solid fa-xmark"),
+                                id="clear-search-btn",
+                                color="light",
+                                title="Clear search",
+                                n_clicks=0,
+                                style={
+                                    "minWidth": "45px",
+                                    "border": "1px solid rgb(222, 226, 230)",
+                                },
+                            ),
+                        ]),
+                        width=10 if advanced else 12,
+                    ),
 
                     *(
                         [
-                            dbc.Button(
-                                "Filter",
-                                id="apply-filter-btn",
-                                color="primary",
-                                title="Apply filter",
-                                n_clicks=0,
-                                className="ms-2",
-                                style={"minWidth": "120px"},
+                            dbc.Col(
+                                dbc.Button(
+                                    "Filter",
+                                    id="apply-filter-btn",
+                                    color="primary",
+                                    title="Apply filter",
+                                    n_clicks=0,
+                                    className="w-100",
+                                ),
+                                width=2,
                             )
                         ]
                         if advanced
                         else []
                     ),
-                ], className="d-flex"),
+                ], className="align-items-center"),
 
                 html.Div(
                     id="filter-text-error",
@@ -588,7 +595,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                                 )
                             ),
                         ),
-                    ], width=9),
+                    ], width=10),
 
                     *(
                         [
@@ -599,7 +606,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                                     n_clicks=0,
                                     className="w-100",
                                 ),
-                            ], width=3)
+                            ], width=2)
                         ]
                         if not advanced
                         else []
@@ -614,7 +621,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                                     n_clicks=0,
                                     className="w-100",
                                 ),
-                            ], width=3)
+                            ], width=2)
                         ]
                         if advanced
                         else []
@@ -681,7 +688,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                         ),
                     ], width=3),
                     dbc.Col([
-                    ], width=3),
+                    ], width=4),
                     dbc.Col([
                         dbc.Button(
                             "Add year filter",
@@ -689,7 +696,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                             n_clicks=0,
                             className="w-100",
                         ),
-                    ], width=3),
+                    ], width=2),
                 ], className="mt-3 align-items-center", style={} if advanced else {"display": "none"}),
 
                 dbc.Row([
@@ -699,7 +706,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                             value=advanced,
                             className="toggle-switch toggle-switch-lg",
                         ),
-                ], className="pl-0 pt-3 mb-2 ms-0 align-items-center"),
+                ], className="pt-3 align-items-center"),
 
             ]),
         ]),
