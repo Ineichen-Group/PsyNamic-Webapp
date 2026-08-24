@@ -438,33 +438,97 @@ def studies_display(
 
 def checkbox_filter_selection() -> html.Div:
     """
-    Builds the checkbox menu in the filter page, allowing users to select tasks and labels for filtering studies.
+    Builds the filter controls for the study search.
     """
     tasks = get_all_tasks() or []
+
     return dbc.Container([
-        dbc.Row([
-            dbc.Col([
-                dcc.Dropdown(
-                    id="task-dropdown",
-                    options=[{"label": task, "value": task} for task in tasks],
-                    placeholder="Select a task",
-                    clearable=False,
+        dbc.Card([
+            dbc.CardBody([
+
+                # Search query
+                html.Label(
+                    "Filter",
+                    className="mb-2",
                 ),
-            ], width=9),
 
-            dbc.Col([
-                dbc.Button("Add Filter", id="add-filter-btn",
-                           n_clicks=0,),
-            ], width=3),
-        ], className="mb-4"),
-        dbc.Row([
-            dbc.Col([
-                html.Div(id="checkbox-container"),
-            ], width=12),
-        ], className="mb-4"),
+                dbc.InputGroup([
+                    html.Div(
+                        id="filter-text",
+                        children="",
+                        className="form-control bg-light",
+                        style={
+                            "minHeight": "38px",
+                            "display": "flex",
+                            "alignItems": "center",
+                            "fontFamily": "monospace",
+                        },
+                    ),
 
+                    dbc.Button(
+                        html.I(className="fa-solid fa-xmark"),
+                        id="clear-search-btn",
+                        color="light",
+                        title="Clear search",
+                        n_clicks=0,
+                        style={
+                            "minWidth": "45px",
+                            "border": "1px solid rgb(222, 226, 230)"
+                        },
+                    ),
+                ]),
 
-    ], className="m-0 p-0")
+                # Filter builder
+                html.Label(
+                    "Build filters",
+                    className="mb-2 mt-4",
+                ),
+
+                dbc.Row([
+                    dbc.Col([
+                        dcc.Dropdown(
+                            id="task-dropdown",
+                            options=[
+                                {"label": task, "value": task}
+                                for task in tasks
+                            ],
+                            placeholder="Select a task...",
+                            clearable=False,
+                        ),
+                    ], width=9),
+
+                    dbc.Col([
+                        dbc.Button(
+                            "Add filter",
+                            id="add-filter-btn",
+                            n_clicks=0,
+                            className="w-100",
+                        ),
+                    ], width=2),
+
+                    dbc.Col([
+                        html.I(
+                            className="fas fa-sliders",
+                            id="advanced-search-btn",
+                            n_clicks=0,
+                            title="Advanced search",
+                            style={
+                                "cursor": "pointer",
+                                "fontSize": "20px",
+                                "lineHeight": "38px",
+                            },
+                        ),
+                    ], width=1),
+                ]),
+
+                html.Div(
+                    id="checkbox-container",
+                    className="mt-3",
+                ),
+
+            ]),
+        ]),
+    ], className="m-0 p-0 pb-4")
 
 
 def _get_tags(active_tags: OrderedDict[str, list[str]], map_all_labels: bool = True) -> OrderedDict[str, list[str]]:
@@ -654,7 +718,8 @@ def build_paper_details(paper: dict, tags_component=None) -> html.Div:
         return html.Div()
 
     title = paper.get("title", "")
-    year_str = f" – {paper.get('authors', '')} ({paper.get('year', '')})" if paper.get("year") else ""
+    year_str = f" – {paper.get('authors', '')} ({paper.get('year', '')})" if paper.get(
+        "year") else ""
     full_title = f"{title}{year_str}"
     paper_url = paper.get("url", "")
     internal_id = paper.get("id", "")
