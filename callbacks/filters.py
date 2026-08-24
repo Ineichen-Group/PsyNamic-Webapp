@@ -1,5 +1,6 @@
 
 from collections import OrderedDict
+import re
 
 import dash_bootstrap_components as dbc
 from dash import ALL, ctx, no_update
@@ -8,6 +9,35 @@ from dash.dependencies import Input, Output, State
 from callbacks.utils import log_time
 from components.layout import build_filter_info_buttons, checkbox_filter_selection
 from data.queries import get_all_labels, get_ids_from_boolean_query
+
+_OPERATOR_TOKEN_RE = re.compile(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)')
+
+
+def _get_expression_state(text: str) -> tuple[bool, int]:
+    """Derives (expecting_atom, open_paren_depth) from the (possibly partial) filter text,
+    used to decide which operator/bracket/Add filter buttons are currently valid to press."""
+    tokens = []
+    for part in _OPERATOR_TOKEN_RE.split(text or ""):
+        part = part.strip()
+        if not part:
+            continue
+        tokens.append(part if part in ("(", ")", "AND", "OR", "NOT") else "ATOM")
+
+    expecting_atom = True
+    depth = 0
+    for token in tokens:
+        if token == "(":
+            depth += 1
+            expecting_atom = True
+        elif token == ")":
+            depth -= 1
+            expecting_atom = False
+        elif token in ("AND", "OR", "NOT"):
+            expecting_atom = True
+        else:  # ATOM
+            expecting_atom = False
+
+    return expecting_atom, max(depth, 0)
 
 
 def remove_filters_from_active_filter(active_filters: OrderedDict[str, list[str]], filters_to_remove: list[int]) -> OrderedDict[str, list[str]]:
@@ -212,6 +242,7 @@ def register(app):
     @app.callback(
         Output("filtered-study-ids", "data", allow_duplicate=True),
         Output("filter-text", "invalid", allow_duplicate=True),
+        Output("filter-text-error", "children", allow_duplicate=True),
         Input("apply-filter-btn", "n_clicks"),
         State("filter-text", "value"),
         prevent_initial_call=True,
@@ -220,10 +251,41 @@ def register(app):
         """Parses the manually edited filter text as a boolean expression and filters studies by it."""
         try:
             ids = get_ids_from_boolean_query(query_text)
-        except ValueError:
-            return no_update, True
+        except ValueError as e:
+            return no_update, True, str(e)
 
-        return ids, False
+        return ids, False, ""
+
+    @app.callback(
+        Output({"type": "operator-btn", "op": ALL}, "disabled"),
+        Output("add-filter-btn", "disabled"),
+        Input("filter-text", "value"),
+        Input("task-dropdown", "value"),
+        Input("label-checklist", "value"),
+        State({"type": "operator-btn", "op": ALL}, "id"),
+        State("advanced-mode", "data"),
+        prevent_initial_call=False,
+    )
+    def update_button_availability(filter_text, task, label_value, operator_ids, advanced_mode):
+        """Enables only the operator/bracket/Add filter buttons that are syntactically valid next."""
+        if not advanced_mode:
+            return [False] * len(operator_ids), False
+
+        expecting_atom, paren_depth = _get_expression_state(filter_text)
+        has_selection = bool(task) and bool(label_value)
+
+        allowed = {
+            "(": expecting_atom,
+            "NOT": expecting_atom,
+            "AND": not expecting_atom,
+            "OR": not expecting_atom,
+            ")": not expecting_atom and paren_depth > 0,
+        }
+
+        operator_disabled = [not allowed[op_id["op"]] for op_id in operator_ids]
+        add_filter_disabled = not (expecting_atom and has_selection)
+
+        return operator_disabled, add_filter_disabled
 
 
 def build_search_string(active_filters) -> str:

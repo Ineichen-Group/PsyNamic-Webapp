@@ -7,6 +7,18 @@
     box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
 }
 
+.operator-btn {
+    min-height: 38px;
+}
+
+.operator-btn:disabled,
+.add-filter-btn:disabled {
+    opacity: 1;
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    color: #6c757d;
+}
+
 
 .year-input {
     max-width: 100px;

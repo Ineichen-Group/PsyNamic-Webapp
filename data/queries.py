@@ -745,6 +745,21 @@ def get_filtered_study_ids(filter: OrderedDict[str, list[str]], mode="and") -> l
 _BOOLEAN_QUERY_TOKEN_RE = re.compile(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)')
 
 
+def _validate_comparison(task: str, label: str) -> tuple[str, str]:
+    """Validates that task/label refer to real prediction tasks/labels (case-insensitive) and returns their canonical casing."""
+    task_lookup = {t.lower(): t for t in get_all_tasks()}
+    matched_task = task_lookup.get(task.lower())
+    if matched_task is None:
+        raise ValueError(f"Unknown task: '{task}'")
+
+    label_lookup = {l.lower(): l for l in get_all_labels(matched_task)}
+    matched_label = label_lookup.get(label.lower())
+    if matched_label is None:
+        raise ValueError(f"Unknown label '{label}' for task '{matched_task}'")
+
+    return matched_task, matched_label
+
+
 def _tokenize_boolean_query(query_text: str) -> list:
     """Splits an advanced filter expression into '(', ')', 'AND', 'OR', 'NOT' and ('CMP', task, label) tokens."""
     tokens = []
@@ -755,10 +770,21 @@ def _tokenize_boolean_query(query_text: str) -> list:
         if part in ("(", ")", "AND", "OR", "NOT"):
             tokens.append(part)
             continue
-        if "=" not in part:
+        if part.count("=") != 1:
+            # Try to pinpoint a stray all-caps word (e.g. a typo'd/unsupported operator) rather
+            # than just dumping the whole malformed segment back at the user.
+            unknown_ops = [
+                word for word in part.split()
+                if word.isalpha() and word.isupper() and word not in ("AND", "OR", "NOT")
+            ]
+            if unknown_ops:
+                raise ValueError(
+                    f"Unknown operator '{unknown_ops[0]}'. Expected AND, OR, or NOT."
+                )
             raise ValueError(f"Expected 'Task = Label' but got: '{part}'")
         task, label = part.split("=", 1)
-        tokens.append(("CMP", task.strip(), label.strip()))
+        task, label = _validate_comparison(task.strip(), label.strip())
+        tokens.append(("CMP", task, label))
     return tokens
 
 

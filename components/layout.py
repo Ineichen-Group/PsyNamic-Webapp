@@ -451,7 +451,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
 
                 html.Div([
                     dbc.InputGroup([
-                        dcc.Input(
+                        dbc.Input(
                             id="filter-text",
                             value="",
                             type="text",
@@ -492,6 +492,12 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                         else []
                     ),
                 ], className="d-flex"),
+
+                html.Div(
+                    id="filter-text-error",
+                    children="",
+                    className="text-danger small mt-1",
+                ),
 
                 html.Label(
                     "Build filters",
@@ -555,19 +561,18 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                     [
                         dbc.Row([
                             dbc.Col([
-                                dbc.ButtonGroup(
+                                html.Div(
                                     [
                                         dbc.Button(
                                             op,
                                             id={"type": "operator-btn", "op": op},
                                             n_clicks=0,
-                                            size="sm",
                                             color="secondary",
-                                            outline=True,
+                                            className="operator-btn flex-fill",
                                         )
                                         for op in ["AND", "OR", "NOT", "(", ")"]
                                     ],
-                                    className="w-100",
+                                    className="d-flex gap-2",
                                 ),
                             ], width=9),
 
@@ -576,7 +581,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                                     "Add filter",
                                     id="add-filter-btn",
                                     n_clicks=0,
-                                    className="w-100",
+                                    className="w-100 add-filter-btn",
                                 ),
                             ], width=3),
                         ], className="mt-3 align-items-center")
