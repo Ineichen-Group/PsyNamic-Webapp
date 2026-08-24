@@ -13,6 +13,20 @@ from data.queries import get_all_labels, get_boolean_query_tags, get_ids_from_bo
 _OPERATOR_TOKEN_RE = re.compile(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)')
 
 
+def _coerce_year(value):
+    """Normalize year input values from Dash components to int or None."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        value = value.strip()
+        if not value:
+            return None
+    try:
+        return int(float(value))
+    except (TypeError, ValueError):
+        return None
+
+
 def _get_expression_state(text: str) -> tuple[bool, int]:
     """Derives (expecting_atom, open_paren_depth) from the (possibly partial) filter text,
     used to decide which operator/bracket/Add filter buttons are currently valid to press."""
@@ -112,6 +126,7 @@ def register(app):
         Output("filter-text", "value"),
         Output("advanced-filter-tags", "data", allow_duplicate=True),
         Input("add-filter-btn", "n_clicks"),
+        Input("add-year-filter-btn", "n_clicks"),
         Input({'type': 'filter-button', 'task': ALL, 'label': ALL}, 'n_clicks'),
         Input("clear-search-btn", "n_clicks"),
         State("active-filters", "data"),
@@ -119,10 +134,13 @@ def register(app):
         State("task-dropdown", "value"),
         State("advanced-mode", "data"),
         State("filter-text", "value"),
+        State("advanced-year-from", "value"),
+        State("advanced-year-to", "value"),
         prevent_initial_call=True
     )
     def modify_filter(
         _,
+        __,
         remove_filter_clicks: list[int],
         clear_search_clicks: int,
         active_filters: OrderedDict[str, list[str]],
@@ -130,23 +148,58 @@ def register(app):
         task: str,
         advanced_mode: bool,
         current_filter_text: str,
+        year_from,
+        year_to,
     ):
         """Modifies the active filters based on user interactions."""
         # RadioItems (single-select, advanced mode) yields a bare value instead of a list
         if not isinstance(label_checklist, list):
             label_checklist = [label_checklist] if label_checklist else []
         # Case 1: Add/remove filters using the Add Filter button
-        if ctx.triggered_id == "add-filter-btn":
+        if ctx.triggered_id in ("add-filter-btn", "add-year-filter-btn"):
             # Advanced mode: append "Task = Label" to the manually built expression instead of
             # overwriting active_filters/rebuilding the whole search string.
             if advanced_mode:
+                year_from = _coerce_year(year_from)
+                year_to = _coerce_year(year_to)
+
+                if year_from is not None and year_to is not None and int(year_from) > int(year_to):
+                    year_from, year_to = year_to, year_from
+
+                year_clauses = []
+                if year_from is not None:
+                    year_clauses.append(f"Year >= {int(year_from)}")
+                if year_to is not None:
+                    year_clauses.append(f"Year <= {int(year_to)}")
+
+                year_token = None
+                if len(year_clauses) == 2:
+                    year_token = f"({year_clauses[0]} AND {year_clauses[1]})"
+                elif len(year_clauses) == 1:
+                    year_token = year_clauses[0]
+
                 label = label_checklist[0] if label_checklist else None
-                if not task or not label:
+                task_token = f"{task} = {label}" if task and label else None
+
+                if ctx.triggered_id == "add-filter-btn":
+                    token = task_token
+                else:
+                    token = year_token
+
+                if token:
+                    token = token.strip()
+                else:
+                    token = None
+                if not token:
                     return no_update, no_update, no_update, no_update, no_update
 
-                token = f"{task} = {label}"
                 current_text = (current_filter_text or "").rstrip()
-                new_text = f"{current_text} {token}" if current_text else token
+                if not current_text:
+                    new_text = token
+                else:
+                    expecting_atom, _ = _get_expression_state(current_text)
+                    connector = "" if expecting_atom else " AND"
+                    new_text = f"{current_text}{connector} {token}"
 
                 return no_update, no_update, no_update, new_text, no_update
 
@@ -268,20 +321,27 @@ def register(app):
     @app.callback(
         Output({"type": "operator-btn", "op": ALL}, "disabled"),
         Output("add-filter-btn", "disabled"),
+        Output("add-year-filter-btn", "disabled"),
         Input("filter-text", "value"),
         Input("task-dropdown", "value"),
         Input("label-checklist", "value"),
+        Input("advanced-year-from", "value"),
+        Input("advanced-year-to", "value"),
         State({"type": "operator-btn", "op": ALL}, "id"),
         State("advanced-mode", "data"),
         prevent_initial_call=False,
     )
-    def update_button_availability(filter_text, task, label_value, operator_ids, advanced_mode):
+    def update_button_availability(filter_text, task, label_value, year_from, year_to, operator_ids, advanced_mode):
         """Enables only the operator/bracket/Add filter buttons that are syntactically valid next."""
         if not advanced_mode:
-            return [False] * len(operator_ids), False
+            return [False] * len(operator_ids), False, True
+
+        year_from = _coerce_year(year_from)
+        year_to = _coerce_year(year_to)
 
         expecting_atom, paren_depth = _get_expression_state(filter_text)
-        has_selection = bool(task) and bool(label_value)
+        has_task_selection = bool(task) and bool(label_value)
+        has_year_selection = year_from is not None or year_to is not None
 
         allowed = {
             "(": expecting_atom,
@@ -292,9 +352,10 @@ def register(app):
         }
 
         operator_disabled = [not allowed[op_id["op"]] for op_id in operator_ids]
-        add_filter_disabled = not (expecting_atom and has_selection)
+        add_filter_disabled = not has_task_selection
+        add_year_filter_disabled = not has_year_selection
 
-        return operator_disabled, add_filter_disabled
+        return operator_disabled, add_filter_disabled, add_year_filter_disabled
 
 
 def build_search_string(active_filters) -> str:

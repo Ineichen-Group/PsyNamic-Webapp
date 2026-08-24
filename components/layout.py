@@ -539,10 +539,19 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                     className="text-danger small mt-1",
                 ),
 
+
                 html.Label(
                     "Build filters",
                     className="mb-2 mt-4",
                 ),
+
+                html.Div(
+                    "1) Add a label filter" if advanced else "",
+                    className="text-secondary small mb-2",
+                ),
+
+
+
 
                 dbc.Row([
                     dbc.Col([
@@ -579,7 +588,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                                 )
                             ),
                         ),
-                    ], width=12 if advanced else 9),
+                    ], width=9),
 
                     *(
                         [
@@ -595,7 +604,30 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                         if not advanced
                         else []
                     ),
+
+                    *(
+                        [
+                            dbc.Col([
+                                dbc.Button(
+                                    "Add label filter",
+                                    id="add-filter-btn",
+                                    n_clicks=0,
+                                    className="w-100",
+                                ),
+                            ], width=3)
+                        ]
+                        if advanced
+                        else []
+                    ),
                 ], className="mt-3 align-items-center"),
+
+
+                html.Div(
+                    "2) Insert boolean operators",
+                    className="text-secondary small mt-4 mb-2",
+                    style={} if advanced else {"display": "none"},
+                ),
+
 
                 *(
                     [
@@ -615,30 +647,59 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                                     className="d-flex gap-2",
                                 ),
                             ], width=9),
-
-                            dbc.Col([
-                                dbc.Button(
-                                    "Add filter",
-                                    id="add-filter-btn",
-                                    n_clicks=0,
-                                    className="w-100 add-filter-btn",
-                                ),
-                            ], width=3),
                         ], className="mt-3 align-items-center")
                     ]
                     if advanced
                     else []
                 ),
 
+                html.Div(
+                    "3) Add a publication year range",
+                    className="text-secondary small mt-4 mb-2",
+                    style={} if advanced else {"display": "none"},
+                ),
+
                 dbc.Row([
                     dbc.Col([
+                        dbc.Input(
+                            id="advanced-year-from",
+                            type="number",
+                            min=1900,
+                            max=2100,
+                            step=1,
+                            placeholder="Year from",
+                        ),
+                    ], width=3),
+                    dbc.Col([
+                        dbc.Input(
+                            id="advanced-year-to",
+                            type="number",
+                            min=1900,
+                            max=2100,
+                            step=1,
+                            placeholder="Year to",
+                        ),
+                    ], width=3),
+                    dbc.Col([
+                    ], width=3),
+                    dbc.Col([
+                        dbc.Button(
+                            "Add year filter",
+                            id="add-year-filter-btn",
+                            n_clicks=0,
+                            className="w-100",
+                        ),
+                    ], width=3),
+                ], className="mt-3 align-items-center", style={} if advanced else {"display": "none"}),
+
+                dbc.Row([
                         dbc.Switch(
                             id="advanced-filter-btn",
                             label="Advanced filtering",
                             value=advanced,
+                            className="toggle-switch toggle-switch-lg",
                         ),
-                    ], width=12),
-                ], className="mt-3"),
+                ], className="pl-0 pt-3 mb-2 ms-0 align-items-center"),
 
             ]),
         ]),

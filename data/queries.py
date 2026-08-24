@@ -802,6 +802,7 @@ def get_filtered_study_ids(
 
 # Matches '(', ')', and the whole-word operators used in advanced filter expressions.
 _BOOLEAN_QUERY_TOKEN_RE = re.compile(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)')
+_YEAR_COMPARISON_RE = re.compile(r'^year\s*(<=|>=|!=|=|<|>)\s*(\d{4})$', re.IGNORECASE)
 
 
 def _validate_comparison(task: str, label: str) -> tuple[str, str]:
@@ -820,7 +821,12 @@ def _validate_comparison(task: str, label: str) -> tuple[str, str]:
 
 
 def _tokenize_boolean_query(query_text: str) -> list:
-    """Splits an advanced filter expression into '(', ')', 'AND', 'OR', 'NOT' and ('CMP', task, label) tokens."""
+    """Splits an advanced filter expression into operator/bracket and comparison tokens.
+
+    Supports:
+      - Task/label comparisons: "Task = Label"
+      - Year comparisons: "Year >= 2020", "Year = 2024", etc.
+    """
     tokens = []
     for part in _BOOLEAN_QUERY_TOKEN_RE.split(query_text):
         part = part.strip()
@@ -829,6 +835,13 @@ def _tokenize_boolean_query(query_text: str) -> list:
         if part in ("(", ")", "AND", "OR", "NOT"):
             tokens.append(part)
             continue
+
+        year_match = _YEAR_COMPARISON_RE.match(part)
+        if year_match:
+            operator, year_text = year_match.groups()
+            tokens.append(("YEAR_CMP", operator, int(year_text)))
+            continue
+
         if part.count("=") != 1:
             # Try to pinpoint a stray all-caps word (e.g. a typo'd/unsupported operator) rather
             # than just dumping the whole malformed segment back at the user.
@@ -848,7 +861,11 @@ def _tokenize_boolean_query(query_text: str) -> list:
 
 
 class _BooleanQueryParser:
-    """Recursive-descent parser for AND/OR/NOT/parentheses expressions over 'Task = Label' comparisons."""
+    """Recursive-descent parser for AND/OR/NOT/parentheses expressions.
+
+    Atoms are either "Task = Label" comparisons or year comparisons
+    like "Year >= 2020".
+    """
 
     def __init__(self, tokens: list):
         self.tokens = tokens
@@ -901,7 +918,37 @@ class _BooleanQueryParser:
         if isinstance(token, tuple) and token[0] == "CMP":
             self._advance()
             return token
+        if isinstance(token, tuple) and token[0] == "YEAR_CMP":
+            self._advance()
+            return token
         raise ValueError(f"Unexpected token: {token}")
+
+
+def _get_ids_for_year_comparison(operator: str, year: int) -> list[int]:
+    """Returns paper IDs matching a year comparison against publication year."""
+    session = Session()
+    try:
+        year_expr = extract('year', Paper.date)
+        query = session.query(Paper.id).filter(Paper.date.isnot(None))
+
+        if operator == "=":
+            query = query.filter(year_expr == year)
+        elif operator == "!=":
+            query = query.filter(year_expr != year)
+        elif operator == ">":
+            query = query.filter(year_expr > year)
+        elif operator == ">=":
+            query = query.filter(year_expr >= year)
+        elif operator == "<":
+            query = query.filter(year_expr < year)
+        elif operator == "<=":
+            query = query.filter(year_expr <= year)
+        else:
+            raise ValueError(f"Unsupported year operator: '{operator}'")
+
+        return [r[0] for r in query.distinct().all()]
+    finally:
+        session.close()
 
 
 def _evaluate_boolean_query(node: tuple, universe: set[int]) -> set[int]:
@@ -909,6 +956,9 @@ def _evaluate_boolean_query(node: tuple, universe: set[int]) -> set[int]:
     if kind == "CMP":
         _, task, label = node
         return set(get_ids(task=task, label=label))
+    if kind == "YEAR_CMP":
+        _, operator, year = node
+        return set(_get_ids_for_year_comparison(operator, year))
     if kind == "AND":
         return _evaluate_boolean_query(node[1], universe) & _evaluate_boolean_query(node[2], universe)
     if kind == "OR":
@@ -919,7 +969,12 @@ def _evaluate_boolean_query(node: tuple, universe: set[int]) -> set[int]:
 
 
 def get_ids_from_boolean_query(query_text: str) -> list[int]:
-    """Parses and evaluates an advanced filter expression (AND/OR/NOT/parentheses over 'Task = Label' comparisons)."""
+    """Parses and evaluates an advanced filter expression.
+
+    Supports AND/OR/NOT/parentheses over:
+        - Task/label comparisons: "Task = Label"
+        - Year comparisons: "Year >= 2020", "Year < 2015", etc.
+    """
     query_text = (query_text or "").strip()
     if not query_text:
         return get_ids()
@@ -936,6 +991,13 @@ def _collect_comparisons(node: tuple, collected: OrderedDict) -> None:
         collected.setdefault(task, [])
         if label not in collected[task]:
             collected[task].append(label)
+        return
+    if kind == "YEAR_CMP":
+        _, operator, year = node
+        collected.setdefault("Year", [])
+        year_label = f"{operator} {year}"
+        if year_label not in collected["Year"]:
+            collected["Year"].append(year_label)
         return
     if kind in ("AND", "OR"):
         _collect_comparisons(node[1], collected)
