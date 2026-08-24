@@ -6,7 +6,7 @@ from dash import ALL, ctx, no_update
 from dash.dependencies import Input, Output, State
 
 from callbacks.utils import log_time
-from components.layout import build_filter_info_buttons
+from components.layout import build_filter_info_buttons, checkbox_filter_selection
 from data.queries import get_all_labels
 
 
@@ -49,20 +49,26 @@ def register(app):
         Output("checkbox-container", "children"),
         Input("task-dropdown", "value"),
         State("active-filters", "data"),
+        State("advanced-mode", "data"),
         prevent_initial_call=False,
     )
     @log_time
-    def update_checkboxes(selected_task, active_filters):
+    def update_checkboxes(selected_task, active_filters, advanced_mode):
         """Updates the checklist of labels based on the selected task and active filters (= previously selected labels)."""
+        checklist_cls = dbc.RadioItems if advanced_mode else dbc.Checklist
+        empty_value = None if advanced_mode else []
+
         if not selected_task:
-            return ""
+            return checklist_cls(id="label-checklist", options=[], value=empty_value, inline=True)
 
         active_filters = active_filters or {}
         # Fetch labels at runtime to avoid relying on module-level cached `filter_data`
         labels = get_all_labels(selected_task)
         checked_labels = active_filters.get(selected_task, [])
+        if advanced_mode:
+            checked_labels = checked_labels[0] if checked_labels else None
 
-        return dbc.Checklist(
+        return checklist_cls(
             options=[{"label": label, "value": label} for label in labels],
             id="label-checklist",
             inline=True,
@@ -87,11 +93,13 @@ def register(app):
         remove_filter_clicks: list[int],
         clear_search_clicks: int,
         active_filters: OrderedDict[str, list[str]],
-        label_checklist: list[str],
+        label_checklist,
         task: str
     ):
         """Modifies the active filters based on user interactions."""
-
+        # RadioItems (single-select, advanced mode) yields a bare value instead of a list
+        if not isinstance(label_checklist, list):
+            label_checklist = [label_checklist] if label_checklist else []
         # Case 1: Add/remove filters using the Add Filter button
         if ctx.triggered_id == "add-filter-btn":
             new_active_filters = get_active_filters_from_checklist(
@@ -152,6 +160,37 @@ def register(app):
                 label_checklist,
                 search_string,
             )
+
+    @app.callback(
+        Output("filter-selection-container", "children"),
+        Input("advanced-filter-btn", "value"),
+        prevent_initial_call=True,
+    )
+    def advanced_filter_callback(advanced_enabled):
+        """Switches between the standard and advanced filter UI."""
+        return checkbox_filter_selection(advanced=bool(advanced_enabled))
+
+    @app.callback(
+        Output("filter-text", "children", allow_duplicate=True),
+        Input({"type": "operator-btn", "op": ALL}, "n_clicks"),
+        State("filter-text", "children"),
+        prevent_initial_call=True,
+    )
+    def insert_operator_token(n_clicks_list, current_text):
+        """Appends a boolean operator/bracket token to the filter text display (visual aid only)."""
+        if not any(n_clicks_list):
+            return no_update
+
+        op = ctx.triggered_id["op"]
+        current_text = (current_text or "").rstrip()
+
+        if not current_text:
+            return "" if op == ")" else op
+
+        if op == ")":
+            return f"{current_text})"
+
+        return f"{current_text} {op}"
 
 
 def build_search_string(active_filters) -> str:

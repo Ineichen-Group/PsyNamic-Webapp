@@ -436,17 +436,14 @@ def studies_display(
     ])
 
 
-def checkbox_filter_selection() -> html.Div:
-    """
-    Builds the filter controls for the study search.
-    """
+def checkbox_filter_selection(advanced: bool = False) -> html.Div:
     tasks = get_all_tasks() or []
 
     return dbc.Container([
+        dcc.Store(id="advanced-mode", data=advanced),
         dbc.Card([
             dbc.CardBody([
 
-                # Search query
                 html.Label(
                     "Filter",
                     className="mb-2",
@@ -473,12 +470,11 @@ def checkbox_filter_selection() -> html.Div:
                         n_clicks=0,
                         style={
                             "minWidth": "45px",
-                            "border": "1px solid rgb(222, 226, 230)"
+                            "border": "1px solid rgb(222, 226, 230)",
                         },
                     ),
                 ]),
 
-                # Filter builder
                 html.Label(
                     "Build filters",
                     className="mb-2 mt-4",
@@ -494,37 +490,92 @@ def checkbox_filter_selection() -> html.Div:
                             ],
                             placeholder="Select a task...",
                             clearable=False,
+                            multi=False,
                         ),
-                    ], width=9),
-
-                    dbc.Col([
-                        dbc.Button(
-                            "Add filter",
-                            id="add-filter-btn",
-                            n_clicks=0,
-                            className="w-100",
-                        ),
-                    ], width=2),
-
-                    dbc.Col([
-                        html.I(
-                            className="fas fa-sliders",
-                            id="advanced-search-btn",
-                            n_clicks=0,
-                            title="Advanced search",
-                            style={
-                                "cursor": "pointer",
-                                "fontSize": "20px",
-                                "lineHeight": "38px",
-                            },
-                        ),
-                    ], width=1),
+                    ], width=12),
                 ]),
 
-                html.Div(
-                    id="checkbox-container",
-                    className="mt-3",
+                dbc.Row([
+                    dbc.Col([
+                        html.Div(
+                            id="checkbox-container",
+                            children=(
+                                dbc.RadioItems(
+                                    id="label-checklist",
+                                    options=[],
+                                    value=None,
+                                    inline=True,
+                                )
+                                if advanced
+                                else dbc.Checklist(
+                                    id="label-checklist",
+                                    options=[],
+                                    value=[],
+                                    inline=True,
+                                )
+                            ),
+                        ),
+                    ], width=12 if advanced else 9),
+
+                    *(
+                        [
+                            dbc.Col([
+                                dbc.Button(
+                                    "Add filter",
+                                    id="add-filter-btn",
+                                    n_clicks=0,
+                                    className="w-100",
+                                ),
+                            ], width=3)
+                        ]
+                        if not advanced
+                        else []
+                    ),
+                ], className="mt-3 align-items-center"),
+
+                *(
+                    [
+                        dbc.Row([
+                            dbc.Col([
+                                dbc.ButtonGroup(
+                                    [
+                                        dbc.Button(
+                                            op,
+                                            id={"type": "operator-btn", "op": op},
+                                            n_clicks=0,
+                                            size="sm",
+                                            color="secondary",
+                                            outline=True,
+                                        )
+                                        for op in ["AND", "OR", "NOT", "(", ")"]
+                                    ],
+                                    className="w-100",
+                                ),
+                            ], width=9),
+
+                            dbc.Col([
+                                dbc.Button(
+                                    "Add filter",
+                                    id="add-filter-btn",
+                                    n_clicks=0,
+                                    className="w-100",
+                                ),
+                            ], width=3),
+                        ], className="mt-3 align-items-center")
+                    ]
+                    if advanced
+                    else []
                 ),
+
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Switch(
+                            id="advanced-filter-btn",
+                            label="Advanced filtering",
+                            value=advanced,
+                        ),
+                    ], width=12),
+                ], className="mt-3"),
 
             ]),
         ]),
