@@ -414,6 +414,12 @@ def studies_display(
         ),
 
         dcc.Store(
+            id="advanced-filter-tags",
+            data={},
+            storage_type="memory",
+        ),
+
+        dcc.Store(
             id="filtered-study-ids",
             data=ids,
             storage_type="memory",

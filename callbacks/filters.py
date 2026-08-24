@@ -8,7 +8,7 @@ from dash.dependencies import Input, Output, State
 
 from callbacks.utils import log_time
 from components.layout import build_filter_info_buttons, checkbox_filter_selection
-from data.queries import get_all_labels, get_ids_from_boolean_query
+from data.queries import get_all_labels, get_boolean_query_tags, get_ids_from_boolean_query
 
 _OPERATOR_TOKEN_RE = re.compile(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)')
 
@@ -110,6 +110,7 @@ def register(app):
         Output("active-filter-buttons", "children", allow_duplicate=True),
         Output("label-checklist", "value"),
         Output("filter-text", "value"),
+        Output("advanced-filter-tags", "data", allow_duplicate=True),
         Input("add-filter-btn", "n_clicks"),
         Input({'type': 'filter-button', 'task': ALL, 'label': ALL}, 'n_clicks'),
         Input("clear-search-btn", "n_clicks"),
@@ -141,13 +142,13 @@ def register(app):
             if advanced_mode:
                 label = label_checklist[0] if label_checklist else None
                 if not task or not label:
-                    return no_update, no_update, no_update, no_update
+                    return no_update, no_update, no_update, no_update, no_update
 
                 token = f"{task} = {label}"
                 current_text = (current_filter_text or "").rstrip()
                 new_text = f"{current_text} {token}" if current_text else token
 
-                return no_update, no_update, no_update, new_text
+                return no_update, no_update, no_update, new_text, no_update
 
             new_active_filters = get_active_filters_from_checklist(
                 task,
@@ -156,10 +157,10 @@ def register(app):
             )
 
             if new_active_filters == active_filters:
-                return no_update, no_update, no_update, no_update
+                return no_update, no_update, no_update, no_update, no_update
 
             elif len(new_active_filters) == 1 and new_active_filters[task] == []:
-                return {}, [], [], ""
+                return {}, [], [], "", {}
 
             else:
                 active_filters = new_active_filters
@@ -176,12 +177,13 @@ def register(app):
                     buttons,
                     label_checklist,
                     search_string,
+                    no_update,
                 )
 
         # Case 2: A filter button is clicked to remove a filter
         # Case 3: Clear search button clicked
         elif ctx.triggered_id == "clear-search-btn":
-            return {}, [], [], ""
+            return {}, [], [], "", {}
 
         # Case 2: A filter button is clicked to remove a filter
         else:
@@ -206,6 +208,7 @@ def register(app):
                 buttons,
                 label_checklist,
                 search_string,
+                no_update,
             )
 
     @app.callback(
@@ -243,6 +246,8 @@ def register(app):
         Output("filtered-study-ids", "data", allow_duplicate=True),
         Output("filter-text", "invalid", allow_duplicate=True),
         Output("filter-text-error", "children", allow_duplicate=True),
+        Output("active-filter-buttons", "children", allow_duplicate=True),
+        Output("advanced-filter-tags", "data", allow_duplicate=True),
         Input("apply-filter-btn", "n_clicks"),
         State("filter-text", "value"),
         prevent_initial_call=True,
@@ -251,10 +256,14 @@ def register(app):
         """Parses the manually edited filter text as a boolean expression and filters studies by it."""
         try:
             ids = get_ids_from_boolean_query(query_text)
+            tags = get_boolean_query_tags(query_text)
         except ValueError as e:
-            return no_update, True, str(e)
+            return no_update, True, str(e), no_update, no_update
 
-        return ids, False, ""
+        # Read-only: the removable 'x' filter buttons don't map onto an arbitrary boolean expression.
+        buttons = build_filter_info_buttons(tags, editable=False, map_all_labels=False)
+
+        return ids, False, "", buttons, tags
 
     @app.callback(
         Output({"type": "operator-btn", "op": ALL}, "disabled"),

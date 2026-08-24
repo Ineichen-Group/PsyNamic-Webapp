@@ -870,6 +870,36 @@ def get_ids_from_boolean_query(query_text: str) -> list[int]:
     return sorted(_evaluate_boolean_query(tree, universe))
 
 
+def _collect_comparisons(node: tuple, collected: OrderedDict) -> None:
+    kind = node[0]
+    if kind == "CMP":
+        _, task, label = node
+        collected.setdefault(task, [])
+        if label not in collected[task]:
+            collected[task].append(label)
+        return
+    if kind in ("AND", "OR"):
+        _collect_comparisons(node[1], collected)
+        _collect_comparisons(node[2], collected)
+        return
+    if kind == "NOT":
+        # Negated comparisons are excluded from the tag/label displayed as an active filter.
+        return
+    raise ValueError(f"Unknown expression node: {node}")
+
+
+def get_boolean_query_tags(query_text: str) -> OrderedDict:
+    """Parses (without evaluating) an advanced filter expression and returns the Task -> [labels] it references, for read-only display."""
+    query_text = (query_text or "").strip()
+    if not query_text:
+        return OrderedDict()
+
+    tree = _BooleanQueryParser(_tokenize_boolean_query(query_text)).parse()
+    collected = OrderedDict()
+    _collect_comparisons(tree, collected)
+    return collected
+
+
 def get_paper_prediction_input(id: int) -> str:
     session = Session()
     try:
