@@ -351,6 +351,70 @@ def about_layout():
                 style={'textAlign': 'center'}
             ),
 
+            html.H3("Using PsyNamic"),
+
+            dbc.Accordion(
+                start_collapsed=True,
+                flush=True,
+                children=[
+                    dbc.AccordionItem(
+                        title="What is the difference between Insights and Explore?",
+                        children=[
+                            html.P([
+                                html.B("Insights"),
+                                " are curated dashboards that answer predefined evidence questions with ready-to-use visualizations."
+                            ]),
+                            html.P([
+                                html.B("Explore"),
+                                " provides flexible tools for custom investigation, where you choose your own filters, search terms, and task combinations."
+                            ]),
+                            html.P("In short: use Insights for fast standardized answers, and Explore for custom investigation paths.")
+                        ]
+                    ),
+
+                    dbc.AccordionItem(
+                        title="What can I do in Insights?",
+                        children=[
+                            html.P("Insights provides predefined views for common evidence questions:"),
+                            html.Ul([
+                                html.Li("Evidence Strength: Compare number of randomized-controlled trials and systematic reviews by substance."),
+                                html.Li("Efficacy & Safety: See how frequently efficacy and safety endpoints are being studied for each substance."),
+                                html.Li("Long-term Effects: Inspect cross-sectional and longitudinal evidence by substance."),
+                                html.Li("Sex Bias: Explore participant sex distribution across substances."),
+                                html.Li("Study Participation: Review participant-count distributions across substances."),
+                                html.Li("Study Protocols: Check protocol activity and upcoming evidence pipelines."),
+                                html.Li("Dosage: Examine dose distributions across substances.")
+                            ]),
+                            html.P("Use Insights when your question already matches one of these overview topics.")
+                        ]
+                    ),
+
+                    dbc.AccordionItem(
+                        title="What can I do in Explore?",
+                        children=[
+                            html.P("Explore provides flexible tools for your own workflow:"),
+                            html.Ul([
+                                html.Li("Filter all studies: Build custom subsets using available study attributes."),
+                                html.Li("Search: Find a specific paper via PubMed ID, internal study ID, DOI, or title text."),
+                                html.Li("Dual Task Analysis: Compare any two classification tasks interactively."),
+                                html.Li("Time: View publication trends across a selectable year range.")
+                            ]),
+                            html.P("Use Explore when you need a custom query, a specific paper, or ad hoc comparisons.")
+                        ]
+                    ),
+
+                    dbc.AccordionItem(
+                        title="Where should I start?",
+                        children=[
+                            html.P("If you need a quick overview, start with Insights and open the view closest to your question."),
+                            html.P("If you already know what paper or subgroup you need, start with Explore (Search or Filter)."),
+                            html.P("From either section, you can continue to study-level details for deeper inspection.")
+                        ]
+                    ),
+                ],
+                className="mb-3",
+            ),
+
             html.H3("Study Retrieval"),
 
             dbc.Accordion(

@@ -2,13 +2,22 @@
 
 This document describes how to set up the PsyNamic dashboard locally and how to deploy it on a UniBE VM.
 
+The deployment documentation assumes that the VM is already set up and that DNS is configured to point to the VM's IP address. For details on how to set up a VM, see the [wiki entry](https://github.com/Ineichen-Group/wiki/blob/main/pages/how-to-vms.md)
+
+It contains the following sections:
+* [Local Development Setup (Non-Docker)](#local-development-setup-non-docker)
+* [Local Development Setup (Docker)](#local-development-setup-docker)
+* [Initial Deployment with Docker on UniBE VM](#initial-deployment-with-docker-on-unibe-vm)
+* [Deployment of Updates](#deployment-of-updates)
+* [Overview of Monitoring](#overview-of-monitoring)
+* [Overview of the Repository Structure](#overview-of-the-repository-structure)
+
+
 ---
 
 # Local Development Setup (Non-Docker)
 
-## General Setup
-
-### Create virtual environment and install dependencies
+## Create Virtual Environment and Install Dependencies
 
 Create and activate a Python virtual environment:
 
@@ -23,11 +32,10 @@ Install the required dependencies:
 pip install -r requirements.txt
 ```
 
-### Database
+## Create Database
 
-- Install [PostgreSQL](https://www.postgresql.org/download/linux/ubuntu/)
-
-- Check if installation was succesfull
+* Install [PostgreSQL](https://www.postgresql.org/download/linux/ubuntu/).
+* Check if the installation was successful:
 
 ```bash
 psql --version
@@ -63,7 +71,7 @@ Exit PostgreSQL:
 \q
 ```
 
-### Configure Environment Variables
+## Configure Environment Variables
 
 Copy the example environment file:
 
@@ -73,35 +81,35 @@ cp .env.copy .env
 
 Edit `.env` and add your local database configuration.
 
-### Initialize and Populate Database
-
-- Populate initial database content:
+## Initialize and Populate Database
 
 ```bash
-./init_db.sh
+make db-init
 ```
+---
 
-- Populate all data retrieved automatically by the pipeline:
+# Local Development Setup (Docker)
+
+* Install Docker and Docker Compose.
+* Create a `.env` file based on `.env.copy` and set the database credentials.
+* Build and start the application:
 
 ```bash
-python -m data.populate --all
+make build
+make up
 ```
 
+Access the application at:
 
-### Dealing with the database when deployed
+http://localhost:8050
 
-- Make dump and load dump into database
+---
 
-  ```bash
-  pg_dump -h localhost -U postgres -d psynamic -F c -f <dump_file>
-  pg_restore --no-owner --dbname  <external_db_link> <dump_file>
-  ```
+# Initial Deployment with Docker on UniBE VM
 
-# Deployment with Docker on UniBE VM
+## Docker & Make
 
-## Basic Setup: Make and Docker
-
-- Make sure everything is up to date
+Make sure everything is up to date:
 
 ```bash
 sudo apt list --upgradable
@@ -109,262 +117,299 @@ sudo apt update
 sudo apt upgrade
 ```
 
-- Install make if not already installed
+Install `make` if it is not already installed:
 
 ```bash
 sudo apt install make
 ```
 
-- Install docker according to: [https://docs.docker.com/engine/install/ubuntu/]https://docs.docker.com/engine/install/ubuntu/
-  - Check if it's running with `sudo systemctl status docker` and `sudo docker run hello-world`
-  - Configure to run docker with root priviliges: [https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
-  - Configure to start docker on boot (so that the application restarts automatically when the server restarts): [https://docs.docker.com/engine/install/linux-postinstall/#configure-docker-to-start-on-boot-with-systemd](https://docs.docker.com/engine/install/linux-postinstall/#configure-docker-to-start-on-boot-with-systemd)
-  - Configure log rotation with json-file (limits the logs to recently generated ones) by editing in `/etc/docker/daemon.json` (create the file if it doesn't exist):
+Install Docker according to the [official Docker installation instructions for Ubuntu](https://docs.docker.com/engine/install/ubuntu/).
 
-  ```json
-  {
-    "log-driver": "json-file",
-    "log-opts": {
-      "max-size": "10m",
-      "max-file": "3"
-    }
+Check if Docker is running:
+
+```bash
+sudo systemctl status docker
+sudo docker run hello-world
+```
+
+Configure Docker to run as a non-root user according to the [Docker post-installation instructions](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
+
+Configure Docker to start on boot so that the application restarts automatically when the server restarts. See the [Docker systemd instructions](https://docs.docker.com/engine/install/linux-postinstall/#configure-docker-to-start-on-boot-with-systemd).
+
+Configure log rotation with `json-file` to limit the logs to recently generated ones by editing `/etc/docker/daemon.json` (create the file if it does not exist):
+
+```json
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
   }
-  ```
+}
+```
 
-  Then restart docker with `sudo systemctl restart docker`
+Then restart Docker:
 
-## Deployment Steps
+```bash
+sudo systemctl restart docker
+```
 
-- Clone the repository and navigate into it
+### Get the Repository
+
+Clone the repository and navigate into it:
 
 ```bash
 git clone git@github.com:Ineichen-Group/PsyNamic-Webapp.git
 ```
 
-- Set envs in `.env` file (copy from `.env.copy`) and edit accordingly
+Set the environment variables in the `.env` file (copy from `.env.copy`) and edit accordingly.
 
-- Before deployment, disable debug mode in `app.py`:
+Before deployment, disable debug mode in `app.py`:
 
 ```python
 debug=False
 ```
 
-### Configure Nginx and SSL
+## Configure Nginx and SSL
 
 > Nginx is used as a reverse proxy between the public internet and the Dash application.
+
 > The Dash application runs internally on port `8050`, while Nginx handles incoming HTTP/HTTPS traffic.
+
 > Certbot is used to automatically obtain and renew SSL certificates from Let's Encrypt.
 
-- Install nginx and certbot
+### Install Nginx and Certbot
 
-  ```bash
-  sudo apt install nginx certbot python3-certbot-nginx
-  ```
+```bash
+sudo apt install nginx certbot python3-certbot-nginx
+```
 
-- Configure new nginx configs
+### Configure Nginx
 
-  ```bash
-  sudo nano /etc/nginx/sites-available/psynamic
-  ```
+Create a new Nginx configuration:
 
-  Add the following configuration and replace the domain if required:
+```bash
+sudo nano /etc/nginx/sites-available/psynamic
+```
 
-  ```nginx
-  server {
-      listen 80;
-      server_name psynamic.dcr.unibe.ch;
+Add the following configuration and replace the domain if required:
 
-      location / {
-          proxy_pass http://0.0.0.0:8050/;
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-      }
-  }
-  ```
+```nginx
+server {
+    listen 80;
+    server_name psynamic.dcr.unibe.ch;
 
-  - Port `80` receives HTTP traffic.
-  - The Dash application runs on port `8050`.
-  - Nginx forwards incoming requests to the application.
+    location / {
+        proxy_pass http://0.0.0.0:8050/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
 
-- Enable the site and test nginx
-  Create a symbolic link:
+* Port `80` receives HTTP traffic.
+* The Dash application runs on port `8050`.
+* Nginx forwards incoming requests to the application.
 
-  ```bash
-  sudo ln -s /etc/nginx/sites-available/psynamic /etc/nginx/sites-enabled/
-  ```
+### Enable the Site and Test Nginx
 
-  Test the configuration:
+Create a symbolic link:
 
-  ```bash
-  sudo nginx -t
-  ```
+```bash
+sudo ln -s /etc/nginx/sites-available/psynamic /etc/nginx/sites-enabled/
+```
 
-  Remove the default configuration:
+Test the configuration:
 
-  ```bash
-  sudo rm /etc/nginx/sites-enabled/default
-  ```
+```bash
+sudo nginx -t
+```
 
-  Reload Nginx:
+Remove the default configuration:
 
-  ```bash
-  sudo systemctl reload nginx
-  ```
+```bash
+sudo rm /etc/nginx/sites-enabled/default
+```
 
-- Obtain SSL certificate with certbot
+Reload Nginx:
 
-  ```bash
-  sudo certbot --nginx -d psynamic.dcr.unibe.ch
-  ```
+```bash
+sudo systemctl reload nginx
+```
 
-  After successful setup, the application should be available at:
+## Obtain SSL Certificate with Certbot
 
-  ```
-  https://psynamic.dcr.unibe.ch
-  ```
+```bash
+sudo certbot --nginx -d psynamic.dcr.unibe.ch
+```
 
-### Build and Run the Application
+After successful setup, the application should be available at:
 
-- Build and start the docker containers
+https://psynamic.dcr.unibe.ch
 
-  ```bash
-  make build
-  make up
-  ```
+This assumes that the DNS (ISPM) is correctly configured to point to the server's IP address.
 
-- Add inital data dump and load
+## Build and Run the Application
 
-  ```bash
-  make db-init
-  ```
+Build and start the Docker containers:
 
-- Copy models to `pipeline\models` and adjust `model_paths.json` accordingly
+```bash
+make build
+make up
+```
 
-### Data Backup
+Add the initial data dump and load:
 
-- install rsync and cifs-utils
+```bash
+make db-init
+```
 
-  ```bash
-  sudo apt update
-  sudo apt install cifs-utils rsync
-  ```
+Copy models to `pipeline/models` and adjust `model_paths.json` accordingly.
 
-- create mount point and set permissions
+---
 
-  ```bash
-    sudo mkdir -p /mnt/research_storage
-    sudo chown sysadmin:sysadmin /mnt/research_storage
-  ```
+## Setup Backup
 
-- test mounting the research storage (replace with your credentials)
+### Install Required Packages
 
-  ```bash
-  sudo mount -t cifs //resstore.unibe.ch/dcr_mds /mnt/research_storage \
+Install `rsync` and `cifs-utils`:
+
+```bash
+sudo apt update
+sudo apt install cifs-utils rsync
+```
+
+### Create Mount Point and Set Permissions
+
+```bash
+sudo mkdir -p /mnt/research_storage
+sudo chown sysadmin:sysadmin /mnt/research_storage
+```
+
+### Test Mounting the Research Storage
+
+Replace the credentials with your own:
+
+```bash
+sudo mount -t cifs //resstore.unibe.ch/dcr_mds /mnt/research_storage \
   -o username=<username>,domain=campus,vers=3.0,sec=ntlmssp
-  ```
+```
 
-  You will be prompted for the password.
+You will be prompted for the password.
 
-  Verify the mount:
+Verify the mount:
 
-  ```bash
-  ls -lah /mnt/research_storage
-  ```
+```bash
+ls -lah /mnt/research_storage
+```
 
-  Unmount again:
+Unmount again:
 
-  ```bash
-  sudo umount /mnt/research_storage
-  ```
+```bash
+sudo umount /mnt/research_storage
+```
 
-- cretae a credentials file to avoid entering the password every time
+### Create a Credentials File
 
-  ```bash
-  sudo nano /root/.research_storage_credentials
-  ```
+To avoid entering the password every time, create a credentials file:
 
-  Add:
+```bash
+sudo nano /root/.research_storage_credentials
+```
 
-  ```ini
-  username=<your username>
-  password=<your password>
-  domain=campus
-  ```
+Add:
 
-  Secure the file:
+```ini
+username=<your username>
+password=<your password>
+domain=campus
+```
 
-  ```bash
-  sudo chmod 600 /root/.research_storage_credentials
-  sudo chown root:root /root/.research_storage_credentials
-  ```
+Secure the file:
 
-- configure persistent cifs mounting
-  Edit fstab:
+```bash
+sudo chmod 600 /root/.research_storage_credentials
+sudo chown root:root /root/.research_storage_credentials
+```
 
-  ```bash
-  sudo nano /etc/fstab
-  ```
+### Configure Persistent CIFS Mounting
 
-  Add:
+Edit `fstab`:
 
-  ```fstab
-  //resstore.unibe.ch/dcr_mds /mnt/research_storage cifs credentials=/root/.research_storage_credentials,vers=3.0,sec=ntlmssp,uid=0,gid=0,file_mode=0600,dir_mode=0700,_netdev,nofail,x-systemd.automount,x-systemd.mount-timeout=30 0 0
-  ```
+```bash
+sudo nano /etc/fstab
+```
 
-- test if the mount is persistent
-  Unmount the share:
+Add:
 
-  ```bash
-  sudo umount /mnt/research_storage
-  ```
+```fstab
+//resstore.unibe.ch/dcr_mds /mnt/research_storage cifs credentials=/root/.research_storage_credentials,vers=3.0,sec=ntlmssp,uid=0,gid=0,file_mode=0600,dir_mode=0700,_netdev,nofail,x-systemd.automount,x-systemd.mount-timeout=30 0 0
+```
 
-  Reload systemd:
+### Test if the Mount Is Persistent
 
-  ```bash
-  sudo systemctl daemon-reload
-  ```
+Unmount the share:
 
-  Mount all configured filesystems:
+```bash
+sudo umount /mnt/research_storage
+```
 
-  ```bash
-  sudo mount -a
-  ```
+Reload systemd:
 
-  Verify:
+```bash
+sudo systemctl daemon-reload
+```
 
-  ```bash
-  findmnt /mnt/research_storage
-  ```
+Mount all configured filesystems:
 
-  Check contents:
+```bash
+sudo mount -a
+```
 
-  ```bash
-  ls -lah /mnt/research_storage
-  ```
+Verify:
 
-- test backup script
+```bash
+findmnt /mnt/research_storage
+```
 
-  ```bash
-  chmod +x backup.sh
-  ./backup.sh
-  ```
+Check the contents:
 
-  The script should synchronize:
+```bash
+ls -lah /mnt/research_storage
+```
 
-  ```
-  data/
-  ├── pubmed_fetch_results
-  ├── predictions
-  └── relevant_studies
-  ```
+### Test Backup Script
 
-  to:
+Make the backup script executable:
 
-  ```
-  /mnt/research_storage/psynamic_data_backup/
-  ```
+```bash
+chmod +x backup.sh
+```
 
-# Scheduled jobs
+Run it:
+
+```bash
+./backup.sh
+```
+
+The script should synchronize:
+
+```text
+data/
+├── pubmed_fetch_results
+├── predictions
+└── relevant_studies
+```
+
+to:
+
+```text
+/mnt/research_storage/psynamic_data_backup/
+```
+
+---
+
+## Log Rotation for Logs
 
 Create the log directory:
 
@@ -382,14 +427,13 @@ Add:
 
 ```conf
 /home/sysadmin/PsyNamic-Webapp/log/*.log {
-    weekly
     size 10M
     rotate 8
     compress
     delaycompress
     missingok
     notifempty
-    copytruncate
+    su root sysadmin
 }
 ```
 
@@ -399,26 +443,48 @@ Test the configuration:
 sudo logrotate -d /etc/logrotate.d/psynamic
 ```
 
-Open the crontab:
+Optionally perform a real test rotation:
+
+```bash
+sudo logrotate -f /etc/logrotate.d/psynamic
+```
+
+Verify automatic logrotate scheduling:
+
+```bash
+systemctl status logrotate.timer
+systemctl list-timers | grep logrotate
+```
+
+Your system will then automatically schedule log rotation; no cron entry is needed.
+
+---
+
+## Add Scheduled Jobs
+
+Edit the cron settings:
 
 ```bash
 sudo crontab -e
 ```
 
-Add the following entries.
-
-## Run the PubMed Pipeline
+### Run the PubMed Pipeline
 
 Every **Wednesday at 18:00**:
 
 ```cron
-0 18 * * 3 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make run-pipeline```
+0 18 * * 3 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make run-pipeline
+```
 
 > **Note:** If necessary, adjust the path to `make` (find it with `which make`).
 
-This will create logs in `/home/sysadmin/PsyNamic-Webapp/log
+This will create logs in:
 
-## Monitor the Web Application
+```text
+/home/sysadmin/PsyNamic-Webapp/log
+```
+
+### Monitor the Web Application
 
 Every **5 minutes**:
 
@@ -428,11 +494,13 @@ Every **5 minutes**:
 
 The monitoring script:
 
-- checks the Dash application, Docker containers, and PostgreSQL,
-- writes logs to `/var/log/webapp_monitor.log`,
-- sends email alerts if a check fails.
+* checks the Dash application
+* checks Docker containers
+* checks PostgreSQL connectivity
+* writes logs to `/var/log/webapp_monitor.log`
+* sends email alerts if a check fails
 
-## Backup the Database
+### Backup the Database
 
 Every **Thursday at 03:00**:
 
@@ -440,38 +508,82 @@ Every **Thursday at 03:00**:
 0 3 * * 4 cd /home/sysadmin/PsyNamic-Webapp && /usr/bin/make backup
 ```
 
-# Monitoring
+---
+
+
+# Deployment of Updates
+
+Commit local changes and push them to the repository:
+
+```bash
+git add .
+git commit -m "Your commit message"
+git push
+```
+
+Get the newest version of the repository and push it to the server:
+
+```bash
+git stash push -m "Keep production debug=False"
+git pull
+git stash pop
+git push
+```
+
+Build and restart the application:
+
+```bash
+make build
+make up
+```
+
+If the database schema has changed, reset the database and populate it with the initial and pipeline data:
+
+```bash
+make db-reset
+```
+
+---
+
+# Overview of Monitoring
 
 The following monitoring mechanisms are currently used:
 
-- `monitor.sh`
-  - Checks application availability
-  - Checks Docker containers
-  - Checks PostgreSQL connectivity
-  - Sends email alerts on failures
+* **`monitor.sh`**
 
-- **UptimeRobot**
-  - External uptime monitoring
+  * Checks application availability
+  * Checks Docker containers
+  * Checks PostgreSQL connectivity
+  * Sends email alerts on failures
 
-- **apticron** (s. [wiki entry](https://github.com/Ineichen-Group/wiki/blob/main/pages/how-to-vms.md#setup-apticron) for details)
-  - Monitors available system updates
-  - Sends email notifications when updates are available
+* **UptimeRobot**
 
-# Common errors
+  * External uptime monitoring
 
-`entrypoint.sh": permission denied: unknown`
+* **apticron** (see the [wiki entry](https://github.com/Ineichen-Group/wiki/blob/main/pages/how-to-vms.md#setup-apticron) for details)
 
-This error usually occurs when the `entrypoint.sh` script does not have the executable permission. To fix this, you can run the following command in the terminal:
+  * Monitors available system updates
+  * Sends email notifications when updates are available
 
-```bash
-chmod +x entrypoint.sh
-docker compose build --no-cache
-```
+---
 
-# Other useful commands
+# Overview of the Repository Structure
 
-- Check if DNS is working (replace with your domain)
+The repository is organized as follows:
 
-```bash
-nslookup psynamic.dcr.unibe.ch
-```
+| Directory/File | Description |
+|----------------|-------------|
+| analysis | Contains scripts for data analysis for the publication |
+| assets | Contains static assets such as images and CSS files |
+| callbacks | Contains Dash callbacks for the web application |
+| components | Contains reusable Dash components |
+| data | Containes scripts and data for the PubMed fetch pipeline as well as prediction outputs |
+| pages | Contains the Dash page layouts |
+| pipeline | Contains the prediction pipeline scripts and models |
+| styles | Contains color script |
+| test | Contains test scripts for mainly the data processing |
+| validation | Contains the scripts for validating the pubmed fetch pipeline |
+| .env.copy | Example environment variable file |
+| app.py | Main entry point for the Dash application |
+
+Also consult Readme files in the subdirectories for more details.

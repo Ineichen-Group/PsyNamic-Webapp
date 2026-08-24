@@ -59,6 +59,7 @@ def register(app):
         Output("search-results", "style"),
         Output("last-search-store", "data"),
         Output("search-input", "value"),
+        Output("search-results-count", "children"),
         Input("url", "pathname"),
         Input("url", "search"),
         prevent_initial_call=False,  # Run on initial page load from direct URL
@@ -66,15 +67,15 @@ def register(app):
     @log_time
     def render_page_from_url(pathname, search):
         if pathname != "/explore/search":
-            return no_update, no_update, no_update, no_update, no_update
+            return no_update, no_update, no_update, no_update, no_update, no_update
 
         if not search:
-            return "", "", hidden_results_style, None, no_update
+            return "", "", hidden_results_style, None, no_update, ""
 
         try:
             qs = parse_qs(search.lstrip("?"))
         except Exception:
-            return "", "", hidden_results_style, None, no_update
+            return "", "", hidden_results_style, None, no_update, ""
 
         # -------------------------
         # Case A: Search Query URL (?query=...)
@@ -94,6 +95,7 @@ def register(app):
                     visible_results_style,
                     [],
                     search_term,
+                    "0 results found",
                 )
 
             items = []
@@ -133,6 +135,7 @@ def register(app):
                 visible_results_style,
                 studies,
                 search_term,  # Sync input box with URL parameter
+                f"{len(studies)}{'+' if len(studies) == 50 else ''} result{'s' if len(studies) != 1 else ''} found",
             )
 
         # -------------------------
@@ -142,7 +145,7 @@ def register(app):
             try:
                 paper_id = int(qs["study_id"][0])
             except ValueError:
-                return "", "", hidden_results_style, no_update, no_update
+                return "", "", hidden_results_style, no_update, no_update, no_update
 
             studies = get_studies_details(
                 ids=[paper_id],
@@ -155,6 +158,7 @@ def register(app):
                     html.Div("Paper not found"),
                     "",
                     hidden_results_style,
+                    no_update,
                     no_update,
                     no_update,
                 )
@@ -175,9 +179,10 @@ def register(app):
                 hidden_results_style,
                 no_update,
                 no_update,
+                no_update,
             )
 
-        return "", "", hidden_results_style, None, no_update
+        return "", "", hidden_results_style, None, no_update, ""
 
     # -------------------------------------------------------------------------
     # Callback 3: Clicking a search result item updates URL to ?study_id=...

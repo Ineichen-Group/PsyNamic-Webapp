@@ -9,7 +9,7 @@ from dash import dcc, html
 from data.queries import (get_all_labels, get_all_tasks, get_ids,
                           get_latest_retrieval_date, get_paper_ner_tags,
                           get_study_count)
-from style.colors import get_color_mapping
+from style.colors import get_color_mapping, get_text_color
 
 SECTION_PATTERN = re.compile(
     r"("
@@ -134,25 +134,34 @@ def content_layout(list_of_children: list, id: str = "content") -> dbc.Container
     )
 
 
-def filter_component(filter_buttons: list[dbc.Button] = [], info_buttons: list[dbc.Button] = []) -> html.Div:
+def filter_component(
+    filter_buttons: list[dbc.Button] = [],
+    info_buttons: list[dbc.Button] = [],
+    show_filters: bool = True,
+) -> html.Div:
     """Builds the sections that display the active filters and info buttons in the studies display page."""
-    children = [
-        dbc.Row(
-            className="mt-2 mb-2",
-            children=[
-                dbc.Col(
-                    html.Span("Active Filters"),
-                    width=2,
-                    className="text-start text-secondary",
-                ),
-                dbc.Col(
-                    id="active-filter-buttons",
-                    children=filter_buttons,
-                    width=10,
-                ),
-            ],
-        ),
-    ]
+    children = []
+
+    # "active-filter-buttons" must stay in the layout whenever the page can add filters,
+    # since callbacks target it by a plain (non-pattern-matching) id.
+    if show_filters:
+        children.append(
+            dbc.Row(
+                className="mt-2 mb-2",
+                children=[
+                    dbc.Col(
+                        html.Span("Active Filters"),
+                        width=2,
+                        className="text-start text-secondary",
+                    ),
+                    dbc.Col(
+                        id="active-filter-buttons",
+                        children=filter_buttons,
+                        width=10,
+                    ),
+                ],
+            )
+        )
 
     if info_buttons:
         children.append(
@@ -385,6 +394,8 @@ def studies_display(
     tags: bool = True,
     grid_id: str = "studies-grid",
     is_dosage: bool = False,
+    toggle_index: str = None,
+    show_filters: bool = True,
 ) -> html.Div:
     """Builds the studies display page with a filter component and a study grid."""
 
@@ -394,12 +405,35 @@ def studies_display(
     filter_buttons = build_filter_info_buttons(
         filters, map_all_labels=False) if filters else []
     info_buttons = build_filter_info_buttons(
-        infos, map_all_labels=False) if infos else []
+        infos, map_all_labels=True) if infos else []
 
     return html.Div([
         html.H3("Filtered Studies"),
 
-        filter_component(filter_buttons, info_buttons),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dbc.Checklist(
+                        id={
+                            "type": "include-study-protocol-toggle",
+                            "index": toggle_index or page_key,
+                        },
+                        options=[
+                            {
+                                "label": "include study protocols",
+                                "value": "include",
+                            }
+                        ],
+                        value=["include"],
+                        switch=True,
+                    ),
+                    width="auto",
+                )
+            ],
+            className="mb-2",
+        ),
+
+        filter_component(filter_buttons, info_buttons, show_filters=show_filters),
 
         dcc.Store(
             id="active-filters",
@@ -625,7 +659,9 @@ def _get_tags(active_tags: OrderedDict[str, list[str]], map_all_labels: bool = T
         else:
             all_labels_task = labels
         task_color_mapping = get_color_mapping(task, all_labels_task)
-        for label in labels:
+        # keep the color-defining order rather than the input order of `labels`
+        ordered_labels = [lbl for lbl in all_labels_task if lbl in labels]
+        for label in ordered_labels:
             tag_info = {
                 'task': task,
                 'label': label,
@@ -661,10 +697,11 @@ def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool
 def filter_info_button(color: str, label: str, task: str, editable: bool = False):
     """ Create info/filter button """
     children = [html.Span(f"{label}", style={"font-size": "16px"})]
+    text_color = get_text_color(color)
     custom_style = {
         "borderRadius": "1rem",
         "backgroundColor": f'{color}',
-        "color": "white",
+        "color": text_color,
         "padding": "0.2rem 0.8rem",
         "margin": "0.1rem",
     }
