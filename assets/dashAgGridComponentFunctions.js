@@ -23,10 +23,9 @@ dagcomponentfuncs.Tag = function (props) {
             return React.createElement(
                 'span',
                 {
-                    className: 'badge',
+                    className: 'badge tag-info-button',
                     style: {
                         backgroundColor: color,
-                        cursor: 'pointer',
                         padding: '8px 13px',  // Tag like appearance
                         marginRight: '5px',
                         borderRadius: '20px',

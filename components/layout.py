@@ -715,7 +715,6 @@ def filter_info_button(color: str, label: str, task: str, editable: bool = False
         custom_style["backgroundColor"] = color
         custom_style["border"] = "none"
         custom_style["boxShadow"] = "none"
-        custom_style["cursor"] = "default"
 
     id = {'type': 'filter-button', 'task': task,
           'label': label} if editable else 'tag-button'
@@ -723,6 +722,7 @@ def filter_info_button(color: str, label: str, task: str, editable: bool = False
         children=children,
         style=custom_style,
         color="light",
+        className="filter-button-active" if editable else "tag-info-button",
         id=id,
         n_clicks=0,
         value={"category": task, "value": label},

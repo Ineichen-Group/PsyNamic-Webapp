@@ -53,6 +53,40 @@
     color: #555;
 }
 
+/* Non-clickable info tags/buttons (help cursor + slight darken on hover) */
+.tag-info-button {
+    cursor: help !important;
+}
+
+.tag-info-button:hover {
+    filter: brightness(0.92);
+}
+
+/* Clickable active filter buttons (pointer cursor + slight darken on hover) */
+.filter-button-active {
+    cursor: pointer !important;
+}
+
+.filter-button-active:hover {
+    filter: brightness(0.92);
+}
+
+/* Rows in the study grid open a detail modal on click */
+.ag-row {
+    cursor: pointer;
+}
+
+/* Pie segments in the dual-task analysis filter Task 2 on click */
+#task1-pie-graph .slice path {
+    cursor: pointer;
+}
+
+/* Radio/checklist options in the filter builder are clickable */
+#label-checklist .form-check-input,
+#label-checklist .form-check-label {
+    cursor: pointer;
+}
+
 .card-hover {
     cursor: pointer; 
     background-color: #f5f5f5;
