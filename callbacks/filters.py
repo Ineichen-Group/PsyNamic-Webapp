@@ -73,34 +73,116 @@ def register(app):
         Output("active-filters", "data", allow_duplicate=True),
         Output("active-filter-buttons", "children", allow_duplicate=True),
         Output("label-checklist", "value"),
+        Output("filter-text", "children"),
         Input("add-filter-btn", "n_clicks"),
         Input({'type': 'filter-button', 'task': ALL, 'label': ALL}, 'n_clicks'),
+        Input("clear-search-btn", "n_clicks"),
         State("active-filters", "data"),
         State("label-checklist", "value"),
         State("task-dropdown", "value"),
         prevent_initial_call=True
     )
-    def modify_filter(_, remove_filter_clicks: list[int], active_filters: OrderedDict[str, list[str]], label_checklist: list[str], task: str):
-        """Modifies the active filters based on user interactions with the checklist and filter buttons."""
-        # Case 1: checkboxes are adjusted and the "Add Filter" button is clicked, can mean adding or removing
+    def modify_filter(
+        _,
+        remove_filter_clicks: list[int],
+        clear_search_clicks: int,
+        active_filters: OrderedDict[str, list[str]],
+        label_checklist: list[str],
+        task: str
+    ):
+        """Modifies the active filters based on user interactions."""
+
+        # Case 1: Add/remove filters using the Add Filter button
         if ctx.triggered_id == "add-filter-btn":
             new_active_filters = get_active_filters_from_checklist(
-                task, label_checklist, active_filters)
+                task,
+                label_checklist,
+                active_filters
+            )
+
             if new_active_filters == active_filters:
-                return no_update, no_update, no_update
+                return no_update, no_update, no_update, no_update
+
             elif len(new_active_filters) == 1 and new_active_filters[task] == []:
-                return {}, [], []
+                return {}, [], [], ""
+
             else:
                 active_filters = new_active_filters
                 buttons = build_filter_info_buttons(
-                    active_filters, editable=True, map_all_labels=False)
-                return active_filters, buttons, label_checklist
-        # Case 2: a filter button is clicked to remove a filter
+                    active_filters,
+                    editable=True,
+                    map_all_labels=False
+                )
+
+                search_string = build_search_string(active_filters)
+
+                return (
+                    active_filters,
+                    buttons,
+                    label_checklist,
+                    search_string,
+                )
+
+        # Case 2: A filter button is clicked to remove a filter
+        # Case 3: Clear search button clicked
+        elif ctx.triggered_id == "clear-search-btn":
+            return {}, [], [], ""
+
+        # Case 2: A filter button is clicked to remove a filter
         else:
             active_filters, label_to_remove = remove_filters_from_active_filter(
-                active_filters, remove_filter_clicks)
+                active_filters,
+                remove_filter_clicks
+            )
+
             buttons = build_filter_info_buttons(
-                active_filters, editable=True, map_all_labels=False)
+                active_filters,
+                editable=True,
+                map_all_labels=False
+            )
+
             if label_to_remove in label_checklist:
                 label_checklist.remove(label_to_remove)
-            return active_filters, buttons, label_checklist
+
+            search_string = build_search_string(active_filters)
+
+            return (
+                active_filters,
+                buttons,
+                label_checklist,
+                search_string,
+            )
+
+
+def build_search_string(active_filters) -> str:
+    """
+    Builds a search string from the active filters.
+
+    Examples:
+        {"Application Form": ["Nasal", "Oral"]}
+        -> "Application Form = Nasal AND Oral"
+
+        {
+            "Application Form": ["Nasal", "Oral"],
+            "Data Type": ["Cross-sectional", "Longitudinal"]
+        }
+        -> "(Application Form = Nasal AND Oral) AND "
+           "(Data Type = Cross-sectional AND Longitudinal)"
+    """
+    filter_groups = []
+
+    for task, labels in active_filters.items():
+        if not labels:
+            continue
+
+        values = " AND ".join(
+            f"{task} = {label}" if i == 0 else label
+            for i, label in enumerate(labels)
+        )
+
+        if len(active_filters) > 1:
+            values = f"({values})"
+
+        filter_groups.append(values)
+
+    return " AND ".join(filter_groups)
