@@ -909,6 +909,8 @@ class _BooleanQueryParser:
 
     def _parse_atom(self):
         token = self._peek()
+        if token is None:
+            raise ValueError("Incomplete search string")
         if token == "(":
             self._advance()
             node = self._parse_or()
