@@ -449,31 +449,49 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                     className="mb-2",
                 ),
 
-                dbc.InputGroup([
-                    html.Div(
-                        id="filter-text",
-                        children="",
-                        className="form-control bg-light",
-                        style={
-                            "minHeight": "38px",
-                            "display": "flex",
-                            "alignItems": "center",
-                            "fontFamily": "monospace",
-                        },
-                    ),
+                html.Div([
+                    dbc.InputGroup([
+                        dcc.Input(
+                            id="filter-text",
+                            value="",
+                            type="text",
+                            disabled=not advanced,
+                            className="form-control bg-light",
+                            style={
+                                "minHeight": "38px",
+                                "fontFamily": "monospace",
+                            },
+                        ),
 
-                    dbc.Button(
-                        html.I(className="fa-solid fa-xmark"),
-                        id="clear-search-btn",
-                        color="light",
-                        title="Clear search",
-                        n_clicks=0,
-                        style={
-                            "minWidth": "45px",
-                            "border": "1px solid rgb(222, 226, 230)",
-                        },
+                        dbc.Button(
+                            html.I(className="fa-solid fa-xmark"),
+                            id="clear-search-btn",
+                            color="light",
+                            title="Clear search",
+                            n_clicks=0,
+                            style={
+                                "minWidth": "45px",
+                                "border": "1px solid rgb(222, 226, 230)",
+                            },
+                        ),
+                    ]),
+
+                    *(
+                        [
+                            dbc.Button(
+                                "Filter",
+                                id="apply-filter-btn",
+                                color="primary",
+                                title="Apply filter",
+                                n_clicks=0,
+                                className="ms-2",
+                                style={"minWidth": "120px"},
+                            )
+                        ]
+                        if advanced
+                        else []
                     ),
-                ]),
+                ], className="d-flex"),
 
                 html.Label(
                     "Build filters",

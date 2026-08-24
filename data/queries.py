@@ -4,6 +4,7 @@ This module contains database query functions for the PsyNamic-Webapp.
 
 import json
 import os
+import re
 import sys
 from collections import OrderedDict
 from pathlib import Path
@@ -738,6 +739,109 @@ def get_filtered_study_ids(filter: OrderedDict[str, list[str]], mode="and") -> l
         return [r[0] for r in query.all()]
     finally:
         session.close()
+
+
+# Matches '(', ')', and the whole-word operators used in advanced filter expressions.
+_BOOLEAN_QUERY_TOKEN_RE = re.compile(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)')
+
+
+def _tokenize_boolean_query(query_text: str) -> list:
+    """Splits an advanced filter expression into '(', ')', 'AND', 'OR', 'NOT' and ('CMP', task, label) tokens."""
+    tokens = []
+    for part in _BOOLEAN_QUERY_TOKEN_RE.split(query_text):
+        part = part.strip()
+        if not part:
+            continue
+        if part in ("(", ")", "AND", "OR", "NOT"):
+            tokens.append(part)
+            continue
+        if "=" not in part:
+            raise ValueError(f"Expected 'Task = Label' but got: '{part}'")
+        task, label = part.split("=", 1)
+        tokens.append(("CMP", task.strip(), label.strip()))
+    return tokens
+
+
+class _BooleanQueryParser:
+    """Recursive-descent parser for AND/OR/NOT/parentheses expressions over 'Task = Label' comparisons."""
+
+    def __init__(self, tokens: list):
+        self.tokens = tokens
+        self.pos = 0
+
+    def _peek(self):
+        return self.tokens[self.pos] if self.pos < len(self.tokens) else None
+
+    def _advance(self):
+        token = self._peek()
+        self.pos += 1
+        return token
+
+    def parse(self):
+        if not self.tokens:
+            raise ValueError("Empty filter expression")
+        node = self._parse_or()
+        if self.pos != len(self.tokens):
+            raise ValueError(f"Unexpected token: {self._peek()}")
+        return node
+
+    def _parse_or(self):
+        node = self._parse_and()
+        while self._peek() == "OR":
+            self._advance()
+            node = ("OR", node, self._parse_and())
+        return node
+
+    def _parse_and(self):
+        node = self._parse_not()
+        while self._peek() == "AND":
+            self._advance()
+            node = ("AND", node, self._parse_not())
+        return node
+
+    def _parse_not(self):
+        if self._peek() == "NOT":
+            self._advance()
+            return ("NOT", self._parse_not())
+        return self._parse_atom()
+
+    def _parse_atom(self):
+        token = self._peek()
+        if token == "(":
+            self._advance()
+            node = self._parse_or()
+            if self._advance() != ")":
+                raise ValueError("Missing closing bracket ')'")
+            return node
+        if isinstance(token, tuple) and token[0] == "CMP":
+            self._advance()
+            return token
+        raise ValueError(f"Unexpected token: {token}")
+
+
+def _evaluate_boolean_query(node: tuple, universe: set[int]) -> set[int]:
+    kind = node[0]
+    if kind == "CMP":
+        _, task, label = node
+        return set(get_ids(task=task, label=label))
+    if kind == "AND":
+        return _evaluate_boolean_query(node[1], universe) & _evaluate_boolean_query(node[2], universe)
+    if kind == "OR":
+        return _evaluate_boolean_query(node[1], universe) | _evaluate_boolean_query(node[2], universe)
+    if kind == "NOT":
+        return universe - _evaluate_boolean_query(node[1], universe)
+    raise ValueError(f"Unknown expression node: {node}")
+
+
+def get_ids_from_boolean_query(query_text: str) -> list[int]:
+    """Parses and evaluates an advanced filter expression (AND/OR/NOT/parentheses over 'Task = Label' comparisons)."""
+    query_text = (query_text or "").strip()
+    if not query_text:
+        return get_ids()
+
+    tree = _BooleanQueryParser(_tokenize_boolean_query(query_text)).parse()
+    universe = set(get_ids())
+    return sorted(_evaluate_boolean_query(tree, universe))
 
 
 def get_paper_prediction_input(id: int) -> str:
