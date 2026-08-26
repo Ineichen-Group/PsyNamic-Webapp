@@ -96,6 +96,7 @@ make db-init
 
 ```bash
 make build
+make down
 make up
 ```
 
