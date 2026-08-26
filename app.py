@@ -18,9 +18,9 @@ from pages.insights.views import rct_view, efficacy_safety_view, longitudinal_vi
 from components.layout import header_layout, footer_layout, content_layout
 from callbacks import register_callbacks
 from flask_talisman import Talisman
+from seo import register_seo_routes
 import logging
 logging.basicConfig(level=logging.DEBUG)
-
 
 
 # Configure logging
@@ -43,8 +43,39 @@ MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE", "false").lower() == "true"
 
 # Dash App Initialization
 app = dash.Dash(__name__, external_stylesheets=[
-                dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME], suppress_callback_exceptions=True, title="PsyNamic")
+                dbc.themes.BOOTSTRAP,
+                dbc.icons.FONT_AWESOME
+            ],
+            suppress_callback_exceptions=True,
+            title="PsyNamic")
+
+# Google Search Console verification
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+
+        <meta name="google-site-verification" content="YzdRrOWHszrERzuJwChSqTlk8baDKZQT-MaMw-ynQyE" />
+    </head>
+    <body>
+        {%app_entry%}
+
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
+
 server = app.server
+register_seo_routes(server)
+
 csp = {
     "default-src": ["'self'"],
     "script-src": ["'self'"] + app.csp_hashes(),
