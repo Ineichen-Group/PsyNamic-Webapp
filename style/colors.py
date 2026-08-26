@@ -8,6 +8,9 @@ GREY = '#c7c7c7'
 BROWN = "#e5d8bd"
 BLUE = "#b6c2d1"
 
+# Matches the plot_bgcolor used for charts in components/graphs.py.
+CHART_BACKGROUND = "#f8f8f8"
+
 SECONDARY_COLOR = '#e5ecf6'
 TASK2COLOR = {
     "Study Type": sequential.Greens,
@@ -102,6 +105,15 @@ def relative_luminance(rgb):
     )
 
 
+def contrast_ratio(rgb_a: list[int], rgb_b: list[int]) -> float:
+    """Computes the WCAG contrast ratio between two RGB colors."""
+    luminance_a = relative_luminance(rgb_a)
+    luminance_b = relative_luminance(rgb_b)
+    lighter = max(luminance_a, luminance_b)
+    darker = min(luminance_a, luminance_b)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
 def check_button_contrast(background_rgb_str: str) -> bool:
     """
     Checks if white text (#FFFFFF) on the given background color meets WCAG contrast guidelines
@@ -109,23 +121,20 @@ def check_button_contrast(background_rgb_str: str) -> bool:
 
     based on: https://github.com/Peter-Slump/python-contrast-ratio
     """
-
-    # Convert background and text colors to RGB
     background_rgb = parse_rgb_string(background_rgb_str)
-    text_rgb = [255, 255, 255]  # RGB for white
+    return contrast_ratio(background_rgb, [255, 255, 255]) >= 3
 
-    # Determine lighter and darker colors
-    background_luminance = relative_luminance(background_rgb)
-    text_luminance = relative_luminance(text_rgb)
 
-    lighter = max(background_luminance, text_luminance)
-    darker = min(background_luminance, text_luminance)
-
-    # Calculate contrast ratio
-    contrast_ratio = (lighter + 0.05) / (darker + 0.05)
-
-    # Check if contrast ratio meets the guideline for large text
-    return contrast_ratio >= 3
+def find_max_lightness_ratio(end_rgb: list[int], start_rgb: list[int], background_rgb: list[int], min_ratio: float = 1.8) -> float:
+    """Finds how far (0..1) to interpolate from `end_rgb` (dark) towards `start_rgb` (light)
+    while the resulting color still keeps at least `min_ratio` contrast against `background_rgb`."""
+    max_t = 0.0
+    for t in np.linspace(0, 1, 100):
+        candidate = interpolate_color(end_rgb, start_rgb, t)
+        if contrast_ratio(candidate, background_rgb) < min_ratio:
+            break
+        max_t = t
+    return max_t
 
 
 def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> dict[str, str]:
@@ -136,7 +145,12 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
     palette_start = TASK2COLOR[task][0]
     palette_end = TASK2COLOR[task][-1]
 
-    lightest, darkest = find_luminance_boundaries(palette_start, palette_end)
+    # Use as much of the palette's lightness range as possible (not just the subset that
+    # is safe for white text) so many categories remain visually distinguishable; text
+    # color is chosen per swatch instead (see `get_text_color`).
+    start_rgb = parse_rgb_string(palette_start)
+    end_rgb = parse_rgb_string(palette_end)
+    background_rgb = parse_rgb_string(hex_to_rgb(CHART_BACKGROUND))
 
     # Treat certain labels as special (use gray) and do not include them in
     # the interpolated palette so spacing of colors for real categories stays even.
@@ -148,20 +162,18 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
 
     n = len(non_special)
     if n == 1:
-        palette = [palette_end]
-        selected_colors = palette
+        selected_colors = [f"rgb({end_rgb[0]}, {end_rgb[1]}, {end_rgb[2]})"]
     else:
-        # Extrapolate colors evenly between the darkest and lightest colors
-        palette = [
-            interpolate_color(darkest, lightest, i / (n - 1)) for i in range(n)
+        # Interpolate evenly across the whole palette range (darkest -> lightest stop),
+        # capping how far we go towards the lightest stop so it stays visible against the
+        # actual chart/page background instead of fading into it.
+        lightness_cap = find_max_lightness_ratio(end_rgb, start_rgb, background_rgb)
+        selected_colors = [
+            "rgb({}, {}, {})".format(
+                *interpolate_color(end_rgb, start_rgb, (i / (n - 1)) * lightness_cap)
+            )
+            for i in range(n)
         ]
-        # convert to rgb() strings
-        selected_colors = [f"rgb({r}, {g}, {b})" for r, g, b in palette]
-
-    # check against contrast ratio for generated colors only
-    for color in selected_colors:
-        if not check_button_contrast(color):
-            raise ValueError(f"Contrast ratio not met for color: {color}")
 
     # convert to hex when requested
     if type == 'hex':
@@ -178,6 +190,12 @@ def get_color_mapping(task: str, list_labels: list[str], type: str = 'rgb') -> d
             idx += 1
 
     return mapping
+
+
+def get_text_color(rgb_or_hex: str) -> str:
+    """Returns '#FFFFFF' or '#000000', whichever gives sufficient contrast against the given background color."""
+    rgb = parse_rgb_string(rgb_or_hex) if not rgb_or_hex.startswith('#') else parse_rgb_string(hex_to_rgb(rgb_or_hex))
+    return "#FFFFFF" if relative_luminance(rgb) < 0.42 else "#000000"
 
 
 def get_color(task: str, type: str = 'rgb') -> str:

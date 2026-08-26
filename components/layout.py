@@ -9,7 +9,7 @@ from dash import dcc, html
 from data.queries import (get_all_labels, get_all_tasks, get_ids,
                           get_latest_retrieval_date, get_paper_ner_tags,
                           get_study_count)
-from style.colors import get_color_mapping
+from style.colors import get_color_mapping, get_text_color
 
 SECTION_PATTERN = re.compile(
     r"("
@@ -553,10 +553,11 @@ def build_filter_info_buttons(tags: OrderedDict[str, list[dict]], editable: bool
 def filter_info_button(color: str, label: str, task: str, editable: bool = False):
     """ Create info/filter button """
     children = [html.Span(f"{label}", style={"font-size": "16px"})]
+    text_color = get_text_color(color)
     custom_style = {
         "borderRadius": "1rem",
         "backgroundColor": f'{color}',
-        "color": "white",
+        "color": text_color,
         "padding": "0.2rem 0.8rem",
         "margin": "0.1rem",
     }

@@ -33,6 +33,7 @@ def search_layout():
                 ],
                 className="mb-3",
             ),
+            html.Div(id="search-results-count", className="text-muted mb-2"),
             html.Div(
                 id="search-results", className="search-results-container hidden"
             ),
