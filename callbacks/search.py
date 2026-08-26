@@ -10,6 +10,12 @@ from components.layout import build_paper_details, build_tag_buttons
 from data.queries import get_studies_details, get_study_tags, search_papers
 
 PAGE_SIZE = 50  # Number of search results to display per page
+pagination_hidden_style = {"display": "none"}
+
+pagination_visible_style = {
+    "display": "flex",
+    "justifyContent": "center",
+}
 
 
 def register(app):
@@ -67,6 +73,7 @@ def register(app):
         Output("search-results-count", "children"),
         Output("search-pagination", "active_page"),
         Output("search-pagination", "max_value"),
+        Output("search-pagination", "style"),
         Input("url", "pathname"),
         Input("url", "search"),
         prevent_initial_call=False,
@@ -83,8 +90,12 @@ def register(app):
                 no_update,
                 no_update,
                 no_update,
+                no_update,
             )
 
+        # -------------------------------------------------------------------------
+        # No URL search parameters
+        # -------------------------------------------------------------------------
         if not search:
             return (
                 "",
@@ -95,8 +106,12 @@ def register(app):
                 "",
                 1,
                 1,
+                pagination_hidden_style,
             )
 
+        # -------------------------------------------------------------------------
+        # Parse URL query parameters
+        # -------------------------------------------------------------------------
         try:
             qs = parse_qs(search.lstrip("?"))
         except Exception:
@@ -109,15 +124,15 @@ def register(app):
                 "",
                 1,
                 1,
+                pagination_hidden_style,
             )
 
-        # -------------------------
-        # Case A: Search Query URL (?query=...)
-        # -------------------------
+        # =========================================================================
+        # Case A: Search Query URL
+        # Example: ?query=lsd&page=2
+        # =========================================================================
         if "query" in qs:
-
             search_term = qs["query"][0]
-
             try:
                 page = int(qs.get("page", ["1"])[0])
             except (ValueError, TypeError):
@@ -153,16 +168,20 @@ def register(app):
                     end_row=end_row,
                 )
 
+            # ---------------------------------------------------------------------
+            # No matching papers
+            # ---------------------------------------------------------------------
             if not studies:
                 return (
-                    html.Div("No matching papers found."),
-                    "",
-                    visible_results_style,
-                    [],
-                    search_term,
-                    "0 results found",
-                    1,
-                    1,
+                    "",                         # search-paper-details
+                    "",                         # search-results
+                    hidden_results_style,       # hide results container
+                    [],                         # last-search-store
+                    search_term,                # search-input
+                    "0 results found",          # search-results-count
+                    1,                          # pagination.active_page
+                    1,                          # pagination.max_value
+                    pagination_hidden_style,    # pagination.style
                 )
 
             items = []
@@ -209,6 +228,16 @@ def register(app):
                     )
                 )
 
+            # ---------------------------------------------------------------------
+            # Show pagination only when there is more than one page
+            # ---------------------------------------------------------------------
+            pagination_style = (
+                pagination_visible_style
+                if total_count > PAGE_SIZE
+                else pagination_hidden_style
+            )
+
+
             return (
                 "",
                 dbc.ListGroup(items),
@@ -218,10 +247,13 @@ def register(app):
                 f"{total_count} result{'s' if total_count != 1 else ''} found",
                 page,
                 total_pages,
+                pagination_style,
             )
-        # -------------------------
-        # Case B: Study Details URL (?study_id=...)
-        # -------------------------
+
+        # =========================================================================
+        # Case B: Study Details URL
+        # Example: ?study_id=7050
+        # =========================================================================
         if "study_id" in qs:
             try:
                 paper_id = int(qs["study_id"][0])
@@ -235,6 +267,7 @@ def register(app):
                     no_update,
                     no_update,
                     no_update,
+                    pagination_hidden_style,
                 )
 
             studies = get_studies_details(
@@ -243,27 +276,40 @@ def register(app):
                 end_row=1,
             )
 
+            # ---------------------------------------------------------------------
+            # Paper doesn't exist
+            # ---------------------------------------------------------------------
             if not studies:
                 return (
-                    html.Div("Paper not found"),
+                    "",
                     "",
                     hidden_results_style,
-                    no_update,
-                    no_update,
-                    no_update,
-                    no_update,
+                    [],
+                    search_term,
+                    "0 results found",
+                    1,
+                    1,
+                    pagination_hidden_style,
                 )
 
             paper = studies[0]
+
             study_tags = get_study_tags([paper_id])
+
             paper_obj = paper.copy()
-            paper_obj["tags"] = study_tags.get(paper_id, [])
+            paper_obj["tags"] = study_tags.get(
+                paper_id,
+                [],
+            )
 
             details = build_paper_details(
                 paper,
                 tags_component=build_tag_buttons(paper_obj),
             )
 
+            # ---------------------------------------------------------------------
+            # No pagination on single-paper details page
+            # ---------------------------------------------------------------------
             return (
                 details,
                 "",
@@ -271,10 +317,14 @@ def register(app):
                 no_update,
                 no_update,
                 no_update,
-                no_update,
-                no_update,
+                1,
+                1,
+                pagination_hidden_style,
             )
 
+        # -------------------------------------------------------------------------
+        # Unknown URL parameters
+        # -------------------------------------------------------------------------
         return (
             "",
             "",
@@ -284,27 +334,28 @@ def register(app):
             "",
             1,
             1,
+            pagination_hidden_style,
         )
-
     # -------------------------------------------------------------------------
     # Callback 3: Clicking a search result item updates URL to ?study_id=...
     # -------------------------------------------------------------------------
+
     @app.callback(
-    Output(
-        {"type": "search-result", "id": ALL},
-        "active",
-        allow_duplicate=True,
-    ),
-    Output("url", "search", allow_duplicate=True),
-    Input(
-        {"type": "search-result", "id": ALL},
-        "n_clicks",
-    ),
-    State(
-        {"type": "search-result", "id": ALL},
-        "id",
-    ),
-    prevent_initial_call=True,
+        Output(
+            {"type": "search-result", "id": ALL},
+            "active",
+            allow_duplicate=True,
+        ),
+        Output("url", "search", allow_duplicate=True),
+        Input(
+            {"type": "search-result", "id": ALL},
+            "n_clicks",
+        ),
+        State(
+            {"type": "search-result", "id": ALL},
+            "id",
+        ),
+        prevent_initial_call=True,
     )
     @log_time
     def select_search_paper(n_clicks_list, ids_list):
