@@ -78,6 +78,7 @@ def view_layout(
     active_filters: OrderedDict,
     active_infos: OrderedDict,
     ids: Optional[list[int]] = None,
+    protocol_toggle_enabled: bool = True,
 ) -> html.Div:
     """Generates the standardized view wrapper containing a title, graph, and study list.
 
@@ -110,6 +111,7 @@ def view_layout(
             filters=active_filters,
             infos=active_infos,
             toggle_index="insight-chart",
+            protocol_toggle_enabled=protocol_toggle_enabled,
         ),
 
         dcc.Store(
@@ -350,7 +352,7 @@ def study_protocol_view() -> html.Div:
     return html.Div([
         html.H1(f"{title}", className="my-4"),
         freq_span,
-        studies_display(page_key=key, ids=ids, filters=filters, tags=False),
+        studies_display(page_key=key, ids=ids, filters=filters, tags=False, protocol_toggle_enabled=False),
     ])
 
 

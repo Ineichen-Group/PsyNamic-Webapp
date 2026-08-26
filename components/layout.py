@@ -402,6 +402,7 @@ def studies_display(
     is_dosage: bool = False,
     toggle_index: str = None,
     show_filters: bool = True,
+    protocol_toggle_enabled: bool = True,
 ) -> html.Div:
     """Builds the studies display page with a filter component and a study grid."""
 
@@ -439,7 +440,7 @@ def studies_display(
                 )
             ],
             className="mb-2 align-items-center",
-        ),
+        ) if protocol_toggle_enabled else None,
 
         filter_component(filter_buttons, info_buttons, show_filters=show_filters),
 
