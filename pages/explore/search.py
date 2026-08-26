@@ -34,9 +34,26 @@ def search_layout():
                 className="mb-3",
             ),
             html.Div(id="search-results-count", className="text-muted mb-2"),
+
             html.Div(
-                id="search-results", className="search-results-container hidden"
+                id="search-results",
+                className="search-results-container hidden",
             ),
+
+            html.Div(
+                dbc.Pagination(
+                    id="search-pagination",
+                    active_page=1,
+                    max_value=1,
+                    fully_expanded=False,
+                    previous_next=True,
+                    first_last=True,
+                    className="mb-3",
+                ),
+                id="search-results-pagination",
+                className="d-flex justify-content-center mt-3",
+            ),
+
             html.Div(id="search-paper-details"),
             dcc.Store(
                 id="last-search-store", data=None, storage_type="memory"

@@ -720,6 +720,8 @@ def search_papers(query: str, start_row: int = 0, end_row: int = 50):
                 # fallback to title partial match
                 query_stmt = query_stmt.filter(Paper.title.ilike(f"%{q}%"))
 
+        total_count = query_stmt.count()
+
         # pagination
         query_stmt = query_stmt.offset(start_row)
         if end_row is not None:
@@ -751,7 +753,7 @@ def search_papers(query: str, start_row: int = 0, end_row: int = 50):
             for s in studies
         ]
 
-        return results
+        return results, total_count
     finally:
         session.close()
 
