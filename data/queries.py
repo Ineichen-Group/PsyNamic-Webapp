@@ -4,6 +4,7 @@ This module contains database query functions for the PsyNamic-Webapp.
 
 import json
 import os
+import re
 import sys
 from collections import OrderedDict
 from pathlib import Path
@@ -797,6 +798,317 @@ def get_filtered_study_ids(
         return [r[0] for r in query.all()]
     finally:
         session.close()
+
+
+# Matches '(', ')', and the whole-word operators used in advanced filter expressions.
+_BOOLEAN_QUERY_TOKEN_RE = re.compile(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)')
+_YEAR_COMPARISON_RE = re.compile(r'^year\s*(<=|>=|!=|=|<|>)\s*(\d{4})$', re.IGNORECASE)
+_YEAR_CMP_SCAN_RE = re.compile(r'^year\s*(<=|>=|!=|=|<|>)\s*(\d{4})', re.IGNORECASE)
+_OPERATOR_MATCH_RE = re.compile(r'^(\(|\)|\bAND\b|\bOR\b|\bNOT\b)', re.IGNORECASE)
+
+
+def _validate_comparison(task: str, label: str) -> tuple[str, str]:
+    """Validates that task/label refer to real prediction tasks/labels (case-insensitive) and returns their canonical casing."""
+    task_lookup = {t.lower(): t for t in get_all_tasks()}
+    matched_task = task_lookup.get(task.lower())
+    if matched_task is None:
+        raise ValueError(f"Unknown task: '{task}'")
+
+    label_lookup = {l.lower(): l for l in get_all_labels(matched_task)}
+    matched_label = label_lookup.get(label.lower())
+    if matched_label is None:
+        raise ValueError(f"Unknown label '{label}' for task '{matched_task}'")
+
+    return matched_task, matched_label
+
+
+def _tokenize_boolean_query(query_text: str, tolerant: bool = False) -> list:
+    """Splits an advanced filter expression into operator/bracket and comparison tokens.
+
+    Supports:
+      - Task/label comparisons: "Task = Label" (handles brackets inside label names e.g. "Adult (≥18 years)")
+      - Year comparisons: "Year >= 2020", "Year = 2024", etc.
+    """
+    tasks = get_all_tasks()
+    task_lookup = {t.lower(): t for t in tasks}
+    sorted_task_lowers = sorted(task_lookup.keys(), key=len, reverse=True)
+
+    task_label_lookups = {}
+    sorted_label_lowers = {}
+    for task_name in tasks:
+        labels = get_all_labels(task_name)
+        l_lookup = {l.lower(): l for l in labels}
+        task_label_lookups[task_name] = l_lookup
+        sorted_label_lowers[task_name] = sorted(l_lookup.keys(), key=len, reverse=True)
+
+    tokens = []
+    i = 0
+    n = len(query_text)
+
+    while i < n:
+        while i < n and query_text[i].isspace():
+            i += 1
+        if i >= n:
+            break
+
+        remaining = query_text[i:]
+
+        # 1. Try matching a known Task comparison starting at i
+        matched_task_lower = None
+        task_match_len = 0
+        for t_lower in sorted_task_lowers:
+            if remaining.lower().startswith(t_lower):
+                after_t = remaining[len(t_lower):].lstrip()
+                if after_t.startswith("="):
+                    matched_task_lower = t_lower
+                    eq_rel_idx = remaining.find("=")
+                    task_match_len = eq_rel_idx + 1
+                    break
+
+        if matched_task_lower is not None:
+            task = task_lookup[matched_task_lower]
+            i += task_match_len
+            while i < n and query_text[i].isspace():
+                i += 1
+            label_remaining = query_text[i:]
+
+            matched_label_lower = None
+            for l_lower in sorted_label_lowers[task]:
+                if label_remaining.lower().startswith(l_lower):
+                    matched_label_lower = l_lower
+                    break
+
+            if matched_label_lower is not None:
+                label = task_label_lookups[task][matched_label_lower]
+                i += len(matched_label_lower)
+                tokens.append(("CMP", task, label))
+                continue
+            else:
+                boundary_match = re.search(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)', label_remaining, re.IGNORECASE)
+                end_idx = boundary_match.start() if boundary_match else len(label_remaining)
+                attempted_label = label_remaining[:end_idx].strip()
+                i += end_idx
+                if tolerant:
+                    tokens.append(("CMP", task, attempted_label))
+                else:
+                    _validate_comparison(task, attempted_label)
+                continue
+
+        # 2. Try matching a Year comparison
+        year_match = _YEAR_CMP_SCAN_RE.match(remaining)
+        if year_match:
+            op, yr = year_match.groups()
+            tokens.append(("YEAR_CMP", op, int(yr)))
+            i += year_match.end()
+            continue
+
+        # 3. Try matching an operator or grouping paren
+        op_match = _OPERATOR_MATCH_RE.match(remaining)
+        if op_match:
+            op_str = op_match.group(1).upper()
+            tokens.append(op_str)
+            i += op_match.end()
+            continue
+
+        # 4. Fallback for unknown task/segment containing '=' or unexpected token
+        boundary_match = re.search(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)', remaining, re.IGNORECASE)
+        end_idx = boundary_match.start() if boundary_match else len(remaining)
+        segment = remaining[:end_idx].strip()
+        advance_by = end_idx if end_idx > 0 else 1
+        i += advance_by
+
+        if segment:
+            if "=" in segment:
+                t_str, l_str = segment.split("=", 1)
+                if tolerant:
+                    tokens.append(("CMP", t_str.strip(), l_str.strip()))
+                else:
+                    task, label = _validate_comparison(t_str.strip(), l_str.strip())
+                    tokens.append(("CMP", task, label))
+            else:
+                if tolerant:
+                    tokens.append("ATOM")
+                else:
+                    unknown_ops = [
+                        w for w in segment.split()
+                        if w.isalpha() and w.isupper() and w not in ("AND", "OR", "NOT")
+                    ]
+                    if unknown_ops:
+                        raise ValueError(f"Unknown operator '{unknown_ops[0]}'. Expected AND, OR, or NOT.")
+                    raise ValueError(f"Expected 'Task = Label' but got: '{segment}'")
+
+    return tokens
+
+
+class _BooleanQueryParser:
+    """Recursive-descent parser for AND/OR/NOT/parentheses expressions.
+
+    Atoms are either "Task = Label" comparisons or year comparisons
+    like "Year >= 2020".
+    """
+
+    def __init__(self, tokens: list):
+        self.tokens = tokens
+        self.pos = 0
+
+    def _peek(self):
+        return self.tokens[self.pos] if self.pos < len(self.tokens) else None
+
+    def _advance(self):
+        token = self._peek()
+        self.pos += 1
+        return token
+
+    def parse(self):
+        if not self.tokens:
+            raise ValueError("Empty filter expression")
+        node = self._parse_or()
+        if self.pos != len(self.tokens):
+            raise ValueError(f"Unexpected token: {self._peek()}")
+        return node
+
+    def _parse_or(self):
+        node = self._parse_and()
+        while self._peek() == "OR":
+            self._advance()
+            node = ("OR", node, self._parse_and())
+        return node
+
+    def _parse_and(self):
+        node = self._parse_not()
+        while self._peek() == "AND":
+            self._advance()
+            node = ("AND", node, self._parse_not())
+        return node
+
+    def _parse_not(self):
+        if self._peek() == "NOT":
+            self._advance()
+            return ("NOT", self._parse_not())
+        return self._parse_atom()
+
+    def _parse_atom(self):
+        token = self._peek()
+        if token is None:
+            raise ValueError("Incomplete search string")
+        if token == "(":
+            self._advance()
+            node = self._parse_or()
+            if self._advance() != ")":
+                raise ValueError("Missing closing bracket ')'")
+            return node
+        if isinstance(token, tuple) and token[0] == "CMP":
+            self._advance()
+            return token
+        if isinstance(token, tuple) and token[0] == "YEAR_CMP":
+            self._advance()
+            return token
+        raise ValueError(f"Unexpected token: {token}")
+
+
+def _get_ids_for_year_comparison(operator: str, year: int) -> list[int]:
+    """Returns paper IDs matching a year comparison against publication year."""
+    session = Session()
+    try:
+        year_expr = extract('year', Paper.date)
+        query = session.query(Paper.id).filter(Paper.date.isnot(None))
+
+        if operator == "=":
+            query = query.filter(year_expr == year)
+        elif operator == "!=":
+            query = query.filter(year_expr != year)
+        elif operator == ">":
+            query = query.filter(year_expr > year)
+        elif operator == ">=":
+            query = query.filter(year_expr >= year)
+        elif operator == "<":
+            query = query.filter(year_expr < year)
+        elif operator == "<=":
+            query = query.filter(year_expr <= year)
+        else:
+            raise ValueError(f"Unsupported year operator: '{operator}'")
+
+        return [r[0] for r in query.distinct().all()]
+    finally:
+        session.close()
+
+
+def _evaluate_boolean_query(node: tuple, universe: set[int]) -> set[int]:
+    kind = node[0]
+    if kind == "CMP":
+        _, task, label = node
+        return set(get_ids(task=task, label=label))
+    if kind == "YEAR_CMP":
+        _, operator, year = node
+        return set(_get_ids_for_year_comparison(operator, year))
+    if kind == "AND":
+        return _evaluate_boolean_query(node[1], universe) & _evaluate_boolean_query(node[2], universe)
+    if kind == "OR":
+        return _evaluate_boolean_query(node[1], universe) | _evaluate_boolean_query(node[2], universe)
+    if kind == "NOT":
+        return universe - _evaluate_boolean_query(node[1], universe)
+    raise ValueError(f"Unknown expression node: {node}")
+
+
+def get_ids_from_boolean_query(query_text: str, include_study_protocols: bool = True) -> list[int]:
+    """Parses and evaluates an advanced filter expression.
+
+    Supports AND/OR/NOT/parentheses over:
+        - Task/label comparisons: "Task = Label"
+        - Year comparisons: "Year >= 2020", "Year < 2015", etc.
+    """
+    query_text = (query_text or "").strip()
+    if not query_text:
+        return get_ids(include_study_protocols=include_study_protocols)
+
+    tree = _BooleanQueryParser(_tokenize_boolean_query(query_text)).parse()
+    universe = set(get_ids())
+    ids = _evaluate_boolean_query(tree, universe)
+    if not include_study_protocols:
+        session = Session()
+        try:
+            protocol_ids = {r[0] for r in session.execute(_study_protocol_subquery())}
+        finally:
+            session.close()
+        ids -= protocol_ids
+    return sorted(ids)
+
+
+def _collect_comparisons(node: tuple, collected: OrderedDict) -> None:
+    kind = node[0]
+    if kind == "CMP":
+        _, task, label = node
+        collected.setdefault(task, [])
+        if label not in collected[task]:
+            collected[task].append(label)
+        return
+    if kind == "YEAR_CMP":
+        _, operator, year = node
+        collected.setdefault("Year", [])
+        year_label = f"{operator} {year}"
+        if year_label not in collected["Year"]:
+            collected["Year"].append(year_label)
+        return
+    if kind in ("AND", "OR"):
+        _collect_comparisons(node[1], collected)
+        _collect_comparisons(node[2], collected)
+        return
+    if kind == "NOT":
+        # Negated comparisons are excluded from the tag/label displayed as an active filter.
+        return
+    raise ValueError(f"Unknown expression node: {node}")
+
+
+def get_boolean_query_tags(query_text: str) -> OrderedDict:
+    """Parses (without evaluating) an advanced filter expression and returns the Task -> [labels] it references, for read-only display."""
+    query_text = (query_text or "").strip()
+    if not query_text:
+        return OrderedDict()
+
+    tree = _BooleanQueryParser(_tokenize_boolean_query(query_text)).parse()
+    collected = OrderedDict()
+    _collect_comparisons(tree, collected)
+    return collected
 
 
 def get_paper_prediction_input(id: int) -> str:

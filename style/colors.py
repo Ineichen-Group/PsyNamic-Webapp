@@ -28,6 +28,7 @@ TASK2COLOR = {
     "Substance Naivety": sequential.Darkmint,
     "Condition": sequential.Oranges,
     "Outcomes": sequential.Bluyl,
+    "Year": sequential.Greys,
     # "Clinical Trial Phase": sequential.PuBuGn,
     # "Study Conclusion": sequential.PuRd,
 }

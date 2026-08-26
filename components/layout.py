@@ -125,6 +125,12 @@ def content_layout(list_of_children: list, id: str = "content") -> dbc.Container
             data=[],
             storage_type="memory"
         ),
+        # Global so State("advanced-mode") resolves on every page, not just the filter page.
+        dcc.Store(
+            id="advanced-mode",
+            data=False,
+            storage_type="memory"
+        ),
     ]
 
     return dbc.Container(
@@ -426,11 +432,13 @@ def studies_display(
                         ],
                         value=["include"],
                         switch=True,
+                        className="study-protocol-toggle",
                     ),
                     width="auto",
+                    className="d-flex align-items-center",
                 )
             ],
-            className="mb-2",
+            className="mb-2 align-items-center",
         ),
 
         filter_component(filter_buttons, info_buttons, show_filters=show_filters),
@@ -444,6 +452,12 @@ def studies_display(
         dcc.Store(
             id="active-infos",
             data=infos or {},
+            storage_type="memory",
+        ),
+
+        dcc.Store(
+            id="advanced-filter-tags",
+            data={},
             storage_type="memory",
         ),
 
@@ -470,35 +484,244 @@ def studies_display(
     ])
 
 
-def checkbox_filter_selection() -> html.Div:
-    """
-    Builds the checkbox menu in the filter page, allowing users to select tasks and labels for filtering studies.
-    """
+def checkbox_filter_selection(advanced: bool = False) -> html.Div:
     tasks = get_all_tasks() or []
+
     return dbc.Container([
-        dbc.Row([
-            dbc.Col([
-                dcc.Dropdown(
-                    id="task-dropdown",
-                    options=[{"label": task, "value": task} for task in tasks],
-                    placeholder="Select a task",
-                    clearable=False,
+        dbc.Card([
+            dbc.CardBody([
+
+                html.Label(
+                    "Filter",
+                    className="mb-2",
                 ),
-            ], width=9),
 
-            dbc.Col([
-                dbc.Button("Add Filter", id="add-filter-btn",
-                           n_clicks=0,),
-            ], width=3),
-        ], className="mb-4"),
-        dbc.Row([
-            dbc.Col([
-                html.Div(id="checkbox-container"),
-            ], width=12),
-        ], className="mb-4"),
+                dbc.Row([
+                    dbc.Col(
+                        dbc.InputGroup([
+                            dbc.Textarea(
+                                id="filter-text",
+                                value="",
+                                disabled=not advanced,
+                                className="form-control bg-light",
+                                style={
+                                    "minHeight": "0",
+                                    "fontFamily": "monospace",
+                                    "resize": "vertical",
+                                    "overflowY": "auto",
+                                },
+                            ) if advanced else dbc.Input(
+                                id="filter-text",
+                                value="",
+                                type="text",
+                                disabled=not advanced,
+                                className="form-control bg-light",
+                                style={
+                                    "minHeight": "38px",
+                                    "fontFamily": "monospace",
+                                },
+                            ),
+
+                            dbc.Button(
+                                html.I(className="fa-solid fa-xmark"),
+                                id="clear-search-btn",
+                                color="light",
+                                title="Clear search",
+                                n_clicks=0,
+                                style={
+                                    "minWidth": "45px",
+                                    "border": "1px solid rgb(222, 226, 230)",
+                                },
+                            ),
+                        ]),
+                        width=10 if advanced else 12,
+                    ),
+
+                    dbc.Col(
+                        dbc.Button(
+                            "Filter",
+                            id="apply-filter-btn",
+                            color="primary",
+                            title="Apply filter",
+                            n_clicks=0,
+                            className="w-100",
+                        ),
+                        width=2,
+                        style={} if advanced else {"display": "none"},
+                    ),
+                ], className="align-items-center"),
+
+                html.Div(
+                    id="filter-text-error",
+                    children="",
+                    className="text-danger small mt-1",
+                ),
 
 
-    ], className="m-0 p-0")
+                html.Label(
+                    "Build filters",
+                    className="mb-2 mt-4",
+                ),
+
+                html.Div(
+                    "1) Add a label filter" if advanced else "",
+                    className="text-secondary small mb-2",
+                ),
+
+
+
+
+                dbc.Row([
+                    dbc.Col([
+                        dcc.Dropdown(
+                            id="task-dropdown",
+                            options=[
+                                {"label": task, "value": task}
+                                for task in tasks
+                            ],
+                            placeholder="Select a task...",
+                            clearable=False,
+                            multi=False,
+                        ),
+                    ], width=12),
+                ]),
+
+                dbc.Row([
+                    dbc.Col([
+                        html.Div(
+                            id="checkbox-container",
+                            children=(
+                                dbc.RadioItems(
+                                    id="label-checklist",
+                                    options=[],
+                                    value=None,
+                                    inline=True,
+                                )
+                                if advanced
+                                else dbc.Checklist(
+                                    id="label-checklist",
+                                    options=[],
+                                    value=[],
+                                    inline=True,
+                                )
+                            ),
+                        ),
+                    ], width=10),
+
+                    *(
+                        [
+                            dbc.Col([
+                                dbc.Button(
+                                    "Add filter",
+                                    id="add-filter-btn",
+                                    n_clicks=0,
+                                    className="w-100",
+                                ),
+                            ], width=2)
+                        ]
+                        if not advanced
+                        else []
+                    ),
+
+                    *(
+                        [
+                            dbc.Col([
+                                dbc.Button(
+                                    "Add label filter",
+                                    id="add-filter-btn",
+                                    n_clicks=0,
+                                    className="w-100",
+                                ),
+                            ], width=2)
+                        ]
+                        if advanced
+                        else []
+                    ),
+                ], className="mt-3 align-items-center"),
+
+
+                html.Div(
+                    "2) Insert boolean operators",
+                    className="text-secondary small mt-4 mb-2",
+                    style={} if advanced else {"display": "none"},
+                ),
+
+
+                *(
+                    [
+                        dbc.Row([
+                            dbc.Col([
+                                html.Div(
+                                    [
+                                        dbc.Button(
+                                            op,
+                                            id={"type": "operator-btn", "op": op},
+                                            n_clicks=0,
+                                            color="secondary",
+                                            className="operator-btn flex-fill",
+                                        )
+                                        for op in ["AND", "OR", "NOT", "(", ")"]
+                                    ],
+                                    className="d-flex gap-2",
+                                ),
+                            ], width=9),
+                        ], className="mt-3 align-items-center")
+                    ]
+                    if advanced
+                    else []
+                ),
+
+                html.Div(
+                    "3) Add a publication year range",
+                    className="text-secondary small mt-4 mb-2",
+                    style={} if advanced else {"display": "none"},
+                ),
+
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Input(
+                            id="advanced-year-from",
+                            type="number",
+                            min=1900,
+                            max=2100,
+                            step=1,
+                            placeholder="Year from",
+                        ),
+                    ], width=3),
+                    dbc.Col([
+                        dbc.Input(
+                            id="advanced-year-to",
+                            type="number",
+                            min=1900,
+                            max=2100,
+                            step=1,
+                            placeholder="Year to",
+                        ),
+                    ], width=3),
+                    dbc.Col([
+                    ], width=4),
+                    dbc.Col([
+                        dbc.Button(
+                            "Add year filter",
+                            id="add-year-filter-btn",
+                            n_clicks=0,
+                            className="w-100",
+                        ),
+                    ], width=2),
+                ], className="mt-3 align-items-center", style={} if advanced else {"display": "none"}),
+
+                dbc.Row([
+                        dbc.Switch(
+                            id="advanced-filter-btn",
+                            label="Advanced filtering",
+                            value=advanced,
+                            className="toggle-switch toggle-switch-lg",
+                        ),
+                ], className="pt-3 align-items-center"),
+
+            ]),
+        ]),
+    ], className="m-0 p-0 pb-4")
 
 
 def _get_tags(active_tags: OrderedDict[str, list[str]], map_all_labels: bool = True) -> OrderedDict[str, list[str]]:
@@ -571,7 +794,6 @@ def filter_info_button(color: str, label: str, task: str, editable: bool = False
         custom_style["backgroundColor"] = color
         custom_style["border"] = "none"
         custom_style["boxShadow"] = "none"
-        custom_style["cursor"] = "default"
 
     id = {'type': 'filter-button', 'task': task,
           'label': label} if editable else 'tag-button'
@@ -579,6 +801,7 @@ def filter_info_button(color: str, label: str, task: str, editable: bool = False
         children=children,
         style=custom_style,
         color="light",
+        className="filter-button-active" if editable else "tag-info-button",
         id=id,
         n_clicks=0,
         value={"category": task, "value": label},
@@ -691,7 +914,8 @@ def build_paper_details(paper: dict, tags_component=None) -> html.Div:
         return html.Div()
 
     title = paper.get("title", "")
-    year_str = f" – {paper.get('authors', '')} ({paper.get('year', '')})" if paper.get("year") else ""
+    year_str = f" – {paper.get('authors', '')} ({paper.get('year', '')})" if paper.get(
+        "year") else ""
     full_title = f"{title}{year_str}"
     paper_url = paper.get("url", "")
     internal_id = paper.get("id", "")

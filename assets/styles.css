@@ -7,6 +7,18 @@
     box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
 }
 
+.operator-btn {
+    min-height: 38px;
+}
+
+.operator-btn:disabled,
+.add-filter-btn:disabled {
+    opacity: 1;
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    color: #6c757d;
+}
+
 
 .year-input {
     max-width: 100px;
@@ -39,6 +51,90 @@
 .dosage-normalization {
     margin-top: 0.75rem;
     color: #555;
+}
+
+/* Non-clickable info tags/buttons (help cursor + slight darken on hover) */
+.tag-info-button {
+    cursor: help !important;
+}
+
+.tag-info-button:hover {
+    filter: brightness(0.92);
+}
+
+/* Clickable active filter buttons (pointer cursor + slight darken on hover) */
+.filter-button-active {
+    cursor: pointer !important;
+}
+
+.filter-button-active:hover {
+    filter: brightness(0.92);
+}
+
+/* Rows in the study grid open a detail modal on click */
+.ag-row {
+    cursor: pointer;
+}
+
+/* Pie segments in the dual-task analysis filter Task 2 on click */
+#task1-pie-graph .slice path {
+    cursor: pointer;
+}
+
+/* Radio/checklist options in the filter builder are clickable */
+#label-checklist .form-check-input,
+#label-checklist .form-check-label {
+    cursor: pointer;
+}
+
+/* Larger toggle switch with the label vertically centered next to it */
+.study-protocol-toggle .form-check {
+    display: flex;
+    align-items: center;
+    min-height: 2rem;
+    padding-left: 3rem;
+}
+
+.study-protocol-toggle .form-check-input {
+    width: 2.75rem;
+    height: 1.5rem;
+    margin-left: -3rem;
+}
+
+.study-protocol-toggle .form-check-label {
+    margin-left: 0.5rem;
+    font-size: 1.05rem;
+}
+
+/* Larger toggle switch with the label vertically centered next to it */
+.toggle-switch-lg .form-check {
+    display: flex;
+    align-items: center;
+    min-height: 2rem;
+    padding-left: 3rem;
+}
+
+.toggle-switch-lg .form-check-input {
+    width: 2.75rem;
+    height: 1.5rem;
+    margin-left: -3rem;
+}
+
+.toggle-switch-lg .form-check-label {
+    margin-left: 0.5rem;
+    font-size: 1.05rem;
+}
+
+.form-switch {
+    padding-left: 4rem;
+}
+
+.form-switch .form-check-input {
+    cursor: pointer;
+}
+
+.form-switch .form-check-label {
+    cursor: pointer;
 }
 
 .card-hover {

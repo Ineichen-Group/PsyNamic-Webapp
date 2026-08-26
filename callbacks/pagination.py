@@ -13,6 +13,7 @@ def register(app):
         Input("filtered-study-ids", "data"),
         State("active-filters", "data"),
         State("active-infos", "data"),
+        State("advanced-filter-tags", "data"),
         State({"type": "study-grid", "index": MATCH}, "id"),
         prevent_initial_call="initial_duplicate",
     )
@@ -22,6 +23,7 @@ def register(app):
         filtered_ids: list[int],
         active_filters: dict,
         active_infos: dict,
+        advanced_filter_tags: dict,
         grid_id: dict[str, str],
     ):
         """Callback to update grid when either pagination moves or filtered-study-ids changes."""        
@@ -40,7 +42,7 @@ def register(app):
         if filtered_ids is None:
             filtered_ids = get_ids()
 
-        tags = {**(active_filters or {}), **(active_infos or {})}
+        tags = {**(active_filters or {}), **(active_infos or {}), **(advanced_filter_tags or {})}
         is_dosage = grid_id["index"] == "dosage-study-grid"
 
         if is_dosage:
