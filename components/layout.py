@@ -499,7 +499,18 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                 dbc.Row([
                     dbc.Col(
                         dbc.InputGroup([
-                            dbc.Input(
+                            dbc.Textarea(
+                                id="filter-text",
+                                value="",
+                                disabled=not advanced,
+                                className="form-control bg-light",
+                                style={
+                                    "minHeight": "0",
+                                    "fontFamily": "monospace",
+                                    "resize": "vertical",
+                                    "overflowY": "auto",
+                                },
+                            ) if advanced else dbc.Input(
                                 id="filter-text",
                                 value="",
                                 type="text",
