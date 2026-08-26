@@ -8,7 +8,12 @@ from dash.dependencies import Input, Output, State
 
 from callbacks.utils import log_time
 from components.layout import build_filter_info_buttons, checkbox_filter_selection
-from data.queries import get_all_labels, get_boolean_query_tags, get_ids_from_boolean_query
+from data.queries import (
+    _tokenize_boolean_query,
+    get_all_labels,
+    get_boolean_query_tags,
+    get_ids_from_boolean_query,
+)
 
 _OPERATOR_TOKEN_RE = re.compile(r'(\(|\)|\bAND\b|\bOR\b|\bNOT\b)')
 
@@ -30,12 +35,20 @@ def _coerce_year(value):
 def _get_expression_state(text: str) -> tuple[bool, int]:
     """Derives (expecting_atom, open_paren_depth) from the (possibly partial) filter text,
     used to decide which operator/bracket/Add filter buttons are currently valid to press."""
+    if not (text or "").strip():
+        return True, 0
+
+    try:
+        raw_tokens = _tokenize_boolean_query(text, tolerant=True)
+    except Exception:
+        return True, 0
+
     tokens = []
-    for part in _OPERATOR_TOKEN_RE.split(text or ""):
-        part = part.strip()
-        if not part:
-            continue
-        tokens.append(part if part in ("(", ")", "AND", "OR", "NOT") else "ATOM")
+    for tok in raw_tokens:
+        if isinstance(tok, str) and tok in ("(", ")", "AND", "OR", "NOT"):
+            tokens.append(tok)
+        else:
+            tokens.append("ATOM")
 
     expecting_atom = True
     depth = 0
@@ -266,12 +279,13 @@ def register(app):
 
     @app.callback(
         Output("filter-selection-container", "children"),
+        Output("advanced-mode", "data", allow_duplicate=True),
         Input("advanced-filter-btn", "value"),
         prevent_initial_call=True,
     )
     def advanced_filter_callback(advanced_enabled):
         """Switches between the standard and advanced filter UI."""
-        return checkbox_filter_selection(advanced=bool(advanced_enabled))
+        return checkbox_filter_selection(advanced=bool(advanced_enabled)), bool(advanced_enabled)
 
     @app.callback(
         Output("filter-text", "value", allow_duplicate=True),
@@ -302,15 +316,29 @@ def register(app):
         Output("active-filter-buttons", "children", allow_duplicate=True),
         Output("advanced-filter-tags", "data", allow_duplicate=True),
         Input("apply-filter-btn", "n_clicks"),
+        Input({"type": "include-study-protocol-toggle", "index": "filter-page"}, "value"),
         State("filter-text", "value"),
+        State("advanced-mode", "data"),
         prevent_initial_call=True,
     )
-    def apply_advanced_filter(n_clicks, query_text):
-        """Parses the manually edited filter text as a boolean expression and filters studies by it."""
+    def apply_advanced_filter(n_clicks, include_study_protocol_toggle, query_text, advanced_mode):
+        """Parses the manually edited filter text as a boolean expression and filters studies by it.
+
+        Also re-applies on the include-study-protocols toggle so the boolean expression
+        (not just the toggle) keeps being enforced; see the matching skip in studies.py.
+        """
+        trigger = ctx.triggered_id
+        is_toggle_trigger = isinstance(trigger, dict) and trigger.get("type") == "include-study-protocol-toggle"
+        if is_toggle_trigger and not (advanced_mode and (query_text or "").strip()):
+            return no_update, no_update, no_update, no_update, no_update
+
+        include_study_protocols = "include" in (include_study_protocol_toggle or [])
         try:
-            ids = get_ids_from_boolean_query(query_text)
+            ids = get_ids_from_boolean_query(query_text, include_study_protocols=include_study_protocols)
             tags = get_boolean_query_tags(query_text)
         except ValueError as e:
+            if is_toggle_trigger:
+                return no_update, no_update, no_update, no_update, no_update
             return no_update, True, str(e), no_update, no_update
 
         # Read-only: the removable 'x' filter buttons don't map onto an arbitrary boolean expression.

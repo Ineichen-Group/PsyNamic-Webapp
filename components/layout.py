@@ -125,6 +125,12 @@ def content_layout(list_of_children: list, id: str = "content") -> dbc.Container
             data=[],
             storage_type="memory"
         ),
+        # Global so State("advanced-mode") resolves on every page, not just the filter page.
+        dcc.Store(
+            id="advanced-mode",
+            data=False,
+            storage_type="memory"
+        ),
     ]
 
     return dbc.Container(
@@ -482,7 +488,6 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
     tasks = get_all_tasks() or []
 
     return dbc.Container([
-        dcc.Store(id="advanced-mode", data=advanced),
         dbc.Card([
             dbc.CardBody([
 
@@ -521,22 +526,17 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                         width=10 if advanced else 12,
                     ),
 
-                    *(
-                        [
-                            dbc.Col(
-                                dbc.Button(
-                                    "Filter",
-                                    id="apply-filter-btn",
-                                    color="primary",
-                                    title="Apply filter",
-                                    n_clicks=0,
-                                    className="w-100",
-                                ),
-                                width=2,
-                            )
-                        ]
-                        if advanced
-                        else []
+                    dbc.Col(
+                        dbc.Button(
+                            "Filter",
+                            id="apply-filter-btn",
+                            color="primary",
+                            title="Apply filter",
+                            n_clicks=0,
+                            className="w-100",
+                        ),
+                        width=2,
+                        style={} if advanced else {"display": "none"},
                     ),
                 ], className="align-items-center"),
 
