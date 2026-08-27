@@ -38,54 +38,81 @@ def header_layout() -> dbc.Navbar:
         dbc.Container(
             [
                 dbc.NavbarBrand("PsyNamic", href="/"),
+
                 dbc.NavbarToggler(id="navbar-toggler"),
+
                 dbc.Collapse(
                     dbc.Nav(
                         [
                             dbc.DropdownMenu(
                                 children=[
                                     dbc.DropdownMenuItem(
-                                        "Evidence Strength", href="/insights/evidence-strength"),
+                                        "Evidence Strength",
+                                        href="/insights/evidence-strength"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Efficacy & Safety Endpoints", href="/insights/efficacy-safety"),
+                                        "Efficacy & Safety Endpoints",
+                                        href="/insights/efficacy-safety"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Long-term Data", href="/insights/long-term"),
+                                        "Long-term Data",
+                                        href="/insights/long-term"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Sex Bias", href="/insights/sex-bias"),
+                                        "Sex Bias",
+                                        href="/insights/sex-bias"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Number of Participants", href="/insights/participants"),
+                                        "Number of Participants",
+                                        href="/insights/participants"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Study Protocol", href="/insights/study-protocol"),
+                                        "Study Protocol",
+                                        href="/insights/study-protocol"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Dosage", href="/insights/dosage"),
-
+                                        "Dosage",
+                                        href="/insights/dosage"
+                                    ),
                                 ],
                                 nav=True,
                                 in_navbar=True,
                                 label="Insights",
-                                id="insightsDropdown"
+                                id="insightsDropdown",
                             ),
 
                             dbc.DropdownMenu(
                                 children=[
                                     dbc.DropdownMenuItem(
-                                        "Filter all studies", href="/explore/filter"),
+                                        "Filter all studies",
+                                        href="/explore/filter"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Search", href="/explore/search"),
+                                        "Search",
+                                        href="/explore/search"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Dual Task Analysis", href="/explore/dual-task"),
+                                        "Dual Task Analysis",
+                                        href="/explore/dual-task"
+                                    ),
                                     dbc.DropdownMenuItem(
-                                        "Time", href="/explore/time"),
+                                        "Time",
+                                        href="/explore/time"
+                                    ),
                                 ],
                                 nav=True,
                                 in_navbar=True,
                                 label="Explore",
-                                id="exploreDropdown"
+                                id="exploreDropdown",
                             ),
 
-                            dbc.NavItem(dbc.NavLink("About", href="/about")),
-                            dbc.NavItem(dbc.NavLink(
-                                "Contact", href="/contact")),
+                            dbc.NavItem(
+                                dbc.NavLink("About", href="/about")
+                            ),
+
+                            dbc.NavItem(
+                                dbc.NavLink("Contact", href="/contact")
+                            ),
                         ],
                         className="mr-auto",
                         navbar=True,
@@ -93,15 +120,28 @@ def header_layout() -> dbc.Navbar:
                     id="navbar-collapse",
                     navbar=True,
                 ),
-                html.Img(src="/assets/stride_lab_logo_transparent.png",
-                         className="ms-3 me-3", width="10%")
+
+                # STRIDE Lab logo — links to the group website
+                html.A(
+                    html.Img(
+                        src="/assets/stride_lab_logo_transparent.png",
+                        style={
+                            "width": "12rem",
+                            "height": "auto",
+                        },
+                    ),
+                    href="https://ineichen-group.github.io/website/",
+                    target="_blank",
+                    rel="noopener noreferrer",
+                    className="ms-auto",
+                ),
             ],
-            className="py-4"
+            className="py-4 d-flex align-items-center",
         ),
         color="light",
         light=True,
         expand="lg",
-        className="bg-light"
+        className="bg-light",
     )
 
 
@@ -442,7 +482,8 @@ def studies_display(
             className="mb-2 align-items-center",
         ) if protocol_toggle_enabled else None,
 
-        filter_component(filter_buttons, info_buttons, show_filters=show_filters),
+        filter_component(filter_buttons, info_buttons,
+                         show_filters=show_filters),
 
         dcc.Store(
             id="active-filters",
@@ -718,7 +759,7 @@ def checkbox_filter_selection(advanced: bool = False) -> html.Div:
                             value=advanced,
                             className="toggle-switch toggle-switch-lg",
                         ),
-                ], className="pt-3 align-items-center"),
+                        ], className="pt-3 align-items-center"),
 
             ]),
         ]),
