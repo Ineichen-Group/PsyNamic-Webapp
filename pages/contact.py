@@ -74,17 +74,6 @@ def contact_layout():
                                 html.H4("Developer", className="mb-3"),
                                 html.P("Vera Bernhard"),
                                 html.P(
-                                    [
-                                        "Email: ",
-                                        html.A(
-                                            "vera.bernhard@unibe.ch",
-                                            href="mailto:vera.bernhard@unibe.ch",
-                                            className="text-primary",
-                                        ),
-                                    ],
-                                    className="mb-2",
-                                ),
-                                html.P(
                                     html.A(
                                         "More about Vera Bernhard",
                                         href="https://ineichen-group.github.io/website/people/bernhard-vera/index.html",
